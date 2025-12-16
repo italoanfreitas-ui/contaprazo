@@ -516,41 +516,50 @@
         }
 
         .btn-nav {
-            width: 40px !important;
-            height: 40px !important;
-            min-width: 40px !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
             padding: 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border-radius: 8px !important;
-            background: white !important;
-            border: 2px solid #e5e7eb !important;
+            border-radius: 6px !important;
+            background: #f3f4f6 !important;
+            border: 1px solid #d1d5db !important;
+            color: #374151 !important;
             transition: all 0.2s;
         }
 
         .btn-nav:hover {
             border-color: #3b82f6 !important;
-            background: #f0f9ff !important;
+            background: #dbeafe !important;
+            color: #1e40af !important;
             transform: translateY(-1px);
         }
 
+        .btn-nav svg {
+            stroke: currentColor;
+        }
+
         .btn-hoje {
-            padding: 10px 18px;
+            padding: 8px 14px;
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
+            border-radius: 6px;
             font-size: 0.875rem;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
             transition: all 0.2s;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .btn-hoje:hover {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
         }
 
         .visualizacao-toggle {
@@ -1178,14 +1187,14 @@
                 <div class="card calendario">
             <div class="calendario-header">
                 <div class="calendario-nav-row">
-                    <button class="btn btn-secondary btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
                     </button>
                     <h2 id="mesAtual"></h2>
-                    <button class="btn btn-secondary btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </button>
@@ -1205,13 +1214,7 @@
 
             <div class="config-feriados">
                 <div class="config-feriados-header" onclick="toggleConfigFeriados()">
-                    <h3>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline; vertical-align: middle; margin-right: 6px;">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.4 4.4l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.4-4.4l4.2-4.2"></path>
-                        </svg>
-                        Configurar Feriados
-                    </h3>
+                    <h3>⚙️ Configurar Feriados</h3>
                     <span class="config-feriados-toggle" id="configToggleIcon">▼</span>
                 </div>
                 <div class="config-feriados-content" id="configFeriadosContent">
@@ -1469,7 +1472,7 @@
                 <h3>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.4 4.4l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.4-4.4l4.2-4.2"></path>
+                        <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"></path>
                     </svg>
                     Configurando Feriados
                 </h3>
@@ -1786,10 +1789,10 @@
                             Exportar PDF
                         </button>
                         <button class="btn btn-indigo" onclick="exportarImagemResumo()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
                             </svg>
                             Exportar Resumo (PNG)
                         </button>
@@ -2208,162 +2211,180 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Calcular altura dinamicamente
+            // Configurações globais
+            const MARGEM = 50;
+            const LARGURA_CANVAS = 1000;
+            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
+            const PADDING_INTERNO = 30;
+
+            // Preparar dados
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            let alturaConteudo = 120; // Cabeçalho
-            alturaConteudo += 60; // Título + margem superior interna
-
             // Calcular linhas da descrição
+            let linhasDescricao = [];
             if (descricaoPrazo) {
-                const maxWidth = 860;
+                ctx.font = 'italic bold 18px system-ui';
+                const maxWidthDesc = LARGURA_CONTEUDO - (PADDING_INTERNO * 2) - 40;
                 const words = descricaoPrazo.split(' ');
                 let line = '';
-                let linhasDescricao = 0;
-                ctx.font = 'bold 20px system-ui';
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && line !== '') {
-                        linhasDescricao++;
+                    if (metrics.width > maxWidthDesc && line !== '') {
+                        linhasDescricao.push(line.trim());
                         line = word + ' ';
                     } else {
                         line = testLine;
                     }
                 }
-                if (line) linhasDescricao++;
-                alturaConteudo += 50 + (linhasDescricao * 30) + 40; // Box + linhas + margem
+                if (line) linhasDescricao.push(line.trim());
             }
 
-            alturaConteudo += 240; // Dados (3 blocos)
-            alturaConteudo += 30; // Margem inferior interna
-            const margem = 50; // Margem simétrica em todos os lados
+            // Calcular altura total do canvas
+            let altura = MARGEM; // Margem superior
+            altura += 60; // Logo + título
+            altura += 30; // Espaço até box de resultado
+            altura += PADDING_INTERNO; // Padding superior do box
+            altura += 40; // Título "Resultado..."
+            if (linhasDescricao.length > 0) {
+                altura += 30; // Espaço antes da descrição
+                altura += (linhasDescricao.length * 28) + 30; // Box da descrição
+            }
+            altura += 30; // Espaço antes dos dados
+            altura += 220; // 3 blocos de dados
+            altura += PADDING_INTERNO; // Padding inferior do box
+            altura += MARGEM; // Margem inferior
 
-            canvas.width = 1000;
-            canvas.height = alturaConteudo + (margem * 2);
+            canvas.width = LARGURA_CANVAS;
+            canvas.height = altura;
 
-            // Fundo
+            // Fundo branco
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // ===== CABEÇALHO =====
+            let yPos = MARGEM;
+
             // Logo CP
-            const gradient = ctx.createLinearGradient(margem, margem, margem + 48, margem + 48);
+            const gradient = ctx.createLinearGradient(MARGEM, yPos, MARGEM + 48, yPos + 48);
             gradient.addColorStop(0, '#3b82f6');
             gradient.addColorStop(1, '#16a34a');
             ctx.fillStyle = gradient;
-            ctx.roundRect(margem, margem, 48, 48, 8);
+            ctx.roundRect(MARGEM, yPos, 48, 48, 8);
             ctx.fill();
+
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('CP', margem + 12, margem + 32);
+            ctx.textAlign = 'left';
+            ctx.fillText('CP', MARGEM + 12, yPos + 32);
 
-            // Título ContaPrazo | Calculadora de Prazos
+            // Título "ContaPrazo | Calculadora de Prazos"
             ctx.fillStyle = '#3b82f6';
-            ctx.font = 'bold 32px system-ui';
-            ctx.fillText('Conta', margem + 65, margem + 30);
+            ctx.font = 'bold 30px system-ui';
+            ctx.fillText('Conta', MARGEM + 65, yPos + 32);
+
             ctx.fillStyle = '#16a34a';
-            ctx.fillText('Prazo', margem + 170, margem + 30);
+            ctx.fillText('Prazo', MARGEM + 160, yPos + 32);
 
-            // Separator
             ctx.fillStyle = '#d1d5db';
-            ctx.font = '300 32px system-ui';
-            ctx.fillText('|', margem + 260, margem + 30);
+            ctx.font = '300 28px system-ui';
+            ctx.fillText('|', MARGEM + 245, yPos + 32);
 
-            // Subtitle
             ctx.fillStyle = '#6b7280';
             ctx.font = '14px system-ui';
-            ctx.fillText('Calculadora de Prazos', margem + 285, margem + 30);
+            ctx.fillText('Calculadora de Prazos', MARGEM + 270, yPos + 32);
 
-            // Área de resultado
-            const boxTop = margem + 70;
-            const alturaBox = alturaConteudo - 20;
+            yPos += 90; // Altura do cabeçalho
+
+            // ===== BOX DE RESULTADO =====
+            const boxTop = yPos;
+            const boxHeight = canvas.height - boxTop - MARGEM;
+
+            // Gradiente de fundo
             const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
             gradientBg.addColorStop(0, '#f0fdf4');
             gradientBg.addColorStop(1, '#dbeafe');
             ctx.fillStyle = gradientBg;
-            ctx.fillRect(margem, boxTop, canvas.width - (margem * 2), alturaBox);
+            ctx.fillRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
 
-            // Borda
+            // Borda verde
             ctx.strokeStyle = '#86efac';
-            ctx.lineWidth = 6;
-            ctx.strokeRect(margem, boxTop, canvas.width - (margem * 2), alturaBox);
+            ctx.lineWidth = 4;
+            ctx.strokeRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
 
-            let yPos = boxTop + 60;
+            yPos = boxTop + PADDING_INTERNO;
 
-            // Título
+            // Título do resultado
             ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 28px system-ui';
-            ctx.fillText('Resultado do Cálculo de Prazo', margem + 20, yPos);
-            yPos += 50;
+            ctx.font = 'bold 24px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 40;
 
-            // Descrição (se houver) - subtítulo em negrito e itálico
-            if (descricaoPrazo) {
-                const descBoxWidth = canvas.width - (margem * 2) - 40;
+            // Descrição (se houver)
+            if (linhasDescricao.length > 0) {
+                yPos += 20;
 
-                // Calcular linhas da descrição
-                ctx.font = 'italic bold 20px system-ui';
-                const words = descricaoPrazo.split(' ');
-                let line = '';
-                let linhasTexto = [];
-                for (let word of words) {
-                    const testLine = line + word + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > descBoxWidth - 30 && line !== '') {
-                        linhasTexto.push(line.trim());
-                        line = word + ' ';
-                    } else {
-                        line = testLine;
-                    }
-                }
-                if (line) linhasTexto.push(line.trim());
+                const descBoxX = MARGEM + PADDING_INTERNO;
+                const descBoxWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
+                const descBoxHeight = (linhasDescricao.length * 28) + 20;
+                const descBoxY = yPos;
 
-                // Desenhar box de fundo branco para a descrição
-                const descBoxHeight = (linhasTexto.length * 30) + 30;
-                const descBoxX = margem + 20;
-                const descBoxY = yPos - 20;
-
+                // Box branco da descrição
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
 
-                // Borda esquerda azul
+                // Borda azul à esquerda
                 ctx.fillStyle = '#3b82f6';
                 ctx.fillRect(descBoxX, descBoxY, 4, descBoxHeight);
 
-                // Texto da descrição alinhado à esquerda
+                // Texto da descrição
                 ctx.fillStyle = '#1f2937';
-                ctx.font = 'italic bold 20px system-ui';
+                ctx.font = 'italic bold 18px system-ui';
                 ctx.textAlign = 'left';
-                linhasTexto.forEach(linha => {
-                    ctx.fillText(linha, descBoxX + 20, yPos);
-                    yPos += 30;
+
+                let descY = descBoxY + 22;
+                linhasDescricao.forEach(linha => {
+                    ctx.fillText(linha, descBoxX + 20, descY);
+                    descY += 28;
                 });
 
-                yPos += 20;
+                yPos += descBoxHeight + 20;
             }
 
-            // Dados
-            ctx.fillStyle = '#374151';
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Data de Início:', margem + 20, yPos);
-            ctx.font = '18px system-ui';
-            ctx.fillText(dataInicioFormatada, margem + 20, yPos + 30);
-            yPos += 70;
+            yPos += 20;
 
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText(`Dias ${tipoDias} Contados:`, margem + 20, yPos);
-            ctx.font = 'bold 24px system-ui';
+            // ===== DADOS DO CÁLCULO =====
+
+            // Data de início
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 18px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('Data de Início:', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 28;
+            ctx.font = '16px system-ui';
+            ctx.fillText(dataInicioFormatada, MARGEM + PADDING_INTERNO, yPos);
+            yPos += 50;
+
+            // Dias contados
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillText(`Dias ${tipoDias} Contados:`, MARGEM + PADDING_INTERNO, yPos);
+            yPos += 28;
+            ctx.font = 'bold 22px system-ui';
             ctx.fillStyle = '#2563eb';
-            ctx.fillText(diasUteis + ' dias', margem + 20, yPos + 30);
-            yPos += 70;
+            ctx.fillText(diasUteis + ' dias', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 50;
 
+            // Data final
             ctx.fillStyle = '#374151';
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Data Final do Prazo:', margem + 20, yPos);
-            ctx.font = 'bold 24px system-ui';
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillText('Data Final do Prazo:', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 28;
+            ctx.font = 'bold 22px system-ui';
             ctx.fillStyle = '#15803d';
-            ctx.fillText(dataFinalFormatada, margem + 20, yPos + 30);
+            ctx.fillText(dataFinalFormatada, MARGEM + PADDING_INTERNO, yPos);
 
             canvas.toBlob(blob => {
                 const url = URL.createObjectURL(blob);
@@ -2384,168 +2405,183 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Calcular altura dinamicamente
-            const alturaPorLinha = 45;
-            let cabecalho = 120; // Logo e título
-
-            // Calcular linhas da descrição
-            let linhasDescricao = 0;
-            if (descricaoPrazo) {
-                const maxWidth = 960;
-                const words = descricaoPrazo.split(' ');
-                let line = '';
-                ctx.font = 'bold 20px system-ui';
-                for (let word of words) {
-                    const testLine = line + word + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && line !== '') {
-                        linhasDescricao++;
-                        line = word + ' ';
-                    } else {
-                        line = testLine;
-                    }
-                }
-                if (line) linhasDescricao++;
-                cabecalho += 70 + (linhasDescricao * 30) + 40; // Box da descrição
-            } else {
-                cabecalho += 60; // Título do resultado
-            }
-
-            cabecalho += 200; // Informações resumidas + separador + título detalhamento
-
-            const margem = 50; // Margem simétrica em todos os lados
-            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margem + 20;
-
-            canvas.width = 1100;
-            canvas.height = alturaTotal + margem;
-
-            // Fundo
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Logo CP
-            const gradient = ctx.createLinearGradient(margem, margem, margem + 48, margem + 48);
-            gradient.addColorStop(0, '#3b82f6');
-            gradient.addColorStop(1, '#16a34a');
-            ctx.fillStyle = gradient;
-            ctx.roundRect(margem, margem, 48, 48, 8);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText('CP', margem + 12, margem + 32);
-
-            // Título ContaPrazo | Calculadora de Prazos
-            ctx.fillStyle = '#3b82f6';
-            ctx.font = 'bold 32px system-ui';
-            ctx.fillText('Conta', margem + 65, margem + 30);
-            ctx.fillStyle = '#16a34a';
-            ctx.fillText('Prazo', margem + 170, margem + 30);
-
-            // Separator
-            ctx.fillStyle = '#d1d5db';
-            ctx.font = '300 32px system-ui';
-            ctx.fillText('|', margem + 260, margem + 30);
-
-            // Subtitle
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '14px system-ui';
-            ctx.fillText('Calculadora de Prazos', margem + 285, margem + 30);
-
-            // Área de resultado
-            const boxTop = margem + 70;
-            const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
-            gradientBg.addColorStop(0, '#f0fdf4');
-            gradientBg.addColorStop(1, '#dbeafe');
-            ctx.fillStyle = gradientBg;
-            ctx.fillRect(margem, boxTop, canvas.width - (margem * 2), canvas.height - boxTop - margem);
-
-            // Borda
-            ctx.strokeStyle = '#86efac';
-            ctx.lineWidth = 6;
-            ctx.strokeRect(margem, boxTop, canvas.width - (margem * 2), canvas.height - boxTop - margem);
-
+            // Configurações globais
+            const MARGEM = 50;
+            const LARGURA_CANVAS = 1100;
+            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
+            const PADDING_INTERNO = 30;
+            const ALTURA_LINHA_DETALHAMENTO = 42;
+            // Preparar dados
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            let yPos = boxTop + 50;
-
-            // Título
-            ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 28px system-ui';
-            ctx.fillText('Resultado do Cálculo de Prazo', margem + 20, yPos);
-            yPos += 50;
-
-            // Descrição (se houver) - subtítulo em negrito e itálico
+            // Calcular linhas da descrição
+            let linhasDescricao = [];
             if (descricaoPrazo) {
-                const descBoxWidth = canvas.width - (margem * 2) - 40;
-
-                // Calcular linhas da descrição
-                ctx.font = 'italic bold 20px system-ui';
+                ctx.font = 'italic bold 18px system-ui';
+                const maxWidthDesc = LARGURA_CONTEUDO - (PADDING_INTERNO * 2) - 40;
                 const words = descricaoPrazo.split(' ');
                 let line = '';
-                let linhasTexto = [];
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > descBoxWidth - 30 && line !== '') {
-                        linhasTexto.push(line.trim());
+                    if (metrics.width > maxWidthDesc && line !== '') {
+                        linhasDescricao.push(line.trim());
                         line = word + ' ';
                     } else {
                         line = testLine;
                     }
                 }
-                if (line) linhasTexto.push(line.trim());
+                if (line) linhasDescricao.push(line.trim());
+            }
 
-                // Desenhar box de fundo branco para a descrição
-                const descBoxHeight = (linhasTexto.length * 30) + 30;
-                const descBoxX = margem + 20;
-                const descBoxY = yPos - 20;
+            // Calcular altura total do canvas
+            let altura = MARGEM; // Margem superior
+            altura += 60; // Logo + título
+            altura += 30; // Espaço até box
+            altura += PADDING_INTERNO; // Padding superior do box
+            altura += 40; // Título "Resultado..."
+            if (linhasDescricao.length > 0) {
+                altura += 30; // Espaço antes da descrição
+                altura += (linhasDescricao.length * 28) + 20; // Box da descrição
+                altura += 20;
+            }
+            altura += 120; // Dados resumidos
+            altura += 30; // Espaço
+            altura += 40; // Título detalhamento
+            altura += 20; // Espaço
+            altura += todosOsDias.length * ALTURA_LINHA_DETALHAMENTO; // Linhas do detalhamento
+            altura += PADDING_INTERNO; // Padding inferior do box
+            altura += MARGEM; // Margem inferior
 
+            canvas.width = LARGURA_CANVAS;
+            canvas.height = altura;
+
+            // Fundo branco
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // ===== CABEÇALHO =====
+            let yPos = MARGEM;
+
+            // Logo CP
+            const gradient = ctx.createLinearGradient(MARGEM, yPos, MARGEM + 48, yPos + 48);
+            gradient.addColorStop(0, '#3b82f6');
+            gradient.addColorStop(1, '#16a34a');
+            ctx.fillStyle = gradient;
+            ctx.roundRect(MARGEM, yPos, 48, 48, 8);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('CP', MARGEM + 12, yPos + 32);
+
+            // Título "ContaPrazo | Calculadora de Prazos"
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = 'bold 30px system-ui';
+            ctx.fillText('Conta', MARGEM + 65, yPos + 32);
+
+            ctx.fillStyle = '#16a34a';
+            ctx.fillText('Prazo', MARGEM + 160, yPos + 32);
+
+            ctx.fillStyle = '#d1d5db';
+            ctx.font = '300 28px system-ui';
+            ctx.fillText('|', MARGEM + 245, yPos + 32);
+
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '14px system-ui';
+            ctx.fillText('Calculadora de Prazos', MARGEM + 270, yPos + 32);
+
+            yPos += 90; // Altura do cabeçalho
+
+            // ===== BOX DE RESULTADO =====
+            const boxTop = yPos;
+            const boxHeight = canvas.height - boxTop - MARGEM;
+
+            // Gradiente de fundo
+            const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
+            gradientBg.addColorStop(0, '#f0fdf4');
+            gradientBg.addColorStop(1, '#dbeafe');
+            ctx.fillStyle = gradientBg;
+            ctx.fillRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
+
+            // Borda verde
+            ctx.strokeStyle = '#86efac';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
+
+            yPos = boxTop + PADDING_INTERNO;
+
+            // Título do resultado
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 24px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 40;
+
+            // Descrição (se houver)
+            if (linhasDescricao.length > 0) {
+                yPos += 20;
+
+                const descBoxX = MARGEM + PADDING_INTERNO;
+                const descBoxWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
+                const descBoxHeight = (linhasDescricao.length * 28) + 20;
+                const descBoxY = yPos;
+
+                // Box branco da descrição
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
 
-                // Borda esquerda azul
+                // Borda azul à esquerda
                 ctx.fillStyle = '#3b82f6';
                 ctx.fillRect(descBoxX, descBoxY, 4, descBoxHeight);
 
-                // Texto da descrição alinhado à esquerda
+                // Texto da descrição
                 ctx.fillStyle = '#1f2937';
-                ctx.font = 'italic bold 20px system-ui';
+                ctx.font = 'italic bold 18px system-ui';
                 ctx.textAlign = 'left';
-                linhasTexto.forEach(linha => {
-                    ctx.fillText(linha, descBoxX + 20, yPos);
-                    yPos += 30;
+
+                let descY = descBoxY + 22;
+                linhasDescricao.forEach(linha => {
+                    ctx.fillText(linha, descBoxX + 20, descY);
+                    descY += 28;
                 });
 
-                yPos += 25;
+                yPos += descBoxHeight + 20;
             }
 
-            // Informações resumidas
+            yPos += 20;
+
+            // ===== DADOS RESUMIDOS =====
             ctx.fillStyle = '#374151';
-            ctx.font = 'bold 18px system-ui';
-            ctx.fillText('Início: ' + dataInicioFormatada, margem + 20, yPos);
+            ctx.font = 'bold 16px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('Início: ' + dataInicioFormatada, MARGEM + PADDING_INTERNO, yPos);
             yPos += 30;
-            ctx.fillText(`Dias ${tipoDias}: ` + diasUteis, margem + 20, yPos);
+            ctx.fillText(`Dias ${tipoDias}: ` + diasUteis, MARGEM + PADDING_INTERNO, yPos);
             yPos += 30;
             ctx.fillStyle = '#15803d';
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Final: ' + dataFinalFormatada, margem + 20, yPos);
-            yPos += 45;
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillText('Final: ' + dataFinalFormatada, MARGEM + PADDING_INTERNO, yPos);
+            yPos += 40;
 
             // Linha separadora
             ctx.strokeStyle = '#d1d5db';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(margem + 20, yPos);
-            ctx.lineTo(canvas.width - margem - 20, yPos);
+            ctx.moveTo(MARGEM + PADDING_INTERNO, yPos);
+            ctx.lineTo(canvas.width - MARGEM - PADDING_INTERNO, yPos);
             ctx.stroke();
-            yPos += 30;
+            yPos += 40;
 
+            // ===== DETALHAMENTO =====
             ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Detalhamento:', margem + 20, yPos);
-            yPos += 35;
+            ctx.font = 'bold 18px system-ui';
+            ctx.textAlign = 'left';
+            ctx.fillText('Detalhamento:', MARGEM + PADDING_INTERNO, yPos);
+            yPos += 30;
 
             todosOsDias.forEach(dia => {
                 const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
@@ -2555,36 +2591,52 @@
                     year: 'numeric'
                 });
 
-                const itemX = margem + 20;
-                const itemWidth = canvas.width - (margem * 2) - 40;
+                const itemX = MARGEM + PADDING_INTERNO;
+                const itemWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
+                const itemHeight = 36;
+                const itemY = yPos;
 
                 if (dia.contado) {
+                    // Fundo verde claro
                     ctx.fillStyle = '#dcfce7';
-                    ctx.fillRect(itemX, yPos - 28, itemWidth, 38);
+                    ctx.fillRect(itemX, itemY, itemWidth, itemHeight);
+
+                    // Borda verde
                     ctx.strokeStyle = '#22c55e';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(itemX, yPos - 28, itemWidth, 38);
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(itemX, itemY, itemWidth, itemHeight);
 
+                    // Número
                     ctx.fillStyle = '#166534';
-                    ctx.font = 'bold 16px system-ui';
-                    ctx.fillText(dia.numero.toString(), itemX + 15, yPos);
-                    ctx.font = '16px system-ui';
-                    ctx.fillText(dataFormatada, itemX + 80, yPos);
-                } else {
-                    ctx.fillStyle = '#fef2f2';
-                    ctx.fillRect(itemX, yPos - 28, itemWidth, 38);
-                    ctx.strokeStyle = '#ef4444';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(itemX, yPos - 28, itemWidth, 38);
+                    ctx.font = 'bold 15px system-ui';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(dia.numero.toString(), itemX + 12, itemY + 22);
 
+                    // Data
+                    ctx.font = '15px system-ui';
+                    ctx.fillText(dataFormatada, itemX + 60, itemY + 22);
+                } else {
+                    // Fundo vermelho claro
+                    ctx.fillStyle = '#fef2f2';
+                    ctx.fillRect(itemX, itemY, itemWidth, itemHeight);
+
+                    // Borda vermelha
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(itemX, itemY, itemWidth, itemHeight);
+
+                    // X
                     ctx.fillStyle = '#991b1b';
-                    ctx.font = 'bold 16px system-ui';
-                    ctx.fillText('X', itemX + 15, yPos);
-                    ctx.font = '16px system-ui';
-                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 80, yPos);
+                    ctx.font = 'bold 15px system-ui';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('X', itemX + 12, itemY + 22);
+
+                    // Data e motivo
+                    ctx.font = '15px system-ui';
+                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 60, itemY + 22);
                 }
 
-                yPos += alturaPorLinha;
+                yPos += ALTURA_LINHA_DETALHAMENTO;
             });
 
             canvas.toBlob(blob => {
