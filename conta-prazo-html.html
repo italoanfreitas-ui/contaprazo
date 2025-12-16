@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContaPrazo Calculadora</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB8UlEQVR4nO2WzUtVURDGf+aprxQVLVq0EKJFi1YtWrRQQYhWQdCiRYv+gBYtgqBFixb9A0GbNi1atGjRokWLIAiCFkHQR0RQH/p6nRnOhXPuPfc+fV5BDwy8d2bmzG/OnJkzB/6zVIE+YBaYARaAn8AqsOHP1r+ngG6gUuRyG/AIOAE2gCPAG/Ab2AvcBOaAPeAS8Mzf3wQ+A0+ADv9eCzwH/gB1YrMNmAYOgArgGrAMbAKHgTp/Pw/c8P1TwAngMrDo9lqBU8AOH+t1YJ9S24B3QJeI1gN/lbkCPJKQU+7EFt8f9vd14I8/LwCVYv8acCCRg0p/1uctC9CVL+f6/V1BPJcuF4BdwH6XfiAuJXTfS5fhTNobgU9iO+7vpvx9FdgoJrJCfHUl7K+47atSA9YK4vs7peMngd0i2ujPCuAF8BZ4DFQnEtniY3dE5Kbb1sS/AHwUm0m3c9+fO4FbLs3At8RYbZP+0BXQSO5EThJP/VLrReROudRq+ldpAw4m3o8AV8V+RkLOJVTHWoE2sVvz5xSw5NdvP/C1iEsT8FlCzrg0au46/9cnJKLCO2cReKg+I9DjneO+S6tKt4tIGfChmEu/n/2ZXzhX3ZlBoD2RiOqE/T7gA/C+sFQq/Tce/VdnfwE+SmjlbuXWQQAAAABJRU5ErkJggg==">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2316a34a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='15' fill='url(%23grad)'/%3E%3Ctext x='50' y='70' font-family='system-ui, sans-serif' font-size='50' font-weight='800' fill='white' text-anchor='middle'%3ECP%3C/text%3E%3C/svg%3E">
     <style>
         * {
             margin: 0;
@@ -46,31 +46,37 @@
         }
 
         .brand-header {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
+            padding: 25px 30px;
+            margin: -30px -30px 30px -30px;
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .logo-cp {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, #3b82f6, #16a34a);
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 20px;
+            font-size: 24px;
             color: white;
             flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .brand-title {
-            font-size: 2rem;
+            font-size: 2.25rem;
             color: #1f2937;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         .brand-conta {
@@ -90,9 +96,9 @@
         .brand-subtitle {
             font-size: 0.875rem;
             color: #6b7280;
-            margin-left: 63px;
-            margin-top: -20px;
-            margin-bottom: 20px;
+            margin-left: 71px;
+            margin-top: -15px;
+            font-weight: 500;
         }
 
         .form-grid {
@@ -435,6 +441,32 @@
             gap: 15px;
         }
 
+        .btn-nav {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-hoje {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .btn-hoje:hover {
+            background: #e5e7eb;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
         .visualizacao-toggle {
             display: flex;
             gap: 5px;
@@ -526,13 +558,77 @@
             background: #f9fafb;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
+            padding: 0;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .config-feriados-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            user-select: none;
+            background: #f9fafb;
+            transition: background 0.2s;
+        }
+
+        .config-feriados-header:hover {
+            background: #f3f4f6;
+        }
+
+        .config-feriados-header h3 {
+            margin: 0;
+            color: #1f2937;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-feriados-toggle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            transition: transform 0.3s;
+        }
+
+        .config-feriados-toggle.aberto {
+            transform: rotate(180deg);
+        }
+
+        .config-feriados-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .config-feriados-content.aberto {
+            max-height: 1000px;
+        }
+
+        .config-feriados-body {
             padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .config-secao {
             margin-bottom: 20px;
         }
 
-        .config-feriados h3 {
-            margin-bottom: 15px;
-            color: #1f2937;
+        .config-secao h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-divisor {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 20px 0;
         }
 
         .toggle-btn {
@@ -820,24 +916,8 @@
                     </svg>
                     Limpar
                 </button>
-                <button class="btn btn-success" onclick="exportarFeriados()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Exportar Feriados
-                </button>
-                <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    Importar Feriados
-                </button>
-                <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
             </div>
+            <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
 
             <div id="resultado" style="display:none"></div>
                 </div>
@@ -847,41 +927,87 @@
             <div>
                 <div class="card calendario">
             <div class="calendario-header">
-                <button class="btn btn-secondary" onclick="mudarMes(-1)" id="btnNavAnterior">
+                <button class="btn btn-secondary btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                    <h2 id="mesAtual"></h2>
-                    <div class="visualizacao-toggle">
-                        <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
-                        <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <h2 id="mesAtual" style="margin: 0;"></h2>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div class="visualizacao-toggle">
+                            <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
+                            <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
+                        </div>
+                        <button class="btn btn-hoje" onclick="irParaHoje()">
+                            📅 Hoje
+                        </button>
                     </div>
                 </div>
-                <button class="btn btn-secondary" onclick="mudarMes(1)" id="btnNavProximo">
+                <button class="btn btn-secondary btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
             </div>
 
+            <div class="calendario-grid" id="calendarioGrid"></div>
+
             <div class="config-feriados">
-                <h3>⚙️ Configurar Feriados</h3>
-                <div class="btn-group">
-                    <button class="toggle-btn toggle-ativo" id="toggleFixos" onclick="toggleFeriados('fixos')">
-                        ✓ Feriados Nacionais
-                    </button>
-                    <button class="toggle-btn toggle-ativo" id="toggleMoveis" onclick="toggleFeriados('moveis')">
-                        ✓ Feriados Móveis
-                    </button>
-                    <button class="toggle-btn toggle-ativo" id="togglePersonalizados" onclick="toggleFeriados('personalizados')">
-                        ✓ Feriados Personalizados
-                    </button>
+                <div class="config-feriados-header" onclick="toggleConfigFeriados()">
+                    <h3>⚙️ Configurar Feriados</h3>
+                    <span class="config-feriados-toggle" id="configToggleIcon">▼</span>
+                </div>
+                <div class="config-feriados-content" id="configFeriadosContent">
+                    <div class="config-feriados-body">
+                        <div class="config-secao">
+                            <h4>Visualização</h4>
+                            <div class="btn-group">
+                                <button class="toggle-btn toggle-ativo" id="toggleFixos" onclick="toggleFeriados('fixos')">
+                                    ✓ Feriados Nacionais
+                                </button>
+                                <button class="toggle-btn toggle-ativo" id="toggleMoveis" onclick="toggleFeriados('moveis')">
+                                    ✓ Feriados Móveis
+                                </button>
+                                <button class="toggle-btn toggle-ativo" id="togglePersonalizados" onclick="toggleFeriados('personalizados')">
+                                    ✓ Feriados Personalizados
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="config-divisor"></div>
+
+                        <div class="config-secao">
+                            <h4>Gerenciar Feriados Personalizados</h4>
+                            <div class="btn-group">
+                                <button class="btn btn-success" onclick="exportarFeriados()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Exportar
+                                </button>
+                                <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    Importar
+                                </button>
+                                <button class="btn btn-red" onclick="limparFeriadosPersonalizados()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Limpar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="calendario-grid" id="calendarioGrid"></div>
 
             <div class="legenda">
                 <h3>Legenda:</h3>
@@ -1271,6 +1397,34 @@
             renderizarCalendario();
         }
 
+        function irParaHoje() {
+            mesAtual = new Date();
+            renderizarCalendario();
+        }
+
+        function toggleConfigFeriados() {
+            const content = document.getElementById('configFeriadosContent');
+            const icon = document.getElementById('configToggleIcon');
+
+            content.classList.toggle('aberto');
+            icon.classList.toggle('aberto');
+        }
+
+        function limparFeriadosPersonalizados() {
+            if (feriadosPersonalizados.size === 0) {
+                alert('⚠️ Não há feriados personalizados para limpar.');
+                return;
+            }
+
+            const quantidade = feriadosPersonalizados.size;
+            if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.`)) {
+                feriadosPersonalizados.clear();
+                localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
+                renderizarCalendario();
+                alert('✅ Feriados personalizados limpos com sucesso!');
+            }
+        }
+
         function renderizarCalendario() {
             if (visualizacaoCalendario === 'mensal') {
                 renderizarCalendarioMensal();
@@ -1457,8 +1611,12 @@
             let descricaoHTML = '';
             if (descricaoPrazo) {
                 descricaoHTML = `
-                    <div style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 6px;">
-                        <strong style="color: #3b82f6;">Descrição:</strong> <em>${descricaoPrazo}</em>
+                    <div style="background: linear-gradient(to right, #e0f2fe, #f0f9ff); border: 3px solid #3b82f6; padding: 20px; margin: 25px 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 24px;">📋</span>
+                            <strong style="color: #1e40af; font-size: 18px;">Descrição:</strong>
+                        </div>
+                        <div style="color: #1f2937; font-size: 16px; line-height: 1.6; font-weight: 500;">${descricaoPrazo}</div>
                     </div>
                 `;
             }
@@ -1561,8 +1719,40 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
+            // Calcular altura dinamicamente
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let alturaConteudo = 120; // Cabeçalho
+            alturaConteudo += 60; // Título
+
+            // Calcular linhas da descrição
+            if (descricaoPrazo) {
+                const maxWidth = 880;
+                const words = descricaoPrazo.split(' ');
+                let line = '';
+                let linhasDescricao = 0;
+                ctx.font = 'bold 20px system-ui';
+                for (let word of words) {
+                    const testLine = line + word + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && line !== '') {
+                        linhasDescricao++;
+                        line = word + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+                if (line) linhasDescricao++;
+                alturaConteudo += 50 + (linhasDescricao * 30) + 40; // Box + linhas + margem
+            }
+
+            alturaConteudo += 240; // Dados (3 blocos)
+            const margemVertical = 40;
+
             canvas.width = 1000;
-            canvas.height = 550;
+            canvas.height = alturaConteudo + margemVertical;
 
             // Fundo
             ctx.fillStyle = '#ffffff';
@@ -1592,21 +1782,17 @@
             ctx.fillText('Calculadora Profissional de Prazos', 105, 85);
 
             // Área de resultado
+            const alturaBox = alturaConteudo - 140;
             const gradientBg = ctx.createLinearGradient(0, 120, canvas.width, 120);
             gradientBg.addColorStop(0, '#f0fdf4');
             gradientBg.addColorStop(1, '#dbeafe');
             ctx.fillStyle = gradientBg;
-            ctx.fillRect(20, 120, canvas.width - 40, canvas.height - 140);
+            ctx.fillRect(20, 120, canvas.width - 40, alturaBox);
 
             // Borda
             ctx.strokeStyle = '#86efac';
             ctx.lineWidth = 6;
-            ctx.strokeRect(20, 120, canvas.width - 40, canvas.height - 140);
-
-            // Conteúdo
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+            ctx.strokeRect(20, 120, canvas.width - 40, alturaBox);
 
             let yPos = 180;
 
@@ -1616,26 +1802,54 @@
             ctx.fillText('Resultado do Cálculo de Prazo', 60, yPos);
             yPos += 50;
 
-            // Descrição (se houver)
+            // Descrição (se houver) - com destaque maior
             if (descricaoPrazo) {
-                ctx.fillStyle = '#3b82f6';
-                ctx.font = 'italic 18px system-ui';
-                const maxWidth = 880;
+                // Box de destaque
+                ctx.fillStyle = '#e0f2fe';
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 3;
+
+                const boxPadding = 20;
+                const boxX = 60;
+                const boxWidth = 880;
+
+                // Calcular altura do box
+                ctx.font = 'bold 20px system-ui';
                 const words = descricaoPrazo.split(' ');
                 let line = '';
+                let linhasTexto = [];
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && line !== '') {
-                        ctx.fillText(line, 60, yPos);
+                    if (metrics.width > (boxWidth - 2 * boxPadding) && line !== '') {
+                        linhasTexto.push(line.trim());
                         line = word + ' ';
-                        yPos += 25;
                     } else {
                         line = testLine;
                     }
                 }
-                ctx.fillText(line, 60, yPos);
-                yPos += 40;
+                if (line) linhasTexto.push(line.trim());
+
+                const boxHeight = 50 + (linhasTexto.length * 30);
+
+                ctx.fillRect(boxX, yPos - 10, boxWidth, boxHeight);
+                ctx.strokeRect(boxX, yPos - 10, boxWidth, boxHeight);
+
+                // Título da descrição
+                ctx.fillStyle = '#1e40af';
+                ctx.font = 'bold 18px system-ui';
+                ctx.fillText('📋 Descrição:', boxX + boxPadding, yPos + 15);
+                yPos += 45;
+
+                // Texto da descrição
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 20px system-ui';
+                linhasTexto.forEach(linha => {
+                    ctx.fillText(linha, boxX + boxPadding, yPos);
+                    yPos += 30;
+                });
+
+                yPos += 30;
             }
 
             // Dados
@@ -1676,13 +1890,40 @@
                 return;
             }
 
-            const alturaPorLinha = 45;
-            const cabecalho = 450;
-            const margemFinal = 40;
-            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margemFinal + 40;
-
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
+
+            // Calcular altura dinamicamente
+            const alturaPorLinha = 45;
+            let cabecalho = 120; // Logo e título
+
+            // Calcular linhas da descrição
+            let linhasDescricao = 0;
+            if (descricaoPrazo) {
+                const maxWidth = 980;
+                const words = descricaoPrazo.split(' ');
+                let line = '';
+                ctx.font = 'bold 20px system-ui';
+                for (let word of words) {
+                    const testLine = line + word + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && line !== '') {
+                        linhasDescricao++;
+                        line = word + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+                if (line) linhasDescricao++;
+                cabecalho += 70 + (linhasDescricao * 30) + 40; // Box da descrição
+            } else {
+                cabecalho += 60; // Título do resultado
+            }
+
+            cabecalho += 200; // Informações resumidas + separador + título detalhamento
+
+            const margemVertical = 40;
+            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margemVertical;
 
             canvas.width = 1100;
             canvas.height = alturaTotal;
@@ -1738,25 +1979,53 @@
             ctx.fillText('Resultado do Cálculo de Prazo', 60, yPos);
             yPos += 50;
 
-            // Descrição (se houver)
+            // Descrição (se houver) - com destaque
             if (descricaoPrazo) {
-                ctx.fillStyle = '#3b82f6';
-                ctx.font = 'italic 16px system-ui';
-                const maxWidth = 980;
+                // Box de destaque
+                ctx.fillStyle = '#e0f2fe';
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 3;
+
+                const boxPadding = 20;
+                const boxX = 60;
+                const boxWidth = 980;
+
+                // Calcular altura do box
+                ctx.font = 'bold 20px system-ui';
                 const words = descricaoPrazo.split(' ');
                 let line = '';
+                let linhasTexto = [];
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && line !== '') {
-                        ctx.fillText(line, 60, yPos);
+                    if (metrics.width > (boxWidth - 2 * boxPadding) && line !== '') {
+                        linhasTexto.push(line.trim());
                         line = word + ' ';
-                        yPos += 22;
                     } else {
                         line = testLine;
                     }
                 }
-                ctx.fillText(line, 60, yPos);
+                if (line) linhasTexto.push(line.trim());
+
+                const boxHeight = 50 + (linhasTexto.length * 30);
+
+                ctx.fillRect(boxX, yPos - 10, boxWidth, boxHeight);
+                ctx.strokeRect(boxX, yPos - 10, boxWidth, boxHeight);
+
+                // Título da descrição
+                ctx.fillStyle = '#1e40af';
+                ctx.font = 'bold 18px system-ui';
+                ctx.fillText('📋 Descrição:', boxX + boxPadding, yPos + 15);
+                yPos += 45;
+
+                // Texto da descrição
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 20px system-ui';
+                linhasTexto.forEach(linha => {
+                    ctx.fillText(linha, boxX + boxPadding, yPos);
+                    yPos += 30;
+                });
+
                 yPos += 35;
             }
 
