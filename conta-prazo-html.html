@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Prazos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f9fafb;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+
+        input[type="date"],
+        input[type="number"] {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-purple {
+            background: #9333ea;
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background: #7e22ce;
+        }
+
+        .btn-quick {
+            flex: 1;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 8px 12px;
+        }
+
+        .btn-quick:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .resultado {
+            background: linear-gradient(to right, #f0fdf4, #dbeafe);
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .resultado h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .resultado-info {
+            margin: 15px 0;
+            font-size: 1.125rem;
+        }
+
+        .resultado-info strong {
+            color: #374151;
+        }
+
+        .data-final {
+            color: #15803d;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .detalhamento {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .detalhamento h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .dia-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .dia-contado {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        .dia-nao-contado {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .dia-numero {
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        .dia-contado .dia-numero {
+            color: #166534;
+        }
+
+        .dia-nao-contado .dia-numero {
+            color: #991b1b;
+        }
+
+        .calendario {
+            margin-top: 30px;
+        }
+
+        .calendario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .calendario-header h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+        }
+
+        .visualizacao-toggle {
+            display: flex;
+            gap: 5px;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .visualizacao-toggle button {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #6b7280;
+        }
+
+        .visualizacao-toggle button.active {
+            background: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .calendario-anual {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .mes-mini {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .mes-mini h4 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .calendario-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+        }
+
+        .calendario-mini-dia-semana {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6b7280;
+            padding: 4px 2px;
+        }
+
+        .calendario-mini-dia {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendario-mini-dia:hover:not(.fim-semana) {
+            background: #f3f4f6;
+        }
+
+        .config-feriados {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-feriados h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-ativo {
+            background: #16a34a;
+            color: white;
+        }
+
+        .toggle-inativo {
+            background: #d1d5db;
+            color: #4b5563;
+        }
+
+        .calendario-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendario-dia-semana {
+            text-align: center;
+            font-weight: bold;
+            color: #4b5563;
+            padding: 10px;
+        }
+
+        .calendario-dia {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            min-height: 40px;
+        }
+
+        .calendario-dia:hover:not(.fim-semana) {
+            background: #f3f4f6;
+        }
+
+        .fim-semana {
+            background: #e5e7eb;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        .feriado {
+            background: #fecaca;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .dia-inicio {
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+
+        .dia-final {
+            background: #16a34a;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px #15803d;
+        }
+
+        .dia-percorrido {
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .legenda {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .legenda h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .legenda-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+        }
+
+        .legenda-cor {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        .rodape {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .rodape a {
+            color: #6b7280;
+            text-decoration: underline;
+            font-size: 0.875rem;
+        }
+
+        .rodape a:hover {
+            color: #374151;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .card {
+                box-shadow: none;
+            }
+            .btn, .calendario, .legenda, .rodape {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-layout">
+            <!-- Coluna esquerda: Formulário e Resultado -->
+            <div>
+                <div class="card">
+                    <h1>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Calculadora de Prazos
+                    </h1>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="dataInicio">Data de Início do Prazo</label>
+                    <input type="date" id="dataInicio">
+                </div>
+                <div class="form-group">
+                    <label for="diasUteis">Quantidade de Dias Úteis</label>
+                    <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
+                    <div class="quick-buttons">
+                        <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
+                        <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
+                        <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
+                        <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="calcularPrazo()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="20" x2="12" y2="10"></line>
+                        <line x1="18" y1="20" x2="18" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="16"></line>
+                    </svg>
+                    Calcular Prazo
+                </button>
+                <button class="btn btn-secondary" onclick="limparResultado()" id="btnLimpar" style="display:none">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Limpar
+                </button>
+                <button class="btn btn-success" onclick="exportarFeriados()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Exportar Feriados
+                </button>
+                <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Importar Feriados
+                </button>
+                <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
+            </div>
+
+            <div id="resultado" style="display:none"></div>
+                </div>
+            </div>
+
+            <!-- Coluna direita: Calendário -->
+            <div>
+                <div class="card calendario">
+            <div class="calendario-header">
+                <button class="btn btn-secondary" onclick="mudarMes(-1)" id="btnMesAnterior">← Anterior</button>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                    <h2 id="mesAtual"></h2>
+                    <div class="visualizacao-toggle">
+                        <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
+                        <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="mudarMes(1)" id="btnProximoMes">Próximo →</button>
+            </div>
+
+            <div class="config-feriados">
+                <h3>⚙️ Configurar Feriados</h3>
+                <div class="btn-group">
+                    <button class="toggle-btn toggle-ativo" id="toggleFixos" onclick="toggleFeriados('fixos')">
+                        ✓ Feriados Nacionais
+                    </button>
+                    <button class="toggle-btn toggle-ativo" id="toggleMoveis" onclick="toggleFeriados('moveis')">
+                        ✓ Feriados Móveis
+                    </button>
+                    <button class="toggle-btn toggle-ativo" id="togglePersonalizados" onclick="toggleFeriados('personalizados')">
+                        ✓ Feriados Personalizados
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendario-grid" id="calendarioGrid"></div>
+
+            <div class="legenda">
+                <h3>Legenda:</h3>
+                <div class="legenda-grid">
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #e5e7eb"></div>
+                        <span>Fim de semana</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #fecaca"></div>
+                        <span>Feriado/Ponto Facultativo</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #3b82f6"></div>
+                        <span>Data de início</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #16a34a"></div>
+                        <span>Data final</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #fef3c7"></div>
+                        <span>Dias úteis contados</span>
+                    </div>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.875rem; color: #6b7280;">
+                    <strong>Dica:</strong> Clique em qualquer dia útil para marcá-lo como feriado personalizado.
+                </p>
+            </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rodape">
+            <p>
+                <a href="#" onclick="baixarCalculadora(); return false;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 5px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Baixar esta calculadora para compartilhar
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Estado da aplicação
+        let mesAtual = new Date();
+        let feriadosPersonalizados = new Set(JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]'));
+        let feriadosFixosAtivos = true;
+        let feriadosMoveisAtivos = true;
+        let feriadosPersonalizadosAtivos = true;
+        let dataInicio = null;
+        let diasUteis = null;
+        let todosOsDias = [];
+        let dataFinal = null;
+        let visualizacaoCalendario = 'mensal'; // 'mensal' ou 'anual'
+
+        // Feriados fixos
+        const feriadosFixos = {
+            '01-01': 'Ano Novo',
+            '04-21': 'Tiradentes',
+            '05-01': 'Dia do Trabalho',
+            '09-07': 'Independência',
+            '10-12': 'Nossa Senhora Aparecida',
+            '11-02': 'Finados',
+            '11-15': 'Proclamação da República',
+            '11-20': 'Consciência Negra',
+            '12-25': 'Natal'
+        };
+
+        // Feriados móveis
+        const feriadosMoveis = {
+            2025: {
+                '03-03': 'Carnaval (seg)',
+                '03-04': 'Carnaval (ter)',
+                '04-18': 'Sexta-feira Santa',
+                '06-19': 'Corpus Christi'
+            },
+            2026: {
+                '02-16': 'Carnaval (seg)',
+                '02-17': 'Carnaval (ter)',
+                '04-03': 'Sexta-feira Santa',
+                '06-04': 'Corpus Christi'
+            }
+        };
+
+        function formatarData(data) {
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+            return `${mes}-${dia}`;
+        }
+
+        function formatarDataCompleta(data) {
+            const ano = data.getFullYear();
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function ehFimDeSemana(data) {
+            const dia = data.getDay();
+            return dia === 0 || dia === 6;
+        }
+
+        function ehFeriado(data) {
+            const dataStr = formatarData(data);
+            const dataCompleta = formatarDataCompleta(data);
+            const ano = data.getFullYear();
+
+            if (feriadosFixosAtivos && feriadosFixos[dataStr]) return true;
+            if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) return true;
+            if (feriadosPersonalizadosAtivos && feriadosPersonalizados.has(dataCompleta)) return true;
+
+            return false;
+        }
+
+        function setDias(dias) {
+            document.getElementById('diasUteis').value = dias;
+        }
+
+        function calcularPrazo() {
+            dataInicio = document.getElementById('dataInicio').value;
+            diasUteis = document.getElementById('diasUteis').value;
+
+            if (!dataInicio || !diasUteis) {
+                alert('Por favor, preencha a data de início e a quantidade de dias úteis.');
+                return;
+            }
+
+            const inicio = new Date(dataInicio + 'T00:00:00');
+            let diasContados = 0;
+            let dataAtual = new Date(inicio);
+            todosOsDias = [];
+            let contador = 0;
+
+            while (diasContados < parseInt(diasUteis)) {
+                dataAtual.setDate(dataAtual.getDate() + 1);
+
+                const ehFds = ehFimDeSemana(dataAtual);
+                const ehFer = ehFeriado(dataAtual);
+
+                let motivo = '';
+                let contado = false;
+
+                if (!ehFds && !ehFer) {
+                    diasContados++;
+                    contador++;
+                    contado = true;
+                    motivo = `Dia ${contador}`;
+                } else {
+                    if (ehFds) {
+                        motivo = dataAtual.getDay() === 0 ? 'Domingo (Final de Semana)' : 'Sábado (Final de Semana)';
+                    } else if (ehFer) {
+                        const dataStr = formatarData(dataAtual);
+                        const ano = dataAtual.getFullYear();
+                        motivo = feriadosFixos[dataStr] ||
+                            (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                            'Feriado/Ponto Facultativo';
+                    }
+                }
+
+                todosOsDias.push({
+                    data: new Date(dataAtual),
+                    contado: contado,
+                    motivo: motivo,
+                    numero: contado ? contador : null
+                });
+            }
+
+            dataFinal = dataAtual;
+            mostrarResultado();
+            renderizarCalendario();
+            document.getElementById('btnLimpar').style.display = 'inline-flex';
+        }
+
+        function mostrarResultado() {
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+
+            let html = `
+                <div class="resultado">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Resultado do Cálculo
+                    </h2>
+                    <div class="resultado-info">
+                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                    </div>
+                    <div class="resultado-info">
+                        <strong>Dias Úteis Contados:</strong> ${diasUteis}
+                    </div>
+                    <div class="resultado-info">
+                        <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 20px;">
+                        <button class="btn" style="background: #dc2626; color: white;" onclick="exportarPDF()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            Exportar PDF
+                        </button>
+                        <button class="btn" style="background: #6366f1; color: white;" onclick="exportarImagemResumo()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            Imagem Resumida
+                        </button>
+                        <button class="btn" style="background: #9333ea; color: white;" onclick="exportarImagemCompleta()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            Imagem Completa
+                        </button>
+                    </div>
+
+                    <div class="detalhamento">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Detalhamento
+                        </h3>
+                        ${todosOsDias.map(dia => {
+                            const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                                weekday: 'short',
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+
+                            if (dia.contado) {
+                                return `<div class="dia-item dia-contado">
+                                    <span class="dia-numero">${dia.numero}</span>
+                                    <span>${dataFormatada}</span>
+                                </div>`;
+                            } else {
+                                return `<div class="dia-item dia-nao-contado">
+                                    <span class="dia-numero">X</span>
+                                    <span>${dataFormatada} - ${dia.motivo}</span>
+                                </div>`;
+                            }
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultado').innerHTML = html;
+            document.getElementById('resultado').style.display = 'block';
+        }
+
+        function limparResultado() {
+            document.getElementById('resultado').style.display = 'none';
+            document.getElementById('btnLimpar').style.display = 'none';
+            dataInicio = null;
+            dataFinal = null;
+            todosOsDias = [];
+            renderizarCalendario();
+        }
+
+        function toggleFeriados(tipo) {
+            const btn = document.getElementById('toggle' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
+
+            if (tipo === 'fixos') {
+                feriadosFixosAtivos = !feriadosFixosAtivos;
+                btn.className = feriadosFixosAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
+                btn.textContent = (feriadosFixosAtivos ? '✓' : '✗') + ' Feriados Nacionais';
+            } else if (tipo === 'moveis') {
+                feriadosMoveisAtivos = !feriadosMoveisAtivos;
+                btn.className = feriadosMoveisAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
+                btn.textContent = (feriadosMoveisAtivos ? '✓' : '✗') + ' Feriados Móveis';
+            } else if (tipo === 'personalizados') {
+                feriadosPersonalizadosAtivos = !feriadosPersonalizadosAtivos;
+                btn.className = feriadosPersonalizadosAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
+                btn.textContent = (feriadosPersonalizadosAtivos ? '✓' : '✗') + ' Feriados Personalizados';
+            }
+
+            renderizarCalendario();
+        }
+
+        function alternarVisualizacao(tipo) {
+            visualizacaoCalendario = tipo;
+            
+            document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
+            document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
+            
+            // Mostrar/ocultar botões de navegação mensal
+            const mostrarNavegacao = tipo === 'mensal';
+            document.getElementById('btnMesAnterior').style.display = mostrarNavegacao ? 'inline-flex' : 'none';
+            document.getElementById('btnProximoMes').style.display = mostrarNavegacao ? 'inline-flex' : 'none';
+            
+            renderizarCalendario();
+        }
+
+        function mudarMes(direcao) {
+            if (visualizacaoCalendario === 'mensal') {
+                mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + direcao, 1);
+            } else {
+                mesAtual = new Date(mesAtual.getFullYear() + direcao, 0, 1);
+            }
+            renderizarCalendario();
+        }
+
+        function renderizarCalendario() {
+            if (visualizacaoCalendario === 'mensal') {
+                renderizarCalendarioMensal();
+            } else {
+                renderizarCalendarioAnual();
+            }
+        }
+
+        function renderizarCalendarioMensal() {
+            const ano = mesAtual.getFullYear();
+            const mes = mesAtual.getMonth();
+            const primeiroDia = new Date(ano, mes, 1);
+            const ultimoDia = new Date(ano, mes + 1, 0);
+            const diasNoMes = ultimoDia.getDate();
+            const diaSemanaInicio = primeiroDia.getDay();
+
+            document.getElementById('mesAtual').textContent =
+                mesAtual.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+
+            let html = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map(dia =>
+                `<div class="calendario-dia-semana">${dia}</div>`
+            ).join('');
+
+            for (let i = 0; i < diaSemanaInicio; i++) {
+                html += '<div></div>';
+            }
+
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                const data = new Date(ano, mes, dia);
+                const dataStr = formatarDataCompleta(data);
+                const ehFds = ehFimDeSemana(data);
+                const ehFer = ehFeriado(data);
+                const ehInicio = dataInicio === formatarDataCompleta(data);
+                const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
+                const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
+
+                let className = 'calendario-dia';
+                if (ehFds) className += ' fim-semana';
+                else if (ehFer) className += ' feriado';
+                else if (ehInicio) className += ' dia-inicio';
+                else if (ehFim) className += ' dia-final';
+                else if (ehPercorrido) className += ' dia-percorrido';
+
+                const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
+                html += `<div class="${className}" ${onclick}>${dia}</div>`;
+            }
+
+            document.getElementById('calendarioGrid').innerHTML = html;
+        }
+
+        function renderizarCalendarioAnual() {
+            const ano = mesAtual.getFullYear();
+            
+            document.getElementById('mesAtual').textContent = ano.toString();
+
+            let html = '';
+
+            for (let mes = 0; mes < 12; mes++) {
+                const primeiroDia = new Date(ano, mes, 1);
+                const ultimoDia = new Date(ano, mes + 1, 0);
+                const diasNoMes = ultimoDia.getDate();
+                const diaSemanaInicio = primeiroDia.getDay();
+                
+                const nomeMes = new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long' });
+
+                html += `<div class="mes-mini">`;
+                html += `<h4>${nomeMes.toUpperCase()}</h4>`;
+                html += `<div class="calendario-mini-grid">`;
+
+                // Dias da semana
+                ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(dia => {
+                    html += `<div class="calendario-mini-dia-semana">${dia}</div>`;
+                });
+
+                // Espaços vazios antes do primeiro dia
+                for (let i = 0; i < diaSemanaInicio; i++) {
+                    html += '<div></div>';
+                }
+
+                // Dias do mês
+                for (let dia = 1; dia <= diasNoMes; dia++) {
+                    const data = new Date(ano, mes, dia);
+                    const dataStr = formatarDataCompleta(data);
+                    const ehFds = ehFimDeSemana(data);
+                    const ehFer = ehFeriado(data);
+                    const ehInicio = dataInicio === formatarDataCompleta(data);
+                    const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
+                    const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
+
+                    let className = 'calendario-mini-dia';
+                    if (ehFds) className += ' fim-semana';
+                    else if (ehFer) className += ' feriado';
+                    else if (ehInicio) className += ' dia-inicio';
+                    else if (ehFim) className += ' dia-final';
+                    else if (ehPercorrido) className += ' dia-percorrido';
+
+                    const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
+                    html += `<div class="${className}" ${onclick}>${dia}</div>`;
+                }
+
+                html += `</div></div>`;
+            }
+
+            document.getElementById('calendarioGrid').innerHTML = html;
+        }
+
+        function toggleDia(dataStr) {
+            if (feriadosPersonalizados.has(dataStr)) {
+                feriadosPersonalizados.delete(dataStr);
+            } else {
+                feriadosPersonalizados.add(dataStr);
+            }
+            localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+            renderizarCalendario();
+        }
+
+        function exportarFeriados() {
+            const config = {
+                feriadosPersonalizados: [...feriadosPersonalizados],
+                dataExportacao: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `feriados-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importarFeriados(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    feriadosPersonalizados = new Set(config.feriadosPersonalizados);
+                    localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+                    renderizarCalendario();
+                    alert('✅ Configuração importada com sucesso!');
+                } catch (error) {
+                    alert('❌ Erro ao importar configuração. Verifique o arquivo.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function exportarPDF() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro para exportar.');
+                return;
+            }
+
+            // Abrir janela de impressão diretamente
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+
+            let listaHTML = '';
+            todosOsDias.forEach(dia => {
+                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                if (dia.contado) {
+                    listaHTML += `<div style="padding: 12px; background: #dcfce7; margin: 5px 0; border-left: 4px solid #22c55e; border-radius: 4px; display: flex;">
+                        <span style="color: #166534; font-weight: bold; min-width: 40px;">${dia.numero}</span>
+                        <span style="color: #1f2937; margin-left: 20px;">${dataFormatada}</span>
+                    </div>`;
+                } else {
+                    listaHTML += `<div style="padding: 12px; background: #fef2f2; margin: 5px 0; border-left: 4px solid #ef4444; border-radius: 4px; display: flex;">
+                        <span style="color: #991b1b; font-weight: bold; min-width: 40px;">X</span>
+                        <span style="color: #1f2937; margin-left: 20px;">${dataFormatada} - ${dia.motivo}</span>
+                    </div>`;
+                }
+            });
+
+            const htmlContent = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cálculo de Prazo</title>
+    <style>
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
+        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
+        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
+        .info { margin: 15px 0; font-size: 16px; }
+        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+        .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
+        h3 { color: #374151; font-size: 18px; margin-bottom: 15px; }
+        @media print { 
+            body { padding: 15px; } 
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Resultado do Cálculo de Prazo</h1>
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Dias Úteis Contados:</strong> ${diasUteis} dias úteis</div>
+        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+    </div>
+    <div class="secao">
+        <h3>Detalhamento</h3>
+        ${listaHTML}
+    </div>
+    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
+        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
+        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
+        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            🖨️ Imprimir / Salvar como PDF
+        </button>
+    </div>
+</body>
+</html>`;
+
+            const popup = window.open('', '_blank', 'width=900,height=700');
+            if (popup) {
+                popup.document.write(htmlContent);
+                popup.document.close();
+            } else {
+                alert('⚠️ Pop-up bloqueado.\n\nPor favor, permita pop-ups para este site ou use os botões de exportar imagem.');
+            }
+        }
+
+        function exportarImagemResumo() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro.');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 900;
+            canvas.height = 450;
+
+            // Fundo
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Gradiente
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, '#f0fdf4');
+            gradient.addColorStop(1, '#dbeafe');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // Borda
+            ctx.strokeStyle = '#86efac';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // Título
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 36px system-ui';
+            ctx.fillText('Resultado do Cálculo de Prazo', 60, 90);
+
+            // Linha
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(60, 120);
+            ctx.lineTo(840, 120);
+            ctx.stroke();
+
+            // Dados
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 24px system-ui';
+            ctx.fillText('Data de Início:', 60, 180);
+            ctx.font = '20px system-ui';
+            ctx.fillText(dataInicioFormatada, 60, 215);
+
+            ctx.font = 'bold 24px system-ui';
+            ctx.fillText('Dias Úteis Contados:', 60, 275);
+            ctx.font = 'bold 28px system-ui';
+            ctx.fillStyle = '#2563eb';
+            ctx.fillText(diasUteis + ' dias úteis', 60, 310);
+
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 24px system-ui';
+            ctx.fillText('Data Final do Prazo:', 60, 365);
+            ctx.font = 'bold 26px system-ui';
+            ctx.fillStyle = '#15803d';
+            ctx.fillText(dataFinalFormatada, 60, 400);
+
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `prazo-resumo-${Date.now()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function exportarImagemCompleta() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro.');
+                return;
+            }
+
+            const alturaPorLinha = 45;
+            const cabecalho = 305;
+            const margemFinal = 40;
+            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margemFinal + 40;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 1000;
+            canvas.height = alturaTotal;
+
+            // Fundo
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Gradiente
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, '#f0fdf4');
+            gradient.addColorStop(1, '#dbeafe');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // Borda
+            ctx.strokeStyle = '#86efac';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // Cabeçalho
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 32px system-ui';
+            ctx.fillText('Resultado do Cálculo de Prazo', 60, 80);
+
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(60, 105);
+            ctx.lineTo(940, 105);
+            ctx.stroke();
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 20px system-ui';
+            ctx.fillText('Data de Início: ' + dataInicioFormatada, 60, 145);
+            ctx.fillText('Dias Úteis: ' + diasUteis, 60, 175);
+            ctx.fillStyle = '#15803d';
+            ctx.font = 'bold 24px system-ui';
+            ctx.fillText('Data Final: ' + dataFinalFormatada, 60, 210);
+
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(60, 230);
+            ctx.lineTo(940, 230);
+            ctx.stroke();
+
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 22px system-ui';
+            ctx.fillText('Detalhamento:', 60, 265);
+
+            let yPos = 305;
+
+            todosOsDias.forEach(dia => {
+                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                if (dia.contado) {
+                    ctx.fillStyle = '#dcfce7';
+                    ctx.fillRect(70, yPos - 28, 860, 38);
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(70, yPos - 28, 860, 38);
+
+                    ctx.fillStyle = '#166534';
+                    ctx.font = 'bold 18px system-ui';
+                    ctx.fillText(dia.numero.toString(), 85, yPos);
+                    ctx.font = '18px system-ui';
+                    ctx.fillText(dataFormatada, 150, yPos);
+                } else {
+                    ctx.fillStyle = '#fef2f2';
+                    ctx.fillRect(70, yPos - 28, 860, 38);
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(70, yPos - 28, 860, 38);
+
+                    ctx.fillStyle = '#991b1b';
+                    ctx.font = 'bold 18px system-ui';
+                    ctx.fillText('X', 85, yPos);
+                    ctx.font = '18px system-ui';
+                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, 150, yPos);
+                }
+
+                yPos += alturaPorLinha;
+            });
+
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `prazo-completo-${Date.now()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function baixarCalculadora() {
+            const htmlCompleto = document.documentElement.outerHTML;
+            const blob = new Blob([htmlCompleto], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'calculadora-prazos.html';
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Calculadora baixada com sucesso!\n\nAgora você pode compartilhar este arquivo HTML com outras pessoas. Basta abrir o arquivo em qualquer navegador para usar a calculadora offline.');
+        }
+
+        // Inicializar
+        renderizarCalendario();
+    </script>
+</body>
+</html>
