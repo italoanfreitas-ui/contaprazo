@@ -380,12 +380,26 @@
 
         .btn-group .btn {
             flex: 1 1 calc(33.333% - 10px);
-            min-width: 180px;
+            min-width: 200px;
+        }
+
+        .btn svg {
+            flex-shrink: 0;
+            min-width: 18px;
+            min-height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group .btn {
+                font-size: 0.85rem;
+                min-width: 160px;
+            }
         }
 
         @media (max-width: 640px) {
             .btn-group .btn {
                 flex: 1 1 100%;
+                font-size: 0.95rem;
             }
         }
 
@@ -552,8 +566,9 @@
             font-weight: 500;
             box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
             transition: all 0.2s;
-            flex-shrink: 0;
+            flex: 0 0 auto;
             white-space: nowrap;
+            cursor: pointer;
         }
 
         .btn-hoje:hover {
@@ -1204,7 +1219,7 @@
                         <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
                         <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
                     </div>
-                    <button class="btn btn-hoje" onclick="irParaHoje()">
+                    <button class="btn-hoje" onclick="irParaHoje()">
                         📅 Hoje
                     </button>
                 </div>
@@ -2211,28 +2226,29 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Configurações globais
-            const MARGEM = 50;
-            const LARGURA_CANVAS = 1000;
-            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
-            const PADDING_INTERNO = 30;
-
             // Preparar dados
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            // Calcular linhas da descrição
+            // Configurações (replicando o PDF)
+            const MARGEM = 30;
+            const LARGURA_CANVAS = 900;
+            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
+            const BOX_PADDING = 30;
+
+            // Calcular linhas da descrição (se houver)
             let linhasDescricao = [];
+            let alturaDescricao = 0;
             if (descricaoPrazo) {
                 ctx.font = 'italic bold 18px system-ui';
-                const maxWidthDesc = LARGURA_CONTEUDO - (PADDING_INTERNO * 2) - 40;
+                const maxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2) - 30;
                 const words = descricaoPrazo.split(' ');
                 let line = '';
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidthDesc && line !== '') {
+                    if (metrics.width > maxWidth && line !== '') {
                         linhasDescricao.push(line.trim());
                         line = word + ' ';
                     } else {
@@ -2240,21 +2256,22 @@
                     }
                 }
                 if (line) linhasDescricao.push(line.trim());
+                alturaDescricao = 20 + 15 + (linhasDescricao.length * 25) + 15 + 30; // Margem + padding + linhas + padding + espaço
             }
 
-            // Calcular altura total do canvas
+            // Calcular altura total (replicando layout do PDF)
             let altura = MARGEM; // Margem superior
-            altura += 60; // Logo + título
-            altura += 30; // Espaço até box de resultado
-            altura += PADDING_INTERNO; // Padding superior do box
-            altura += 40; // Título "Resultado..."
-            if (linhasDescricao.length > 0) {
-                altura += 30; // Espaço antes da descrição
-                altura += (linhasDescricao.length * 28) + 30; // Box da descrição
-            }
-            altura += 30; // Espaço antes dos dados
-            altura += 220; // 3 blocos de dados
-            altura += PADDING_INTERNO; // Padding inferior do box
+            altura += 48; // Logo
+            altura += 15; // Espaço logo-title
+            altura += 25; // Espaço title-box
+            altura += BOX_PADDING; // Padding superior box
+            altura += 28; // Título H1
+            altura += 25; // Espaço título-descrição ou dados
+            altura += alturaDescricao; // Descrição (se houver)
+            altura += 15 + 16; // Label "Data de Início"
+            altura += 15 + 16; // Label "Dias Contados"
+            altura += 15 + 20; // Label "Data Final" (maior)
+            altura += BOX_PADDING; // Padding inferior box
             altura += MARGEM; // Margem inferior
 
             canvas.width = LARGURA_CANVAS;
@@ -2314,21 +2331,21 @@
             ctx.lineWidth = 4;
             ctx.strokeRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
 
-            yPos = boxTop + PADDING_INTERNO;
+            yPos = boxTop + BOX_PADDING;
 
             // Título do resultado
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 24px system-ui';
             ctx.textAlign = 'left';
-            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + BOX_PADDING, yPos);
             yPos += 40;
 
             // Descrição (se houver)
             if (linhasDescricao.length > 0) {
                 yPos += 20;
 
-                const descBoxX = MARGEM + PADDING_INTERNO;
-                const descBoxWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
+                const descBoxX = MARGEM + BOX_PADDING;
+                const descBoxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2);
                 const descBoxHeight = (linhasDescricao.length * 28) + 20;
                 const descBoxY = yPos;
 
@@ -2362,29 +2379,29 @@
             ctx.fillStyle = '#374151';
             ctx.font = 'bold 18px system-ui';
             ctx.textAlign = 'left';
-            ctx.fillText('Data de Início:', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText('Data de Início:', MARGEM + BOX_PADDING, yPos);
             yPos += 28;
             ctx.font = '16px system-ui';
-            ctx.fillText(dataInicioFormatada, MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText(dataInicioFormatada, MARGEM + BOX_PADDING, yPos);
             yPos += 50;
 
             // Dias contados
             ctx.font = 'bold 18px system-ui';
-            ctx.fillText(`Dias ${tipoDias} Contados:`, MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText(`Dias ${tipoDias} Contados:`, MARGEM + BOX_PADDING, yPos);
             yPos += 28;
             ctx.font = 'bold 22px system-ui';
             ctx.fillStyle = '#2563eb';
-            ctx.fillText(diasUteis + ' dias', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText(diasUteis + ' dias', MARGEM + BOX_PADDING, yPos);
             yPos += 50;
 
             // Data final
             ctx.fillStyle = '#374151';
             ctx.font = 'bold 18px system-ui';
-            ctx.fillText('Data Final do Prazo:', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText('Data Final do Prazo:', MARGEM + BOX_PADDING, yPos);
             yPos += 28;
             ctx.font = 'bold 22px system-ui';
             ctx.fillStyle = '#15803d';
-            ctx.fillText(dataFinalFormatada, MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText(dataFinalFormatada, MARGEM + BOX_PADDING, yPos);
 
             canvas.toBlob(blob => {
                 const url = URL.createObjectURL(blob);
@@ -2405,28 +2422,30 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Configurações globais
-            const MARGEM = 50;
-            const LARGURA_CANVAS = 1100;
-            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
-            const PADDING_INTERNO = 30;
-            const ALTURA_LINHA_DETALHAMENTO = 42;
             // Preparar dados
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            // Calcular linhas da descrição
+            // Configurações (replicando o PDF)
+            const MARGEM = 30;
+            const LARGURA_CANVAS = 900;
+            const LARGURA_CONTEUDO = LARGURA_CANVAS - (MARGEM * 2);
+            const BOX_PADDING = 30;
+            const ALTURA_LINHA_DETALHAMENTO = 38;
+
+            // Calcular linhas da descrição (se houver)
             let linhasDescricao = [];
+            let alturaDescricao = 0;
             if (descricaoPrazo) {
                 ctx.font = 'italic bold 18px system-ui';
-                const maxWidthDesc = LARGURA_CONTEUDO - (PADDING_INTERNO * 2) - 40;
+                const maxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2) - 30;
                 const words = descricaoPrazo.split(' ');
                 let line = '';
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidthDesc && line !== '') {
+                    if (metrics.width > maxWidth && line !== '') {
                         linhasDescricao.push(line.trim());
                         line = word + ' ';
                     } else {
@@ -2434,25 +2453,28 @@
                     }
                 }
                 if (line) linhasDescricao.push(line.trim());
+                alturaDescricao = 20 + 15 + (linhasDescricao.length * 25) + 15 + 30;
             }
 
-            // Calcular altura total do canvas
+            // Calcular altura total (replicando layout do PDF)
             let altura = MARGEM; // Margem superior
-            altura += 60; // Logo + título
-            altura += 30; // Espaço até box
-            altura += PADDING_INTERNO; // Padding superior do box
-            altura += 40; // Título "Resultado..."
-            if (linhasDescricao.length > 0) {
-                altura += 30; // Espaço antes da descrição
-                altura += (linhasDescricao.length * 28) + 20; // Box da descrição
-                altura += 20;
-            }
-            altura += 120; // Dados resumidos
-            altura += 30; // Espaço
-            altura += 40; // Título detalhamento
-            altura += 20; // Espaço
+            altura += 48; // Logo
+            altura += 15; // Espaço logo-title
+            altura += 25; // Espaço title-box
+            altura += BOX_PADDING; // Padding superior box
+            altura += 28; // Título H1
+            altura += 25; // Espaço título-descrição ou dados
+            altura += alturaDescricao; // Descrição (se houver)
+            altura += 15 + 16; // Label "Data de Início"
+            altura += 15 + 16; // Label "Dias Contados"
+            altura += 15 + 20; // Label "Data Final" (maior)
+            altura += 30; // Espaço antes da linha separadora
+            altura += 2; // Linha separadora
+            altura += 30; // Espaço após linha
+            altura += 20; // Título "Detalhamento"
+            altura += 20; // Espaço antes das linhas
             altura += todosOsDias.length * ALTURA_LINHA_DETALHAMENTO; // Linhas do detalhamento
-            altura += PADDING_INTERNO; // Padding inferior do box
+            altura += BOX_PADDING; // Padding inferior box
             altura += MARGEM; // Margem inferior
 
             canvas.width = LARGURA_CANVAS;
@@ -2512,21 +2534,21 @@
             ctx.lineWidth = 4;
             ctx.strokeRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
 
-            yPos = boxTop + PADDING_INTERNO;
+            yPos = boxTop + BOX_PADDING;
 
             // Título do resultado
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 24px system-ui';
             ctx.textAlign = 'left';
-            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + BOX_PADDING, yPos);
             yPos += 40;
 
             // Descrição (se houver)
             if (linhasDescricao.length > 0) {
                 yPos += 20;
 
-                const descBoxX = MARGEM + PADDING_INTERNO;
-                const descBoxWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
+                const descBoxX = MARGEM + BOX_PADDING;
+                const descBoxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2);
                 const descBoxHeight = (linhasDescricao.length * 28) + 20;
                 const descBoxY = yPos;
 
@@ -2554,25 +2576,43 @@
 
             yPos += 20;
 
-            // ===== DADOS RESUMIDOS =====
+            // ===== DADOS DO CÁLCULO =====
+
+            // Data de início
             ctx.fillStyle = '#374151';
-            ctx.font = 'bold 16px system-ui';
-            ctx.textAlign = 'left';
-            ctx.fillText('Início: ' + dataInicioFormatada, MARGEM + PADDING_INTERNO, yPos);
-            yPos += 30;
-            ctx.fillText(`Dias ${tipoDias}: ` + diasUteis, MARGEM + PADDING_INTERNO, yPos);
-            yPos += 30;
-            ctx.fillStyle = '#15803d';
             ctx.font = 'bold 18px system-ui';
-            ctx.fillText('Final: ' + dataFinalFormatada, MARGEM + PADDING_INTERNO, yPos);
-            yPos += 40;
+            ctx.textAlign = 'left';
+            ctx.fillText('Data de Início:', MARGEM + BOX_PADDING, yPos);
+            yPos += 28;
+            ctx.font = '16px system-ui';
+            ctx.fillText(dataInicioFormatada, MARGEM + BOX_PADDING, yPos);
+            yPos += 50;
+
+            // Dias contados
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillText(`Dias ${tipoDias} Contados:`, MARGEM + BOX_PADDING, yPos);
+            yPos += 28;
+            ctx.font = 'bold 22px system-ui';
+            ctx.fillStyle = '#2563eb';
+            ctx.fillText(diasUteis + ' dias', MARGEM + BOX_PADDING, yPos);
+            yPos += 50;
+
+            // Data final
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillText('Data Final do Prazo:', MARGEM + BOX_PADDING, yPos);
+            yPos += 28;
+            ctx.font = 'bold 22px system-ui';
+            ctx.fillStyle = '#15803d';
+            ctx.fillText(dataFinalFormatada, MARGEM + BOX_PADDING, yPos);
+            yPos += 50;
 
             // Linha separadora
             ctx.strokeStyle = '#d1d5db';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(MARGEM + PADDING_INTERNO, yPos);
-            ctx.lineTo(canvas.width - MARGEM - PADDING_INTERNO, yPos);
+            ctx.moveTo(MARGEM + BOX_PADDING, yPos);
+            ctx.lineTo(canvas.width - MARGEM - BOX_PADDING, yPos);
             ctx.stroke();
             yPos += 40;
 
@@ -2580,7 +2620,7 @@
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 18px system-ui';
             ctx.textAlign = 'left';
-            ctx.fillText('Detalhamento:', MARGEM + PADDING_INTERNO, yPos);
+            ctx.fillText('Detalhamento:', MARGEM + BOX_PADDING, yPos);
             yPos += 30;
 
             todosOsDias.forEach(dia => {
@@ -2591,9 +2631,9 @@
                     year: 'numeric'
                 });
 
-                const itemX = MARGEM + PADDING_INTERNO;
-                const itemWidth = LARGURA_CONTEUDO - (PADDING_INTERNO * 2);
-                const itemHeight = 36;
+                const itemX = MARGEM + BOX_PADDING;
+                const itemWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2);
+                const itemHeight = 32;
                 const itemY = yPos;
 
                 if (dia.contado) {
@@ -2608,13 +2648,13 @@
 
                     // Número
                     ctx.fillStyle = '#166534';
-                    ctx.font = 'bold 15px system-ui';
+                    ctx.font = 'bold 14px system-ui';
                     ctx.textAlign = 'left';
-                    ctx.fillText(dia.numero.toString(), itemX + 12, itemY + 22);
+                    ctx.fillText(dia.numero.toString(), itemX + 12, itemY + 20);
 
                     // Data
-                    ctx.font = '15px system-ui';
-                    ctx.fillText(dataFormatada, itemX + 60, itemY + 22);
+                    ctx.font = '14px system-ui';
+                    ctx.fillText(dataFormatada, itemX + 60, itemY + 20);
                 } else {
                     // Fundo vermelho claro
                     ctx.fillStyle = '#fef2f2';
@@ -2627,13 +2667,13 @@
 
                     // X
                     ctx.fillStyle = '#991b1b';
-                    ctx.font = 'bold 15px system-ui';
+                    ctx.font = 'bold 14px system-ui';
                     ctx.textAlign = 'left';
-                    ctx.fillText('X', itemX + 12, itemY + 22);
+                    ctx.fillText('X', itemX + 12, itemY + 20);
 
                     // Data e motivo
-                    ctx.font = '15px system-ui';
-                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 60, itemY + 22);
+                    ctx.font = '14px system-ui';
+                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 60, itemY + 20);
                 }
 
                 yPos += ALTURA_LINHA_DETALHAMENTO;
