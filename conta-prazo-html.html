@@ -24,6 +24,78 @@
             margin: 0 auto;
         }
 
+        .page-header {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-header .brand-subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-left: 71px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .nav-tabs {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 8px;
+            background: #f9fafb;
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #6b7280;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #1f2937;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -45,17 +117,6 @@
             margin-bottom: 30px;
         }
 
-        .brand-header {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
-            border-bottom: 3px solid;
-            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
-            padding: 25px 30px;
-            margin: -30px -30px 30px -30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
 
         .logo-cp {
             width: 56px;
@@ -93,13 +154,6 @@
             background-clip: text;
         }
 
-        .brand-subtitle {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-left: 71px;
-            margin-top: -15px;
-            font-weight: 500;
-        }
 
         .form-grid {
             display: grid;
@@ -425,7 +479,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid;
+            border-image: linear-gradient(90deg, #e5e7eb, #d1d5db, #e5e7eb) 1;
             flex-wrap: wrap;
             gap: 10px;
         }
@@ -438,33 +495,45 @@
         .calendario-nav {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn-nav {
-            width: 44px !important;
-            height: 44px !important;
-            min-width: 44px !important;
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
             padding: 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            border-radius: 8px !important;
+            background: white !important;
+            border: 2px solid #e5e7eb !important;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover {
+            border-color: #3b82f6 !important;
+            background: #f0f9ff !important;
+            transform: translateY(-1px);
         }
 
         .btn-hoje {
-            padding: 8px 16px;
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
             font-size: 0.875rem;
             font-weight: 600;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+            transition: all 0.2s;
         }
 
         .btn-hoje:hover {
-            background: #e5e7eb;
-            border-color: #3b82f6;
-            color: #3b82f6;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
         .visualizacao-toggle {
@@ -838,6 +907,133 @@
             justify-content: flex-end;
         }
 
+        /* Página de Ajuda */
+        .help-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .help-section h3 {
+            color: #1f2937;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-section p {
+            color: #4b5563;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .help-section ul {
+            margin-left: 20px;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+
+        .help-section li {
+            margin-bottom: 8px;
+        }
+
+        .help-section code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #3b82f6;
+        }
+
+        /* Gerenciamento Avançado */
+        .batch-editor {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .batch-editor h3 {
+            color: #1f2937;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+        }
+
+        .batch-editor textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .batch-editor textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1e40af;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #92400e;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .feriados-list {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feriado-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+
         @media print {
             body {
                 padding: 0;
@@ -845,25 +1041,61 @@
             .card {
                 box-shadow: none;
             }
-            .btn, .calendario, .legenda, .rodape {
+            .btn, .calendario, .legenda, .rodape, .nav-tabs, .page-header {
                 display: none !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Cabeçalho Global -->
+    <div class="page-header">
+        <div class="page-header-content">
+            <div class="logo-cp">CP</div>
+            <div>
+                <h1 class="brand-title">
+                    <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+                </h1>
+                <div class="brand-subtitle">Calculadora de Prazos</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu de Navegação -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="trocarPagina('calculo')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Cálculo
+        </button>
+        <button class="nav-tab" onclick="trocarPagina('gerenciamento')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m5.2-13.2l-4.3 4.3m0 5.9l4.3 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.3-4.3m-5.9 0l-4.2 4.3"></path>
+            </svg>
+            Gerenciamento de Feriados
+        </button>
+        <button class="nav-tab" onclick="trocarPagina('ajuda')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Ajuda
+        </button>
+    </div>
+
     <div class="container">
+        <!-- Página de Cálculo -->
+        <div id="paginaCalculo" class="page-content active">
         <div class="main-layout">
             <!-- Coluna esquerda: Formulário e Resultado -->
             <div>
                 <div class="card">
-                    <div class="brand-header">
-                        <div class="logo-cp">CP</div>
-                        <h1 class="brand-title">
-                            <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
-                        </h1>
-                    </div>
-                    <div class="brand-subtitle">Calculadora Profissional de Prazos</div>
 
             <div class="form-grid">
                 <div class="form-group">
@@ -1053,6 +1285,243 @@
                 </a>
             </p>
         </div>
+        </div>
+        <!-- Fim Página de Cálculo -->
+
+        <!-- Página de Gerenciamento de Feriados -->
+        <div id="paginaGerenciamento" class="page-content">
+            <div class="batch-editor">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Gerenciamento Avançado de Feriados
+                </h3>
+                <p style="color: #6b7280; margin-bottom: 20px;">
+                    Configure os feriados fixos e móveis da calculadora. Estas configurações são diferentes dos feriados personalizados que você adiciona clicando no calendário.
+                </p>
+
+                <div class="info-box">
+                    <p><strong>ℹ️ Formato:</strong> Uma data por linha no formato <code>YYYY-MM-DD Nome do Feriado</code></p>
+                    <p style="margin-top: 8px;"><strong>Exemplo:</strong> <code>2025-12-25 Natal</code></p>
+                </div>
+
+                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Fixos</h4>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos (sem especificar o ano):</p>
+                <textarea id="editorFeriadosFixos" placeholder="01-01 Ano Novo&#10;12-25 Natal"></textarea>
+
+                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Móveis</h4>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que variam de data a cada ano (inclui o ano completo):</p>
+                <textarea id="editorFeriadosMoveis" placeholder="2025-03-04 Carnaval&#10;2025-04-18 Sexta-feira Santa"></textarea>
+
+                <div class="warning-box" style="margin-top: 20px;">
+                    <p><strong>⚠️ Atenção:</strong> Ao salvar, as configurações atuais serão substituídas pelas novas. Esta ação não afeta os feriados personalizados adicionados no calendário.</p>
+                </div>
+
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="salvarFeriadosBatch()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Salvar Configurações
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetarFeriadosPadrao()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Resetar para Padrão
+                    </button>
+                </div>
+            </div>
+
+            <div class="batch-editor">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                        <line x1="4" y1="22" x2="4" y2="15"></line>
+                    </svg>
+                    Visualização de Feriados Configurados
+                </h3>
+
+                <h4 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px;">Feriados Fixos Ativos</h4>
+                <div id="listaFeriadosFixos" class="feriados-list"></div>
+
+                <h4 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px;">Feriados Móveis Ativos</h4>
+                <div id="listaFeriadosMoveis" class="feriados-list"></div>
+            </div>
+        </div>
+        <!-- Fim Página de Gerenciamento -->
+
+        <!-- Página de Ajuda -->
+        <div id="paginaAjuda" class="page-content">
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    Bem-vindo ao ContaPrazo
+                </h3>
+                <p>
+                    O <strong>ContaPrazo</strong> é uma calculadora profissional de prazos que ajuda você a calcular datas finais considerando dias úteis ou corridos, feriados nacionais, móveis e personalizados.
+                </p>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Como Usar a Calculadora
+                </h3>
+                <ul>
+                    <li><strong>Data de Início:</strong> Selecione a data inicial do prazo.</li>
+                    <li><strong>Quantidade de Dias:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
+                    <li><strong>Tipo de Dias:</strong> Use o botão de alternância para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias).</li>
+                    <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
+                    <li><strong>Calcular:</strong> Clique no botão "Calcular Prazo" para ver o resultado.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    Entendendo os Resultados
+                </h3>
+                <ul>
+                    <li><strong>Data de Início:</strong> A data inicial informada, exibida por extenso.</li>
+                    <li><strong>Dias Contados:</strong> Quantidade de dias úteis ou corridos que foram contados.</li>
+                    <li><strong>Data Final do Prazo:</strong> A data final calculada, destacada em verde.</li>
+                    <li><strong>Detalhamento:</strong> Lista completa de todos os dias percorridos, mostrando quais foram contados (em verde) e quais foram pulados (em vermelho) com o motivo.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    Exportando Resultados
+                </h3>
+                <p>Você pode exportar os resultados em diferentes formatos:</p>
+                <ul>
+                    <li><strong>Exportar PDF:</strong> Gera um documento HTML que pode ser impresso ou salvo como PDF (use Ctrl+P ou Cmd+P).</li>
+                    <li><strong>Exportar Resumo (PNG):</strong> Salva uma imagem com as informações principais do cálculo.</li>
+                    <li><strong>Exportar com Detalhamento (PNG):</strong> Salva uma imagem completa incluindo o detalhamento dia a dia.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Usando o Calendário
+                </h3>
+                <ul>
+                    <li><strong>Visualização:</strong> Alterne entre visualização <strong>Mensal</strong> e <strong>Anual</strong> usando os botões correspondentes.</li>
+                    <li><strong>Navegação:</strong> Use as setas para navegar entre meses ou anos. O botão <strong>"Hoje"</strong> retorna para o mês/ano atual.</li>
+                    <li><strong>Feriados Personalizados:</strong> Clique em qualquer dia útil no calendário para marcá-lo ou desmarcá-lo como feriado personalizado.</li>
+                    <li><strong>Legenda:</strong> Consulte a legenda abaixo do calendário para entender as cores de cada tipo de dia.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m5.2-13.2l-4.3 4.3m0 5.9l4.3 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.3-4.3m-5.9 0l-4.2 4.3"></path>
+                    </svg>
+                    Configurando Feriados
+                </h3>
+                <p>Existem três tipos de feriados na calculadora:</p>
+                <ul>
+                    <li><strong>Feriados Nacionais:</strong> Feriados fixos do Brasil (Ano Novo, Tiradentes, Natal, etc.). Podem ser ativados/desativados na seção "Configurar Feriados".</li>
+                    <li><strong>Feriados Móveis:</strong> Feriados que mudam de data a cada ano (Carnaval, Páscoa, Corpus Christi). Também podem ser ativados/desativados.</li>
+                    <li><strong>Feriados Personalizados:</strong> Datas específicas que você marca clicando no calendário (ex: feriados municipais, ponto facultativo local).</li>
+                </ul>
+                <p style="margin-top: 12px;">
+                    <strong>Exportar/Importar:</strong> Você pode exportar seus feriados personalizados para compartilhar com outras pessoas ou fazer backup. Ao importar, escolha entre substituir os atuais ou mesclar com os novos.
+                </p>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                        <line x1="4" y1="22" x2="4" y2="15"></line>
+                    </svg>
+                    Gerenciamento Avançado de Feriados
+                </h3>
+                <p>
+                    Na aba <strong>"Gerenciamento de Feriados"</strong>, você pode editar os feriados fixos e móveis em modo batch (lote):
+                </p>
+                <ul>
+                    <li><strong>Feriados Fixos:</strong> Edite os feriados que ocorrem na mesma data todos os anos (formato: <code>MM-DD Nome</code>).</li>
+                    <li><strong>Feriados Móveis:</strong> Edite os feriados que mudam de ano para ano (formato: <code>YYYY-MM-DD Nome</code>).</li>
+                    <li><strong>Salvar:</strong> As alterações substituem as configurações atuais.</li>
+                    <li><strong>Resetar:</strong> Restaura os feriados padrão do Brasil.</li>
+                </ul>
+                <p style="margin-top: 12px;">
+                    <strong>Nota:</strong> Esta configuração é diferente dos feriados personalizados. Os feriados fixos/móveis são as datas padrão da calculadora, enquanto os personalizados são marcações específicas suas.
+                </p>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Compartilhando a Calculadora
+                </h3>
+                <p>
+                    No rodapé da página de cálculo, você encontrará a opção <strong>"Baixar esta calculadora para compartilhar"</strong>. Isso permite que você:
+                </p>
+                <ul>
+                    <li>Baixe o arquivo HTML completo da calculadora</li>
+                    <li>Compartilhe com colegas, clientes ou qualquer pessoa</li>
+                    <li>Use a calculadora offline, sem necessidade de internet</li>
+                    <li>Mantenha uma cópia local para uso futuro</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Dicas e Boas Práticas
+                </h3>
+                <ul>
+                    <li>Sempre verifique se o tipo de dias (úteis ou corridos) está correto antes de calcular.</li>
+                    <li>Use a descrição para documentar o motivo do cálculo - isso ajuda ao exportar ou revisar depois.</li>
+                    <li>Confira a legenda do calendário para entender como cada dia está sendo categorizado.</li>
+                    <li>Exporte seus feriados personalizados periodicamente para não perdê-los (são salvos localmente no navegador).</li>
+                    <li>Use o detalhamento para conferir se algum dia foi contado ou não contado corretamente.</li>
+                    <li>O botão "Limpar" remove o resultado atual e permite fazer um novo cálculo rapidamente.</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Fim Página de Ajuda -->
     </div>
 
     <!-- Modal para importar feriados -->
@@ -1611,12 +2080,8 @@
             let descricaoHTML = '';
             if (descricaoPrazo) {
                 descricaoHTML = `
-                    <div style="background: linear-gradient(to right, #e0f2fe, #f0f9ff); border: 3px solid #3b82f6; padding: 20px; margin: 25px 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <span style="font-size: 24px;">📋</span>
-                            <strong style="color: #1e40af; font-size: 18px;">Descrição:</strong>
-                        </div>
-                        <div style="color: #1f2937; font-size: 16px; line-height: 1.6; font-weight: 500;">${descricaoPrazo}</div>
+                    <div style="margin: 20px 0 30px 0; text-align: center;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0;">${descricaoPrazo}</p>
                     </div>
                 `;
             }
@@ -1749,79 +2214,73 @@
             }
 
             alturaConteudo += 240; // Dados (3 blocos)
-            const margemVertical = 40;
+            const margem = 50; // Margem simétrica em todos os lados
 
             canvas.width = 1000;
-            canvas.height = alturaConteudo + margemVertical;
+            canvas.height = alturaConteudo + (margem * 2);
 
             // Fundo
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Logo CP
-            const gradient = ctx.createLinearGradient(40, 40, 88, 88);
+            const gradient = ctx.createLinearGradient(margem, margem, margem + 48, margem + 48);
             gradient.addColorStop(0, '#3b82f6');
             gradient.addColorStop(1, '#16a34a');
             ctx.fillStyle = gradient;
-            ctx.roundRect(40, 40, 48, 48, 8);
+            ctx.roundRect(margem, margem, 48, 48, 8);
             ctx.fill();
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('CP', 52, 72);
+            ctx.fillText('CP', margem + 12, margem + 32);
 
             // Título ContaPrazo
             ctx.fillStyle = '#3b82f6';
             ctx.font = 'bold 32px system-ui';
-            ctx.fillText('Conta', 105, 65);
+            ctx.fillText('Conta', margem + 65, margem + 25);
             ctx.fillStyle = '#16a34a';
-            ctx.fillText('Prazo', 210, 65);
+            ctx.fillText('Prazo', margem + 170, margem + 25);
 
             // Subtitle
             ctx.fillStyle = '#6b7280';
             ctx.font = '14px system-ui';
-            ctx.fillText('Calculadora Profissional de Prazos', 105, 85);
+            ctx.fillText('Calculadora de Prazos', margem + 65, margem + 45);
 
             // Área de resultado
-            const alturaBox = alturaConteudo - 140;
-            const gradientBg = ctx.createLinearGradient(0, 120, canvas.width, 120);
+            const boxTop = margem + 70;
+            const alturaBox = alturaConteudo - 20;
+            const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
             gradientBg.addColorStop(0, '#f0fdf4');
             gradientBg.addColorStop(1, '#dbeafe');
             ctx.fillStyle = gradientBg;
-            ctx.fillRect(20, 120, canvas.width - 40, alturaBox);
+            ctx.fillRect(margem, boxTop, canvas.width - (margem * 2), alturaBox);
 
             // Borda
             ctx.strokeStyle = '#86efac';
             ctx.lineWidth = 6;
-            ctx.strokeRect(20, 120, canvas.width - 40, alturaBox);
+            ctx.strokeRect(margem, boxTop, canvas.width - (margem * 2), alturaBox);
 
-            let yPos = 180;
+            let yPos = boxTop + 60;
 
             // Título
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 28px system-ui';
-            ctx.fillText('Resultado do Cálculo de Prazo', 60, yPos);
+            ctx.fillText('Resultado do Cálculo de Prazo', margem + 10, yPos);
             yPos += 50;
 
-            // Descrição (se houver) - com destaque maior
+            // Descrição (se houver) - subtítulo em negrito e itálico
             if (descricaoPrazo) {
-                // Box de destaque
-                ctx.fillStyle = '#e0f2fe';
-                ctx.strokeStyle = '#3b82f6';
-                ctx.lineWidth = 3;
+                const boxWidth = canvas.width - (margem * 2) - 20;
 
-                const boxPadding = 20;
-                const boxX = 60;
-                const boxWidth = 880;
-
-                // Calcular altura do box
-                ctx.font = 'bold 20px system-ui';
+                // Calcular linhas da descrição
+                ctx.font = 'italic bold 20px system-ui';
                 const words = descricaoPrazo.split(' ');
                 let line = '';
                 let linhasTexto = [];
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > (boxWidth - 2 * boxPadding) && line !== '') {
+                    if (metrics.width > boxWidth && line !== '') {
                         linhasTexto.push(line.trim());
                         line = word + ' ';
                     } else {
@@ -1830,49 +2289,40 @@
                 }
                 if (line) linhasTexto.push(line.trim());
 
-                const boxHeight = 50 + (linhasTexto.length * 30);
-
-                ctx.fillRect(boxX, yPos - 10, boxWidth, boxHeight);
-                ctx.strokeRect(boxX, yPos - 10, boxWidth, boxHeight);
-
-                // Título da descrição
-                ctx.fillStyle = '#1e40af';
-                ctx.font = 'bold 18px system-ui';
-                ctx.fillText('📋 Descrição:', boxX + boxPadding, yPos + 15);
-                yPos += 45;
-
-                // Texto da descrição
+                // Texto da descrição centralizado
                 ctx.fillStyle = '#1f2937';
-                ctx.font = 'bold 20px system-ui';
+                ctx.font = 'italic bold 20px system-ui';
+                ctx.textAlign = 'center';
                 linhasTexto.forEach(linha => {
-                    ctx.fillText(linha, boxX + boxPadding, yPos);
+                    ctx.fillText(linha, canvas.width / 2, yPos);
                     yPos += 30;
                 });
+                ctx.textAlign = 'left';
 
-                yPos += 30;
+                yPos += 20;
             }
 
             // Dados
             ctx.fillStyle = '#374151';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Data de Início:', 60, yPos);
+            ctx.fillText('Data de Início:', margem + 10, yPos);
             ctx.font = '18px system-ui';
-            ctx.fillText(dataInicioFormatada, 60, yPos + 30);
+            ctx.fillText(dataInicioFormatada, margem + 10, yPos + 30);
             yPos += 70;
 
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText(`Dias ${tipoDias} Contados:`, 60, yPos);
+            ctx.fillText(`Dias ${tipoDias} Contados:`, margem + 10, yPos);
             ctx.font = 'bold 24px system-ui';
             ctx.fillStyle = '#2563eb';
-            ctx.fillText(diasUteis + ' dias', 60, yPos + 30);
+            ctx.fillText(diasUteis + ' dias', margem + 10, yPos + 30);
             yPos += 70;
 
             ctx.fillStyle = '#374151';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Data Final do Prazo:', 60, yPos);
+            ctx.fillText('Data Final do Prazo:', margem + 10, yPos);
             ctx.font = 'bold 24px system-ui';
             ctx.fillStyle = '#15803d';
-            ctx.fillText(dataFinalFormatada, 60, yPos + 30);
+            ctx.fillText(dataFinalFormatada, margem + 10, yPos + 30);
 
             canvas.toBlob(blob => {
                 const url = URL.createObjectURL(blob);
@@ -1922,83 +2372,77 @@
 
             cabecalho += 200; // Informações resumidas + separador + título detalhamento
 
-            const margemVertical = 40;
-            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margemVertical;
+            const margem = 50; // Margem simétrica em todos os lados
+            const alturaTotal = cabecalho + (todosOsDias.length * alturaPorLinha) + margem;
 
             canvas.width = 1100;
-            canvas.height = alturaTotal;
+            canvas.height = alturaTotal + margem;
 
             // Fundo
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Logo CP
-            const gradient = ctx.createLinearGradient(40, 40, 88, 88);
+            const gradient = ctx.createLinearGradient(margem, margem, margem + 48, margem + 48);
             gradient.addColorStop(0, '#3b82f6');
             gradient.addColorStop(1, '#16a34a');
             ctx.fillStyle = gradient;
-            ctx.roundRect(40, 40, 48, 48, 8);
+            ctx.roundRect(margem, margem, 48, 48, 8);
             ctx.fill();
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('CP', 52, 72);
+            ctx.fillText('CP', margem + 12, margem + 32);
 
             // Título ContaPrazo
             ctx.fillStyle = '#3b82f6';
             ctx.font = 'bold 32px system-ui';
-            ctx.fillText('Conta', 105, 65);
+            ctx.fillText('Conta', margem + 65, margem + 25);
             ctx.fillStyle = '#16a34a';
-            ctx.fillText('Prazo', 210, 65);
+            ctx.fillText('Prazo', margem + 170, margem + 25);
 
             // Subtitle
             ctx.fillStyle = '#6b7280';
             ctx.font = '14px system-ui';
-            ctx.fillText('Calculadora Profissional de Prazos', 105, 85);
+            ctx.fillText('Calculadora de Prazos', margem + 65, margem + 45);
 
             // Área de resultado
-            const gradientBg = ctx.createLinearGradient(0, 120, canvas.width, 120);
+            const boxTop = margem + 70;
+            const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
             gradientBg.addColorStop(0, '#f0fdf4');
             gradientBg.addColorStop(1, '#dbeafe');
             ctx.fillStyle = gradientBg;
-            ctx.fillRect(20, 120, canvas.width - 40, canvas.height - 140);
+            ctx.fillRect(margem, boxTop, canvas.width - (margem * 2), canvas.height - boxTop - margem);
 
             // Borda
             ctx.strokeStyle = '#86efac';
             ctx.lineWidth = 6;
-            ctx.strokeRect(20, 120, canvas.width - 40, canvas.height - 140);
+            ctx.strokeRect(margem, boxTop, canvas.width - (margem * 2), canvas.height - boxTop - margem);
 
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            let yPos = 170;
+            let yPos = boxTop + 50;
 
             // Título
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 28px system-ui';
-            ctx.fillText('Resultado do Cálculo de Prazo', 60, yPos);
+            ctx.fillText('Resultado do Cálculo de Prazo', margem + 10, yPos);
             yPos += 50;
 
-            // Descrição (se houver) - com destaque
+            // Descrição (se houver) - subtítulo em negrito e itálico
             if (descricaoPrazo) {
-                // Box de destaque
-                ctx.fillStyle = '#e0f2fe';
-                ctx.strokeStyle = '#3b82f6';
-                ctx.lineWidth = 3;
+                const boxWidth = canvas.width - (margem * 2) - 20;
 
-                const boxPadding = 20;
-                const boxX = 60;
-                const boxWidth = 980;
-
-                // Calcular altura do box
-                ctx.font = 'bold 20px system-ui';
+                // Calcular linhas da descrição
+                ctx.font = 'italic bold 20px system-ui';
                 const words = descricaoPrazo.split(' ');
                 let line = '';
                 let linhasTexto = [];
                 for (let word of words) {
                     const testLine = line + word + ' ';
                     const metrics = ctx.measureText(testLine);
-                    if (metrics.width > (boxWidth - 2 * boxPadding) && line !== '') {
+                    if (metrics.width > boxWidth && line !== '') {
                         linhasTexto.push(line.trim());
                         line = word + ' ';
                     } else {
@@ -2007,52 +2451,43 @@
                 }
                 if (line) linhasTexto.push(line.trim());
 
-                const boxHeight = 50 + (linhasTexto.length * 30);
-
-                ctx.fillRect(boxX, yPos - 10, boxWidth, boxHeight);
-                ctx.strokeRect(boxX, yPos - 10, boxWidth, boxHeight);
-
-                // Título da descrição
-                ctx.fillStyle = '#1e40af';
-                ctx.font = 'bold 18px system-ui';
-                ctx.fillText('📋 Descrição:', boxX + boxPadding, yPos + 15);
-                yPos += 45;
-
-                // Texto da descrição
+                // Texto da descrição centralizado
                 ctx.fillStyle = '#1f2937';
-                ctx.font = 'bold 20px system-ui';
+                ctx.font = 'italic bold 20px system-ui';
+                ctx.textAlign = 'center';
                 linhasTexto.forEach(linha => {
-                    ctx.fillText(linha, boxX + boxPadding, yPos);
+                    ctx.fillText(linha, canvas.width / 2, yPos);
                     yPos += 30;
                 });
+                ctx.textAlign = 'left';
 
-                yPos += 35;
+                yPos += 25;
             }
 
             // Informações resumidas
             ctx.fillStyle = '#374151';
             ctx.font = 'bold 18px system-ui';
-            ctx.fillText('Início: ' + dataInicioFormatada, 60, yPos);
+            ctx.fillText('Início: ' + dataInicioFormatada, margem + 10, yPos);
             yPos += 30;
-            ctx.fillText(`Dias ${tipoDias}: ` + diasUteis, 60, yPos);
+            ctx.fillText(`Dias ${tipoDias}: ` + diasUteis, margem + 10, yPos);
             yPos += 30;
             ctx.fillStyle = '#15803d';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Final: ' + dataFinalFormatada, 60, yPos);
+            ctx.fillText('Final: ' + dataFinalFormatada, margem + 10, yPos);
             yPos += 45;
 
             // Linha separadora
             ctx.strokeStyle = '#d1d5db';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(60, yPos);
-            ctx.lineTo(1040, yPos);
+            ctx.moveTo(margem + 10, yPos);
+            ctx.lineTo(canvas.width - margem - 10, yPos);
             ctx.stroke();
             yPos += 30;
 
             ctx.fillStyle = '#1f2937';
             ctx.font = 'bold 20px system-ui';
-            ctx.fillText('Detalhamento:', 60, yPos);
+            ctx.fillText('Detalhamento:', margem + 10, yPos);
             yPos += 35;
 
             todosOsDias.forEach(dia => {
@@ -2063,30 +2498,33 @@
                     year: 'numeric'
                 });
 
+                const itemX = margem + 20;
+                const itemWidth = canvas.width - (margem * 2) - 40;
+
                 if (dia.contado) {
                     ctx.fillStyle = '#dcfce7';
-                    ctx.fillRect(70, yPos - 28, 960, 38);
+                    ctx.fillRect(itemX, yPos - 28, itemWidth, 38);
                     ctx.strokeStyle = '#22c55e';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(70, yPos - 28, 960, 38);
+                    ctx.strokeRect(itemX, yPos - 28, itemWidth, 38);
 
                     ctx.fillStyle = '#166534';
                     ctx.font = 'bold 16px system-ui';
-                    ctx.fillText(dia.numero.toString(), 85, yPos);
+                    ctx.fillText(dia.numero.toString(), itemX + 15, yPos);
                     ctx.font = '16px system-ui';
-                    ctx.fillText(dataFormatada, 150, yPos);
+                    ctx.fillText(dataFormatada, itemX + 80, yPos);
                 } else {
                     ctx.fillStyle = '#fef2f2';
-                    ctx.fillRect(70, yPos - 28, 960, 38);
+                    ctx.fillRect(itemX, yPos - 28, itemWidth, 38);
                     ctx.strokeStyle = '#ef4444';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(70, yPos - 28, 960, 38);
+                    ctx.strokeRect(itemX, yPos - 28, itemWidth, 38);
 
                     ctx.fillStyle = '#991b1b';
                     ctx.font = 'bold 16px system-ui';
-                    ctx.fillText('X', 85, yPos);
+                    ctx.fillText('X', itemX + 15, yPos);
                     ctx.font = '16px system-ui';
-                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, 150, yPos);
+                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 80, yPos);
                 }
 
                 yPos += alturaPorLinha;
@@ -2131,7 +2569,218 @@
             };
         }
 
+        // Função para trocar de página
+        function trocarPagina(pagina) {
+            // Esconder todas as páginas
+            document.getElementById('paginaCalculo').classList.remove('active');
+            document.getElementById('paginaGerenciamento').classList.remove('active');
+            document.getElementById('paginaAjuda').classList.remove('active');
+
+            // Remover active de todas as tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+
+            // Mostrar página selecionada e ativar tab
+            if (pagina === 'calculo') {
+                document.getElementById('paginaCalculo').classList.add('active');
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+            } else if (pagina === 'gerenciamento') {
+                document.getElementById('paginaGerenciamento').classList.add('active');
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                carregarEditoresFeriados();
+            } else if (pagina === 'ajuda') {
+                document.getElementById('paginaAjuda').classList.add('active');
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+            }
+        }
+
+        // Carregar editores de feriados
+        function carregarEditoresFeriados() {
+            // Carregar feriados fixos
+            let textoFixos = '';
+            for (let [data, nome] of Object.entries(feriadosFixos)) {
+                textoFixos += `${data} ${nome}\n`;
+            }
+            document.getElementById('editorFeriadosFixos').value = textoFixos.trim();
+
+            // Carregar feriados móveis
+            let textoMoveis = '';
+            for (let [ano, feriados] of Object.entries(feriadosMoveis)) {
+                for (let [data, nome] of Object.entries(feriados)) {
+                    textoMoveis += `${ano}-${data} ${nome}\n`;
+                }
+            }
+            document.getElementById('editorFeriadosMoveis').value = textoMoveis.trim();
+
+            // Atualizar visualizações
+            atualizarVisualizacaoFeriados();
+        }
+
+        // Atualizar visualização de feriados
+        function atualizarVisualizacaoFeriados() {
+            // Feriados fixos
+            let htmlFixos = '';
+            for (let [data, nome] of Object.entries(feriadosFixos)) {
+                htmlFixos += `
+                    <div class="feriado-item">
+                        <span><strong>${data}</strong> - ${nome}</span>
+                    </div>
+                `;
+            }
+            document.getElementById('listaFeriadosFixos').innerHTML = htmlFixos || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado fixo configurado</p>';
+
+            // Feriados móveis
+            let htmlMoveis = '';
+            for (let [ano, feriados] of Object.entries(feriadosMoveis)) {
+                for (let [data, nome] of Object.entries(feriados)) {
+                    htmlMoveis += `
+                        <div class="feriado-item">
+                            <span><strong>${ano}-${data}</strong> - ${nome}</span>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('listaFeriadosMoveis').innerHTML = htmlMoveis || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado móvel configurado</p>';
+        }
+
+        // Salvar feriados em batch
+        function salvarFeriadosBatch() {
+            try {
+                // Processar feriados fixos
+                const textoFixos = document.getElementById('editorFeriadosFixos').value;
+                const novosFeriadosFixos = {};
+
+                if (textoFixos.trim()) {
+                    const linhasFixos = textoFixos.split('\n');
+                    for (let linha of linhasFixos) {
+                        linha = linha.trim();
+                        if (!linha) continue;
+
+                        const match = linha.match(/^(\d{2}-\d{2})\s+(.+)$/);
+                        if (match) {
+                            novosFeriadosFixos[match[1]] = match[2];
+                        } else {
+                            throw new Error(`Formato inválido na linha: "${linha}"\nUse o formato: MM-DD Nome do Feriado`);
+                        }
+                    }
+                }
+
+                // Processar feriados móveis
+                const textoMoveis = document.getElementById('editorFeriadosMoveis').value;
+                const novosFeriadosMoveis = {};
+
+                if (textoMoveis.trim()) {
+                    const linhasMoveis = textoMoveis.split('\n');
+                    for (let linha of linhasMoveis) {
+                        linha = linha.trim();
+                        if (!linha) continue;
+
+                        const match = linha.match(/^(\d{4})-(\d{2}-\d{2})\s+(.+)$/);
+                        if (match) {
+                            const ano = match[1];
+                            const data = match[2];
+                            const nome = match[3];
+
+                            if (!novosFeriadosMoveis[ano]) {
+                                novosFeriadosMoveis[ano] = {};
+                            }
+                            novosFeriadosMoveis[ano][data] = nome;
+                        } else {
+                            throw new Error(`Formato inválido na linha: "${linha}"\nUse o formato: YYYY-MM-DD Nome do Feriado`);
+                        }
+                    }
+                }
+
+                // Confirmar antes de salvar
+                const totalFixos = Object.keys(novosFeriadosFixos).length;
+                const totalMoveis = Object.values(novosFeriadosMoveis).reduce((acc, f) => acc + Object.keys(f).length, 0);
+
+                if (confirm(`Deseja salvar as configurações?\n\n✓ ${totalFixos} feriado(s) fixo(s)\n✓ ${totalMoveis} feriado(s) móvel(is)\n\nIsso substituirá as configurações atuais.`)) {
+                    // Atualizar variáveis globais
+                    Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
+                    Object.assign(feriadosFixos, novosFeriadosFixos);
+
+                    Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
+                    Object.assign(feriadosMoveis, novosFeriadosMoveis);
+
+                    // Salvar no localStorage
+                    localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
+                    localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
+
+                    atualizarVisualizacaoFeriados();
+                    renderizarCalendario();
+
+                    alert('✅ Configurações salvas com sucesso!');
+                }
+            } catch (error) {
+                alert('❌ Erro ao processar os feriados:\n\n' + error.message);
+            }
+        }
+
+        // Resetar feriados para padrão
+        function resetarFeriadosPadrao() {
+            if (!confirm('🔄 Deseja restaurar os feriados padrão?\n\nIsso irá substituir todas as configurações atuais de feriados fixos e móveis pelos valores padrão do Brasil.')) {
+                return;
+            }
+
+            // Feriados fixos padrão do Brasil
+            const feriadosFixosPadrao = {
+                '01-01': 'Ano Novo',
+                '04-21': 'Tiradentes',
+                '05-01': 'Dia do Trabalho',
+                '09-07': 'Independência',
+                '10-12': 'Nossa Senhora Aparecida',
+                '11-02': 'Finados',
+                '11-15': 'Proclamação da República',
+                '11-20': 'Consciência Negra',
+                '12-25': 'Natal'
+            };
+
+            // Feriados móveis padrão
+            const feriadosMoveisPadrao = {
+                2025: {
+                    '03-03': 'Carnaval (seg)',
+                    '03-04': 'Carnaval (ter)',
+                    '04-18': 'Sexta-feira Santa',
+                    '06-19': 'Corpus Christi'
+                },
+                2026: {
+                    '02-16': 'Carnaval (seg)',
+                    '02-17': 'Carnaval (ter)',
+                    '04-03': 'Sexta-feira Santa',
+                    '06-04': 'Corpus Christi'
+                }
+            };
+
+            // Atualizar variáveis globais
+            Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
+            Object.assign(feriadosFixos, feriadosFixosPadrao);
+
+            Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
+            Object.assign(feriadosMoveis, feriadosMoveisPadrao);
+
+            // Salvar no localStorage
+            localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
+            localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
+
+            // Atualizar editores e visualizações
+            carregarEditoresFeriados();
+            renderizarCalendario();
+
+            alert('✅ Feriados padrão restaurados com sucesso!');
+        }
+
         // Inicializar
+        // Carregar feriados do localStorage se existirem
+        const feriadosFixosSalvos = localStorage.getItem('feriadosFixos');
+        if (feriadosFixosSalvos) {
+            Object.assign(feriadosFixos, JSON.parse(feriadosFixosSalvos));
+        }
+
+        const feriadosMoveisSalvos = localStorage.getItem('feriadosMoveis');
+        if (feriadosMoveisSalvos) {
+            Object.assign(feriadosMoveis, JSON.parse(feriadosMoveisSalvos));
+        }
+
         renderizarCalendario();
     </script>
 </body>
