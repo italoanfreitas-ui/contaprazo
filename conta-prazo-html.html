@@ -3205,6 +3205,12 @@
                 const isInicio = index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
+                // Verificar se é feriado, fim de semana ou personalizado usando as funções
+                const ehFds = ehFimDeSemana(dia.data);
+                const ehFer = ehFeriado(dia.data);
+                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
+                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
+
                 let cor = '#fef3c7'; // Padrão: dia contado (amarelo claro)
                 let borda = '1px solid #fbbf24';
                 let textoCor = '#92400e';
@@ -3217,17 +3223,15 @@
                     cor = '#16a34a';
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
-                } else if (dia.feriado) {
-                    if (dia.feriadoPersonalizado) {
-                        cor = '#e9d5ff'; // Feriado personalizado (roxo)
-                        borda = '1px solid #c084fc';
-                        textoCor = '#6b21a8';
-                    } else {
-                        cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
-                        borda = '1px solid #f87171';
-                        textoCor = '#991b1b';
-                    }
-                } else if (dia.fimDeSemana) {
+                } else if (ehPersonalizado) {
+                    cor = '#e9d5ff'; // Feriado personalizado (roxo)
+                    borda = '1px solid #c084fc';
+                    textoCor = '#6b21a8';
+                } else if (ehFer) {
+                    cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
+                    borda = '1px solid #f87171';
+                    textoCor = '#991b1b';
+                } else if (ehFds) {
                     cor = '#e5e7eb'; // Fim de semana (cinza)
                     borda = '1px solid #d1d5db';
                     textoCor = '#6b7280';
