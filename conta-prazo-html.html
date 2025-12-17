@@ -1794,76 +1794,108 @@
                     Configure os feriados fixos e móveis da calculadora. Estas configurações são diferentes dos feriados personalizados que você adiciona clicando no calendário.
                 </p>
 
-                <div class="info-box">
-                    <p><strong>ℹ️ Formatos aceitos:</strong></p>
-                    <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.8;">
-                        <li><strong>Feriados Fixos:</strong> <code>DD-MM Nome</code> (sem ano) - Ex: <code>25-12 Natal</code></li>
-                        <li><strong>Feriados Móveis:</strong> <code>DD-MM-YYYY Nome</code> (com ano) - Ex: <code>04-03-2025 Carnaval</code></li>
-                    </ul>
+                <!-- Seção 1: Feriados Fixos e Móveis -->
+                <div style="background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                    <h4 style="color: #3b82f6; margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Feriados Fixos e Móveis
+                    </h4>
+
+                    <div class="info-box">
+                        <p><strong>ℹ️ Formatos aceitos:</strong></p>
+                        <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.8;">
+                            <li><strong>Feriados Fixos:</strong> <code>DD-MM Nome</code> (sem ano) - Ex: <code>25-12 Natal</code></li>
+                            <li><strong>Feriados Móveis:</strong> <code>DD-MM-YYYY Nome</code> (com ano) - Ex: <code>04-03-2025 Carnaval</code></li>
+                        </ul>
+                    </div>
+
+                    <h5 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px; font-size: 1rem;">Feriados Fixos</h5>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos. <strong>Formato: DD-MM Nome</strong> (sem especificar o ano):</p>
+                    <textarea id="editorFeriadosFixos" placeholder="01-01 Ano Novo&#10;25-12 Natal"></textarea>
+
+                    <h5 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px; font-size: 1rem;">Feriados Móveis</h5>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 10px;">Feriados que variam de data a cada ano. <strong>Formato: DD-MM-YYYY Nome</strong> (com o ano completo):</p>
+                    <textarea id="editorFeriadosMoveis" placeholder="04-03-2025 Carnaval&#10;18-04-2025 Sexta-feira Santa"></textarea>
+
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <p><strong>⚠️ Atenção:</strong> Ao salvar, as configurações atuais de fixos/móveis serão substituídas pelas novas. Esta ação não afeta os feriados personalizados.</p>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn btn-success" onclick="salvarFeriadosBatch()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Salvar Fixos e Móveis
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetarFeriadosPadrao()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            Resetar Fixos/Móveis
+                        </button>
+                    </div>
                 </div>
 
-                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Fixos</h4>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos. <strong>Formato: DD-MM Nome</strong> (sem especificar o ano):</p>
-                <textarea id="editorFeriadosFixos" placeholder="01-01 Ano Novo&#10;25-12 Natal"></textarea>
+                <!-- Divisor visual -->
+                <div style="border-top: 3px solid #d1d5db; margin: 30px 0;"></div>
 
-                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Móveis</h4>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que variam de data a cada ano. <strong>Formato: DD-MM-YYYY Nome</strong> (com o ano completo):</p>
-                <textarea id="editorFeriadosMoveis" placeholder="04-03-2025 Carnaval&#10;18-04-2025 Sexta-feira Santa"></textarea>
+                <!-- Seção 2: Feriados Personalizados -->
+                <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 12px; padding: 20px;">
+                    <h4 style="color: #d97706; margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Feriados Personalizados
+                    </h4>
 
-                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Personalizados</h4>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados personalizados (adicionados clicando no calendário ou importados). <strong>Formato: DD-MM-YYYY</strong> (apenas a data, uma por linha):</p>
-                <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025&#10;01-01-2026" style="min-height: 100px;"></textarea>
+                    <p style="color: #92400e; font-size: 0.9rem; margin-bottom: 15px;">
+                        Gerencie feriados específicos adicionados por você (via calendário ou importação JSON). <strong>Formato: DD-MM-YYYY</strong>
+                    </p>
 
-                <div class="btn-group" style="margin-top: 15px;">
-                    <button class="btn btn-success" onclick="salvarFeriadosPersonalizadosEditor()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Salvar Personalizados
-                    </button>
-                    <button class="btn btn-indigo" onclick="limparFeriadosPersonalizados()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        Limpar Todos
-                    </button>
-                    <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Importar JSON
-                    </button>
-                    <button class="btn btn-secondary" onclick="exportarFeriados()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        Exportar JSON
-                    </button>
-                </div>
+                    <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025&#10;01-01-2026" style="min-height: 100px;"></textarea>
 
-                <div class="warning-box" style="margin-top: 20px;">
-                    <p><strong>⚠️ Atenção:</strong> Ao salvar, as configurações atuais serão substituídas pelas novas. Esta ação não afeta os feriados personalizados adicionados no calendário.</p>
-                </div>
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn btn-success" onclick="salvarFeriadosPersonalizadosEditor()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Salvar Personalizados
+                        </button>
+                        <button class="btn btn-indigo" onclick="limparFeriadosPersonalizados()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Limpar Personalizados
+                        </button>
+                    </div>
 
-                <div class="btn-group" style="margin-top: 20px;">
-                    <button class="btn btn-success" onclick="salvarFeriadosBatch()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Salvar Configurações
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetarFeriadosPadrao()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                        </svg>
-                        Resetar para Padrão
-                    </button>
+                    <div class="btn-group" style="margin-top: 10px;">
+                        <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Importar JSON
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportarFeriados()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Exportar JSON
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -3294,304 +3326,6 @@
                 document.querySelectorAll('.nav-tab')[1].classList.add('active');
                 carregarEditoresFeriados();
             } else if (pagina === 'ajuda') {
-                const maxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2) - 30;
-                const words = descricaoPrazo.split(' ');
-                let line = '';
-                for (let word of words) {
-                    const testLine = line + word + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && line !== '') {
-                        linhasDescricao.push(line.trim());
-                        line = word + ' ';
-                    } else {
-                        line = testLine;
-                    }
-                }
-                if (line) linhasDescricao.push(line.trim());
-                alturaDescricao = 20 + 15 + (linhasDescricao.length * 25) + 15 + 30;
-            }
-
-            // Calcular altura total (replicando layout do PDF)
-            let altura = MARGEM; // Margem superior
-            altura += 48; // Logo
-            altura += 15; // Espaço logo-title
-            altura += 25; // Espaço title-box
-            altura += BOX_PADDING; // Padding superior box
-            altura += 28; // Título H1
-            altura += 25; // Espaço título-descrição ou dados
-            altura += alturaDescricao; // Descrição (se houver)
-            altura += 15 + 16; // Label "Data de Início"
-            altura += 15 + 16; // Label "Dias Contados"
-            altura += 15 + 20; // Label "Data Final" (maior)
-            altura += 30; // Espaço antes da linha separadora
-            altura += 2; // Linha separadora
-            altura += 30; // Espaço após linha
-            altura += 20; // Título "Detalhamento"
-            altura += 20; // Espaço antes das linhas
-            altura += todosOsDias.length * ALTURA_LINHA_DETALHAMENTO; // Linhas do detalhamento
-            altura += BOX_PADDING; // Padding inferior box
-            altura += MARGEM; // Margem inferior
-
-            canvas.width = LARGURA_CANVAS;
-            canvas.height = altura;
-
-            // Fundo branco
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // ===== CABEÇALHO =====
-            let yPos = MARGEM;
-
-            // Logo CP
-            const gradient = ctx.createLinearGradient(MARGEM, yPos, MARGEM + 48, yPos + 48);
-            gradient.addColorStop(0, '#3b82f6');
-            gradient.addColorStop(1, '#16a34a');
-            ctx.fillStyle = gradient;
-            ctx.roundRect(MARGEM, yPos, 48, 48, 8);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px system-ui';
-            ctx.textAlign = 'left';
-            ctx.fillText('CP', MARGEM + 12, yPos + 32);
-
-            // Título "ContaPrazo | Calculadora de Prazos"
-            ctx.fillStyle = '#3b82f6';
-            ctx.font = 'bold 30px system-ui';
-            ctx.fillText('Conta', MARGEM + 65, yPos + 32);
-
-            ctx.fillStyle = '#16a34a';
-            ctx.fillText('Prazo', MARGEM + 160, yPos + 32);
-
-            ctx.fillStyle = '#d1d5db';
-            ctx.font = '300 28px system-ui';
-            ctx.fillText('|', MARGEM + 245, yPos + 32);
-
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '14px system-ui';
-            ctx.fillText('Calculadora de Prazos', MARGEM + 270, yPos + 32);
-
-            yPos += 90; // Altura do cabeçalho
-
-            // ===== BOX DE RESULTADO =====
-            const boxTop = yPos;
-            const boxHeight = canvas.height - boxTop - MARGEM;
-
-            // Gradiente de fundo
-            const gradientBg = ctx.createLinearGradient(0, boxTop, canvas.width, boxTop);
-            gradientBg.addColorStop(0, '#f0fdf4');
-            gradientBg.addColorStop(1, '#dbeafe');
-            ctx.fillStyle = gradientBg;
-            ctx.fillRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
-
-            // Borda verde
-            ctx.strokeStyle = '#86efac';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(MARGEM, boxTop, LARGURA_CONTEUDO, boxHeight);
-
-            yPos = boxTop + BOX_PADDING;
-
-            // Título do resultado
-            ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 24px system-ui';
-            ctx.textAlign = 'left';
-            ctx.fillText('Resultado do Cálculo de Prazo', MARGEM + BOX_PADDING, yPos);
-            yPos += 40;
-
-            // Descrição (se houver)
-            if (linhasDescricao.length > 0) {
-                yPos += 20;
-
-                const descBoxX = MARGEM + BOX_PADDING;
-                const descBoxWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2);
-                const descBoxHeight = (linhasDescricao.length * 28) + 20;
-                const descBoxY = yPos;
-
-                // Box branco da descrição
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
-
-                // Borda azul à esquerda
-                ctx.fillStyle = '#3b82f6';
-                ctx.fillRect(descBoxX, descBoxY, 4, descBoxHeight);
-
-                // Texto da descrição
-                ctx.fillStyle = '#1f2937';
-                ctx.font = 'italic bold 18px system-ui';
-                ctx.textAlign = 'left';
-
-                let descY = descBoxY + 22;
-                linhasDescricao.forEach(linha => {
-                    ctx.fillText(linha, descBoxX + 20, descY);
-                    descY += 28;
-                });
-
-                yPos += descBoxHeight + 20;
-            }
-
-            yPos += 20;
-
-            // ===== DADOS DO CÁLCULO =====
-
-            // Data de início
-            ctx.fillStyle = '#374151';
-            ctx.font = 'bold 18px system-ui';
-            ctx.textAlign = 'left';
-            ctx.fillText('Data de Início:', MARGEM + BOX_PADDING, yPos);
-            yPos += 28;
-            ctx.font = '16px system-ui';
-            ctx.fillText(dataInicioFormatada, MARGEM + BOX_PADDING, yPos);
-            yPos += 50;
-
-            // Dias contados
-            ctx.font = 'bold 18px system-ui';
-            ctx.fillText(`Dias ${tipoDias} Contados:`, MARGEM + BOX_PADDING, yPos);
-            yPos += 28;
-            ctx.font = 'bold 22px system-ui';
-            ctx.fillStyle = '#2563eb';
-            ctx.fillText(diasUteis + ' dias', MARGEM + BOX_PADDING, yPos);
-            yPos += 50;
-
-            // Data final
-            ctx.fillStyle = '#374151';
-            ctx.font = 'bold 18px system-ui';
-            ctx.fillText('Data Final do Prazo:', MARGEM + BOX_PADDING, yPos);
-            yPos += 28;
-            ctx.font = 'bold 22px system-ui';
-            ctx.fillStyle = '#15803d';
-            ctx.fillText(dataFinalFormatada, MARGEM + BOX_PADDING, yPos);
-            yPos += 50;
-
-            // Linha separadora
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(MARGEM + BOX_PADDING, yPos);
-            ctx.lineTo(canvas.width - MARGEM - BOX_PADDING, yPos);
-            ctx.stroke();
-            yPos += 40;
-
-            // ===== DETALHAMENTO =====
-            ctx.fillStyle = '#1f2937';
-            ctx.font = 'bold 18px system-ui';
-            ctx.textAlign = 'left';
-            ctx.fillText('Detalhamento:', MARGEM + BOX_PADDING, yPos);
-            yPos += 30;
-
-            todosOsDias.forEach(dia => {
-                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                    weekday: 'short',
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-
-                const itemX = MARGEM + BOX_PADDING;
-                const itemWidth = LARGURA_CONTEUDO - (BOX_PADDING * 2);
-                const itemHeight = 32;
-                const itemY = yPos;
-
-                if (dia.contado) {
-                    // Fundo verde claro
-                    ctx.fillStyle = '#dcfce7';
-                    ctx.fillRect(itemX, itemY, itemWidth, itemHeight);
-
-                    // Borda verde
-                    ctx.strokeStyle = '#22c55e';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(itemX, itemY, itemWidth, itemHeight);
-
-                    // Número
-                    ctx.fillStyle = '#166534';
-                    ctx.font = 'bold 14px system-ui';
-                    ctx.textAlign = 'left';
-                    ctx.fillText(dia.numero.toString(), itemX + 12, itemY + 20);
-
-                    // Data
-                    ctx.font = '14px system-ui';
-                    ctx.fillText(dataFormatada, itemX + 60, itemY + 20);
-                } else {
-                    // Fundo vermelho claro
-                    ctx.fillStyle = '#fef2f2';
-                    ctx.fillRect(itemX, itemY, itemWidth, itemHeight);
-
-                    // Borda vermelha
-                    ctx.strokeStyle = '#ef4444';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(itemX, itemY, itemWidth, itemHeight);
-
-                    // X
-                    ctx.fillStyle = '#991b1b';
-                    ctx.font = 'bold 14px system-ui';
-                    ctx.textAlign = 'left';
-                    ctx.fillText('X', itemX + 12, itemY + 20);
-
-                    // Data e motivo
-                    ctx.font = '14px system-ui';
-                    ctx.fillText(dataFormatada + ' - ' + dia.motivo, itemX + 60, itemY + 20);
-                }
-
-                yPos += ALTURA_LINHA_DETALHAMENTO;
-            });
-
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `contaprazo-completo-${Date.now()}.png`;
-                link.click();
-                URL.revokeObjectURL(url);
-            });
-        }
-
-        function baixarCalculadora() {
-            const htmlCompleto = document.documentElement.outerHTML;
-            const blob = new Blob([htmlCompleto], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'contaprazo-calculadora.html';
-            link.click();
-            URL.revokeObjectURL(url);
-
-            alert('✅ Calculadora baixada com sucesso!\n\nAgora você pode compartilhar este arquivo HTML com outras pessoas. Basta abrir o arquivo em qualquer navegador para usar a calculadora offline.');
-        }
-
-        // Polyfill para roundRect (compatibilidade com navegadores antigos)
-        if (!CanvasRenderingContext2D.prototype.roundRect) {
-            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-                if (w < 2 * r) r = w / 2;
-                if (h < 2 * r) r = h / 2;
-                this.beginPath();
-                this.moveTo(x + r, y);
-                this.arcTo(x + w, y, x + w, y + h, r);
-                this.arcTo(x + w, y + h, x, y + h, r);
-                this.arcTo(x, y + h, x, y, r);
-                this.arcTo(x, y, x + w, y, r);
-                this.closePath();
-                return this;
-            };
-        }
-
-        // Função para trocar de página
-        function trocarPagina(pagina) {
-            // Esconder todas as páginas
-            document.getElementById('paginaCalculo').classList.remove('active');
-            document.getElementById('paginaGerenciamento').classList.remove('active');
-            document.getElementById('paginaAjuda').classList.remove('active');
-
-            // Remover active de todas as tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-
-            // Mostrar página selecionada e ativar tab
-            if (pagina === 'calculo') {
-                document.getElementById('paginaCalculo').classList.add('active');
-                document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            } else if (pagina === 'gerenciamento') {
-                document.getElementById('paginaGerenciamento').classList.add('active');
-                document.querySelectorAll('.nav-tab')[1].classList.add('active');
-                carregarEditoresFeriados();
-            } else if (pagina === 'ajuda') {
                 document.getElementById('paginaAjuda').classList.add('active');
                 document.querySelectorAll('.nav-tab')[2].classList.add('active');
             }
@@ -3883,14 +3617,6 @@
         }
 
         // Inicializar
-        // Verifica se deve voltar ao topo após reload
-        if (sessionStorage.getItem('reloadToTop') === 'true') {
-            sessionStorage.removeItem('reloadToTop');
-            window.scrollTo(0, 0);
-            // Garante que está na primeira aba (Cálculo)
-            trocarPagina('calculo');
-        }
-
         // Carregar feriados do localStorage se existirem
         const feriadosFixosSalvos = localStorage.getItem('feriadosFixos');
         if (feriadosFixosSalvos) {
@@ -3912,6 +3638,17 @@
         });
 
         renderizarCalendario();
+
+        // Event listener para executar após load completo da página
+        window.addEventListener('load', function() {
+            // Verifica se deve voltar ao topo após reload
+            if (sessionStorage.getItem('reloadToTop') === 'true') {
+                sessionStorage.removeItem('reloadToTop');
+                // Força scroll ao topo e primeira aba
+                window.scrollTo(0, 0);
+                trocarPagina('calculo');
+            }
+        });
     </script>
 
     <!-- Modal de Aviso de Recálculo -->
