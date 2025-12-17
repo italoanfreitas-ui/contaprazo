@@ -1600,13 +1600,34 @@
                     <li><strong>Feriados Móveis:</strong> Feriados que mudam de data a cada ano (Carnaval, Páscoa, Corpus Christi). Também podem ser ativados/desativados.</li>
                     <li><strong>Feriados Personalizados:</strong> Datas específicas que você marca clicando no calendário (ex: feriados municipais, ponto facultativo local).</li>
                 </ul>
+                <h4 style="margin-top: 24px; font-size: 1rem; color: #1f2937; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Exportar/Importar Feriados Personalizados
+                </h4>
                 <p style="margin-top: 12px;">
-                    <strong>Exportar/Importar:</strong> Você pode exportar seus feriados personalizados para compartilhar com outras pessoas ou fazer backup. Ao importar, escolha entre substituir os atuais ou mesclar com os novos.
+                    Você pode salvar seus feriados personalizados em um arquivo JSON e compartilhá-lo com colegas, equipes ou setores que precisem das mesmas exceções de calendário. Isso é especialmente útil para:
                 </p>
-                <p style="margin-top: 12px;">
-                    <strong>Formato do Arquivo JSON:</strong> O arquivo exportado segue a estrutura abaixo. Se desejar editá-lo manualmente, certifique-se de manter o formato correto:
+                <ul style="margin-top: 8px;">
+                    <li>Equipes jurídicas que seguem o mesmo calendário forense</li>
+                    <li>Departamentos que compartilham feriados municipais ou estaduais</li>
+                    <li>Grupos de trabalho com pontos facultativos específicos</li>
+                    <li>Backup e restauração de suas configurações personalizadas</li>
+                </ul>
+                <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
+                    <strong>Como funciona:</strong> Exporte seus feriados clicando em "Exportar JSON" na aba de Feriados. Compartilhe o arquivo com outras pessoas (e-mail, chat, drive). Ao importar, escolha <strong>"Substituir"</strong> para sobrescrever os atuais ou <strong>"Mesclar"</strong> para adicionar aos existentes.
                 </p>
-                <pre style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; overflow-x: auto; font-size: 0.875rem; line-height: 1.5;"><code>{
+
+                <h4 style="margin-top: 20px; font-size: 0.95rem; color: #4b5563; font-weight: 600;">
+                    📋 Formato do arquivo exportado
+                </h4>
+                <p style="margin-top: 8px; font-size: 0.875rem;">
+                    O arquivo JSON segue esta estrutura:
+                </p>
+                <pre style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; overflow-x: auto; font-size: 0.875rem; line-height: 1.5; margin-top: 8px;"><code>{
   "feriadosPersonalizados": [
     "2025-12-25",
     "2025-12-24",
@@ -2364,6 +2385,29 @@
             }
         }
 
+		function sanitizarNomeArquivo(descricao) {
+            if (!descricao || descricao.trim() === '') return '';
+
+            // Normaliza e remove acentos/diacríticos
+            let nome = descricao
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                // Remove caracteres inválidos em nomes de arquivo
+                .replace(/[<>:"/\\|?*]/g, '')
+                // Substitui espaços por hífens
+                .replace(/\s+/g, '-')
+                // Remove hífens duplicados
+                .replace(/-+/g, '-')
+                // Converte para minúsculas
+                .toLowerCase()
+                // Limita a 50 caracteres
+                .substring(0, 50)
+                // Remove hífens no início ou fim
+                .replace(/^-|-$/g, '');
+
+            return nome ? `${nome}-` : '';
+        }
+
         function exportarImagemResumo() {
             if (!dataFinal) {
                 alert('Calcule um prazo primeiro.');
@@ -2443,7 +2487,8 @@
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = `contaprazo-resumo-${Date.now()}.png`;
+                    const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+                    link.download = prefixo ? `${prefixo}contaprazo-resumo.png` : `contaprazo-resumo-${Date.now()}.png`;
                     link.click();
                     URL.revokeObjectURL(url);
                 });
@@ -2561,7 +2606,8 @@
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = `contaprazo-completo-${Date.now()}.png`;
+                    const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+                    link.download = prefixo ? `${prefixo}contaprazo-completo.png` : `contaprazo-completo-${Date.now()}.png`;
                     link.click();
                     URL.revokeObjectURL(url);
                 });
