@@ -708,6 +708,7 @@
             font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
         }
 
         .calendario-mini-dia:hover:not(.fim-semana) {
@@ -834,6 +835,11 @@
             transition: all 0.2s;
             font-size: 0.875rem;
             min-height: 40px;
+            position: relative;
+        }
+
+        .dia-normal {
+            background: white;
         }
 
         .calendario-dia:hover:not(.fim-semana) {
@@ -871,11 +877,6 @@
             color: white;
             font-weight: bold;
             box-shadow: 0 0 0 2px #15803d;
-        }
-
-        .dia-percorrido {
-            position: relative;
-            z-index: 1;
         }
 
         .dia-percorrido::before {
@@ -1893,12 +1894,10 @@
             const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
 
             let className = baseClass;
-            if (ehFds) className += ' fim-semana';
-            else if (tipoFeriado === 'personalizado') className += ' feriado-personalizado';
-            else if (tipoFeriado) className += ' feriado';
-            else if (ehInicio) className += ' dia-inicio';
-            else if (ehFim) className += ' dia-final';
-            else if (ehPercorrido) {
+            let ehDiaEspecial = false;
+
+            // Adiciona faixa amarela primeiro (se percorrido)
+            if (ehPercorrido) {
                 className += ' dia-percorrido';
                 if (diasPercorridos.length === 1) {
                     className += ' dia-percorrido-unico';
@@ -1907,6 +1906,27 @@
                 } else if (dataStr === ultimoDiaPercorrido) {
                     className += ' dia-percorrido-fim';
                 }
+            }
+
+            // Adiciona classes de cor (que ficam por cima da faixa)
+            if (ehFds) {
+                className += ' fim-semana';
+                ehDiaEspecial = true;
+            } else if (tipoFeriado === 'personalizado') {
+                className += ' feriado-personalizado';
+                ehDiaEspecial = true;
+            } else if (tipoFeriado) {
+                className += ' feriado';
+                ehDiaEspecial = true;
+            } else if (ehInicio) {
+                className += ' dia-inicio';
+                ehDiaEspecial = true;
+            } else if (ehFim) {
+                className += ' dia-final';
+                ehDiaEspecial = true;
+            } else if (!ehPercorrido) {
+                // Dia normal (não percorrido, sem características especiais)
+                className += ' dia-normal';
             }
 
             return { className, ehFds };
