@@ -2295,6 +2295,9 @@
                 localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
                 renderizarCalendario();
                 alert('✅ Feriados personalizados limpos com sucesso!');
+
+                // Mostra aviso se já houver cálculo realizado
+                mostrarAvisoRecalculo();
             }
         }
 
@@ -2453,6 +2456,9 @@
             localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
             renderizarCalendario();
             fecharModal();
+
+            // Mostra aviso se já houver cálculo realizado (após importar com sucesso)
+            mostrarAvisoRecalculo();
         }
 
         function fecharModal() {
