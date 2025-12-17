@@ -3197,6 +3197,52 @@
                 `;
             }
 
+            // Gerar visualização dos dias considerados
+            let diasVisuaisHTML = '';
+            todosOsDias.forEach((dia, index) => {
+                const diaNum = dia.data.getDate();
+                const mes = dia.data.getMonth() + 1;
+                const isInicio = index === 0;
+                const isFinal = index === todosOsDias.length - 1;
+
+                let cor = '#fef3c7'; // Padrão: dia contado (amarelo claro)
+                let borda = '1px solid #fbbf24';
+                let textoCor = '#92400e';
+
+                if (isInicio) {
+                    cor = '#3b82f6';
+                    borda = '2px solid #2563eb';
+                    textoCor = '#ffffff';
+                } else if (isFinal) {
+                    cor = '#16a34a';
+                    borda = '2px solid #15803d';
+                    textoCor = '#ffffff';
+                } else if (dia.feriado) {
+                    if (dia.feriadoPersonalizado) {
+                        cor = '#e9d5ff'; // Feriado personalizado (roxo)
+                        borda = '1px solid #c084fc';
+                        textoCor = '#6b21a8';
+                    } else {
+                        cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
+                        borda = '1px solid #f87171';
+                        textoCor = '#991b1b';
+                    }
+                } else if (dia.fimDeSemana) {
+                    cor = '#e5e7eb'; // Fim de semana (cinza)
+                    borda = '1px solid #d1d5db';
+                    textoCor = '#6b7280';
+                }
+
+                // Adicionar indicador de mudança de mês
+                let mesIndicador = '';
+                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
+                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                }
+
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
+            });
+
             const htmlContent = `
 <style>
     .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
@@ -3230,6 +3276,10 @@
         <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
+            <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
+            <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+        </div>
     </div>
 </div>`;
 
