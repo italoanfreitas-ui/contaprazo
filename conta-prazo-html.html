@@ -1795,17 +1795,56 @@
                 </p>
 
                 <div class="info-box">
-                    <p><strong>ℹ️ Formato:</strong> Uma data por linha no formato <code>DD-MM-YYYY Nome do Feriado</code></p>
-                    <p style="margin-top: 8px;"><strong>Exemplo:</strong> <code>25-12-2025 Natal</code></p>
+                    <p><strong>ℹ️ Formatos aceitos:</strong></p>
+                    <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Feriados Fixos:</strong> <code>DD-MM Nome</code> (sem ano) - Ex: <code>25-12 Natal</code></li>
+                        <li><strong>Feriados Móveis:</strong> <code>DD-MM-YYYY Nome</code> (com ano) - Ex: <code>04-03-2025 Carnaval</code></li>
+                    </ul>
                 </div>
 
                 <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Fixos</h4>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos (sem especificar o ano):</p>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos. <strong>Formato: DD-MM Nome</strong> (sem especificar o ano):</p>
                 <textarea id="editorFeriadosFixos" placeholder="01-01 Ano Novo&#10;25-12 Natal"></textarea>
 
                 <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Móveis</h4>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que variam de data a cada ano (inclui o ano completo):</p>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados que variam de data a cada ano. <strong>Formato: DD-MM-YYYY Nome</strong> (com o ano completo):</p>
                 <textarea id="editorFeriadosMoveis" placeholder="04-03-2025 Carnaval&#10;18-04-2025 Sexta-feira Santa"></textarea>
+
+                <h4 style="color: #1f2937; margin-top: 30px; margin-bottom: 15px; font-size: 1.1rem;">Feriados Personalizados</h4>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 10px;">Feriados personalizados (adicionados clicando no calendário ou importados). <strong>Formato: DD-MM-YYYY</strong> (apenas a data, uma por linha):</p>
+                <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025&#10;01-01-2026" style="min-height: 100px;"></textarea>
+
+                <div class="btn-group" style="margin-top: 15px;">
+                    <button class="btn btn-success" onclick="salvarFeriadosPersonalizadosEditor()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Salvar Personalizados
+                    </button>
+                    <button class="btn btn-indigo" onclick="limparFeriadosPersonalizados()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Limpar Todos
+                    </button>
+                    <button class="btn btn-purple" onclick="document.getElementById('importarFeriados').click()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Importar JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportarFeriados()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        Exportar JSON
+                    </button>
+                </div>
 
                 <div class="warning-box" style="margin-top: 20px;">
                     <p><strong>⚠️ Atenção:</strong> Ao salvar, as configurações atuais serão substituídas pelas novas. Esta ação não afeta os feriados personalizados adicionados no calendário.</p>
@@ -1842,6 +1881,9 @@
 
                 <h4 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px;">Feriados Móveis Ativos</h4>
                 <div id="listaFeriadosMoveis" class="feriados-list"></div>
+
+                <h4 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px;">Feriados Personalizados Ativos</h4>
+                <div id="listaFeriadosPersonalizados" class="feriados-list"></div>
             </div>
         </div>
         <!-- Fim Página de Gerenciamento -->
@@ -2009,14 +2051,14 @@
                 </p>
                 <pre style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; overflow-x: auto; font-size: 0.875rem; line-height: 1.5; margin-top: 8px;"><code>{
   "feriadosPersonalizados": [
-    "25-12",
-    "24-12",
-    "01-01"
+    "25-12-2025",
+    "24-12-2025",
+    "01-01-2026"
   ],
   "dataExportacao": "2025-12-16T12:35:09.540Z"
 }</code></pre>
                 <p style="margin-top: 8px; font-size: 0.875rem; color: #6b7280;">
-                    <strong>Nota:</strong> As datas dos feriados personalizados devem estar no formato DD-MM (dia-mês). O campo "dataExportacao" é opcional e gerado automaticamente.
+                    <strong>Nota:</strong> As datas dos feriados personalizados devem estar no formato DD-MM-YYYY (dia-mês-ano). O campo "dataExportacao" é opcional e gerado automaticamente.
                 </p>
             </div>
 
@@ -2029,17 +2071,22 @@
                     Gerenciamento Avançado de Feriados
                 </h3>
                 <p>
-                    Na aba <strong>"Editor de Feriados"</strong>, você pode editar os feriados fixos e móveis em modo batch (lote):
+                    Na aba <strong>"Editor de Feriados"</strong>, você pode editar feriados em modo batch (lote):
                 </p>
                 <ul>
                     <li><strong>Feriados Fixos:</strong> Edite os feriados que ocorrem na mesma data todos os anos (formato: <code>DD-MM Nome</code>).</li>
                     <li><strong>Feriados Móveis:</strong> Edite os feriados que mudam de ano para ano (formato: <code>DD-MM-YYYY Nome</code>).</li>
-                    <li><strong>Salvar:</strong> As alterações substituem as configurações atuais.</li>
-                    <li><strong>Resetar:</strong> Restaura os feriados padrão do Brasil.</li>
+                    <li><strong>Feriados Personalizados:</strong> Gerencie os feriados adicionados clicando no calendário ou importados de JSON (formato: <code>DD-MM-YYYY</code>). Você pode adicionar, editar ou remover feriados específicos diretamente no editor de texto.</li>
                 </ul>
                 <p style="margin-top: 12px;">
-                    <strong>Nota:</strong> Esta configuração é diferente dos feriados personalizados. Os feriados fixos/móveis são as datas padrão da calculadora, enquanto os personalizados são marcações específicas suas.
+                    <strong>Ações disponíveis:</strong>
                 </p>
+                <ul>
+                    <li><strong>Salvar:</strong> Substitui as configurações atuais pelas novas.</li>
+                    <li><strong>Resetar:</strong> Restaura os feriados fixos/móveis padrão do Brasil.</li>
+                    <li><strong>Importar/Exportar JSON:</strong> Permite importar ou exportar feriados personalizados em formato JSON.</li>
+                    <li><strong>Limpar Todos:</strong> Remove todos os feriados personalizados.</li>
+                </ul>
             </div>
 
             <div class="help-section">
@@ -2202,6 +2249,9 @@
 
             // Mostra mensagem de sucesso
             alert('✅ Configurações restauradas com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+
+            // Marca flag para voltar à primeira aba após reload
+            sessionStorage.setItem('reloadToTop', 'true');
 
             // Recarrega a página para aplicar as configurações padrão
             location.reload();
@@ -2724,10 +2774,18 @@
         }
 
         function exportarFeriados() {
-            // Converte feriados personalizados para formato brasileiro DD-MM
+            // Solicita nome personalizado para o arquivo
+            const nomePersonalizado = prompt('Digite um nome para o arquivo (sem extensão):\n\nDeixe em branco para usar o nome padrão.', '');
+
+            // Se usuário cancelar, interrompe a exportação
+            if (nomePersonalizado === null) {
+                return;
+            }
+
+            // Converte feriados personalizados para formato brasileiro DD-MM-YYYY
             const feriadosBrasileiro = [...feriadosPersonalizados].map(data => {
-                const [mes, dia] = data.split('-');
-                return `${dia}-${mes}`;
+                const [ano, mes, dia] = data.split('-');
+                return `${dia}-${mes}-${ano}`;
             });
 
             const config = {
@@ -2739,7 +2797,13 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `feriados-${Date.now()}.json`;
+
+            // Usa nome personalizado ou padrão
+            const nomeArquivo = nomePersonalizado.trim() ?
+                `${nomePersonalizado.trim()}.json` :
+                `feriados-${Date.now()}.json`;
+            link.download = nomeArquivo;
+
             link.click();
             URL.revokeObjectURL(url);
         }
@@ -2765,26 +2829,51 @@
         function finalizarImportacao(tipo) {
             if (!configImportacaoPendente) return;
 
-            // Converte datas do formato brasileiro DD-MM para formato interno MM-DD
-            // Também aceita formato antigo MM-DD para retrocompatibilidade
+            // Converte datas do formato brasileiro DD-MM-YYYY para formato interno YYYY-MM-DD
+            // Também aceita formatos antigos para retrocompatibilidade
             const converterParaInterno = (datas) => {
                 return datas.map(data => {
-                    const [parte1, parte2] = data.split('-');
-                    const num1 = parseInt(parte1);
-                    const num2 = parseInt(parte2);
+                    const partes = data.split('-');
 
-                    // Se parte1 é dia válido (1-31) e parte2 é mês válido (1-12), é formato brasileiro DD-MM
-                    if (num1 >= 1 && num1 <= 31 && num2 >= 1 && num2 <= 12) {
-                        // Converte DD-MM para MM-DD
-                        return `${parte2}-${parte1}`;
+                    // Formato DD-MM-YYYY (novo formato brasileiro com ano)
+                    if (partes.length === 3) {
+                        const [parte1, parte2, parte3] = partes;
+                        const num1 = parseInt(parte1);
+                        const num2 = parseInt(parte2);
+                        const num3 = parseInt(parte3);
+
+                        // Se parte1 é dia (1-31), parte2 é mês (1-12) e parte3 é ano, é formato brasileiro DD-MM-YYYY
+                        if (num1 >= 1 && num1 <= 31 && num2 >= 1 && num2 <= 12 && num3 >= 1000) {
+                            // Converte DD-MM-YYYY para YYYY-MM-DD
+                            return `${parte3}-${parte2}-${parte1}`;
+                        }
+                        // Se parte1 é ano, é formato YYYY-MM-DD (retrocompatibilidade)
+                        else if (num1 >= 1000) {
+                            // Já está em YYYY-MM-DD, mantém
+                            return data;
+                        }
                     }
-                    // Se parte1 é mês válido (1-12) e parte2 é dia válido (1-31), é formato americano MM-DD (retrocompatibilidade)
-                    else if (num1 >= 1 && num1 <= 12 && num2 >= 1 && num2 <= 31) {
-                        // Já está em MM-DD, mantém
-                        return data;
+
+                    // Formato DD-MM ou MM-DD (sem ano) - não deveria acontecer para feriados personalizados,
+                    // mas trata para retrocompatibilidade
+                    if (partes.length === 2) {
+                        const [parte1, parte2] = partes;
+                        const num1 = parseInt(parte1);
+                        const num2 = parseInt(parte2);
+                        const anoAtual = new Date().getFullYear();
+
+                        // Formato brasileiro DD-MM
+                        if (num1 >= 1 && num1 <= 31 && num2 >= 1 && num2 <= 12) {
+                            return `${anoAtual}-${parte2}-${parte1}`;
+                        }
+                        // Formato americano MM-DD
+                        else if (num1 >= 1 && num1 <= 12 && num2 >= 1 && num2 <= 31) {
+                            return `${anoAtual}-${parte1}-${parte2}`;
+                        }
                     }
-                    // Caso não consiga determinar, assume formato brasileiro e tenta converter
-                    return `${parte2}-${parte1}`;
+
+                    // Caso não consiga determinar, retorna como está
+                    return data;
                 });
             };
 
@@ -3530,6 +3619,16 @@
             }
             document.getElementById('editorFeriadosMoveis').value = textoMoveis.trim();
 
+            // Carregar feriados personalizados no formato brasileiro DD-MM-YYYY
+            let textoPersonalizados = '';
+            const feriadosArray = [...feriadosPersonalizados].sort();
+            for (let data of feriadosArray) {
+                // Converte YYYY-MM-DD para DD-MM-YYYY
+                const [ano, mes, dia] = data.split('-');
+                textoPersonalizados += `${dia}-${mes}-${ano}\n`;
+            }
+            document.getElementById('editorFeriadosPersonalizados').value = textoPersonalizados.trim();
+
             // Atualizar visualizações
             atualizarVisualizacaoFeriados();
         }
@@ -3563,6 +3662,57 @@
                 }
             }
             document.getElementById('listaFeriadosMoveis').innerHTML = htmlMoveis || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado móvel configurado</p>';
+
+            // Feriados personalizados - exibir no formato brasileiro DD-MM-YYYY
+            let htmlPersonalizados = '';
+            const feriadosArray = [...feriadosPersonalizados].sort();
+            for (let data of feriadosArray) {
+                // Converte YYYY-MM-DD para DD-MM-YYYY
+                const [ano, mes, dia] = data.split('-');
+                htmlPersonalizados += `
+                    <div class="feriado-item">
+                        <span><strong>${dia}-${mes}-${ano}</strong></span>
+                    </div>
+                `;
+            }
+            document.getElementById('listaFeriadosPersonalizados').innerHTML = htmlPersonalizados || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado personalizado configurado</p>';
+        }
+
+        // Salvar feriados personalizados do editor
+        function salvarFeriadosPersonalizadosEditor() {
+            try {
+                const texto = document.getElementById('editorFeriadosPersonalizados').value;
+                const novosFeriados = new Set();
+
+                if (texto.trim()) {
+                    const linhas = texto.split('\n');
+                    for (let linha of linhas) {
+                        linha = linha.trim();
+                        if (!linha) continue;
+
+                        // Aceita formato DD-MM-YYYY
+                        const match = linha.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+                        if (match) {
+                            const [, dia, mes, ano] = match;
+                            // Converte para formato interno YYYY-MM-DD
+                            novosFeriados.add(`${ano}-${mes}-${dia}`);
+                        } else {
+                            throw new Error(`Formato inválido na linha: "${linha}"\nUse o formato: DD-MM-YYYY`);
+                        }
+                    }
+                }
+
+                if (confirm(`Deseja salvar ${novosFeriados.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`)) {
+                    feriadosPersonalizados = novosFeriados;
+                    localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+                    atualizarVisualizacaoFeriados();
+                    renderizarCalendario();
+                    alert('✅ Feriados personalizados salvos com sucesso!');
+                    mostrarAvisoRecalculo();
+                }
+            } catch (error) {
+                alert('❌ Erro ao processar os feriados:\n\n' + error.message);
+            }
         }
 
         // Salvar feriados em batch
@@ -3668,6 +3818,9 @@
 
                     alert('✅ Configurações salvas com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
 
+                    // Marca flag para voltar à primeira aba após reload
+                    sessionStorage.setItem('reloadToTop', 'true');
+
                     // Recarrega a página para aplicar as configurações
                     location.reload();
                 }
@@ -3730,6 +3883,14 @@
         }
 
         // Inicializar
+        // Verifica se deve voltar ao topo após reload
+        if (sessionStorage.getItem('reloadToTop') === 'true') {
+            sessionStorage.removeItem('reloadToTop');
+            window.scrollTo(0, 0);
+            // Garante que está na primeira aba (Cálculo)
+            trocarPagina('calculo');
+        }
+
         // Carregar feriados do localStorage se existirem
         const feriadosFixosSalvos = localStorage.getItem('feriadosFixos');
         if (feriadosFixosSalvos) {
