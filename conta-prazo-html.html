@@ -1792,6 +1792,15 @@
                     <li>Use o detalhamento para conferir se algum dia foi contado ou não contado corretamente.</li>
                     <li>O botão "Limpar" remove o resultado atual e permite fazer um novo cálculo rapidamente.</li>
                 </ul>
+
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e7eb; text-align: center;">
+                    <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">
+                        Precisa restaurar a calculadora para as configurações originais?
+                    </p>
+                    <button class="btn btn-secondary" onclick="confirmarResetCompleto()" style="font-size: 0.875rem; padding: 8px 16px;">
+                        🔄 Restaurar Configurações Padrão
+                    </button>
+                </div>
             </div>
         </div>
         <!-- Fim Página de Ajuda -->
@@ -1876,6 +1885,39 @@
             modal.classList.remove('active');
             // Desmarca o checkbox para a próxima vez
             checkbox.checked = false;
+        }
+
+        // Controle de reset completo
+        function confirmarResetCompleto() {
+            const modal = document.getElementById('modalResetCompleto');
+            modal.classList.add('active');
+        }
+
+        function fecharModalReset() {
+            const modal = document.getElementById('modalResetCompleto');
+            modal.classList.remove('active');
+        }
+
+        function executarResetCompleto() {
+            // Limpa feriados personalizados
+            feriadosPersonalizados.clear();
+            localStorage.removeItem('feriadosPersonalizados');
+
+            // Remove feriados fixos e móveis customizados (volta ao padrão do código)
+            localStorage.removeItem('feriadosFixos');
+            localStorage.removeItem('feriadosMoveis');
+
+            // Remove preferência de não mostrar aviso
+            localStorage.removeItem('naoMostrarAvisoRecalculo');
+
+            // Fecha o modal
+            fecharModalReset();
+
+            // Mostra mensagem de sucesso
+            alert('✅ Configurações restauradas com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+
+            // Recarrega a página para aplicar as configurações padrão
+            location.reload();
         }
 
         // Feriados fixos
@@ -1989,6 +2031,7 @@
 
         function setDias(dias) {
             document.getElementById('diasUteis').value = dias;
+            mostrarAvisoRecalculo();
         }
 
         function setDataHoje() {
@@ -1997,6 +2040,7 @@
             const mes = String(hoje.getMonth() + 1).padStart(2, '0');
             const dia = String(hoje.getDate()).padStart(2, '0');
             document.getElementById('dataInicio').value = `${ano}-${mes}-${dia}`;
+            mostrarAvisoRecalculo();
         }
 
         function calcularPrazo() {
@@ -3326,6 +3370,31 @@
                 </label>
             </div>
             <button class="btn btn-primary" onclick="fecharAvisoRecalculo()">Entendi</button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Reset -->
+    <div id="modalResetCompleto" class="modal-aviso">
+        <div class="modal-aviso-content" style="max-width: 500px;">
+            <div class="modal-aviso-icon">⚠️</div>
+            <h3>Restaurar Configurações Padrão</h3>
+            <p style="text-align: left; margin-bottom: 20px;">
+                Esta ação irá <strong>restaurar todas as configurações</strong> para os valores originais:
+            </p>
+            <ul style="text-align: left; margin: 0 0 20px 20px; color: #374151; line-height: 1.8;">
+                <li>Todos os <strong>feriados personalizados</strong> serão removidos</li>
+                <li>Feriados <strong>fixos e móveis</strong> voltarão ao padrão</li>
+                <li>Preferência de <strong>avisos</strong> será resetada</li>
+            </ul>
+            <p style="text-align: left; color: #991b1b; font-weight: 600; margin-bottom: 20px;">
+                ⚠️ Esta ação não pode ser desfeita!
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" onclick="fecharModalReset()">Cancelar</button>
+                <button class="btn" onclick="executarResetCompleto()" style="background: #dc2626; color: white;">
+                    Confirmar Reset
+                </button>
+            </div>
         </div>
     </div>
 
