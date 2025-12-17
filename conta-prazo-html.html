@@ -1003,6 +1003,90 @@
             justify-content: flex-end;
         }
 
+        /* Modal de Aviso de Recálculo */
+        .modal-aviso {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-aviso.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-aviso-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-aviso-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-aviso-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .modal-aviso-content p {
+            color: #374151;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-aviso-checkbox {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .modal-aviso-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .modal-aviso-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         /* Página de Ajuda */
         .help-section {
             background: white;
@@ -1768,6 +1852,31 @@
         let usarDiasUteis = true; // true = dias úteis, false = dias corridos
         let descricaoPrazo = '';
         let configImportacaoPendente = null;
+        let calculoRealizado = false; // Controla se já foi feito um cálculo
+
+        // Controle de avisos
+        function mostrarAvisoRecalculo() {
+            // Verifica se o usuário optou por não mostrar o aviso
+            const naoMostrar = localStorage.getItem('naoMostrarAvisoRecalculo') === 'true';
+            if (naoMostrar || !calculoRealizado) return;
+
+            const modal = document.getElementById('modalAvisoRecalculo');
+            modal.classList.add('active');
+        }
+
+        function fecharAvisoRecalculo() {
+            const modal = document.getElementById('modalAvisoRecalculo');
+            const checkbox = document.getElementById('naoMostrarAvisoNovamente');
+
+            // Se o checkbox estiver marcado, salva a preferência
+            if (checkbox.checked) {
+                localStorage.setItem('naoMostrarAvisoRecalculo', 'true');
+            }
+
+            modal.classList.remove('active');
+            // Desmarca o checkbox para a próxima vez
+            checkbox.checked = false;
+        }
 
         // Feriados fixos
         const feriadosFixos = {
@@ -1810,6 +1919,9 @@
                 toggle.classList.remove('active');
                 label.textContent = 'Dias Corridos';
             }
+
+            // Mostra aviso se já houver cálculo realizado
+            mostrarAvisoRecalculo();
         }
 
         function formatarData(data) {
@@ -1958,6 +2070,7 @@
             }
 
             dataFinal = dataAtual;
+            calculoRealizado = true; // Marca que o cálculo foi realizado
             mostrarResultado();
             renderizarCalendario();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
@@ -2243,6 +2356,9 @@
             }
             localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
             renderizarCalendario();
+
+            // Mostra aviso se já houver cálculo realizado
+            mostrarAvisoRecalculo();
         }
 
         function exportarFeriados() {
@@ -3185,7 +3301,33 @@
             Object.assign(feriadosMoveis, JSON.parse(feriadosMoveisSalvos));
         }
 
+        // Adiciona listeners para mostrar aviso quando modificar parâmetros do cálculo
+        document.getElementById('dataInicio').addEventListener('change', function() {
+            mostrarAvisoRecalculo();
+        });
+
+        document.getElementById('diasUteis').addEventListener('input', function() {
+            mostrarAvisoRecalculo();
+        });
+
         renderizarCalendario();
     </script>
+
+    <!-- Modal de Aviso de Recálculo -->
+    <div id="modalAvisoRecalculo" class="modal-aviso">
+        <div class="modal-aviso-content">
+            <div class="modal-aviso-icon">ℹ️</div>
+            <h3>Recálculo Necessário</h3>
+            <p>Você modificou os parâmetros do cálculo. Para ver o resultado atualizado, clique no botão <strong>"Calcular Prazo"</strong> novamente.</p>
+            <div class="modal-aviso-checkbox">
+                <label>
+                    <input type="checkbox" id="naoMostrarAvisoNovamente">
+                    Não mostrar este aviso novamente
+                </label>
+            </div>
+            <button class="btn btn-primary" onclick="fecharAvisoRecalculo()">Entendi</button>
+        </div>
+    </div>
+
 </body>
 </html>
