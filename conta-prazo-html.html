@@ -853,6 +853,12 @@
             font-weight: 600;
         }
 
+        .feriado-personalizado {
+            background: #e9d5ff;
+            color: #6b21a8;
+            font-weight: 600;
+        }
+
         .dia-inicio {
             background: #3b82f6;
             color: white;
@@ -868,8 +874,37 @@
         }
 
         .dia-percorrido {
+            position: relative;
+            z-index: 1;
+        }
+
+        .dia-percorrido::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            bottom: 2px;
+            left: -2px;
+            right: -2px;
             background: #fef3c7;
-            border-color: #fbbf24;
+            z-index: -1;
+        }
+
+        .dia-percorrido-inicio::before {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            left: 2px;
+        }
+
+        .dia-percorrido-fim::before {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            right: 2px;
+        }
+
+        .dia-percorrido-unico::before {
+            border-radius: 8px;
+            left: 2px;
+            right: 2px;
         }
 
         .legenda {
@@ -1372,7 +1407,11 @@
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #fecaca"></div>
-                        <span>Feriado/Ponto Facultativo</span>
+                        <span>Feriados Fixos/Móveis</span>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor" style="background: #e9d5ff"></div>
+                        <span>Feriados Personalizados</span>
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #3b82f6"></div>
@@ -1833,6 +1872,46 @@
             return false;
         }
 
+        function getTipoFeriado(data) {
+            const dataStr = formatarData(data);
+            const dataCompleta = formatarDataCompleta(data);
+            const ano = data.getFullYear();
+
+            if (feriadosFixosAtivos && feriadosFixos[dataStr]) return 'fixo';
+            if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) return 'movel';
+            if (feriadosPersonalizadosAtivos && feriadosPersonalizados.has(dataCompleta)) return 'personalizado';
+
+            return null;
+        }
+
+        function obterClassesDia(data, baseClass, diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido) {
+            const dataStr = formatarDataCompleta(data);
+            const ehFds = ehFimDeSemana(data);
+            const tipoFeriado = getTipoFeriado(data);
+            const ehInicio = dataInicio === dataStr;
+            const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
+            const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
+
+            let className = baseClass;
+            if (ehFds) className += ' fim-semana';
+            else if (tipoFeriado === 'personalizado') className += ' feriado-personalizado';
+            else if (tipoFeriado) className += ' feriado';
+            else if (ehInicio) className += ' dia-inicio';
+            else if (ehFim) className += ' dia-final';
+            else if (ehPercorrido) {
+                className += ' dia-percorrido';
+                if (diasPercorridos.length === 1) {
+                    className += ' dia-percorrido-unico';
+                } else if (dataStr === primeiroDiaPercorrido) {
+                    className += ' dia-percorrido-inicio';
+                } else if (dataStr === ultimoDiaPercorrido) {
+                    className += ' dia-percorrido-fim';
+                }
+            }
+
+            return { className, ehFds };
+        }
+
         function setDias(dias) {
             document.getElementById('diasUteis').value = dias;
         }
@@ -2115,6 +2194,11 @@
             const diasNoMes = ultimoDia.getDate();
             const diaSemanaInicio = primeiroDia.getDay();
 
+            // Identificar primeiro e último dia percorrido
+            const diasPercorridos = todosOsDias.filter(d => d.contado).map(d => formatarDataCompleta(d.data));
+            const primeiroDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[0] : null;
+            const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
+
             document.getElementById('mesAtual').textContent =
                 mesAtual.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
 
@@ -2129,19 +2213,7 @@
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const data = new Date(ano, mes, dia);
                 const dataStr = formatarDataCompleta(data);
-                const ehFds = ehFimDeSemana(data);
-                const ehFer = ehFeriado(data);
-                const ehInicio = dataInicio === formatarDataCompleta(data);
-                const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
-                const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
-
-                let className = 'calendario-dia';
-                if (ehFds) className += ' fim-semana';
-                else if (ehFer) className += ' feriado';
-                else if (ehInicio) className += ' dia-inicio';
-                else if (ehFim) className += ' dia-final';
-                else if (ehPercorrido) className += ' dia-percorrido';
-
+                const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                 const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
                 html += `<div class="${className}" ${onclick}>${dia}</div>`;
             }
@@ -2152,6 +2224,11 @@
 
         function renderizarCalendarioAnual() {
             const ano = mesAtual.getFullYear();
+
+            // Identificar primeiro e último dia percorrido
+            const diasPercorridos = todosOsDias.filter(d => d.contado).map(d => formatarDataCompleta(d.data));
+            const primeiroDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[0] : null;
+            const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
 
             document.getElementById('mesAtual').textContent = ano.toString();
 
@@ -2183,19 +2260,7 @@
                 for (let dia = 1; dia <= diasNoMes; dia++) {
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
-                    const ehFds = ehFimDeSemana(data);
-                    const ehFer = ehFeriado(data);
-                    const ehInicio = dataInicio === formatarDataCompleta(data);
-                    const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
-                    const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
-
-                    let className = 'calendario-mini-dia';
-                    if (ehFds) className += ' fim-semana';
-                    else if (ehFer) className += ' feriado';
-                    else if (ehInicio) className += ' dia-inicio';
-                    else if (ehFim) className += ' dia-final';
-                    else if (ehPercorrido) className += ' dia-percorrido';
-
+                    const { className, ehFds } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
                     html += `<div class="${className}" ${onclick}>${dia}</div>`;
                 }
