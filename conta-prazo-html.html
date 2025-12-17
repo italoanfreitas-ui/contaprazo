@@ -2322,6 +2322,29 @@
         </div>
     </div>
 
+    <!-- Modal para escolher tipo de export PDF -->
+    <div class="modal" id="modalExportPDF">
+        <div class="modal-content">
+            <div class="modal-header">Exportar PDF</div>
+            <div class="modal-body">
+                Escolha o tipo de export PDF:
+            </div>
+            <div class="modal-options">
+                <div class="modal-option" onclick="finalizarExportPDF('resumido')">
+                    <div class="modal-option-title">📄 Resumido</div>
+                    <div class="modal-option-desc">Export compacto com visualização gráfica dos dias considerados (similar ao PNG resumido).</div>
+                </div>
+                <div class="modal-option" onclick="finalizarExportPDF('completo')">
+                    <div class="modal-option-title">📋 Completo</div>
+                    <div class="modal-option-desc">Export detalhado com lista completa de todos os dias do período.</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalExportPDF()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Estado da aplicação
         let mesAtual = new Date();
@@ -2665,7 +2688,7 @@
                     </div>
 
                     <div class="btn-group" style="margin-top: 20px;">
-                        <button class="btn btn-red" onclick="exportarPDF()">
+                        <button class="btn btn-red" onclick="abrirModalExportPDF()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -3042,7 +3065,171 @@
             configImportacaoPendente = null;
         }
 
-        function exportarPDF() {
+        function abrirModalExportPDF() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro para exportar.');
+                return;
+            }
+            document.getElementById('modalExportPDF').classList.add('active');
+        }
+
+        function fecharModalExportPDF() {
+            document.getElementById('modalExportPDF').classList.remove('active');
+        }
+
+        function finalizarExportPDF(tipo) {
+            fecharModalExportPDF();
+            if (tipo === 'resumido') {
+                exportarPDFResumido();
+            } else {
+                exportarPDFCompleto();
+            }
+        }
+
+        function exportarPDFResumido() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro para exportar.');
+                return;
+            }
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (descricaoPrazo) {
+                descricaoHTML = `
+                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
+                    </div>
+                `;
+            }
+
+            // Gerar visualização dos dias (reutilizar lógica do PNG)
+            let diasVisuaisHTML = '';
+            todosOsDias.forEach((dia, index) => {
+                const diaNum = dia.data.getDate();
+                const isInicio = index === 0;
+                const isFinal = index === todosOsDias.length - 1;
+
+                const ehFds = ehFimDeSemana(dia.data);
+                const ehFer = ehFeriado(dia.data);
+                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
+                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
+
+                let cor = '#fef3c7';
+                let borda = '1px solid #fbbf24';
+                let textoCor = '#92400e';
+
+                if (isInicio) {
+                    cor = '#3b82f6';
+                    borda = '2px solid #2563eb';
+                    textoCor = '#ffffff';
+                } else if (isFinal) {
+                    cor = '#16a34a';
+                    borda = '2px solid #15803d';
+                    textoCor = '#ffffff';
+                } else if (ehPersonalizado) {
+                    cor = '#e9d5ff';
+                    borda = '1px solid #c084fc';
+                    textoCor = '#6b21a8';
+                } else if (ehFer) {
+                    cor = '#fecaca';
+                    borda = '1px solid #f87171';
+                    textoCor = '#991b1b';
+                } else if (ehFds) {
+                    cor = '#e5e7eb';
+                    borda = '1px solid #d1d5db';
+                    textoCor = '#6b7280';
+                }
+
+                let mesIndicador = '';
+                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
+                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                }
+
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
+            });
+
+            const htmlContent = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cálculo de Prazo - ContaPrazo</title>
+    <style>
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
+        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
+        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .brand-name { display: flex; }
+        .brand-conta { color: #3b82f6; }
+        .brand-prazo { color: #16a34a; }
+        .brand-separator { color: #d1d5db; font-weight: 300; }
+        .brand-subtitle { font-size: 0.875rem; color: #6b7280; }
+        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
+        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
+        .info { margin: 15px 0; font-size: 16px; }
+        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+        @media print {
+            body { padding: 15px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="brand-header">
+        <div class="logo-cp">CP</div>
+        <div class="brand-title">
+            <div class="brand-name">
+                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+            </div>
+            <span class="brand-separator">|</span>
+            <span class="brand-subtitle">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div class="header">
+        <h1>Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
+        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
+            <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
+            <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Útil</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
+            </div>
+        </div>
+    </div>
+    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
+        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
+        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
+        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            🖨️ Imprimir / Salvar como PDF
+        </button>
+    </div>
+</body>
+</html>`;
+
+            const popup = window.open('', '_blank', 'width=900,height=700');
+            if (popup) {
+                popup.document.write(htmlContent);
+                popup.document.close();
+                setTimeout(() => {
+                    popup.print();
+                }, 500);
+            } else {
+                alert('⚠️ Pop-up bloqueado.\n\nPor favor, permita pop-ups para este site.');
+            }
+        }
+
+        function exportarPDFCompleto() {
             if (!dataFinal) {
                 alert('Calcule um prazo primeiro para exportar.');
                 return;
@@ -3205,6 +3392,12 @@
                 const isInicio = index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
+                // Verificar se é feriado, fim de semana ou personalizado usando as funções
+                const ehFds = ehFimDeSemana(dia.data);
+                const ehFer = ehFeriado(dia.data);
+                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
+                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
+
                 let cor = '#fef3c7'; // Padrão: dia contado (amarelo claro)
                 let borda = '1px solid #fbbf24';
                 let textoCor = '#92400e';
@@ -3217,17 +3410,15 @@
                     cor = '#16a34a';
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
-                } else if (dia.feriado) {
-                    if (dia.feriadoPersonalizado) {
-                        cor = '#e9d5ff'; // Feriado personalizado (roxo)
-                        borda = '1px solid #c084fc';
-                        textoCor = '#6b21a8';
-                    } else {
-                        cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
-                        borda = '1px solid #f87171';
-                        textoCor = '#991b1b';
-                    }
-                } else if (dia.fimDeSemana) {
+                } else if (ehPersonalizado) {
+                    cor = '#e9d5ff'; // Feriado personalizado (roxo)
+                    borda = '1px solid #c084fc';
+                    textoCor = '#6b21a8';
+                } else if (ehFer) {
+                    cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
+                    borda = '1px solid #f87171';
+                    textoCor = '#991b1b';
+                } else if (ehFds) {
                     cor = '#e5e7eb'; // Fim de semana (cinza)
                     borda = '1px solid #d1d5db';
                     textoCor = '#6b7280';
@@ -3279,6 +3470,14 @@
         <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
             <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
             <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Útil</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
+            </div>
         </div>
     </div>
 </div>`;
