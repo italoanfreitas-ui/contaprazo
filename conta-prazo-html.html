@@ -2095,9 +2095,8 @@
                 </h3>
                 <p>Você pode exportar os resultados em diferentes formatos:</p>
                 <ul>
-                    <li><strong>Exportar PDF:</strong> Gera um documento HTML que pode ser impresso ou salvo como PDF (use Ctrl+P ou Cmd+P).</li>
-                    <li><strong>Exportar Resumo (PNG):</strong> Salva uma imagem com as informações principais do cálculo.</li>
-                    <li><strong>Exportar com Detalhamento (PNG):</strong> Salva uma imagem completa incluindo o detalhamento dia a dia.</li>
+                    <li><strong>Exportar PDF:</strong> Gera um documento HTML que pode ser impresso ou salvo como PDF (use Ctrl+P ou Cmd+P). Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
+                    <li><strong>Exportar PNG:</strong> Salva uma imagem do cálculo. Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
                 </ul>
             </div>
 
@@ -2341,6 +2340,29 @@
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="fecharModalExportPDF()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para escolher tipo de export PNG -->
+    <div class="modal" id="modalExportPNG">
+        <div class="modal-content">
+            <div class="modal-header">Exportar PNG</div>
+            <div class="modal-body">
+                Escolha o tipo de export PNG:
+            </div>
+            <div class="modal-options">
+                <div class="modal-option" onclick="finalizarExportPNG('resumido')">
+                    <div class="modal-option-title">🖼️ Resumido</div>
+                    <div class="modal-option-desc">Salva uma imagem com as informações principais e visualização gráfica dos dias considerados.</div>
+                </div>
+                <div class="modal-option" onclick="finalizarExportPNG('completo')">
+                    <div class="modal-option-title">📸 Completo</div>
+                    <div class="modal-option-desc">Salva uma imagem completa incluindo o detalhamento dia a dia do período.</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalExportPNG()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -2695,21 +2717,13 @@
                             </svg>
                             Exportar PDF
                         </button>
-                        <button class="btn btn-indigo" onclick="exportarImagemResumo()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="9" y1="15" x2="15" y2="15"></line>
-                            </svg>
-                            Exportar Resumo (PNG)
-                        </button>
-                        <button class="btn btn-purple" onclick="exportarImagemCompleta()">
+                        <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                            Exportar com Detalhamento (PNG)
+                            Exportar PNG
                         </button>
                     </div>
 
@@ -3086,6 +3100,27 @@
             }
         }
 
+        function abrirModalExportPNG() {
+            if (!dataFinal) {
+                alert('Calcule um prazo primeiro para exportar.');
+                return;
+            }
+            document.getElementById('modalExportPNG').classList.add('active');
+        }
+
+        function fecharModalExportPNG() {
+            document.getElementById('modalExportPNG').classList.remove('active');
+        }
+
+        function finalizarExportPNG(tipo) {
+            fecharModalExportPNG();
+            if (tipo === 'resumido') {
+                exportarImagemResumo();
+            } else {
+                exportarImagemCompleta();
+            }
+        }
+
         function exportarPDFResumido() {
             if (!dataFinal) {
                 alert('Calcule um prazo primeiro para exportar.');
@@ -3129,19 +3164,23 @@
                     cor = '#16a34a';
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
-                } else if (ehPersonalizado) {
-                    cor = '#e9d5ff';
-                    borda = '1px solid #c084fc';
-                    textoCor = '#6b21a8';
-                } else if (ehFer) {
-                    cor = '#fecaca';
-                    borda = '1px solid #f87171';
-                    textoCor = '#991b1b';
-                } else if (ehFds) {
-                    cor = '#e5e7eb';
-                    borda = '1px solid #d1d5db';
-                    textoCor = '#6b7280';
+                } else if (usarDiasUteis) {
+                    // No modo dias úteis, diferenciar por tipo de dia
+                    if (ehPersonalizado) {
+                        cor = '#e9d5ff';
+                        borda = '1px solid #c084fc';
+                        textoCor = '#6b21a8';
+                    } else if (ehFer) {
+                        cor = '#fecaca';
+                        borda = '1px solid #f87171';
+                        textoCor = '#991b1b';
+                    } else if (ehFds) {
+                        cor = '#e5e7eb';
+                        borda = '1px solid #d1d5db';
+                        textoCor = '#6b7280';
+                    }
                 }
+                // No modo dias corridos, todos os dias contados (exceto início e final) ficam amarelos
 
                 let mesIndicador = '';
                 if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
@@ -3200,7 +3239,7 @@
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
                 <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Útil</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
@@ -3410,19 +3449,23 @@
                     cor = '#16a34a';
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
-                } else if (ehPersonalizado) {
-                    cor = '#e9d5ff'; // Feriado personalizado (roxo)
-                    borda = '1px solid #c084fc';
-                    textoCor = '#6b21a8';
-                } else if (ehFer) {
-                    cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
-                    borda = '1px solid #f87171';
-                    textoCor = '#991b1b';
-                } else if (ehFds) {
-                    cor = '#e5e7eb'; // Fim de semana (cinza)
-                    borda = '1px solid #d1d5db';
-                    textoCor = '#6b7280';
+                } else if (usarDiasUteis) {
+                    // No modo dias úteis, diferenciar por tipo de dia
+                    if (ehPersonalizado) {
+                        cor = '#e9d5ff'; // Feriado personalizado (roxo)
+                        borda = '1px solid #c084fc';
+                        textoCor = '#6b21a8';
+                    } else if (ehFer) {
+                        cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
+                        borda = '1px solid #f87171';
+                        textoCor = '#991b1b';
+                    } else if (ehFds) {
+                        cor = '#e5e7eb'; // Fim de semana (cinza)
+                        borda = '1px solid #d1d5db';
+                        textoCor = '#6b7280';
+                    }
                 }
+                // No modo dias corridos, todos os dias contados (exceto início e final) ficam amarelos
 
                 // Adicionar indicador de mudança de mês
                 let mesIndicador = '';
@@ -3473,7 +3516,7 @@
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
                 <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Útil</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
