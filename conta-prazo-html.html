@@ -709,6 +709,8 @@
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            background: white;
+            z-index: 1;
         }
 
         .calendario-mini-dia:hover:not(.fim-semana) {
@@ -836,6 +838,8 @@
             font-size: 0.875rem;
             min-height: 40px;
             position: relative;
+            background: white;
+            z-index: 1;
         }
 
         .dia-normal {
@@ -879,15 +883,21 @@
             box-shadow: 0 0 0 2px #15803d;
         }
 
+        /* Dias percorridos que NÃO são especiais ficam transparentes */
+        .dia-percorrido:not(.fim-semana):not(.feriado):not(.feriado-personalizado):not(.dia-inicio):not(.dia-final) {
+            background: transparent;
+        }
+
         .dia-percorrido::before {
             content: '';
             position: absolute;
-            top: 3px;
-            bottom: 3px;
+            top: 0;
+            bottom: 0;
             left: -50%;
             right: -50%;
             background: #fef3c7;
-            z-index: -1;
+            z-index: 0;
+            border-radius: 6px;
         }
 
         .dia-percorrido-inicio::before {
