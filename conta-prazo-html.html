@@ -859,6 +859,12 @@
             font-weight: 600;
         }
 
+        .feriado-em-fds {
+            /* Mantém o fundo cinza do fim-semana, mas texto vermelho negrito como feriado */
+            color: #991b1b !important;
+            font-weight: 700 !important;
+        }
+
         .dia-inicio {
             background: #3b82f6;
             color: white;
@@ -1212,6 +1218,174 @@
             background: white;
             border-radius: 6px;
             border-left: 4px solid #3b82f6;
+        }
+
+        /* Responsividade mobile - densidade aumentada para evitar scroll horizontal */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .page-header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .page-header-content {
+                gap: 10px;
+            }
+
+            .logo-cp {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .nav-tabs {
+                gap: 4px;
+                padding: 4px;
+                margin-bottom: 15px;
+            }
+
+            .nav-tab {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                gap: 6px;
+            }
+
+            /* Problema 5: Proteger ícones SVG do menu de encolher demais */
+            .nav-tab svg {
+                flex-shrink: 0;
+                min-width: 18px;
+                min-height: 18px;
+            }
+
+            /* Problema 4: Reduzir fonte do cabeçalho para evitar quebra */
+            .brand-title {
+                font-size: 1.5rem;
+            }
+
+            .page-header .brand-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .resultado {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .resultado h2 {
+                font-size: 1.25rem;
+            }
+
+            .resultado-info {
+                font-size: 1rem;
+            }
+
+            .detalhamento h3 {
+                font-size: 1.1rem;
+            }
+
+            .dia-item {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            .calendario-header {
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+            }
+
+            .calendario-header h2 {
+                font-size: 1.25rem;
+                min-width: 150px;
+            }
+
+            .calendario-actions-row {
+                gap: 6px;
+            }
+
+            .btn-hoje {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .visualizacao-toggle button {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Telas muito pequenas - ajustes adicionais */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .page-header {
+                padding: 12px;
+            }
+
+            .logo-cp {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            /* Cabeçalho ainda menor para telas muito pequenas */
+            .brand-title {
+                font-size: 1.25rem;
+            }
+
+            .page-header .brand-subtitle {
+                font-size: 0.7rem;
+            }
+
+            .brand-separator {
+                font-size: 1rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .resultado {
+                padding: 15px;
+            }
+
+            .btn-group {
+                gap: 8px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            label {
+                font-size: 0.9rem;
+            }
+
+            input, select, textarea {
+                font-size: 0.9rem;
+            }
+
+            .calendario-nav-row {
+                gap: 10px;
+            }
+
+            .calendario-header h2 {
+                font-size: 1.1rem;
+                min-width: 120px;
+            }
+
+            .legenda-item {
+                font-size: 0.85rem;
+            }
         }
 
         @media print {
@@ -2018,13 +2192,23 @@
 
             let className = baseClass;
 
-            // Adiciona classes de cor
-            if (ehFds) className += ' fim-semana';
-            else if (tipoFeriado === 'personalizado') className += ' feriado-personalizado';
-            else if (tipoFeriado) className += ' feriado';
-            else if (ehInicio) className += ' dia-inicio';
-            else if (ehFim) className += ' dia-final';
-            else if (ehPercorrido) className += ' dia-percorrido';
+            // Adiciona classes de cor - permitindo combinação de fim de semana com feriado
+            if (ehFds && tipoFeriado) {
+                // Fim de semana + feriado: mantém fundo cinza, mas texto vermelho
+                className += ' fim-semana feriado-em-fds';
+            } else if (ehFds) {
+                className += ' fim-semana';
+            } else if (tipoFeriado === 'personalizado') {
+                className += ' feriado-personalizado';
+            } else if (tipoFeriado) {
+                className += ' feriado';
+            } else if (ehInicio) {
+                className += ' dia-inicio';
+            } else if (ehFim) {
+                className += ' dia-final';
+            } else if (ehPercorrido) {
+                className += ' dia-percorrido';
+            }
 
             return { className, ehFds };
         }
@@ -2076,14 +2260,19 @@
                         contado = true;
                         motivo = `Dia ${contador}`;
                     } else {
-                        if (ehFds) {
-                            motivo = dataAtual.getDay() === 0 ? 'Domingo (Final de Semana)' : 'Sábado (Final de Semana)';
+                        // Verifica ambas as condições independentemente
+                        const dataStr = formatarData(dataAtual);
+                        const ano = dataAtual.getFullYear();
+                        const nomeFeriado = feriadosFixos[dataStr] ||
+                            (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                            null;
+
+                        if (ehFds && ehFer) {
+                            motivo = `Final de Semana e ${nomeFeriado || 'Feriado'}`;
+                        } else if (ehFds) {
+                            motivo = 'Final de Semana';
                         } else if (ehFer) {
-                            const dataStr = formatarData(dataAtual);
-                            const ano = dataAtual.getFullYear();
-                            motivo = feriadosFixos[dataStr] ||
-                                (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
-                                'Feriado/Ponto Facultativo';
+                            motivo = nomeFeriado || 'Feriado/Ponto Facultativo';
                         }
                     }
                 } else {
@@ -2091,15 +2280,20 @@
                     diasContados++;
                     contador++;
                     contado = true;
-                    if (ehFds) {
-                        motivo = dataAtual.getDay() === 0 ? `Dia ${contador} - Domingo` : `Dia ${contador} - Sábado`;
+
+                    // Verifica ambas as condições independentemente
+                    const dataStr = formatarData(dataAtual);
+                    const ano = dataAtual.getFullYear();
+                    const nomeFeriado = feriadosFixos[dataStr] ||
+                        (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                        null;
+
+                    if (ehFds && ehFer) {
+                        motivo = `Dia ${contador} - Final de Semana e ${nomeFeriado || 'Feriado'}`;
+                    } else if (ehFds) {
+                        motivo = `Dia ${contador} - Final de Semana`;
                     } else if (ehFer) {
-                        const dataStr = formatarData(dataAtual);
-                        const ano = dataAtual.getFullYear();
-                        const nomeFeriado = feriadosFixos[dataStr] ||
-                            (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
-                            'Feriado';
-                        motivo = `Dia ${contador} - ${nomeFeriado}`;
+                        motivo = `Dia ${contador} - ${nomeFeriado || 'Feriado'}`;
                     } else {
                         motivo = `Dia ${contador}`;
                     }
