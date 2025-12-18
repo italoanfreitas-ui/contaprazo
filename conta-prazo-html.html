@@ -3307,7 +3307,33 @@
             configImportacaoPendente = null;
         }
 
-        // Funções para importação de conjuntos pré-definidos
+        // ==================== IMPORTAÇÃO DE CONJUNTOS PRÉ-DEFINIDOS ====================
+
+        // Constantes
+        const GITHUB_RAW_BASE_URL = 'https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos';
+
+        // Funções auxiliares
+        function adicionarCacheBusting(url) {
+            const timestamp = new Date().getTime();
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}t=${timestamp}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function mostrarMensagemLoading(elemento, mensagem) {
+            elemento.innerHTML = `<div style="text-align: center; padding: 20px; color: #6b7280;">${escapeHtml(mensagem)}</div>`;
+        }
+
+        function mostrarMensagemErro(elemento, mensagem) {
+            elemento.innerHTML = `<div style="text-align: center; padding: 20px; color: #ef4444;">❌ ${escapeHtml(mensagem)}</div>`;
+        }
+
+        // Funções principais
         function abrirModalSelecionarFonte() {
             document.getElementById('modalSelecionarFonte').classList.add('active');
         }
@@ -3326,50 +3352,48 @@
             document.getElementById('modalPredefinidos').classList.add('active');
 
             const listaPredefinidos = document.getElementById('listaPredefinidos');
-            listaPredefinidos.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>';
+            mostrarMensagemLoading(listaPredefinidos, 'Carregando conjuntos disponíveis...');
 
             try {
-                // URL do manifest.json no GitHub com cache-busting
-                const timestamp = new Date().getTime();
-                const manifestUrl = `https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos/manifest.json?t=${timestamp}`;
-
-                // Fetch simples com cache-busting via timestamp
+                // Busca manifest.json com cache-busting
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
                 const response = await fetch(manifestUrl);
 
                 if (!response.ok) {
-                    throw new Error('Não foi possível carregar os conjuntos pré-definidos');
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 const manifest = await response.json();
 
                 if (!manifest.conjuntos || manifest.conjuntos.length === 0) {
-                    listaPredefinidos.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">Nenhum conjunto disponível no momento.</div>';
+                    mostrarMensagemLoading(listaPredefinidos, 'Nenhum conjunto disponível no momento.');
                     return;
                 }
 
-                // Renderiza os itens do dropdown
-                let html = '';
-                manifest.conjuntos.forEach(conjunto => {
-                    const urlArquivo = `https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos/${conjunto.arquivo}`;
-                    html += `
-                        <div class="item-predefinido" onclick='importarFeriadoPredefinido(${JSON.stringify(urlArquivo)}, ${JSON.stringify(conjunto.nome)})'>
-                            <div class="item-predefinido-nome">${conjunto.nome}</div>
-                            <div class="item-predefinido-desc">${conjunto.descricao}</div>
-                            <div class="item-predefinido-data">📅 Atualizado em: ${conjunto.dataAtualizacao}</div>
+                // Renderiza os itens usando map().join() (mais eficiente que +=)
+                const html = manifest.conjuntos.map(conjunto => {
+                    const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
+                    return `
+                        <div class="item-predefinido" data-url="${escapeHtml(urlArquivo)}" data-nome="${escapeHtml(conjunto.nome)}">
+                            <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
+                            <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
+                            <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
                         </div>
                     `;
-                });
+                }).join('');
 
                 listaPredefinidos.innerHTML = html;
 
+                // Event delegation: adiciona listener único no container
+                listaPredefinidos.querySelectorAll('.item-predefinido').forEach(item => {
+                    item.addEventListener('click', function() {
+                        importarFeriadoPredefinido(this.dataset.url, this.dataset.nome);
+                    });
+                });
+
             } catch (error) {
                 console.error('Erro ao carregar conjuntos pré-definidos:', error);
-                listaPredefinidos.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #ef4444;">
-                        ❌ Erro ao carregar conjuntos pré-definidos.<br>
-                        Verifique sua conexão com a internet.
-                    </div>
-                `;
+                mostrarMensagemErro(listaPredefinidos, `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`);
             }
         }
 
@@ -3380,21 +3404,23 @@
 
         async function importarFeriadoPredefinido(url, nome) {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
-            listaPredefinidos.innerHTML = `<div style="text-align: center; padding: 20px; color: #6b7280;">⏳ Baixando ${nome}...</div>`;
+            mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
             try {
-                // Adiciona cache-busting na URL
-                const timestamp = new Date().getTime();
-                const urlComCacheBusting = `${url}?t=${timestamp}`;
-
-                // Fetch simples com cache-busting via timestamp
+                // Busca o JSON com cache-busting
+                const urlComCacheBusting = adicionarCacheBusting(url);
                 const response = await fetch(urlComCacheBusting);
 
                 if (!response.ok) {
-                    throw new Error('Não foi possível baixar o arquivo');
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 const config = await response.json();
+
+                // Valida estrutura básica do JSON
+                if (!config.feriadosPersonalizados || !Array.isArray(config.feriadosPersonalizados)) {
+                    throw new Error('Formato de arquivo inválido');
+                }
 
                 // Fecha o modal de pré-definidos e abre o modal de importação
                 document.getElementById('modalPredefinidos').classList.remove('active');
@@ -3405,12 +3431,7 @@
 
             } catch (error) {
                 console.error('Erro ao importar conjunto pré-definido:', error);
-                listaPredefinidos.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #ef4444;">
-                        ❌ Erro ao baixar o conjunto.<br>
-                        Tente novamente mais tarde.
-                    </div>
-                `;
+                mostrarMensagemErro(listaPredefinidos, `Erro ao baixar o conjunto.\nTente novamente mais tarde.`);
 
                 // Volta para a lista após 2 segundos
                 setTimeout(() => {
