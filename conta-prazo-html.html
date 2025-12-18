@@ -3514,6 +3514,89 @@
             }
         }
 
+        // ==================== FUNÇÕES AUXILIARES PARA EXPORTS ====================
+
+        /**
+         * Gera o cabeçalho HTML padronizado para exports PDF/PNG
+         * @param {Object} params - Parâmetros do cabeçalho
+         * @param {string} params.dataInicioFormatada - Data inicial formatada
+         * @param {string} params.dataFinalFormatada - Data final formatada
+         * @param {string} params.tipoDias - "Úteis" ou "Corridos"
+         * @param {number} params.diasContados - Quantidade de dias contados
+         * @param {string} params.descricaoHTML - HTML da descrição (opcional)
+         * @param {string} params.conteudoEspecifico - HTML do conteúdo específico (visualização ou lista)
+         * @param {string} params.estilosAdicionais - CSS adicional (opcional)
+         * @returns {string} HTML completo do documento
+         */
+        function gerarCabecalhoExportHTML(params) {
+            const {
+                dataInicioFormatada,
+                dataFinalFormatada,
+                tipoDias,
+                diasContados,
+                descricaoHTML = '',
+                conteudoEspecifico,
+                estilosAdicionais = ''
+            } = params;
+
+            return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cálculo de Prazo - ContaPrazo</title>
+    <style>
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
+        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
+        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .brand-name { display: flex; }
+        .brand-conta { color: #3b82f6; }
+        .brand-prazo { color: #16a34a; }
+        .brand-separator { color: #d1d5db; font-weight: 300; }
+        .brand-subtitle { font-size: 0.875rem; color: #6b7280; }
+        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
+        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
+        .info { margin: 15px 0; font-size: 16px; }
+        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+        @media print {
+            body { padding: 15px; }
+            .no-print { display: none; }
+        }
+        ${estilosAdicionais}
+    </style>
+</head>
+<body>
+    <div class="brand-header">
+        <div class="logo-cp">CP</div>
+        <div class="brand-title">
+            <div class="brand-name">
+                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+            </div>
+            <span class="brand-separator">|</span>
+            <span class="brand-subtitle">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div class="header">
+        <h1>Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
+        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+    </div>
+    ${conteudoEspecifico}
+    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
+        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
+        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
+        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            🖨️ Imprimir / Salvar como PDF
+        </button>
+    </div>
+</body>
+</html>`;
+        }
+
+        // ==================== FUNÇÕES DE EXPORTAÇÃO ====================
+
         function exportarPDFResumido() {
             if (!dataFinal) {
                 alert('Calcule um prazo primeiro para exportar.');
@@ -3533,7 +3616,7 @@
                 `;
             }
 
-            // Gerar visualização dos dias (reutilizar lógica do PNG)
+            // Gerar visualização dos dias
             let diasVisuaisHTML = '';
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
@@ -3558,7 +3641,6 @@
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
                 } else if (usarDiasUteis) {
-                    // No modo dias úteis, diferenciar por tipo de dia
                     if (ehPersonalizado) {
                         cor = '#e9d5ff';
                         borda = '1px solid #c084fc';
@@ -3573,7 +3655,6 @@
                         textoCor = '#6b7280';
                     }
                 }
-                // No modo dias corridos, todos os dias contados (exceto início e final) ficam amarelos
 
                 let mesIndicador = '';
                 if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
@@ -3584,70 +3665,31 @@
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
 
-            const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Cálculo de Prazo - ContaPrazo</title>
-    <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .brand-name { display: flex; }
-        .brand-conta { color: #3b82f6; }
-        .brand-prazo { color: #16a34a; }
-        .brand-separator { color: #d1d5db; font-weight: 300; }
-        .brand-subtitle { font-size: 0.875rem; color: #6b7280; }
-        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-        .info { margin: 15px 0; font-size: 16px; }
-        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
-        @media print {
-            body { padding: 15px; }
-            .no-print { display: none; }
-        }
-    </style>
-</head>
-<body>
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-    </div>
-    <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
-            <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
-            <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
-            </div>
-        </div>
-    </div>
-    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
-        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
-        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-            🖨️ Imprimir / Salvar como PDF
-        </button>
-    </div>
-</body>
-</html>`;
+            // Conteúdo específico: visualização dos dias com legenda
+            const conteudoEspecifico = `
+                <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
+                    <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
+                    <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
+                    </div>
+                </div>
+            `;
+
+            // Gerar HTML usando função helper
+            const htmlContent = gerarCabecalhoExportHTML({
+                dataInicioFormatada,
+                dataFinalFormatada,
+                tipoDias,
+                diasContados: diasUteis,
+                descricaoHTML,
+                conteudoEspecifico
+            });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
             if (popup) {
