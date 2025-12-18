@@ -12,6 +12,36 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* Gradientes principais */
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #16a34a);
+            --gradient-blue: linear-gradient(135deg, #3b82f6, #2563eb);
+            --gradient-green: linear-gradient(135deg, #16a34a, #15803d);
+            --gradient-header: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+            --gradient-border: linear-gradient(90deg, #3b82f6, #16a34a);
+
+            /* Cores principais */
+            --color-blue-500: #3b82f6;
+            --color-blue-600: #2563eb;
+            --color-green-600: #16a34a;
+            --color-green-700: #15803d;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+            /* Border radius */
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            /* Transitions */
+            --transition-fast: all 0.2s;
+            --transition-normal: all 0.3s;
+        }
+
         body {
             font-family: system-ui, -apple-system, sans-serif;
             background: #f9fafb;
@@ -25,12 +55,12 @@
         }
 
         .page-header {
-            background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+            background: var(--gradient-header);
             border-bottom: 3px solid;
-            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
+            border-image: var(--gradient-border) 1;
             padding: 25px 30px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-md);
         }
 
         .page-header-content {
@@ -145,8 +175,8 @@
         .logo-cp {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #3b82f6, #16a34a);
-            border-radius: 12px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2400,14 +2430,101 @@
         let configImportacaoPendente = null;
         let calculoRealizado = false; // Controla se já foi feito um cálculo
 
-        // Controle de avisos
+        // ========================================
+        // CONSTANTES
+        // ========================================
+        const TEMPOS = {
+            PRINT: 500,
+            DEBOUNCE_AVISO: 300,
+            SCROLL_SUAVE: 100
+        };
+
+        const DIMENSOES = {
+            BTN_NAV: 32,
+            LOGO: 56,
+            LOGO_MOBILE: 44,
+            LOGO_SMALL: 38,
+            EXPORT_WIDTH: 900
+        };
+
+        const ESCALAS = {
+            HTML2CANVAS: 2,
+            CALENDARIO_MOBILE: 0.95,
+            CALENDARIO_SMALL: 0.88
+        };
+
+        // ========================================
+        // FUNÇÕES HELPER
+        // ========================================
+
+        // Conversão de formatos de data
+        function converterParaFormatoBrasileiro(dataISO) {
+            // YYYY-MM-DD → DD-MM-YYYY
+            const [ano, mes, dia] = dataISO.split('-');
+            return `${dia}-${mes}-${ano}`;
+        }
+
+        function converterParaFormatoISO(dataBR) {
+            // DD-MM-YYYY → YYYY-MM-DD
+            const [dia, mes, ano] = dataBR.split('-');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function converterParaFormatoMesDia(dataBR) {
+            // DD-MM → MM-DD (para feriados fixos - formato interno)
+            const [dia, mes] = dataBR.split('-');
+            return `${mes}-${dia}`;
+        }
+
+        function converterMesDiaParaBrasileiro(mesdia) {
+            // MM-DD → DD-MM (de formato interno para exibição)
+            const [mes, dia] = mesdia.split('-');
+            return `${dia}-${mes}`;
+        }
+
+        // Obtém nome de feriado de todas as fontes possíveis
+        function obterNomeFeriado(data) {
+            const dataStr = formatarData(data);
+            const dataCompleta = formatarDataCompleta(data);
+            const ano = data.getFullYear();
+
+            return feriadosFixos[dataStr] ||
+                (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
+                null;
+        }
+
+        // Cache de seletores DOM
+        let cacheDom = null;
+        function inicializarCacheDom() {
+            const navTabElements = document.querySelectorAll('.nav-tab');
+            cacheDom = {
+                navTabs: {
+                    calculo: navTabElements[0],
+                    gerenciamento: navTabElements[1],
+                    ajuda: navTabElements[2]
+                },
+                paginas: {
+                    calculo: document.getElementById('paginaCalculo'),
+                    gerenciamento: document.getElementById('paginaGerenciamento'),
+                    ajuda: document.getElementById('paginaAjuda')
+                }
+            };
+        }
+
+        // Controle de avisos (com debounce)
+        let avisoRecalculoTimeout = null;
         function mostrarAvisoRecalculo() {
             // Verifica se o usuário optou por não mostrar o aviso
             const naoMostrar = localStorage.getItem('naoMostrarAvisoRecalculo') === 'true';
             if (naoMostrar || !calculoRealizado) return;
 
-            const modal = document.getElementById('modalAvisoRecalculo');
-            modal.classList.add('active');
+            // Debounce: aguarda 300ms antes de mostrar para evitar múltiplos avisos
+            clearTimeout(avisoRecalculoTimeout);
+            avisoRecalculoTimeout = setTimeout(() => {
+                const modal = document.getElementById('modalAvisoRecalculo');
+                modal.classList.add('active');
+            }, TEMPOS.DEBOUNCE_AVISO);
         }
 
         function fecharAvisoRecalculo() {
@@ -2627,13 +2744,7 @@
                         motivo = `Dia ${contador}`;
                     } else {
                         // Verifica ambas as condições independentemente
-                        const dataStr = formatarData(dataAtual);
-                        const dataCompleta = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
-                        const ano = dataAtual.getFullYear();
-                        const nomeFeriado = feriadosFixos[dataStr] ||
-                            (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
-                            (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
-                            null;
+                        const nomeFeriado = obterNomeFeriado(dataAtual);
 
                         if (ehFds && ehFer) {
                             motivo = `Final de Semana e ${nomeFeriado || 'Feriado'}`;
@@ -2650,13 +2761,7 @@
                     contado = true;
 
                     // Verifica ambas as condições independentemente
-                    const dataStr = formatarData(dataAtual);
-                    const dataCompleta = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
-                    const ano = dataAtual.getFullYear();
-                    const nomeFeriado = feriadosFixos[dataStr] ||
-                        (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
-                        (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
-                        null;
+                    const nomeFeriado = obterNomeFeriado(dataAtual);
 
                     if (ehFds && ehFer) {
                         motivo = `Dia ${contador} - Final de Semana e ${nomeFeriado || 'Feriado'}`;
@@ -3756,25 +3861,28 @@
 
         // Função para trocar de página
         function trocarPagina(pagina) {
+            // Inicializa cache se necessário
+            if (!cacheDom) inicializarCacheDom();
+
             // Esconder todas as páginas
-            document.getElementById('paginaCalculo').classList.remove('active');
-            document.getElementById('paginaGerenciamento').classList.remove('active');
-            document.getElementById('paginaAjuda').classList.remove('active');
+            cacheDom.paginas.calculo.classList.remove('active');
+            cacheDom.paginas.gerenciamento.classList.remove('active');
+            cacheDom.paginas.ajuda.classList.remove('active');
 
             // Remover active de todas as tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            Object.values(cacheDom.navTabs).forEach(tab => tab.classList.remove('active'));
 
             // Mostrar página selecionada e ativar tab
             if (pagina === 'calculo') {
-                document.getElementById('paginaCalculo').classList.add('active');
-                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                cacheDom.paginas.calculo.classList.add('active');
+                cacheDom.navTabs.calculo.classList.add('active');
             } else if (pagina === 'gerenciamento') {
-                document.getElementById('paginaGerenciamento').classList.add('active');
-                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                cacheDom.paginas.gerenciamento.classList.add('active');
+                cacheDom.navTabs.gerenciamento.classList.add('active');
                 carregarEditoresFeriados();
             } else if (pagina === 'ajuda') {
-                document.getElementById('paginaAjuda').classList.add('active');
-                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+                cacheDom.paginas.ajuda.classList.add('active');
+                cacheDom.navTabs.ajuda.classList.add('active');
             }
         }
 
@@ -3783,9 +3891,7 @@
             // Carregar feriados fixos no formato brasileiro DD-MM
             let textoFixos = '';
             for (let [data, nome] of Object.entries(feriadosFixos)) {
-                // Converte MM-DD para DD-MM
-                const [mes, dia] = data.split('-');
-                textoFixos += `${dia}-${mes} ${nome}\n`;
+                textoFixos += `${converterMesDiaParaBrasileiro(data)} ${nome}\n`;
             }
             document.getElementById('editorFeriadosFixos').value = textoFixos.trim();
 
@@ -3793,9 +3899,7 @@
             let textoMoveis = '';
             for (let [ano, feriados] of Object.entries(feriadosMoveis)) {
                 for (let [data, nome] of Object.entries(feriados)) {
-                    // Converte MM-DD para DD-MM-YYYY
-                    const [mes, dia] = data.split('-');
-                    textoMoveis += `${dia}-${mes}-${ano} ${nome}\n`;
+                    textoMoveis += `${converterMesDiaParaBrasileiro(data)}-${ano} ${nome}\n`;
                 }
             }
             document.getElementById('editorFeriadosMoveis').value = textoMoveis.trim();
@@ -3804,13 +3908,8 @@
             let textoPersonalizados = '';
             const feriadosArray = Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]));
             for (let [data, nome] of feriadosArray) {
-                // Converte YYYY-MM-DD para DD-MM-YYYY
-                const [ano, mes, dia] = data.split('-');
-                if (nome) {
-                    textoPersonalizados += `${dia}-${mes}-${ano} ${nome}\n`;
-                } else {
-                    textoPersonalizados += `${dia}-${mes}-${ano}\n`;
-                }
+                const dataBR = converterParaFormatoBrasileiro(data);
+                textoPersonalizados += nome ? `${dataBR} ${nome}\n` : `${dataBR}\n`;
             }
             document.getElementById('editorFeriadosPersonalizados').value = textoPersonalizados.trim();
 
@@ -3823,11 +3922,10 @@
             // Feriados fixos - exibir no formato brasileiro DD-MM
             let htmlFixos = '';
             for (let [data, nome] of Object.entries(feriadosFixos)) {
-                // Converte MM-DD para DD-MM
-                const [mes, dia] = data.split('-');
+                const dataBR = converterMesDiaParaBrasileiro(data);
                 htmlFixos += `
                     <div class="feriado-item fixo">
-                        <span><strong>${dia}-${mes}</strong> - ${nome}</span>
+                        <span><strong>${dataBR}</strong> - ${nome}</span>
                     </div>
                 `;
             }
@@ -3837,11 +3935,10 @@
             let htmlMoveis = '';
             for (let [ano, feriados] of Object.entries(feriadosMoveis)) {
                 for (let [data, nome] of Object.entries(feriados)) {
-                    // Converte MM-DD para DD-MM-YYYY
-                    const [mes, dia] = data.split('-');
+                    const dataBR = `${converterMesDiaParaBrasileiro(data)}-${ano}`;
                     htmlMoveis += `
                         <div class="feriado-item movel">
-                            <span><strong>${dia}-${mes}-${ano}</strong> - ${nome}</span>
+                            <span><strong>${dataBR}</strong> - ${nome}</span>
                         </div>
                     `;
                 }
@@ -3850,23 +3947,15 @@
 
             // Feriados personalizados - exibir no formato brasileiro DD-MM-YYYY Nome
             let htmlPersonalizados = '';
-            const feriadosArray2 = Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-            for (let [data, nome] of feriadosArray2) {
-                // Converte YYYY-MM-DD para DD-MM-YYYY
-                const [ano, mes, dia] = data.split('-');
-                if (nome) {
-                    htmlPersonalizados += `
-                        <div class="feriado-item personalizado">
-                            <span><strong>${dia}-${mes}-${ano}</strong> - ${nome}</span>
-                        </div>
-                    `;
-                } else {
-                    htmlPersonalizados += `
-                        <div class="feriado-item personalizado">
-                            <span><strong>${dia}-${mes}-${ano}</strong></span>
-                        </div>
-                    `;
-                }
+            const feriadosArray = Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            for (let [data, nome] of feriadosArray) {
+                const dataBR = converterParaFormatoBrasileiro(data);
+                const conteudo = nome ? `<strong>${dataBR}</strong> - ${nome}` : `<strong>${dataBR}</strong>`;
+                htmlPersonalizados += `
+                    <div class="feriado-item personalizado">
+                        <span>${conteudo}</span>
+                    </div>
+                `;
             }
             document.getElementById('listaFeriadosPersonalizados').innerHTML = htmlPersonalizados || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado personalizado configurado</p>';
         }
