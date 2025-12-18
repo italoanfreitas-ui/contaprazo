@@ -1196,8 +1196,8 @@
         }
 
         .info-box {
-            background: #f0f9ff;
-            border-left: 4px solid #3b82f6;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
             padding: 15px;
             border-radius: 6px;
             margin: 15px 0;
@@ -1205,7 +1205,7 @@
 
         .info-box p {
             margin: 0;
-            color: #1e40af;
+            color: #991b1b;
             font-size: 0.9rem;
             line-height: 1.6;
         }
@@ -1958,10 +1958,10 @@
                     </h4>
 
                     <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 15px;">
-                        Gerencie feriados específicos adicionados por você (via calendário ou importação JSON). <strong>Formato: DD-MM-YYYY</strong>
+                        Gerencie feriados específicos adicionados por você (via calendário ou importação JSON). <strong>Formato: DD-MM-YYYY Nome</strong> (nome opcional)
                     </p>
 
-                    <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025&#10;01-01-2026"></textarea>
+                    <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025 Natal&#10;01-01-2026 Ano Novo&#10;15-06-2026"></textarea>
 
                     <div class="btn-group" style="margin-top: 15px;">
                         <button class="btn btn-success" onclick="salvarFeriadosPersonalizadosEditor()">
@@ -2368,7 +2368,24 @@
     <script>
         // Estado da aplicação
         let mesAtual = new Date();
-        let feriadosPersonalizados = new Set(JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]'));
+
+        // Carregar feriados personalizados do localStorage com retrocompatibilidade
+        let feriadosPersonalizados = new Map();
+        const feriadosPersonalizadosStorage = JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]');
+
+        // Retrocompatibilidade: se for array de strings (formato antigo), converte para Map
+        if (Array.isArray(feriadosPersonalizadosStorage)) {
+            feriadosPersonalizadosStorage.forEach(item => {
+                if (typeof item === 'string') {
+                    // Formato antigo: apenas data
+                    feriadosPersonalizados.set(item, '');
+                } else if (item && typeof item === 'object') {
+                    // Formato novo: objeto {data, nome}
+                    feriadosPersonalizados.set(item.data, item.nome || '');
+                }
+            });
+        }
+
         let feriadosFixosAtivos = true;
         let feriadosMoveisAtivos = true;
         let feriadosPersonalizadosAtivos = true;
@@ -2610,9 +2627,11 @@
                     } else {
                         // Verifica ambas as condições independentemente
                         const dataStr = formatarData(dataAtual);
+                        const dataCompleta = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
                         const ano = dataAtual.getFullYear();
                         const nomeFeriado = feriadosFixos[dataStr] ||
                             (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                            (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
                             null;
 
                         if (ehFds && ehFer) {
@@ -2631,9 +2650,11 @@
 
                     // Verifica ambas as condições independentemente
                     const dataStr = formatarData(dataAtual);
+                    const dataCompleta = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dataAtual.getDate()).padStart(2, '0')}`;
                     const ano = dataAtual.getFullYear();
                     const nomeFeriado = feriadosFixos[dataStr] ||
                         (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
+                        (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
                         null;
 
                     if (ehFds && ehFer) {
@@ -2946,9 +2967,16 @@
             if (feriadosPersonalizados.has(dataStr)) {
                 feriadosPersonalizados.delete(dataStr);
             } else {
-                feriadosPersonalizados.add(dataStr);
+                // Adiciona sem nome (usuário pode editar depois na aba 2)
+                feriadosPersonalizados.set(dataStr, '');
             }
-            localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+
+            // Salva no formato novo: array de objetos {data, nome}
+            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                data,
+                nome: nome || ''
+            }));
+            localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
             renderizarCalendario();
 
             // Mostra aviso se já houver cálculo realizado
@@ -2964,10 +2992,12 @@
                 return;
             }
 
-            // Converte feriados personalizados para formato brasileiro DD-MM-YYYY
-            const feriadosBrasileiro = [...feriadosPersonalizados].map(data => {
+            // Converte feriados personalizados para formato brasileiro DD-MM-YYYY Nome
+            const feriadosBrasileiro = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
                 const [ano, mes, dia] = data.split('-');
-                return `${dia}-${mes}-${ano}`;
+                const dataFormatada = `${dia}-${mes}-${ano}`;
+                // Se tiver nome, inclui; senão, só a data
+                return nome ? `${dataFormatada} ${nome}` : dataFormatada;
             });
 
             const config = {
@@ -3011,67 +3041,74 @@
         function finalizarImportacao(tipo) {
             if (!configImportacaoPendente) return;
 
-            // Converte datas do formato brasileiro DD-MM-YYYY para formato interno YYYY-MM-DD
+            // Converte datas do formato brasileiro DD-MM-YYYY Nome para formato interno {data: YYYY-MM-DD, nome: Nome}
             // Também aceita formatos antigos para retrocompatibilidade
             const converterParaInterno = (datas) => {
-                return datas.map(data => {
-                    const partes = data.split('-');
+                return datas.map(item => {
+                    // Se for string, pode ser "DD-MM-YYYY Nome" ou só "DD-MM-YYYY"
+                    if (typeof item === 'string') {
+                        // Tenta extrair data e nome usando regex
+                        // Formato esperado: DD-MM-YYYY seguido opcionalmente por espaço e nome
+                        const matchComNome = item.match(/^(\d{2})-(\d{2})-(\d{4})\s+(.+)$/);
+                        const matchSemNome = item.match(/^(\d{2})-(\d{2})-(\d{4})$/);
 
-                    // Formato DD-MM-YYYY (novo formato brasileiro com ano)
-                    if (partes.length === 3) {
-                        const [parte1, parte2, parte3] = partes;
-                        const num1 = parseInt(parte1);
-                        const num2 = parseInt(parte2);
-                        const num3 = parseInt(parte3);
-
-                        // Se parte1 é dia (1-31), parte2 é mês (1-12) e parte3 é ano, é formato brasileiro DD-MM-YYYY
-                        if (num1 >= 1 && num1 <= 31 && num2 >= 1 && num2 <= 12 && num3 >= 1000) {
-                            // Converte DD-MM-YYYY para YYYY-MM-DD
-                            return `${parte3}-${parte2}-${parte1}`;
-                        }
-                        // Se parte1 é ano, é formato YYYY-MM-DD (retrocompatibilidade)
-                        else if (num1 >= 1000) {
-                            // Já está em YYYY-MM-DD, mantém
-                            return data;
-                        }
-                    }
-
-                    // Formato DD-MM ou MM-DD (sem ano) - não deveria acontecer para feriados personalizados,
-                    // mas trata para retrocompatibilidade
-                    if (partes.length === 2) {
-                        const [parte1, parte2] = partes;
-                        const num1 = parseInt(parte1);
-                        const num2 = parseInt(parte2);
-                        const anoAtual = new Date().getFullYear();
-
-                        // Formato brasileiro DD-MM
-                        if (num1 >= 1 && num1 <= 31 && num2 >= 1 && num2 <= 12) {
-                            return `${anoAtual}-${parte2}-${parte1}`;
-                        }
-                        // Formato americano MM-DD
-                        else if (num1 >= 1 && num1 <= 12 && num2 >= 1 && num2 <= 31) {
-                            return `${anoAtual}-${parte1}-${parte2}`;
+                        if (matchComNome) {
+                            // Formato: DD-MM-YYYY Nome
+                            const [, dia, mes, ano, nome] = matchComNome;
+                            return {
+                                data: `${ano}-${mes}-${dia}`,
+                                nome: nome.trim()
+                            };
+                        } else if (matchSemNome) {
+                            // Formato: DD-MM-YYYY (sem nome)
+                            const [, dia, mes, ano] = matchSemNome;
+                            return {
+                                data: `${ano}-${mes}-${dia}`,
+                                nome: ''
+                            };
+                        } else {
+                            // Tenta formato YYYY-MM-DD (retrocompatibilidade)
+                            const matchYMD = item.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                            if (matchYMD) {
+                                return {
+                                    data: item,
+                                    nome: ''
+                                };
+                            }
                         }
                     }
 
-                    // Caso não consiga determinar, retorna como está
-                    return data;
+                    // Formato já convertido: retorna como está
+                    return item;
                 });
             };
 
+            const dadosConvertidos = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
+            const quantidade = dadosConvertidos.length;
+
             if (tipo === 'substituir') {
-                const datasConvertidas = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
-                feriadosPersonalizados = new Set(datasConvertidas);
-                const quantidade = datasConvertidas.length;
+                feriadosPersonalizados.clear();
+                dadosConvertidos.forEach(item => {
+                    if (item && item.data) {
+                        feriadosPersonalizados.set(item.data, item.nome || '');
+                    }
+                });
                 alert(`✅ Feriados substituídos com sucesso!\n\n${quantidade} data(s) importada(s).\n\nA página será recarregada para aplicar as mudanças.`);
             } else if (tipo === 'mesclar') {
-                const datasConvertidas = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
-                const quantidadeImportada = datasConvertidas.length;
-                datasConvertidas.forEach(data => feriadosPersonalizados.add(data));
-                alert(`✅ Feriados mesclados com sucesso!\n\n${quantidadeImportada} data(s) importada(s).\n\nA página será recarregada para aplicar as mudanças.`);
+                dadosConvertidos.forEach(item => {
+                    if (item && item.data) {
+                        feriadosPersonalizados.set(item.data, item.nome || '');
+                    }
+                });
+                alert(`✅ Feriados mesclados com sucesso!\n\n${quantidade} data(s) importada(s).\n\nA página será recarregada para aplicar as mudanças.`);
             }
 
-            localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+            // Salva no formato novo: array de objetos {data, nome}
+            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                data,
+                nome: nome || ''
+            }));
+            localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
             fecharModal();
 
             // Marca flag para voltar à primeira aba após reload
@@ -3762,13 +3799,17 @@
             }
             document.getElementById('editorFeriadosMoveis').value = textoMoveis.trim();
 
-            // Carregar feriados personalizados no formato brasileiro DD-MM-YYYY
+            // Carregar feriados personalizados no formato brasileiro DD-MM-YYYY Nome
             let textoPersonalizados = '';
-            const feriadosArray = [...feriadosPersonalizados].sort();
-            for (let data of feriadosArray) {
+            const feriadosArray = Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            for (let [data, nome] of feriadosArray) {
                 // Converte YYYY-MM-DD para DD-MM-YYYY
                 const [ano, mes, dia] = data.split('-');
-                textoPersonalizados += `${dia}-${mes}-${ano}\n`;
+                if (nome) {
+                    textoPersonalizados += `${dia}-${mes}-${ano} ${nome}\n`;
+                } else {
+                    textoPersonalizados += `${dia}-${mes}-${ano}\n`;
+                }
             }
             document.getElementById('editorFeriadosPersonalizados').value = textoPersonalizados.trim();
 
@@ -3806,17 +3847,25 @@
             }
             document.getElementById('listaFeriadosMoveis').innerHTML = htmlMoveis || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado móvel configurado</p>';
 
-            // Feriados personalizados - exibir no formato brasileiro DD-MM-YYYY
+            // Feriados personalizados - exibir no formato brasileiro DD-MM-YYYY Nome
             let htmlPersonalizados = '';
-            const feriadosArray = [...feriadosPersonalizados].sort();
-            for (let data of feriadosArray) {
+            const feriadosArray2 = Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            for (let [data, nome] of feriadosArray2) {
                 // Converte YYYY-MM-DD para DD-MM-YYYY
                 const [ano, mes, dia] = data.split('-');
-                htmlPersonalizados += `
-                    <div class="feriado-item personalizado">
-                        <span><strong>${dia}-${mes}-${ano}</strong></span>
-                    </div>
-                `;
+                if (nome) {
+                    htmlPersonalizados += `
+                        <div class="feriado-item personalizado">
+                            <span><strong>${dia}-${mes}-${ano}</strong> - ${nome}</span>
+                        </div>
+                    `;
+                } else {
+                    htmlPersonalizados += `
+                        <div class="feriado-item personalizado">
+                            <span><strong>${dia}-${mes}-${ano}</strong></span>
+                        </div>
+                    `;
+                }
             }
             document.getElementById('listaFeriadosPersonalizados').innerHTML = htmlPersonalizados || '<p style="color: #6b7280; text-align: center; padding: 20px;">Nenhum feriado personalizado configurado</p>';
         }
@@ -3825,7 +3874,7 @@
         function salvarFeriadosPersonalizadosEditor() {
             try {
                 const texto = document.getElementById('editorFeriadosPersonalizados').value;
-                const novosFeriados = new Set();
+                const novosFeriados = new Map();
 
                 if (texto.trim()) {
                     const linhas = texto.split('\n');
@@ -3833,21 +3882,34 @@
                         linha = linha.trim();
                         if (!linha) continue;
 
-                        // Aceita formato DD-MM-YYYY
-                        const match = linha.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-                        if (match) {
-                            const [, dia, mes, ano] = match;
+                        // Aceita formato DD-MM-YYYY Nome ou DD-MM-YYYY
+                        const matchComNome = linha.match(/^(\d{2})-(\d{2})-(\d{4})\s+(.+)$/);
+                        const matchSemNome = linha.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+
+                        if (matchComNome) {
+                            const [, dia, mes, ano, nome] = matchComNome;
                             // Converte para formato interno YYYY-MM-DD
-                            novosFeriados.add(`${ano}-${mes}-${dia}`);
+                            novosFeriados.set(`${ano}-${mes}-${dia}`, nome.trim());
+                        } else if (matchSemNome) {
+                            const [, dia, mes, ano] = matchSemNome;
+                            // Converte para formato interno YYYY-MM-DD
+                            novosFeriados.set(`${ano}-${mes}-${dia}`, '');
                         } else {
-                            throw new Error(`Formato inválido na linha: "${linha}"\nUse o formato: DD-MM-YYYY`);
+                            throw new Error(`Formato inválido na linha: "${linha}"\nUse o formato: DD-MM-YYYY Nome (nome é opcional)`);
                         }
                     }
                 }
 
                 if (confirm(`Deseja salvar ${novosFeriados.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`)) {
                     feriadosPersonalizados = novosFeriados;
-                    localStorage.setItem('feriadosPersonalizados', JSON.stringify([...feriadosPersonalizados]));
+
+                    // Salva no formato novo: array de objetos {data, nome}
+                    const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                        data,
+                        nome: nome || ''
+                    }));
+                    localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
                     alert('✅ Feriados personalizados salvos com sucesso!');
