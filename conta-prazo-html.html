@@ -3722,6 +3722,7 @@
                 `;
             }
 
+            // Gerar lista detalhada dos dias
             let listaHTML = '';
             todosOsDias.forEach(dia => {
                 const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
@@ -3744,64 +3745,30 @@
                 }
             });
 
-            const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Cálculo de Prazo - ContaPrazo</title>
-    <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .brand-name { display: flex; }
-        .brand-conta { color: #3b82f6; }
-        .brand-prazo { color: #16a34a; }
-        .brand-separator { color: #d1d5db; font-weight: 300; }
-        .brand-subtitle { font-size: 0.875rem; color: #6b7280; }
-        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-        .info { margin: 15px 0; font-size: 16px; }
-        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
-        .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
-        h3 { color: #374151; font-size: 18px; margin-bottom: 15px; }
-        @media print {
-            body { padding: 15px; }
-            .no-print { display: none; }
-        }
-    </style>
-</head>
-<body>
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-    </div>
-    <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-    </div>
-    <div class="secao">
-        <h3>Detalhamento</h3>
-        ${listaHTML}
-    </div>
-    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
-        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
-        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-            🖨️ Imprimir / Salvar como PDF
-        </button>
-    </div>
-</body>
-</html>`;
+            // Conteúdo específico: lista detalhada
+            const conteudoEspecifico = `
+                <div class="secao">
+                    <h3>Detalhamento</h3>
+                    ${listaHTML}
+                </div>
+            `;
+
+            // Estilos adicionais para a seção de detalhamento
+            const estilosAdicionais = `
+                .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
+                h3 { color: #374151; font-size: 18px; margin-bottom: 15px; }
+            `;
+
+            // Gerar HTML usando função helper
+            const htmlContent = gerarCabecalhoExportHTML({
+                dataInicioFormatada,
+                dataFinalFormatada,
+                tipoDias,
+                diasContados: diasUteis,
+                descricaoHTML,
+                conteudoEspecifico,
+                estilosAdicionais
+            });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
             if (popup) {
@@ -3858,21 +3825,19 @@
                 `;
             }
 
-            // Gerar visualização dos dias considerados
+            // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
             let diasVisuaisHTML = '';
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
-                const mes = dia.data.getMonth() + 1;
                 const isInicio = index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
-                // Verificar se é feriado, fim de semana ou personalizado usando as funções
                 const ehFds = ehFimDeSemana(dia.data);
                 const ehFer = ehFeriado(dia.data);
                 const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
                 const ehPersonalizado = feriadosPersonalizados.has(dataStr);
 
-                let cor = '#fef3c7'; // Padrão: dia contado (amarelo claro)
+                let cor = '#fef3c7';
                 let borda = '1px solid #fbbf24';
                 let textoCor = '#92400e';
 
@@ -3885,24 +3850,21 @@
                     borda = '2px solid #15803d';
                     textoCor = '#ffffff';
                 } else if (usarDiasUteis) {
-                    // No modo dias úteis, diferenciar por tipo de dia
                     if (ehPersonalizado) {
-                        cor = '#e9d5ff'; // Feriado personalizado (roxo)
+                        cor = '#e9d5ff';
                         borda = '1px solid #c084fc';
                         textoCor = '#6b21a8';
                     } else if (ehFer) {
-                        cor = '#fecaca'; // Feriado fixo/móvel (vermelho)
+                        cor = '#fecaca';
                         borda = '1px solid #f87171';
                         textoCor = '#991b1b';
                     } else if (ehFds) {
-                        cor = '#e5e7eb'; // Fim de semana (cinza)
+                        cor = '#e5e7eb';
                         borda = '1px solid #d1d5db';
                         textoCor = '#6b7280';
                     }
                 }
-                // No modo dias corridos, todos os dias contados (exceto início e final) ficam amarelos
 
-                // Adicionar indicador de mudança de mês
                 let mesIndicador = '';
                 if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
                     const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
@@ -3912,6 +3874,7 @@
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
 
+            // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
 <style>
     .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
@@ -3960,7 +3923,7 @@
     </div>
 </div>`;
 
-            // Criar elemento temporário invisível
+            // Renderizar com html2canvas
             const container = document.createElement('div');
             container.style.position = 'absolute';
             container.style.left = '-9999px';
@@ -3969,23 +3932,20 @@
             container.innerHTML = htmlContent;
             document.body.appendChild(container);
 
-            // Usar html2canvas para renderizar
             html2canvas(container, {
                 backgroundColor: '#ffffff',
-                scale: 2, // Melhor qualidade
+                scale: 2,
                 logging: false,
                 width: 900
             }).then(canvas => {
-                // Remover elemento temporário
                 document.body.removeChild(container);
 
-                // Fazer download da imagem
                 canvas.toBlob(blob => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
                     const prefixo = sanitizarNomeArquivo(descricaoPrazo);
-                    link.download = prefixo ? `${prefixo}contaprazo-resumo.png` : `contaprazo-resumo-${Date.now()}.png`;
+                    link.download = prefixo ? `${prefixo}-contaprazo-resumo.png` : `contaprazo-resumo-${Date.now()}.png`;
                     link.click();
                     URL.revokeObjectURL(url);
                 });
