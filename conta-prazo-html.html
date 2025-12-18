@@ -3333,14 +3333,8 @@
                 const timestamp = new Date().getTime();
                 const manifestUrl = `https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos/manifest.json?t=${timestamp}`;
 
-                // Fetch com headers anti-cache
-                const response = await fetch(manifestUrl, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    }
-                });
+                // Fetch simples com cache-busting via timestamp
+                const response = await fetch(manifestUrl);
 
                 if (!response.ok) {
                     throw new Error('Não foi possível carregar os conjuntos pré-definidos');
@@ -3393,14 +3387,8 @@
                 const timestamp = new Date().getTime();
                 const urlComCacheBusting = `${url}?t=${timestamp}`;
 
-                // Fetch com headers anti-cache
-                const response = await fetch(urlComCacheBusting, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    }
-                });
+                // Fetch simples com cache-busting via timestamp
+                const response = await fetch(urlComCacheBusting);
 
                 if (!response.ok) {
                     throw new Error('Não foi possível baixar o arquivo');
