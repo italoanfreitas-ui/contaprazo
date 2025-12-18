@@ -3329,9 +3329,18 @@
             listaPredefinidos.innerHTML = '<div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>';
 
             try {
-                // URL do manifest.json no GitHub
-                const manifestUrl = 'https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos/manifest.json';
-                const response = await fetch(manifestUrl);
+                // URL do manifest.json no GitHub com cache-busting
+                const timestamp = new Date().getTime();
+                const manifestUrl = `https://raw.githubusercontent.com/italoanfreitas-ui/contaprazo/main/feriados-predefinidos/manifest.json?t=${timestamp}`;
+
+                // Fetch com headers anti-cache
+                const response = await fetch(manifestUrl, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
 
                 if (!response.ok) {
                     throw new Error('Não foi possível carregar os conjuntos pré-definidos');
@@ -3380,7 +3389,18 @@
             listaPredefinidos.innerHTML = `<div style="text-align: center; padding: 20px; color: #6b7280;">⏳ Baixando ${nome}...</div>`;
 
             try {
-                const response = await fetch(url);
+                // Adiciona cache-busting na URL
+                const timestamp = new Date().getTime();
+                const urlComCacheBusting = `${url}?t=${timestamp}`;
+
+                // Fetch com headers anti-cache
+                const response = await fetch(urlComCacheBusting, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
 
                 if (!response.ok) {
                     throw new Error('Não foi possível baixar o arquivo');
