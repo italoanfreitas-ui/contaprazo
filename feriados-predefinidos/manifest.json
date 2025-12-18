@@ -1,0 +1,21 @@
+{
+  "versao": "1.0",
+  "conjuntos": [
+    {
+      "id": "pmvc-2026",
+      "arquivo": "PMVC-2026.json",
+      "nome": "Prefeitura Municipal de Vitória da Conquista - 2026",
+      "descricao": "Decreto Municipal nº 123/2025 - Calendário oficial de feriados",
+      "dataAtualizacao": "18-12-2025",
+      "ano": "2026"
+    },
+    {
+      "id": "tjba-2025-2026",
+      "arquivo": "TJBA-2025-2026.json",
+      "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
+      "descricao": "Portaria TJBA nº 456/2024 - Feriados forenses e pontos facultativos",
+      "dataAtualizacao": "15-12-2025",
+      "ano": "2025-2026"
+    }
+  ]
+}
