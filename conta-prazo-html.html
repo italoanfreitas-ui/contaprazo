@@ -1775,10 +1775,27 @@
                 font-size: 0.8rem !important;
             }
 
-            /* Ajustar boxes destacados */
-            .help-section div[style*="background"] {
+            /* Ajustar boxes destacados (divs e parágrafos com backgrounds coloridos) */
+            .help-section div[style*="background"],
+            .help-section p[style*="background"] {
                 padding: 10px !important;
-                font-size: 0.8rem !important;
+                font-size: 0.75rem !important;
+                line-height: 1.6 !important;
+            }
+
+            /* Ajustar elementos filhos dentro dos boxes com background */
+            .help-section div[style*="background"] h4,
+            .help-section div[style*="background"] h5,
+            .help-section div[style*="background"] p,
+            .help-section div[style*="background"] ul,
+            .help-section div[style*="background"] ol {
+                font-size: 0.75rem !important;
+            }
+
+            /* Ajustar strong dentro dos boxes */
+            .help-section p[style*="background"] strong,
+            .help-section div[style*="background"] strong {
+                font-size: inherit;
             }
 
             /* Ajustar blocos de código */
