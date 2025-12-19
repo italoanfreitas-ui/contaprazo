@@ -234,6 +234,12 @@
             padding: 0;
         }
 
+        .brand-name {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            line-height: 1;
+        }
 
         .form-grid {
             display: grid;
@@ -1489,10 +1495,10 @@
                 font-size: 0.8rem;
             }
 
-            /* Aplicar zoom out no calendário para evitar scroll horizontal */
+            /* Ajustar calendário para ocupar mesma largura que o formulário */
             .calendario {
-                transform: scale(0.95);
-                transform-origin: top center;
+                width: 100%;
+                padding: 0;
                 margin-bottom: 10px;
             }
 
@@ -1642,9 +1648,10 @@
                 font-size: 0.7rem;
             }
 
-            /* Zoom out ainda mais agressivo no calendário */
+            /* Calendário ocupa 100% da largura em telas pequenas */
             .calendario {
-                transform: scale(0.88);
+                width: 100%;
+                padding: 0;
             }
 
             .calendario-grid {
@@ -1695,7 +1702,9 @@
         <div class="page-header-content">
             <div class="logo-cp">CP</div>
             <div class="brand-title">
-                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+                <div class="brand-name">
+                    <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+                </div>
                 <span class="brand-separator">|</span>
                 <span class="brand-subtitle">Calculadora de Prazos</span>
             </div>
@@ -1711,7 +1720,7 @@
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
-            Cálculo
+            Calculadora
         </button>
         <button class="nav-tab" onclick="trocarPagina('gerenciamento')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2308,7 +2317,7 @@
                     <strong>Como usar:</strong>
                 </p>
                 <ol style="margin-top: 8px; font-size: 0.875rem;">
-                    <li>Clique em <strong>"Importar Feriados"</strong> (disponível na Aba 1 ou 2)</li>
+                    <li>Clique em <strong>"Importar Feriados"</strong> (disponível no menu Calculadora ou Editor de Feriados)</li>
                     <li>Escolha <strong>"☁️ Conjuntos Pré-definidos Online"</strong></li>
                     <li>Selecione o conjunto desejado da lista (ex: TJBA, PMVC, etc.)</li>
                     <li>Escolha se deseja <strong>Substituir</strong> (apagar atuais) ou <strong>Mesclar</strong> (adicionar aos existentes)</li>
@@ -3207,7 +3216,7 @@
             if (feriadosPersonalizados.has(dataStr)) {
                 feriadosPersonalizados.delete(dataStr);
             } else {
-                // Adiciona sem nome (usuário pode editar depois na aba 2)
+                // Adiciona sem nome (usuário pode editar depois no Editor de Feriados)
                 feriadosPersonalizados.set(dataStr, '');
             }
 
@@ -3549,6 +3558,7 @@
          * @param {number} params.diasContados - Quantidade de dias contados
          * @param {string} params.descricaoHTML - HTML da descrição (opcional)
          * @param {string} params.conteudoEspecifico - HTML do conteúdo específico (visualização ou lista)
+         * @param {string} params.diasVisuaisHTML - HTML da visualização dos dias (opcional, para incluir dentro do header)
          * @param {string} params.estilosAdicionais - CSS adicional (opcional)
          * @returns {string} HTML completo do documento
          */
@@ -3560,6 +3570,7 @@
                 diasContados,
                 descricaoHTML = '',
                 conteudoEspecifico,
+                diasVisuaisHTML = '',
                 estilosAdicionais = ''
             } = params;
 
@@ -3606,6 +3617,7 @@
         <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        ${diasVisuaisHTML}
     </div>
     ${conteudoEspecifico}
     <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
@@ -3689,8 +3701,8 @@
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
 
-            // Conteúdo específico: visualização dos dias com legenda
-            const conteudoEspecifico = `
+            // Formatar visualização dos dias com legenda para incluir dentro do header
+            const diasVisuaisHTMLFormatado = `
                 <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
                     <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
                     <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
@@ -3700,19 +3712,20 @@
                         <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
                     </div>
                 </div>
             `;
 
-            // Gerar HTML usando função helper
+            // Gerar HTML usando função helper (dias considerados agora dentro do header)
             const htmlContent = gerarCabecalhoExportHTML({
                 dataInicioFormatada,
                 dataFinalFormatada,
                 tipoDias,
                 diasContados: diasUteis,
                 descricaoHTML,
-                conteudoEspecifico
+                diasVisuaisHTML: diasVisuaisHTMLFormatado,
+                conteudoEspecifico: ''
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -3941,7 +3954,7 @@
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Personalizado</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
             </div>
         </div>
     </div>
