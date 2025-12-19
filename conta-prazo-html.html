@@ -1624,6 +1624,25 @@
             .help-section h4 {
                 font-size: 1rem;
             }
+
+            /* Adicionar ajustes para listas e outros elementos da ajuda */
+            .help-section ul,
+            .help-section ol {
+                font-size: 0.85rem;
+            }
+
+            .help-section li {
+                font-size: inherit;
+                margin-bottom: 6px;
+            }
+
+            .help-section code {
+                font-size: 0.85em;
+            }
+
+            .help-section strong {
+                font-size: inherit;
+            }
         }
 
         /* Telas muito pequenas - ajustes adicionais com zoom out mais agressivo */
@@ -1716,6 +1735,73 @@
 
             .nav-tab {
                 font-size: 0.75rem;
+            }
+
+            /* Ajustes completos para aba de Ajuda em telas muito pequenas */
+            .help-section {
+                padding: 15px;
+            }
+
+            .help-section h3 {
+                font-size: 1rem !important;
+            }
+
+            .help-section h4 {
+                font-size: 0.9rem !important;
+            }
+
+            .help-section p,
+            .help-section ul,
+            .help-section ol {
+                font-size: 0.8rem !important;
+            }
+
+            .help-section li {
+                font-size: inherit;
+                margin-bottom: 6px;
+            }
+
+            .help-section code {
+                font-size: 0.8em;
+                padding: 1px 4px;
+            }
+
+            /* Sobrescrever estilos inline específicos em telas pequenas */
+            .help-section h4[style],
+            .help-section p[style],
+            .help-section div[style*="font-size"],
+            .help-section ol[style*="font-size"],
+            .help-section ul[style*="font-size"] {
+                font-size: 0.8rem !important;
+            }
+
+            /* Ajustar boxes destacados */
+            .help-section div[style*="background"] {
+                padding: 10px !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* Ajustar blocos de código */
+            .help-section pre[style],
+            .help-section code[style] {
+                font-size: 0.75rem !important;
+                padding: 10px !important;
+            }
+
+            .batch-editor {
+                padding: 15px;
+            }
+
+            .batch-editor h3 {
+                font-size: 1rem;
+            }
+
+            .batch-editor h4 {
+                font-size: 0.9rem;
+            }
+
+            .batch-editor p {
+                font-size: 0.8rem;
             }
         }
 
