@@ -3105,11 +3105,39 @@
             mostrarAvisoRecalculo();
         }
 
+        function atualizarTextoBotaoVisualizacao() {
+            const btnMensal = document.getElementById('btnMensal');
+            if (!btnMensal) return;
+
+            // Só atualiza se estiver em visualização mensal
+            if (visualizacaoCalendario === 'mensal') {
+                const mesesVisiveis = calcularMesesVisiveis();
+
+                switch(mesesVisiveis) {
+                    case 3:
+                        btnMensal.textContent = 'Trimestral';
+                        break;
+                    case 2:
+                        btnMensal.textContent = 'Bimestral';
+                        break;
+                    case 1:
+                    default:
+                        btnMensal.textContent = 'Mensal';
+                        break;
+                }
+            }
+        }
+
         function alternarVisualizacao(tipo) {
             visualizacaoCalendario = tipo;
 
             document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
             document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
+
+            // Atualizar texto do botão se for mensal
+            if (tipo === 'mensal') {
+                atualizarTextoBotaoVisualizacao();
+            }
 
             renderizarCalendario();
         }
@@ -4596,6 +4624,7 @@
         });
 
         renderizarCalendario();
+        atualizarTextoBotaoVisualizacao();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
@@ -4641,6 +4670,7 @@
                 // Re-renderizar calendário apenas se estiver em visualização mensal
                 if (visualizacaoCalendario === 'mensal') {
                     renderizarCalendario();
+                    atualizarTextoBotaoVisualizacao();
                 }
             }, 250); // Debounce de 250ms
         });
