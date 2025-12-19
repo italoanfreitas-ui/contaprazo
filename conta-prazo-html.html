@@ -1767,11 +1767,16 @@
             }
 
             /* Sobrescrever estilos inline específicos em telas pequenas */
-            .help-section h4[style],
-            .help-section p[style],
+            .help-section h4[style*="font-size"],
+            .help-section p[style*="font-size"]:not([style*="background"]),
             .help-section div[style*="font-size"],
             .help-section ol[style*="font-size"],
             .help-section ul[style*="font-size"] {
+                font-size: 0.8rem !important;
+            }
+
+            /* h4 sem font-size mas com outros estilos inline */
+            .help-section h4[style]:not([style*="font-size"]) {
                 font-size: 0.8rem !important;
             }
 
