@@ -898,6 +898,57 @@
             color: #4b5563;
         }
 
+        .calendario-multi-meses {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+        }
+
+        /* Layout responsivo para múltiplos meses */
+        @media (min-width: 600px) and (max-width: 1023px) {
+            .calendario-multi-meses.meses-2 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .calendario-multi-meses.meses-3 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            /* Ajustes para calendários menores em multi-mês */
+            .calendario-multi-meses .calendario-grid {
+                gap: 3px;
+            }
+
+            .calendario-multi-meses .calendario-dia-semana {
+                padding: 6px 2px;
+                font-size: 0.65rem;
+            }
+
+            .calendario-multi-meses .calendario-dia {
+                min-height: 32px;
+                font-size: 0.75rem;
+            }
+
+            .mes-container h4 {
+                font-size: 0.8rem;
+                margin-bottom: 8px;
+            }
+        }
+
+        .mes-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mes-container h4 {
+            font-size: 0.9rem;
+            color: #1f2937;
+            margin: 0 0 10px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
         .calendario-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -1495,13 +1546,6 @@
                 font-size: 0.8rem;
             }
 
-            /* Ajustar calendário para ocupar mesma largura que o formulário */
-            .calendario {
-                width: 100%;
-                padding: 0;
-                margin-bottom: 10px;
-            }
-
             .calendario-grid {
                 gap: 3px;
             }
@@ -1646,12 +1690,6 @@
 
             .legenda-item {
                 font-size: 0.7rem;
-            }
-
-            /* Calendário ocupa 100% da largura em telas pequenas */
-            .calendario {
-                width: 100%;
-                padding: 0;
             }
 
             .calendario-grid {
@@ -3078,7 +3116,9 @@
 
         function mudarMes(direcao) {
             if (visualizacaoCalendario === 'mensal') {
-                mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + direcao, 1);
+                const mesesVisiveis = calcularMesesVisiveis();
+                // Avançar/retroceder pela quantidade de meses visíveis
+                mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + (direcao * mesesVisiveis), 1);
             } else {
                 mesAtual = new Date(mesAtual.getFullYear() + direcao, 0, 1);
             }
@@ -3126,40 +3166,113 @@
             }
         }
 
+        function calcularMesesVisiveis() {
+            const largura = window.innerWidth;
+
+            // Desktop: 1 mês
+            if (largura > 1023) {
+                return 1;
+            }
+            // Tablets/telas médias: 2 ou 3 meses
+            else if (largura >= 800) {
+                return 3;
+            }
+            else if (largura >= 600) {
+                return 2;
+            }
+            // Mobile: 1 mês
+            else {
+                return 1;
+            }
+        }
+
         function renderizarCalendarioMensal() {
-            const ano = mesAtual.getFullYear();
-            const mes = mesAtual.getMonth();
-            const primeiroDia = new Date(ano, mes, 1);
-            const ultimoDia = new Date(ano, mes + 1, 0);
-            const diasNoMes = ultimoDia.getDate();
-            const diaSemanaInicio = primeiroDia.getDay();
+            const mesesVisiveis = calcularMesesVisiveis();
 
             // Identificar primeiro e último dia percorrido
             const diasPercorridos = todosOsDias.filter(d => d.contado).map(d => formatarDataCompleta(d.data));
             const primeiroDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[0] : null;
             const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
 
-            document.getElementById('mesAtual').textContent =
-                mesAtual.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+            // Atualizar display do mês/ano
+            if (mesesVisiveis === 1) {
+                document.getElementById('mesAtual').textContent =
+                    mesAtual.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+            } else {
+                const mesInicio = mesAtual;
+                const mesFim = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + mesesVisiveis - 1, 1);
 
-            let html = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map(dia =>
-                `<div class="calendario-dia-semana">${dia}</div>`
-            ).join('');
-
-            for (let i = 0; i < diaSemanaInicio; i++) {
-                html += '<div></div>';
+                if (mesInicio.getFullYear() === mesFim.getFullYear()) {
+                    const mesInicioNome = mesInicio.toLocaleDateString('pt-BR', { month: 'short' });
+                    const mesFimNome = mesFim.toLocaleDateString('pt-BR', { month: 'short' });
+                    document.getElementById('mesAtual').textContent =
+                        `${mesInicioNome.toUpperCase()} - ${mesFimNome.toUpperCase()} ${mesInicio.getFullYear()}`;
+                } else {
+                    const mesInicioCompleto = mesInicio.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+                    const mesFimCompleto = mesFim.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+                    document.getElementById('mesAtual').textContent =
+                        `${mesInicioCompleto.toUpperCase()} - ${mesFimCompleto.toUpperCase()}`;
+                }
             }
 
-            for (let dia = 1; dia <= diasNoMes; dia++) {
-                const data = new Date(ano, mes, dia);
-                const dataStr = formatarDataCompleta(data);
-                const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
-                const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
-                html += `<div class="${className}" ${onclick}>${dia}</div>`;
+            // Renderizar meses
+            let htmlContainer = '';
+
+            for (let i = 0; i < mesesVisiveis; i++) {
+                const mesRenderizar = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + i, 1);
+                const ano = mesRenderizar.getFullYear();
+                const mes = mesRenderizar.getMonth();
+                const primeiroDia = new Date(ano, mes, 1);
+                const ultimoDia = new Date(ano, mes + 1, 0);
+                const diasNoMes = ultimoDia.getDate();
+                const diaSemanaInicio = primeiroDia.getDay();
+
+                let htmlMes = '';
+
+                // Título do mês (apenas se múltiplos meses)
+                if (mesesVisiveis > 1) {
+                    const nomeMes = mesRenderizar.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                    htmlMes += `<h4>${nomeMes.toUpperCase()}</h4>`;
+                }
+
+                htmlMes += '<div class="calendario-grid">';
+
+                // Dias da semana
+                htmlMes += ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map(dia =>
+                    `<div class="calendario-dia-semana">${dia}</div>`
+                ).join('');
+
+                // Espaços vazios antes do primeiro dia
+                for (let j = 0; j < diaSemanaInicio; j++) {
+                    htmlMes += '<div></div>';
+                }
+
+                // Dias do mês
+                for (let dia = 1; dia <= diasNoMes; dia++) {
+                    const data = new Date(ano, mes, dia);
+                    const dataStr = formatarDataCompleta(data);
+                    const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
+                    const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
+                    htmlMes += `<div class="${className}" ${onclick}>${dia}</div>`;
+                }
+
+                htmlMes += '</div>';
+
+                if (mesesVisiveis > 1) {
+                    htmlContainer += `<div class="mes-container">${htmlMes}</div>`;
+                } else {
+                    htmlContainer = htmlMes;
+                }
             }
 
-            document.getElementById('calendarioGrid').innerHTML = html;
-            document.getElementById('calendarioGrid').className = 'calendario-grid';
+            const gridElement = document.getElementById('calendarioGrid');
+            if (mesesVisiveis > 1) {
+                gridElement.innerHTML = htmlContainer;
+                gridElement.className = `calendario-multi-meses meses-${mesesVisiveis}`;
+            } else {
+                gridElement.innerHTML = htmlContainer;
+                gridElement.className = 'calendario-single';
+            }
         }
 
         function renderizarCalendarioAnual() {
@@ -4518,6 +4631,18 @@
                     trocarPagina('calculo');
                 }, 0);
             }
+        });
+
+        // Event listener para redimensionamento da janela
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                // Re-renderizar calendário apenas se estiver em visualização mensal
+                if (visualizacaoCalendario === 'mensal') {
+                    renderizarCalendario();
+                }
+            }, 250); // Debounce de 250ms
         });
     </script>
 
