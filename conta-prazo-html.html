@@ -2740,7 +2740,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.2 • 2025 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.3 • 2025 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -4020,7 +4020,11 @@
 
                 if (!manifestOnline.conjuntos || manifestOnline.conjuntos.length === 0) {
                     if (mostrarFeedback) {
-                        alert('ℹ️ Nenhum conjunto disponível no momento.');
+                        mostrarBannerInformativo(
+                            'Nenhum conjunto disponível',
+                            'Não há conjuntos de feriados disponíveis no momento.',
+                            'ℹ️'
+                        );
                     }
                     return;
                 }
@@ -4034,7 +4038,12 @@
                     // Mostra notificação genérica apenas se há conjuntos disponíveis
                     if (mostrarFeedback) {
                         const totalConjuntos = manifestOnline.conjuntos.length;
-                        alert(`ℹ️ Há ${totalConjuntos} conjunto(s) de feriados disponível(is) para importação.\n\nAcesse "Gerenciamento" → "Importar/Exportar" → "Importar de Fonte" para ver os conjuntos disponíveis.`);
+                        mostrarBannerInformativo(
+                            'Conjuntos disponíveis',
+                            `Há <strong>${totalConjuntos} conjunto(s)</strong> de feriados disponível(is) para importação.<br>
+                            <small style="color: #9ca3af;">Acesse "Gerenciamento" → "Importar/Exportar" → "Importar de Fonte" para ver os conjuntos disponíveis.</small>`,
+                            'ℹ️'
+                        );
                     }
                     return;
                 }
@@ -4070,13 +4079,22 @@
                 if (conjuntosAtualizados.length > 0) {
                     mostrarBannerAtualizacao(conjuntosAtualizados);
                 } else if (mostrarFeedback) {
-                    alert('✅ Todos os seus conjuntos de feriados estão atualizados!');
+                    mostrarBannerInformativo(
+                        'Tudo atualizado!',
+                        'Todos os seus conjuntos de feriados estão atualizados.',
+                        '✅'
+                    );
                 }
 
             } catch (error) {
                 console.error('Erro ao verificar atualizações de feriados:', error);
                 if (mostrarFeedback) {
-                    alert('❌ Erro ao verificar atualizações.\nVerifique sua conexão com a internet.');
+                    mostrarBannerInformativo(
+                        'Erro ao verificar atualizações',
+                        'Não foi possível verificar as atualizações. Verifique sua conexão com a internet e tente novamente.',
+                        '❌',
+                        false // Não auto-fecha em caso de erro
+                    );
                 }
             }
         }
@@ -4112,13 +4130,63 @@
             banner.classList.add('active');
         }
 
+        // Função para mostrar mensagem informativa no banner (sem botão de atualizar)
+        function mostrarBannerInformativo(titulo, mensagem, icone = '💡', autoFechar = true) {
+            const banner = document.getElementById('updateBanner');
+            const title = document.getElementById('updateBannerTitle');
+            const description = document.getElementById('updateBannerDescription');
+            const actions = banner.querySelector('.update-banner-actions');
+            const iconElement = banner.querySelector('.update-banner-icon');
+
+            // Atualiza conteúdo
+            title.textContent = titulo;
+            description.innerHTML = mensagem;
+            iconElement.textContent = icone;
+
+            // Esconde botões de ação
+            actions.style.display = 'none';
+
+            // Mostra o banner
+            banner.classList.add('active');
+
+            // Auto-fecha após 5 segundos se especificado
+            if (autoFechar) {
+                setTimeout(() => {
+                    fecharBannerInformativo();
+                }, 5000);
+            }
+        }
+
+        // Função para fechar banner informativo e restaurar estado original
+        function fecharBannerInformativo() {
+            const banner = document.getElementById('updateBanner');
+            const actions = banner.querySelector('.update-banner-actions');
+            const iconElement = banner.querySelector('.update-banner-icon');
+
+            banner.classList.remove('active');
+
+            // Restaura botões de ação e ícone original
+            setTimeout(() => {
+                actions.style.display = 'flex';
+                iconElement.textContent = '🔔';
+            }, 300); // Aguarda animação de fade out
+        }
+
         // Função para fechar o banner
         function fecharBannerAtualizacao() {
             const banner = document.getElementById('updateBanner');
-            banner.classList.remove('active');
+            const actions = banner.querySelector('.update-banner-actions');
 
-            // Salva no sessionStorage para não mostrar novamente nesta sessão
-            sessionStorage.setItem('updateBannerClosed', 'true');
+            // Verifica se é um banner informativo (botões escondidos)
+            const ehBannerInformativo = actions.style.display === 'none';
+
+            if (ehBannerInformativo) {
+                fecharBannerInformativo();
+            } else {
+                banner.classList.remove('active');
+                // Salva no sessionStorage para não mostrar novamente nesta sessão
+                sessionStorage.setItem('updateBannerClosed', 'true');
+            }
         }
 
         // Função para atualizar feriados a partir do banner
