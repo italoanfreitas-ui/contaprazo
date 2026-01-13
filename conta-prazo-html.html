@@ -1838,6 +1838,139 @@
                 display: none !important;
             }
         }
+
+        /* ==================== BANNER DE ATUALIZAÇÃO DE FERIADOS ==================== */
+        .update-banner {
+            display: none;
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border-bottom: 2px solid;
+            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .update-banner.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .update-banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .update-banner-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .update-banner-text {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .update-banner-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-banner-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .update-banner-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .update-banner-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .update-banner-btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .update-banner-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        }
+
+        .update-banner-btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .update-banner-btn-secondary:hover {
+            background: #f9fafb;
+            color: #1f2937;
+        }
+
+        .update-banner-btn-close {
+            background: transparent;
+            color: #9ca3af;
+            padding: 4px 8px;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .update-banner-btn-close:hover {
+            color: #6b7280;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .update-banner {
+                padding: 12px 20px;
+            }
+
+            .update-banner-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .update-banner-actions {
+                width: 100%;
+            }
+
+            .update-banner-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
     </style>
     <!-- Biblioteca html2canvas para exportação de PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1853,6 +1986,32 @@
                 </div>
                 <span class="brand-separator">|</span>
                 <span class="brand-subtitle">Calculadora de Prazos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner de Atualização de Feriados -->
+    <div id="updateBanner" class="update-banner">
+        <div class="update-banner-content">
+            <div class="update-banner-icon">🔔</div>
+            <div class="update-banner-text">
+                <div class="update-banner-title" id="updateBannerTitle">
+                    Atualizações disponíveis
+                </div>
+                <div class="update-banner-description" id="updateBannerDescription">
+                    Verificando atualizações...
+                </div>
+            </div>
+            <div class="update-banner-actions">
+                <button class="update-banner-btn update-banner-btn-primary" onclick="atualizarFeriadosAPartirDoBanner()">
+                    Atualizar
+                </button>
+                <button class="update-banner-btn update-banner-btn-secondary" onclick="fecharBannerAtualizacao()">
+                    Agora não
+                </button>
+                <button class="update-banner-btn update-banner-btn-close" onclick="fecharBannerAtualizacao()" title="Fechar">
+                    ✕
+                </button>
             </div>
         </div>
     </div>
@@ -2074,6 +2233,13 @@
                                     </svg>
                                     Importar Feriados
                                 </button>
+                                <button class="btn btn-secondary" onclick="verificarAtualizacoesFeriados(true)" title="Verificar se há atualizações disponíveis para os conjuntos de feriados importados">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                    </svg>
+                                    Verificar Atualizações
+                                </button>
                                 <button class="btn btn-red" onclick="limparFeriadosPersonalizados()">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"></polyline>
@@ -2242,6 +2408,16 @@
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
                             Exportar JSON
+                        </button>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="verificarAtualizacoesFeriados(true)" style="width: 100%;" title="Verificar se há atualizações disponíveis">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            Verificar Atualizações
                         </button>
                     </div>
                 </div>
@@ -2717,6 +2893,7 @@
         let usarDiasUteis = true; // true = dias úteis, false = dias corridos
         let descricaoPrazo = '';
         let configImportacaoPendente = null;
+        let conjuntoPendenteMetadata = null; // Armazena metadata do conjunto sendo importado
         let calculoRealizado = false; // Controla se já foi feito um cálculo
 
         // ========================================
@@ -3607,6 +3784,16 @@
                 nome: nome || ''
             }));
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+
+            // Salva metadata do conjunto importado (se for de um conjunto predefinido)
+            if (conjuntoPendenteMetadata) {
+                salvarMetadataConjunto(
+                    conjuntoPendenteMetadata.nome,
+                    conjuntoPendenteMetadata.arquivo,
+                    conjuntoPendenteMetadata.dataAtualizacao
+                );
+            }
+
             fecharModal();
 
             // Marca flag para voltar à primeira aba após reload
@@ -3619,6 +3806,7 @@
         function fecharModal() {
             document.getElementById('modalImportar').classList.remove('active');
             configImportacaoPendente = null;
+            conjuntoPendenteMetadata = null; // Limpa metadata pendente
         }
 
         // ==================== IMPORTAÇÃO DE CONJUNTOS PRÉ-DEFINIDOS ====================
@@ -3688,7 +3876,11 @@
                 const html = manifest.conjuntos.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
-                        <div class="item-predefinido" data-url="${escapeHtml(urlArquivo)}" data-nome="${escapeHtml(conjunto.nome)}">
+                        <div class="item-predefinido"
+                             data-url="${escapeHtml(urlArquivo)}"
+                             data-nome="${escapeHtml(conjunto.nome)}"
+                             data-arquivo="${escapeHtml(conjunto.arquivo)}"
+                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
@@ -3701,7 +3893,12 @@
                 // Event delegation: adiciona listener único no container
                 listaPredefinidos.querySelectorAll('.item-predefinido').forEach(item => {
                     item.addEventListener('click', function() {
-                        importarFeriadoPredefinido(this.dataset.url, this.dataset.nome);
+                        importarFeriadoPredefinido(
+                            this.dataset.url,
+                            this.dataset.nome,
+                            this.dataset.arquivo,
+                            this.dataset.dataAtualizacao
+                        );
                     });
                 });
 
@@ -3716,7 +3913,7 @@
             abrirModalSelecionarFonte();
         }
 
-        async function importarFeriadoPredefinido(url, nome) {
+        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null) {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
             mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
@@ -3741,6 +3938,18 @@
 
                 // Define a configuração pendente e abre o modal de substituir/mesclar
                 configImportacaoPendente = config;
+
+                // Armazena metadata do conjunto sendo importado
+                if (arquivo && dataAtualizacao) {
+                    conjuntoPendenteMetadata = {
+                        nome: nome,
+                        arquivo: arquivo,
+                        dataAtualizacao: dataAtualizacao
+                    };
+                } else {
+                    conjuntoPendenteMetadata = null;
+                }
+
                 document.getElementById('modalImportar').classList.add('active');
 
             } catch (error) {
@@ -3752,6 +3961,268 @@
                     abrirDropdownPredefinidos();
                 }, 2000);
             }
+        }
+
+        // ==================== VERIFICAÇÃO DE ATUALIZAÇÕES DE FERIADOS ====================
+
+        // Variável global para armazenar as atualizações disponíveis
+        let atualizacoesDisponiveis = [];
+
+        // Constantes de configuração
+        const INTERVALO_VERIFICACAO = 6 * 60 * 60 * 1000; // 6 horas em milissegundos
+        let intervaloVerificacaoId = null;
+
+        // Funções de gerenciamento de metadata no localStorage
+
+        function obterMetadataConjuntos() {
+            try {
+                const metadata = localStorage.getItem('conjuntosPredefinidosImportados');
+                return metadata ? JSON.parse(metadata) : [];
+            } catch (error) {
+                console.error('Erro ao obter metadata de conjuntos:', error);
+                return [];
+            }
+        }
+
+        function salvarMetadataConjunto(nome, arquivo, dataAtualizacao) {
+            try {
+                const metadata = obterMetadataConjuntos();
+
+                // Remove entrada anterior se existir
+                const novaMetadata = metadata.filter(item => item.arquivo !== arquivo);
+
+                // Adiciona nova entrada
+                novaMetadata.push({
+                    nome: nome,
+                    arquivo: arquivo,
+                    dataAtualizacao: dataAtualizacao,
+                    dataImportacao: new Date().toISOString()
+                });
+
+                localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(novaMetadata));
+            } catch (error) {
+                console.error('Erro ao salvar metadata de conjunto:', error);
+            }
+        }
+
+        // Função principal para verificar atualizações
+        async function verificarAtualizacoesFeriados(mostrarFeedback = false) {
+            try {
+                // Busca o manifest online
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const response = await fetch(manifestUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const manifestOnline = await response.json();
+
+                if (!manifestOnline.conjuntos || manifestOnline.conjuntos.length === 0) {
+                    if (mostrarFeedback) {
+                        alert('ℹ️ Nenhum conjunto disponível no momento.');
+                    }
+                    return;
+                }
+
+                // Obtém metadata dos conjuntos importados localmente
+                const metadataLocal = obterMetadataConjuntos();
+
+                // Se não há conjuntos importados, verifica se há atualizações gerais
+                if (metadataLocal.length === 0) {
+                    // Usuário não importou nenhum conjunto ainda
+                    // Mostra notificação genérica apenas se há conjuntos disponíveis
+                    if (mostrarFeedback) {
+                        const totalConjuntos = manifestOnline.conjuntos.length;
+                        alert(`ℹ️ Há ${totalConjuntos} conjunto(s) de feriados disponível(is) para importação.\n\nAcesse "Gerenciamento" → "Importar/Exportar" → "Importar de Fonte" para ver os conjuntos disponíveis.`);
+                    }
+                    return;
+                }
+
+                // Compara versões
+                const conjuntosAtualizados = [];
+
+                metadataLocal.forEach(metadataItem => {
+                    // Procura o conjunto correspondente no manifest online
+                    const conjuntoOnline = manifestOnline.conjuntos.find(
+                        c => c.arquivo === metadataItem.arquivo
+                    );
+
+                    if (conjuntoOnline) {
+                        // Compara as datas de atualização
+                        if (conjuntoOnline.dataAtualizacao !== metadataItem.dataAtualizacao) {
+                            conjuntosAtualizados.push({
+                                nome: conjuntoOnline.nome,
+                                arquivo: conjuntoOnline.arquivo,
+                                descricao: conjuntoOnline.descricao,
+                                dataAtualizacaoNova: conjuntoOnline.dataAtualizacao,
+                                dataAtualizacaoAntiga: metadataItem.dataAtualizacao,
+                                url: `${GITHUB_RAW_BASE_URL}/${conjuntoOnline.arquivo}`
+                            });
+                        }
+                    }
+                });
+
+                // Armazena as atualizações disponíveis globalmente
+                atualizacoesDisponiveis = conjuntosAtualizados;
+
+                // Mostra feedback
+                if (conjuntosAtualizados.length > 0) {
+                    mostrarBannerAtualizacao(conjuntosAtualizados);
+                } else if (mostrarFeedback) {
+                    alert('✅ Todos os seus conjuntos de feriados estão atualizados!');
+                }
+
+            } catch (error) {
+                console.error('Erro ao verificar atualizações de feriados:', error);
+                if (mostrarFeedback) {
+                    alert('❌ Erro ao verificar atualizações.\nVerifique sua conexão com a internet.');
+                }
+            }
+        }
+
+        // Função para mostrar o banner de atualização
+        function mostrarBannerAtualizacao(conjuntosAtualizados) {
+            const banner = document.getElementById('updateBanner');
+            const title = document.getElementById('updateBannerTitle');
+            const description = document.getElementById('updateBannerDescription');
+
+            // Verifica se o banner já foi fechado nesta sessão
+            const bannerFechadoNaSessao = sessionStorage.getItem('updateBannerClosed');
+            if (bannerFechadoNaSessao === 'true') {
+                return; // Não mostra o banner se foi fechado nesta sessão
+            }
+
+            if (conjuntosAtualizados.length === 1) {
+                const conjunto = conjuntosAtualizados[0];
+                title.textContent = `Nova atualização disponível`;
+                description.innerHTML = `
+                    O conjunto <strong>${escapeHtml(conjunto.nome)}</strong> foi atualizado em ${escapeHtml(conjunto.dataAtualizacaoNova)}.<br>
+                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
+                `;
+            } else {
+                title.textContent = `${conjuntosAtualizados.length} atualizações disponíveis`;
+                const nomes = conjuntosAtualizados.map(c => escapeHtml(c.nome)).join(', ');
+                description.innerHTML = `
+                    Os seguintes conjuntos foram atualizados: <strong>${nomes}</strong>.<br>
+                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
+                `;
+            }
+
+            banner.classList.add('active');
+        }
+
+        // Função para fechar o banner
+        function fecharBannerAtualizacao() {
+            const banner = document.getElementById('updateBanner');
+            banner.classList.remove('active');
+
+            // Salva no sessionStorage para não mostrar novamente nesta sessão
+            sessionStorage.setItem('updateBannerClosed', 'true');
+        }
+
+        // Função para atualizar feriados a partir do banner
+        function atualizarFeriadosAPartirDoBanner() {
+            if (atualizacoesDisponiveis.length === 0) {
+                alert('Nenhuma atualização disponível.');
+                return;
+            }
+
+            // Fecha o banner
+            fecharBannerAtualizacao();
+
+            // Se há apenas uma atualização, importa diretamente
+            if (atualizacoesDisponiveis.length === 1) {
+                const conjunto = atualizacoesDisponiveis[0];
+                importarFeriadoPredefinido(conjunto.url, conjunto.nome, conjunto.arquivo, conjunto.dataAtualizacaoNova);
+            } else {
+                // Se há múltiplas atualizações, abre o modal de seleção
+                abrirModalPredefinidosComAtualizacoes();
+            }
+        }
+
+        // Função para abrir modal de predefinidos com destaque nas atualizações
+        async function abrirModalPredefinidosComAtualizacoes() {
+            document.getElementById('modalPredefinidos').classList.add('active');
+
+            const listaPredefinidos = document.getElementById('listaPredefinidos');
+            mostrarMensagemLoading(listaPredefinidos, 'Carregando conjuntos disponíveis...');
+
+            try {
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const response = await fetch(manifestUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const manifest = await response.json();
+
+                if (!manifest.conjuntos || manifest.conjuntos.length === 0) {
+                    mostrarMensagemLoading(listaPredefinidos, 'Nenhum conjunto disponível no momento.');
+                    return;
+                }
+
+                // Renderiza os itens, destacando os atualizados
+                const arquivosAtualizados = atualizacoesDisponiveis.map(a => a.arquivo);
+
+                const html = manifest.conjuntos.map(conjunto => {
+                    const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
+                    const isAtualizado = arquivosAtualizados.includes(conjunto.arquivo);
+                    const badgeAtualizado = isAtualizado ? '<span style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">ATUALIZADO</span>' : '';
+
+                    return `
+                        <div class="item-predefinido"
+                             data-url="${escapeHtml(urlArquivo)}"
+                             data-nome="${escapeHtml(conjunto.nome)}"
+                             data-arquivo="${escapeHtml(conjunto.arquivo)}"
+                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
+                             style="${isAtualizado ? 'border-left: 4px solid #16a34a;' : ''}">
+                            <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}${badgeAtualizado}</div>
+                            <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
+                            <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                listaPredefinidos.innerHTML = html;
+
+                listaPredefinidos.querySelectorAll('.item-predefinido').forEach(item => {
+                    item.addEventListener('click', function() {
+                        importarFeriadoPredefinido(
+                            this.dataset.url,
+                            this.dataset.nome,
+                            this.dataset.arquivo,
+                            this.dataset.dataAtualizacao
+                        );
+                    });
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar conjuntos pré-definidos:', error);
+                mostrarMensagemErro(listaPredefinidos, `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`);
+            }
+        }
+
+        // Função para iniciar a verificação periódica
+        function iniciarVerificacaoPeriodica() {
+            // Limpa qualquer intervalo anterior
+            if (intervaloVerificacaoId) {
+                clearInterval(intervaloVerificacaoId);
+            }
+
+            // Verifica imediatamente ao carregar
+            verificarAtualizacoesFeriados(false);
+
+            // Configura verificação periódica
+            intervaloVerificacaoId = setInterval(() => {
+                verificarAtualizacoesFeriados(false);
+            }, INTERVALO_VERIFICACAO);
+        }
+
+        // Função chamada ao finalizar importação - salva metadata
+        function salvarMetadataAposImportacao(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto) {
+            salvarMetadataConjunto(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto);
         }
 
         function abrirModalExportPDF() {
@@ -4768,6 +5239,9 @@
                     trocarPagina('calculo');
                 }, 0);
             }
+
+            // Inicia verificação periódica de atualizações de feriados
+            iniciarVerificacaoPeriodica();
         });
 
         // Event listener para redimensionamento da janela
