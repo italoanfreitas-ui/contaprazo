@@ -1839,35 +1839,60 @@
             }
         }
 
-        /* ==================== BANNER DE ATUALIZAÇÃO DE FERIADOS ==================== */
+        /* ==================== BANNER DE ATUALIZAÇÃO DE FERIADOS (ESTILO iOS) ==================== */
         .update-banner {
             display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 10000;
             background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
-            border-bottom: 2px solid;
-            border-image: linear-gradient(90deg, #3b82f6, #16a34a) 1;
-            padding: 15px 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            animation: slideDown 0.3s ease-out;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 18px 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+                        0 4px 12px rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity 0.4s ease-out;
+            opacity: 0;
         }
 
         .update-banner.active {
             display: block;
+            animation: slideDownBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        @keyframes slideDown {
-            from {
+        .update-banner.hiding {
+            animation: slideUpFade 0.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+        }
+
+        @keyframes slideDownBounce {
+            0% {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateX(-50%) translateY(-120%);
             }
-            to {
+            100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-120%);
             }
         }
 
         .update-banner-content {
-            max-width: 1200px;
-            margin: 0 auto;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -1953,13 +1978,29 @@
 
         @media (max-width: 768px) {
             .update-banner {
-                padding: 12px 20px;
+                top: 10px;
+                width: 95%;
+                max-width: calc(100% - 20px);
+                padding: 16px 20px;
+                border-radius: 12px;
             }
 
             .update-banner-content {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
+            }
+
+            .update-banner-icon {
+                font-size: 1.25rem;
+            }
+
+            .update-banner-title {
+                font-size: 0.95rem;
+            }
+
+            .update-banner-description {
+                font-size: 0.8rem;
             }
 
             .update-banner-actions {
@@ -1969,6 +2010,8 @@
             .update-banner-btn {
                 flex: 1;
                 text-align: center;
+                font-size: 0.8rem;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -4163,13 +4206,15 @@
             const actions = banner.querySelector('.update-banner-actions');
             const iconElement = banner.querySelector('.update-banner-icon');
 
-            banner.classList.remove('active');
+            // Adiciona classe de animação de saída
+            banner.classList.add('hiding');
 
-            // Restaura botões de ação e ícone original
+            // Remove o banner após a animação
             setTimeout(() => {
+                banner.classList.remove('active', 'hiding');
                 actions.style.display = 'flex';
                 iconElement.textContent = '🔔';
-            }, 300); // Aguarda animação de fade out
+            }, 400); // Duração da animação slideUpFade
         }
 
         // Função para fechar o banner
@@ -4183,7 +4228,14 @@
             if (ehBannerInformativo) {
                 fecharBannerInformativo();
             } else {
-                banner.classList.remove('active');
+                // Adiciona classe de animação de saída
+                banner.classList.add('hiding');
+
+                // Remove o banner após a animação
+                setTimeout(() => {
+                    banner.classList.remove('active', 'hiding');
+                }, 400); // Duração da animação slideUpFade
+
                 // Salva no sessionStorage para não mostrar novamente nesta sessão
                 sessionStorage.setItem('updateBannerClosed', 'true');
             }
