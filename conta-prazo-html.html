@@ -2376,6 +2376,12 @@
             padding-left: 0;
         }
 
+        .prazo-info-secundaria-separador {
+            color: #d1d5db;
+            padding: 0 8px;
+            user-select: none;
+        }
+
         /* Contador Regressivo - Discreto mas Claro */
         .prazo-contador {
             display: flex;
@@ -6570,17 +6576,17 @@
             let contadorInline = '';
             if (prazo.status === 'concluido') {
                 const dataConc = prazo.dataConclusao ? new Date(prazo.dataConclusao).toLocaleDateString('pt-BR') : '';
-                contadorInline = `<span class="prazo-contador-inline concluido">• Concluído em ${dataConc}</span>`;
+                contadorInline = `<span class="prazo-contador-inline concluido">Concluído em ${dataConc}</span>`;
             } else {
                 if (diasRestantes.atrasado) {
                     // Atrasado: mostrar negativo em vermelho (com concordância)
                     const textoTipo = diasRestantes.tipo === 'uteis'
                         ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
                         : (diasRestantes.numero === 1 ? 'dia' : 'dias');
-                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
+                    contadorInline = `<span class="prazo-contador-inline atrasado">Atrasado há <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 } else if (diasRestantes.hoje) {
                     // Vence hoje: texto chamativo
-                    contadorInline = `<span class="prazo-contador-inline vence-hoje">• <strong>VENCE HOJE</strong></span>`;
+                    contadorInline = `<span class="prazo-contador-inline vence-hoje"><strong>VENCE HOJE</strong></span>`;
                 } else {
                     // Pendente ou vencendo: mostrar positivo (com concordância)
                     const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
@@ -6588,7 +6594,7 @@
                         ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
                         : (diasRestantes.numero === 1 ? 'dia' : 'dias');
                     const verbo = diasRestantes.numero === 1 ? 'Falta' : 'Faltam';
-                    contadorInline = `<span class="prazo-contador-inline ${classe}">• ${verbo} <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
+                    contadorInline = `<span class="prazo-contador-inline ${classe}">${verbo} <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 }
             }
 
@@ -6632,10 +6638,11 @@
                                     ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
                                     : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
+                            <span class="prazo-info-secundaria-separador">•</span>
                             <span class="prazo-info-secundaria-item">
-                                • Início: ${dataInicioFormatada}
+                                Início: ${dataInicioFormatada}
                             </span>
-                            ${contadorInline}
+                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">•</span>${contadorInline}` : ''}
                         </div>
                     </div>
                     <div class="prazo-acoes">
@@ -6678,6 +6685,7 @@
         function toggleMenuPrazo(event, id) {
             event.stopPropagation();
             const menu = document.getElementById(`menu-${id}`);
+            const button = event.currentTarget;
             const todosMenus = document.querySelectorAll('.prazo-menu-dropdown');
 
             // Fechar outros menus
@@ -6699,11 +6707,15 @@
 
                 // Aguardar renderização para calcular posição
                 setTimeout(() => {
-                    const menuRect = menu.getBoundingClientRect();
+                    const buttonRect = button.getBoundingClientRect();
                     const viewportHeight = window.innerHeight;
+                    const menuHeight = 150; // Altura aproximada do menu (3 itens)
 
-                    // Se o menu ultrapassar a viewport, abrir para cima
-                    if (menuRect.bottom > viewportHeight - 20) {
+                    // Calcular espaço disponível abaixo do botão
+                    const spaceBelow = viewportHeight - buttonRect.bottom;
+
+                    // Se não houver espaço suficiente abaixo, abrir para cima
+                    if (spaceBelow < menuHeight + 20) {
                         menu.classList.add('dropdown-up');
                     }
                 }, 0);
