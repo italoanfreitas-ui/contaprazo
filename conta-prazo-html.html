@@ -2144,7 +2144,7 @@
             padding: 16px 20px;
             transition: all 0.2s;
             display: grid;
-            grid-template-columns: 32px 1fr 140px auto;
+            grid-template-columns: 32px 1fr auto;
             gap: 16px;
             align-items: center;
             cursor: default;
@@ -2154,8 +2154,36 @@
             border-bottom: none;
         }
 
-        .prazo-item:hover {
+        /* Coloração de fundo conforme status */
+        .prazo-item-atrasado {
+            background: #fef2f2;
+            border-left: 3px solid #dc2626;
+        }
+
+        .prazo-item-vencendo {
+            background: #fffbeb;
+            border-left: 3px solid #ea580c;
+        }
+
+        .prazo-item-concluido {
+            background: #f0fdf4;
+            border-left: 3px solid #16a34a;
+        }
+
+        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-concluido) {
             background: #f9fafb;
+        }
+
+        .prazo-item-atrasado:hover {
+            background: #fee2e2;
+        }
+
+        .prazo-item-vencendo:hover {
+            background: #fef3c7;
+        }
+
+        .prazo-item-concluido:hover {
+            background: #dcfce7;
         }
 
         .prazo-item:hover .prazo-acoes {
@@ -2387,13 +2415,149 @@
             color: #3b82f6;
         }
 
-        /* Botões de ação (hover) */
+        /* Contador Inline (sem caixa, apenas texto destacado) */
+        .prazo-contador-inline {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        .prazo-contador-inline.atrasado {
+            color: #dc2626;
+        }
+
+        .prazo-contador-inline.vence-hoje {
+            color: #ea580c;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .prazo-contador-inline.vencendo {
+            color: #ea580c;
+        }
+
+        .prazo-contador-inline.pendente {
+            color: #3b82f6;
+        }
+
+        .prazo-contador-inline.concluido {
+            color: #16a34a;
+        }
+
+        .prazo-contador-inline strong {
+            font-weight: 700;
+        }
+
+        /* Botões de ação (menu três pontos) */
         .prazo-acoes {
+            position: relative;
             display: flex;
-            gap: 8px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
+            align-items: center;
+        }
+
+        .prazo-menu-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: transparent;
+            color: #9ca3af;
+        }
+
+        .prazo-menu-btn:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .prazo-menu-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .prazo-menu-dropdown {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            min-width: 160px;
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .prazo-menu-dropdown.active {
+            display: block;
+            animation: menuSlideIn 0.2s ease-out;
+        }
+
+        @keyframes menuSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prazo-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            background: white;
+            width: 100%;
+            text-align: left;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+
+        .prazo-menu-item:hover {
+            background: #f9fafb;
+        }
+
+        .prazo-menu-item svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        .prazo-menu-item.menu-ver {
+            color: #3b82f6;
+        }
+
+        .prazo-menu-item.menu-ver svg {
+            stroke: #3b82f6;
+        }
+
+        .prazo-menu-item.menu-editar {
+            color: #059669;
+        }
+
+        .prazo-menu-item.menu-editar svg {
+            stroke: #059669;
+        }
+
+        .prazo-menu-item.menu-excluir {
+            color: #dc2626;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .prazo-menu-item.menu-excluir svg {
+            stroke: #dc2626;
         }
 
         .prazo-btn-acao {
@@ -2597,6 +2761,111 @@
 
         .toast-undo-btn:hover {
             background: #2563eb;
+        }
+
+        /* Toast de Sucesso */
+        .toast-sucesso {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 3000;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #16a34a;
+            max-width: 400px;
+        }
+
+        .toast-sucesso.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-sucesso-icone {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-sucesso-icone svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 3;
+        }
+
+        .toast-sucesso-conteudo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-sucesso-titulo {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 0.95rem;
+        }
+
+        .toast-sucesso-mensagem {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .toast-sucesso-acoes {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toast-sucesso-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toast-sucesso-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .toast-sucesso-fechar {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .toast-sucesso-fechar:hover {
+            background: #f3f4f6;
+            color: #1f2937;
         }
 
         /* Paginação da Agenda */
@@ -4362,13 +4631,27 @@
         }
 
         function limparResultado() {
+            // Ocultar resultado e botão limpar
             document.getElementById('resultado').style.display = 'none';
             document.getElementById('btnLimpar').style.display = 'none';
+
+            // Limpar campos do formulário
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('diasUteis').value = '';
             document.getElementById('descricaoPrazo').value = '';
+
+            // Resetar variáveis de estado
             dataInicio = null;
             dataFinal = null;
             todosOsDias = [];
             descricaoPrazo = '';
+            calculoRealizado = false; // Resetar flag de cálculo realizado
+
+            // Resetar para dias úteis (padrão)
+            usarDiasUteis = true;
+            document.getElementById('toggleTipoDias').classList.add('active');
+            document.getElementById('labelTipoDias').textContent = 'Dias Úteis';
+
             renderizarCalendario();
         }
 
@@ -6164,10 +6447,30 @@
             // Fechar modal
             fecharModalInputTitulo();
 
-            // Mostrar mensagem de sucesso
-            alert('✅ Prazo salvo na agenda com sucesso!');
+            // Mostrar toast de sucesso (sem redirecionar automaticamente)
+            mostrarToastSucesso();
+        }
 
-            // Trocar para a aba da agenda
+        // Mostrar toast de sucesso
+        function mostrarToastSucesso() {
+            const toast = document.getElementById('toastSucesso');
+            toast.classList.add('active');
+
+            // Auto-fechar após 5 segundos
+            setTimeout(() => {
+                fecharToastSucesso();
+            }, 5000);
+        }
+
+        // Fechar toast de sucesso
+        function fecharToastSucesso() {
+            const toast = document.getElementById('toastSucesso');
+            toast.classList.remove('active');
+        }
+
+        // Ir para a agenda (ao clicar no botão "Ver" do toast)
+        function irParaAgenda() {
+            fecharToastSucesso();
             trocarPagina('agenda');
         }
 
@@ -6282,7 +6585,16 @@
             const status = prazo.status === 'concluido' ? 'concluido' : prazo.statusCalculado;
             const diasRestantes = calcularDiasRestantes(prazo);
             const checked = prazo.status === 'concluido' ? 'checked' : '';
-            const classConcluido = prazo.status === 'concluido' ? 'concluido' : '';
+
+            // Classe de coloração de fundo conforme status
+            let classeFundo = '';
+            if (status === 'atrasado') {
+                classeFundo = 'prazo-item-atrasado';
+            } else if (status === 'vencendo') {
+                classeFundo = 'prazo-item-vencendo';
+            } else if (status === 'concluido') {
+                classeFundo = 'prazo-item-concluido';
+            }
 
             // Badge de status - discreto
             let badgeHTML = '';
@@ -6296,38 +6608,23 @@
                 badgeHTML = '<span class="prazo-badge badge-concluido">Concluído</span>';
             }
 
-            // Contador regressivo - discreto mas claro
-            let contadorHTML = '';
+            // Contador inline (Opção A) - sem caixa, apenas texto destacado
+            let contadorInline = '';
             if (prazo.status === 'concluido') {
                 const dataConc = prazo.dataConclusao ? new Date(prazo.dataConclusao).toLocaleDateString('pt-BR') : '';
-                contadorHTML = `
-                    <div class="prazo-contador">
-                        <div class="contador-numero">✓</div>
-                        <div class="contador-label">Concluído<br>${dataConc}</div>
-                    </div>
-                `;
+                contadorInline = `<span class="prazo-contador-inline concluido">• Concluído em ${dataConc}</span>`;
             } else {
-                const classContador = status === 'atrasado' ? 'contador-atrasado' :
-                                      status === 'vencendo' ? 'contador-vencendo' : 'contador-pendente';
-                let labelContador = '';
-                let prefixo = '';
-
                 if (diasRestantes.atrasado) {
-                    prefixo = '-';
-                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    // Atrasado: mostrar negativo em vermelho
+                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
                 } else if (diasRestantes.hoje) {
-                    labelContador = 'Vence hoje!';
+                    // Vence hoje: texto chamativo
+                    contadorInline = `<span class="prazo-contador-inline vence-hoje">• <strong>VENCE HOJE</strong></span>`;
                 } else {
-                    prefixo = '';
-                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    // Pendente ou vencendo: mostrar positivo
+                    const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
+                    contadorInline = `<span class="prazo-contador-inline ${classe}">• Faltam <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
                 }
-
-                contadorHTML = `
-                    <div class="prazo-contador ${classContador}">
-                        <div class="contador-numero">${prefixo}${diasRestantes.numero}</div>
-                        <div class="contador-label">${labelContador}</div>
-                    </div>
-                `;
             }
 
             // Formatações
@@ -6339,7 +6636,7 @@
                 `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
 
             return `
-                <div class="prazo-item ${classConcluido}" data-id="${prazo.id}">
+                <div class="prazo-item ${classeFundo}" data-id="${prazo.id}">
                     <div class="prazo-checkbox-wrapper">
                         <div class="prazo-checkbox ${checked}" onclick="toggleConcluido('${prazo.id}')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -6365,38 +6662,81 @@
                             </div>
                         </div>
                         <div class="prazo-info-secundaria">
-                            <div class="prazo-info-secundaria-item">
+                            <span class="prazo-info-secundaria-item">
                                 ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}
-                            </div>
-                            <div class="prazo-info-secundaria-item">
+                            </span>
+                            <span class="prazo-info-secundaria-item">
                                 • Início: ${dataInicioFormatada}
-                            </div>
+                            </span>
+                            ${contadorInline}
                         </div>
                     </div>
-                    ${contadorHTML}
                     <div class="prazo-acoes">
-                        <button class="prazo-btn-acao prazo-btn-ver" onclick="abrirDetalhes('${prazo.id}')" title="Ver detalhes">
+                        <button class="prazo-menu-btn" onclick="toggleMenuPrazo(event, '${prazo.id}')" title="Ações">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="12" cy="5" r="1"></circle>
+                                <circle cx="12" cy="19" r="1"></circle>
                             </svg>
                         </button>
-                        <button class="prazo-btn-acao prazo-btn-editar" onclick="abrirEdicao('${prazo.id}')" title="Editar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                        </button>
-                        <button class="prazo-btn-acao prazo-btn-excluir" onclick="excluirPrazo('${prazo.id}')" title="Excluir">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
+                        <div class="prazo-menu-dropdown" id="menu-${prazo.id}">
+                            <button class="prazo-menu-item menu-ver" onclick="abrirDetalhes('${prazo.id}'); fecharMenusPrazo();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Ver Detalhes
+                            </button>
+                            <button class="prazo-menu-item menu-editar" onclick="abrirEdicao('${prazo.id}'); fecharMenusPrazo();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Editar
+                            </button>
+                            <button class="prazo-menu-item menu-excluir" onclick="excluirPrazo('${prazo.id}'); fecharMenusPrazo();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Excluir
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
         }
+
+        // Toggle menu de ações do prazo
+        function toggleMenuPrazo(event, id) {
+            event.stopPropagation();
+            const menu = document.getElementById(`menu-${id}`);
+            const todosMenus = document.querySelectorAll('.prazo-menu-dropdown');
+
+            // Fechar outros menus
+            todosMenus.forEach(m => {
+                if (m !== menu) {
+                    m.classList.remove('active');
+                }
+            });
+
+            // Toggle menu atual
+            menu.classList.toggle('active');
+        }
+
+        // Fechar todos os menus de prazo
+        function fecharMenusPrazo() {
+            document.querySelectorAll('.prazo-menu-dropdown').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        }
+
+        // Fechar menus ao clicar fora
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.prazo-acoes')) {
+                fecharMenusPrazo();
+            }
+        });
 
         // Atualizar badges dos filtros
         function atualizarBadgesFiltros() {
@@ -6657,8 +6997,9 @@
         // Editar prazo do modal de detalhes
         function editarPrazoModal() {
             if (prazoEmEdicao) {
+                const id = prazoEmEdicao; // Salvar ID antes de fechar
                 fecharModalDetalhes();
-                abrirEdicao(prazoEmEdicao);
+                abrirEdicao(id); // Usar ID salvo
             }
         }
 
@@ -6707,8 +7048,9 @@
         // Excluir prazo do modal
         function excluirPrazoModal() {
             if (prazoEmEdicao) {
+                const id = prazoEmEdicao; // Salvar ID antes de fechar
                 fecharModalDetalhes();
-                excluirPrazo(prazoEmEdicao);
+                excluirPrazo(id); // Usar ID salvo
             }
         }
 
@@ -7449,6 +7791,33 @@
 
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
+
+    <!-- Toast de Sucesso ao Salvar Prazo -->
+    <div id="toastSucesso" class="toast-sucesso">
+        <div class="toast-sucesso-icone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="toast-sucesso-conteudo">
+            <div class="toast-sucesso-titulo">Prazo salvo com sucesso!</div>
+            <div class="toast-sucesso-mensagem">O prazo foi adicionado à sua agenda.</div>
+        </div>
+        <div class="toast-sucesso-acoes">
+            <button class="toast-sucesso-btn" onclick="irParaAgenda()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+                Ver
+            </button>
+            <button class="toast-sucesso-fechar" onclick="fecharToastSucesso()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
 
 </body>
 </html>
