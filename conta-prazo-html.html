@@ -4064,12 +4064,15 @@
         // VARIÁVEIS DA AGENDA DE PRAZOS
         // ========================================
         let prazos = []; // Array de prazos salvos
+        let prazosArquivados = []; // Array de prazos arquivados
+        let modoVisualizacao = 'ativos'; // 'ativos' ou 'arquivados'
         let filtroAtual = 'todos'; // Filtro ativo
         let prazoEmEdicao = null; // ID do prazo sendo editado
         let undoState = null; // Estado para desfazer ações
         let undoTimeout = null; // Timeout para limpar undo
         let paginaAtual = 1; // Página atual na lista
         const ITENS_POR_PAGINA = 20; // Limite de itens por página
+        const DIAS_PARA_ARQUIVAR = 90; // Dias após conclusão para arquivar automaticamente
 
         // ========================================
         // CONSTANTES
