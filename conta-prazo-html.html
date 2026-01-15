@@ -6182,6 +6182,7 @@
         function renderizarPrazos() {
             const container = document.getElementById('agendaLista');
             const vazio = document.getElementById('agendaVazia');
+            const paginacao = document.getElementById('agendaPaginacao');
 
             // Filtrar prazos
             let prazosFiltrados = prazos.filter(prazo => {
@@ -6206,13 +6207,73 @@
             // Atualizar badges de contadores
             atualizarBadgesFiltros();
 
+            // Calcular paginação
+            const totalItens = prazosFiltrados.length;
+            const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
+
+            // Ajustar página atual se estiver fora do limite
+            if (paginaAtual > totalPaginas && totalPaginas > 0) {
+                paginaAtual = totalPaginas;
+            }
+            if (paginaAtual < 1) {
+                paginaAtual = 1;
+            }
+
             // Renderizar
-            if (prazosFiltrados.length === 0) {
+            if (totalItens === 0) {
                 container.innerHTML = '';
                 vazio.style.display = 'block';
+                paginacao.style.display = 'none';
             } else {
                 vazio.style.display = 'none';
-                container.innerHTML = prazosFiltrados.map(prazo => renderizarItemPrazo(prazo)).join('');
+
+                // Mostrar paginação apenas se houver mais de ITENS_POR_PAGINA itens
+                if (totalItens > ITENS_POR_PAGINA) {
+                    paginacao.style.display = 'flex';
+
+                    // Calcular início e fim da página atual
+                    const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+                    const fim = inicio + ITENS_POR_PAGINA;
+                    const prazosNaPagina = prazosFiltrados.slice(inicio, fim);
+
+                    // Atualizar informações da paginação
+                    document.getElementById('paginacaoMostrando').textContent =
+                        `${inicio + 1}-${Math.min(fim, totalItens)}`;
+                    document.getElementById('paginacaoTotal').textContent = totalItens;
+                    document.getElementById('paginacaoNumero').textContent = paginaAtual;
+                    document.getElementById('paginacaoPaginas').textContent = totalPaginas;
+
+                    // Habilitar/desabilitar botões de navegação
+                    const btnAnterior = document.getElementById('btnPaginaAnterior');
+                    const btnProxima = document.getElementById('btnProximaPagina');
+
+                    if (paginaAtual <= 1) {
+                        btnAnterior.disabled = true;
+                        btnAnterior.style.opacity = '0.5';
+                        btnAnterior.style.cursor = 'not-allowed';
+                    } else {
+                        btnAnterior.disabled = false;
+                        btnAnterior.style.opacity = '1';
+                        btnAnterior.style.cursor = 'pointer';
+                    }
+
+                    if (paginaAtual >= totalPaginas) {
+                        btnProxima.disabled = true;
+                        btnProxima.style.opacity = '0.5';
+                        btnProxima.style.cursor = 'not-allowed';
+                    } else {
+                        btnProxima.disabled = false;
+                        btnProxima.style.opacity = '1';
+                        btnProxima.style.cursor = 'pointer';
+                    }
+
+                    // Renderizar apenas os itens da página atual
+                    container.innerHTML = prazosNaPagina.map(prazo => renderizarItemPrazo(prazo)).join('');
+                } else {
+                    // Menos de ITENS_POR_PAGINA itens - ocultar paginação
+                    paginacao.style.display = 'none';
+                    container.innerHTML = prazosFiltrados.map(prazo => renderizarItemPrazo(prazo)).join('');
+                }
             }
         }
 
@@ -6223,7 +6284,7 @@
             const checked = prazo.status === 'concluido' ? 'checked' : '';
             const classConcluido = prazo.status === 'concluido' ? 'concluido' : '';
 
-            // Badge de status
+            // Badge de status - discreto
             let badgeHTML = '';
             if (status === 'atrasado') {
                 badgeHTML = '<span class="prazo-badge badge-atrasado">Atrasado</span>';
@@ -6235,40 +6296,47 @@
                 badgeHTML = '<span class="prazo-badge badge-concluido">Concluído</span>';
             }
 
-            // Contador regressivo
+            // Contador regressivo - discreto mas claro
             let contadorHTML = '';
             if (prazo.status === 'concluido') {
                 const dataConc = prazo.dataConclusao ? new Date(prazo.dataConclusao).toLocaleDateString('pt-BR') : '';
                 contadorHTML = `
                     <div class="prazo-contador">
                         <div class="contador-numero">✓</div>
-                        <div class="contador-label">Concluído${dataConc ? '<br>' + dataConc : ''}</div>
+                        <div class="contador-label">Concluído<br>${dataConc}</div>
                     </div>
                 `;
             } else {
                 const classContador = status === 'atrasado' ? 'contador-atrasado' :
                                       status === 'vencendo' ? 'contador-vencendo' : 'contador-pendente';
                 let labelContador = '';
+                let prefixo = '';
 
                 if (diasRestantes.atrasado) {
-                    labelContador = `${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'} atrasado${diasRestantes.numero > 1 ? 's' : ''}`;
+                    prefixo = '-';
+                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
                 } else if (diasRestantes.hoje) {
                     labelContador = 'Vence hoje!';
                 } else {
-                    labelContador = `${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    prefixo = '';
+                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
                 }
 
                 contadorHTML = `
                     <div class="prazo-contador ${classContador}">
-                        <div class="contador-numero">${diasRestantes.atrasado ? '-' : ''}${diasRestantes.numero}</div>
+                        <div class="contador-numero">${prefixo}${diasRestantes.numero}</div>
                         <div class="contador-label">${labelContador}</div>
                     </div>
                 `;
             }
 
-            // Data de início discreta
+            // Formatações
             const dataInicioFormatada = new Date(prazo.dataInicio).toLocaleDateString('pt-BR');
             const dataFinalFormatada = new Date(prazo.dataFinal).toLocaleDateString('pt-BR');
+
+            // Descrição (opcional)
+            const descricaoHTML = prazo.descricao ?
+                `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
 
             return `
                 <div class="prazo-item ${classConcluido}" data-id="${prazo.id}">
@@ -6284,25 +6352,24 @@
                             <h3 class="prazo-titulo">${prazo.titulo}</h3>
                             ${badgeHTML}
                         </div>
-                        <div class="prazo-info">
-                            <div class="prazo-info-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span><strong>Prazo final:</strong> ${dataFinalFormatada}</span>
+                        ${descricaoHTML}
+                        <div class="prazo-data-final-destaque">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <div class="prazo-data-final-texto">
+                                Prazo final: <strong>${dataFinalFormatada}</strong>
                             </div>
-                            <div class="prazo-info-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                <span><strong>Tipo:</strong> ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}</span>
+                        </div>
+                        <div class="prazo-info-secundaria">
+                            <div class="prazo-info-secundaria-item">
+                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}
                             </div>
-                            <div class="prazo-info-item prazo-data-inicio">
-                                <span>Início: ${dataInicioFormatada}</span>
+                            <div class="prazo-info-secundaria-item">
+                                • Início: ${dataInicioFormatada}
                             </div>
                         </div>
                     </div>
@@ -6368,7 +6435,17 @@
                 }
             });
 
+            // Resetar para primeira página ao mudar filtro
+            paginaAtual = 1;
             renderizarPrazos();
+        }
+
+        // Mudar página da lista
+        function mudarPagina(novaPagina) {
+            paginaAtual = novaPagina;
+            renderizarPrazos();
+            // Scroll suave para o topo da lista
+            document.getElementById('agendaLista').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // Toggle concluído
