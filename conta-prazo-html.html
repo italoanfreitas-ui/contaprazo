@@ -2784,111 +2784,6 @@
             background: #2563eb;
         }
 
-        /* Toast de Sucesso */
-        .toast-sucesso {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: white;
-            padding: 20px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 3000;
-            opacity: 0;
-            transform: translateX(400px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid #16a34a;
-            max-width: 400px;
-        }
-
-        .toast-sucesso.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .toast-sucesso-icone {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .toast-sucesso-icone svg {
-            width: 24px;
-            height: 24px;
-            stroke: white;
-            stroke-width: 3;
-        }
-
-        .toast-sucesso-conteudo {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast-sucesso-titulo {
-            font-weight: 700;
-            color: #1f2937;
-            font-size: 0.95rem;
-        }
-
-        .toast-sucesso-mensagem {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .toast-sucesso-acoes {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .toast-sucesso-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .toast-sucesso-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .toast-sucesso-fechar {
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .toast-sucesso-fechar:hover {
-            background: #f3f4f6;
-            color: #1f2937;
-        }
-
         /* Paginação da Agenda */
         .agenda-paginacao {
             display: flex;
@@ -6468,31 +6363,65 @@
             // Fechar modal
             fecharModalInputTitulo();
 
-            // Mostrar toast de sucesso (sem redirecionar automaticamente)
-            mostrarToastSucesso();
+            // Mostrar banner de sucesso (sem redirecionar automaticamente)
+            mostrarBannerPrazoSalvo();
         }
 
-        // Mostrar toast de sucesso
-        function mostrarToastSucesso() {
-            const toast = document.getElementById('toastSucesso');
-            toast.classList.add('active');
+        // Mostrar banner de prazo salvo
+        let bannerPrazoSalvoTimeout;
+        function mostrarBannerPrazoSalvo() {
+            const banner = document.getElementById('bannerPrazoSalvo');
+            banner.classList.add('active');
 
-            // Auto-fechar após 5 segundos
-            setTimeout(() => {
-                fecharToastSucesso();
+            // Limpar timeout anterior se existir
+            if (bannerPrazoSalvoTimeout) {
+                clearTimeout(bannerPrazoSalvoTimeout);
+            }
+
+            // Auto-fechar após 5 segundos (com pausa no hover)
+            bannerPrazoSalvoTimeout = setTimeout(() => {
+                fecharBannerPrazoSalvo();
+            }, 5000);
+
+            // Pausar countdown no hover
+            banner.addEventListener('mouseenter', pausarBannerPrazoSalvo);
+            banner.addEventListener('mouseleave', retomarBannerPrazoSalvo);
+        }
+
+        // Pausar auto-fechamento do banner
+        function pausarBannerPrazoSalvo() {
+            if (bannerPrazoSalvoTimeout) {
+                clearTimeout(bannerPrazoSalvoTimeout);
+            }
+        }
+
+        // Retomar auto-fechamento do banner
+        function retomarBannerPrazoSalvo() {
+            bannerPrazoSalvoTimeout = setTimeout(() => {
+                fecharBannerPrazoSalvo();
             }, 5000);
         }
 
-        // Fechar toast de sucesso
-        function fecharToastSucesso() {
-            const toast = document.getElementById('toastSucesso');
-            toast.classList.remove('active');
+        // Fechar banner de prazo salvo
+        function fecharBannerPrazoSalvo() {
+            const banner = document.getElementById('bannerPrazoSalvo');
+            banner.classList.add('hiding');
+
+            setTimeout(() => {
+                banner.classList.remove('active', 'hiding');
+            }, 400);
+
+            // Remover event listeners
+            banner.removeEventListener('mouseenter', pausarBannerPrazoSalvo);
+            banner.removeEventListener('mouseleave', retomarBannerPrazoSalvo);
         }
 
-        // Ir para a agenda (ao clicar no botão "Ver" do toast)
+        // Ir para a agenda (ao clicar no botão "Ver Agenda")
         function irParaAgenda() {
-            fecharToastSucesso();
+            fecharBannerPrazoSalvo();
             trocarPagina('agenda');
+            // Scroll para o topo da página
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Carregar e renderizar agenda
@@ -7846,30 +7775,22 @@
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
-    <!-- Toast de Sucesso ao Salvar Prazo -->
-    <div id="toastSucesso" class="toast-sucesso">
-        <div class="toast-sucesso-icone">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
-        <div class="toast-sucesso-conteudo">
-            <div class="toast-sucesso-titulo">Prazo salvo com sucesso!</div>
-            <div class="toast-sucesso-mensagem">O prazo foi adicionado à sua agenda.</div>
-        </div>
-        <div class="toast-sucesso-acoes">
-            <button class="toast-sucesso-btn" onclick="irParaAgenda()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 18l6-6-6-6"></path>
-                </svg>
-                Ver
-            </button>
-            <button class="toast-sucesso-fechar" onclick="fecharToastSucesso()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+    <!-- Banner de Notificação de Prazo Salvo -->
+    <div id="bannerPrazoSalvo" class="update-banner">
+        <div class="update-banner-content">
+            <div class="update-banner-icon">✅</div>
+            <div class="update-banner-text">
+                <div class="update-banner-title">Prazo salvo com sucesso!</div>
+                <div class="update-banner-description">O prazo foi adicionado à sua agenda.</div>
+            </div>
+            <div class="update-banner-actions">
+                <button class="update-banner-btn update-banner-btn-primary" onclick="irParaAgenda()">
+                    Ver Agenda
+                </button>
+                <button class="update-banner-btn update-banner-btn-secondary" onclick="fecharBannerPrazoSalvo()">
+                    OK
+                </button>
+            </div>
         </div>
     </div>
 
