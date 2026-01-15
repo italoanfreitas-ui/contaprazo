@@ -2368,17 +2368,12 @@
         .prazo-info-secundaria-item {
             display: inline-flex;
             align-items: center;
-            padding: 0 8px;
             gap: 4px;
-        }
-
-        .prazo-info-secundaria-item:first-child {
-            padding-left: 0;
         }
 
         .prazo-info-secundaria-separador {
             color: #d1d5db;
-            padding: 0 8px;
+            margin: 0 8px;
             user-select: none;
         }
 
@@ -2744,6 +2739,45 @@
             bottom: 0;
             background: white;
             border-radius: 0 0 16px 16px;
+        }
+
+        .modal-fechar {
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-fechar:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .opcao-arquivamento {
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opcao-arquivamento:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .opcao-arquivamento.opcao-perigo:hover {
+            border-color: #dc2626;
+            background: #fef2f2;
         }
 
         /* Toast de Undo */
@@ -6218,7 +6252,43 @@
                 localStorage.setItem('agendaPrazos', JSON.stringify(prazos));
             } catch (error) {
                 console.error('Erro ao salvar prazos:', error);
-                alert('Erro ao salvar prazos no armazenamento local. Verifique o espaço disponível.');
+                mostrarNotificacao('Erro ao salvar prazos. Verifique o espaço disponível.', 'erro');
+            }
+        }
+
+        // Carregar prazos arquivados do localStorage
+        function carregarArquivadosStorage() {
+            const arquivadosStorage = localStorage.getItem('agendaPrazosArquivados');
+            if (arquivadosStorage) {
+                try {
+                    prazosArquivados = JSON.parse(arquivadosStorage);
+                    // Converter strings de data de volta para objetos Date
+                    prazosArquivados = prazosArquivados.map(prazo => ({
+                        ...prazo,
+                        dataInicio: new Date(prazo.dataInicio),
+                        dataFinal: new Date(prazo.dataFinal),
+                        dataCriacao: new Date(prazo.dataCriacao),
+                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                        dataArquivamento: prazo.dataArquivamento ? new Date(prazo.dataArquivamento) : null,
+                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
+                            ...dia,
+                            data: new Date(dia.data)
+                        }))
+                    }));
+                } catch (error) {
+                    console.error('Erro ao carregar arquivados:', error);
+                    prazosArquivados = [];
+                }
+            }
+        }
+
+        // Salvar prazos arquivados no localStorage
+        function salvarArquivadosStorage() {
+            try {
+                localStorage.setItem('agendaPrazosArquivados', JSON.stringify(prazosArquivados));
+            } catch (error) {
+                console.error('Erro ao salvar arquivados:', error);
+                mostrarNotificacao('Erro ao salvar arquivados. Verifique o espaço disponível.', 'erro');
             }
         }
 
@@ -6431,6 +6501,88 @@
             trocarPagina('agenda');
             // Scroll para o topo da página
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Sistema de notificações genérico
+        let notificacaoTimeout;
+        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
+            const banner = document.getElementById('bannerNotificacao');
+            const titulo = document.getElementById('notificacaoTitulo');
+            const descricao = document.getElementById('notificacaoDescricao');
+            const icone = document.getElementById('notificacaoIcone');
+            const btnPrimario = document.getElementById('notificacaoBtnPrimario');
+            const btnSecundario = document.getElementById('notificacaoBtnSecundario');
+
+            // Configurar conteúdo
+            if (tipo === 'sucesso') {
+                titulo.textContent = 'Sucesso!';
+                icone.textContent = '✅';
+            } else if (tipo === 'erro') {
+                titulo.textContent = 'Erro';
+                icone.textContent = '❌';
+            } else if (tipo === 'aviso') {
+                titulo.textContent = 'Atenção';
+                icone.textContent = '⚠️';
+            } else if (tipo === 'info') {
+                titulo.textContent = 'Informação';
+                icone.textContent = 'ℹ️';
+            }
+
+            descricao.textContent = mensagem;
+
+            // Configurar botões
+            if (botaoTexto && botaoCallback) {
+                btnPrimario.textContent = botaoTexto;
+                btnPrimario.style.display = 'inline-flex';
+                btnPrimario.onclick = () => {
+                    botaoCallback();
+                    fecharNotificacao();
+                };
+            } else {
+                btnPrimario.style.display = 'none';
+            }
+
+            // Mostrar banner
+            banner.classList.add('active');
+
+            // Limpar timeout anterior
+            if (notificacaoTimeout) {
+                clearTimeout(notificacaoTimeout);
+            }
+
+            // Auto-fechar após 5 segundos (com pausa no hover)
+            notificacaoTimeout = setTimeout(() => {
+                fecharNotificacao();
+            }, 5000);
+
+            // Pausar countdown no hover
+            banner.addEventListener('mouseenter', pausarNotificacao);
+            banner.addEventListener('mouseleave', retomarNotificacao);
+        }
+
+        function pausarNotificacao() {
+            if (notificacaoTimeout) {
+                clearTimeout(notificacaoTimeout);
+            }
+        }
+
+        function retomarNotificacao() {
+            notificacaoTimeout = setTimeout(() => {
+                fecharNotificacao();
+            }, 5000);
+        }
+
+        function fecharNotificacao() {
+            const banner = document.getElementById('bannerNotificacao');
+            banner.classList.add('hiding');
+
+            setTimeout(() => {
+                banner.classList.remove('active', 'hiding');
+            }, 400);
+
+            // Remover event listeners
+            banner.removeEventListener('mouseenter', pausarNotificacao);
+            banner.removeEventListener('mouseleave', retomarNotificacao);
         }
 
         // Carregar e renderizar agenda
@@ -7805,6 +7957,81 @@
                 <button class="update-banner-btn update-banner-btn-secondary" onclick="fecharBannerPrazoSalvo()">
                     OK
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner de Notificação Genérico -->
+    <div id="bannerNotificacao" class="update-banner">
+        <div class="update-banner-content">
+            <div class="update-banner-icon" id="notificacaoIcone">✅</div>
+            <div class="update-banner-text">
+                <div class="update-banner-title" id="notificacaoTitulo">Sucesso!</div>
+                <div class="update-banner-description" id="notificacaoDescricao">Operação realizada com sucesso.</div>
+            </div>
+            <div class="update-banner-actions">
+                <button class="update-banner-btn update-banner-btn-primary" id="notificacaoBtnPrimario" style="display:none;">
+                    Ação
+                </button>
+                <button class="update-banner-btn update-banner-btn-secondary" id="notificacaoBtnSecundario" onclick="fecharNotificacao()">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Arquivamento -->
+    <div id="modalArquivamento" class="modal-detalhes">
+        <div class="modal-detalhes-content" style="max-width: 600px;">
+            <div class="modal-detalhes-header">
+                <h2>Arquivar Prazos Concluídos</h2>
+                <button class="modal-fechar" onclick="fecharModalArquivamento()">×</button>
+            </div>
+            <div class="modal-detalhes-body">
+                <p style="margin-bottom: 20px; color: #6b7280;">
+                    Escolha como deseja gerenciar os prazos concluídos:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="opcao-arquivamento" onclick="arquivarAntigos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">📦</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Arquivar antigos (>90 dias)
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Move prazos concluídos há mais de 90 dias para o arquivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opcao-arquivamento" onclick="arquivarTodos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">📁</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Arquivar todos os concluídos
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Move TODOS os prazos concluídos para o arquivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opcao-arquivamento opcao-perigo" onclick="excluirTodosConcluidos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">🗑️</div>
+                            <div>
+                                <div style="font-weight: 600; color: #dc2626; margin-bottom: 4px;">
+                                    Excluir definitivamente
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Remove permanentemente todos os prazos concluídos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
