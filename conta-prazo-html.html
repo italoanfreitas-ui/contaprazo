@@ -2127,30 +2127,35 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Lista de Prazos Moderna */
+        /* Lista de Prazos Linear */
         .agenda-lista {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
         }
 
         .prazo-item {
             background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            transition: all 0.2s;
             display: grid;
-            grid-template-columns: 40px 1fr auto;
-            gap: 20px;
+            grid-template-columns: 32px 1fr 140px auto;
+            gap: 16px;
             align-items: center;
             cursor: default;
         }
 
+        .prazo-item:last-child {
+            border-bottom: none;
+        }
+
         .prazo-item:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
+            background: #f9fafb;
         }
 
         .prazo-item:hover .prazo-acoes {
@@ -2159,13 +2164,13 @@
         }
 
         .prazo-item.concluido {
-            opacity: 0.7;
-            border-color: #d1d5db;
-            background: #f9fafb;
+            opacity: 0.65;
+            background: #fafafa;
         }
 
         .prazo-item.concluido:hover {
-            opacity: 0.85;
+            opacity: 0.8;
+            background: #f5f5f5;
         }
 
         /* Checkbox customizado */
@@ -2176,10 +2181,10 @@
         }
 
         .prazo-checkbox {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border: 2px solid #d1d5db;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -2204,8 +2209,8 @@
 
         .prazo-checkbox svg {
             display: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             stroke: white;
             stroke-width: 3;
         }
@@ -2214,23 +2219,23 @@
         .prazo-conteudo {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             min-width: 0;
         }
 
         .prazo-header {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 10px;
         }
 
         .prazo-titulo {
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            color: #1f2937;
+            color: #111827;
             margin: 0;
             word-break: break-word;
+            flex: 1;
         }
 
         .prazo-item.concluido .prazo-titulo {
@@ -2238,15 +2243,57 @@
             color: #9ca3af;
         }
 
-        /* Badges de Status */
+        .prazo-descricao {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.4;
+            margin: 2px 0 0 0;
+            word-break: break-word;
+        }
+
+        .prazo-item.concluido .prazo-descricao {
+            color: #9ca3af;
+        }
+
+        /* Data Final - Destaque Principal */
+        .prazo-data-final-destaque {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
+            border-left: 3px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        .prazo-data-final-destaque svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            stroke: #3b82f6;
+        }
+
+        .prazo-data-final-texto {
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .prazo-data-final-texto strong {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        /* Badges de Status - Discreto */
         .prazo-badge {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
             font-weight: 600;
             white-space: nowrap;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .badge-atrasado {
@@ -2270,55 +2317,54 @@
         }
 
         /* Informações secundárias */
-        .prazo-info {
+        .prazo-info-secundaria {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            font-size: 0.875rem;
-            color: #6b7280;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 4px;
         }
 
-        .prazo-info-item {
+        .prazo-info-secundaria-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .prazo-info-item svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-
-        .prazo-info-item strong {
-            color: #374151;
-        }
-
-        .prazo-data-inicio {
-            color: #9ca3af;
-            font-size: 0.8rem;
-        }
-
-        /* Contador Regressivo */
+        /* Contador Regressivo - Discreto mas Claro */
         .prazo-contador {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 4px;
+            justify-content: center;
+            gap: 2px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            min-width: 140px;
         }
 
         .contador-numero {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: #1f2937;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
             line-height: 1;
         }
 
         .contador-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #6b7280;
             font-weight: 500;
             text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .prazo-item.concluido .prazo-contador {
+            background: transparent;
+            border-color: transparent;
         }
 
         .prazo-item.concluido .contador-numero,
@@ -2551,6 +2597,172 @@
 
         .toast-undo-btn:hover {
             background: #2563eb;
+        }
+
+        /* Paginação da Agenda */
+        .agenda-paginacao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .paginacao-info {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .paginacao-info strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .paginacao-controles {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .paginacao-btn {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .paginacao-btn:hover:not(:disabled) {
+            background: #f9fafb;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .paginacao-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .paginacao-numero {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .paginacao-numero.ativa {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* Botões de Gerenciamento da Agenda */
+        .agenda-acoes-gerenciamento {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Modal de Input de Título */
+        .modal-input-titulo {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-input-titulo.active {
+            display: flex;
+        }
+
+        .modal-input-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        .modal-input-header {
+            padding: 24px 30px 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-input-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-input-body {
+            padding: 25px 30px;
+        }
+
+        .modal-input-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .modal-input-group input,
+        .modal-input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .modal-input-group input:focus,
+        .modal-input-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .modal-input-footer {
+            padding: 20px 30px;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
 
         /* Responsividade Mobile */
@@ -3420,32 +3632,28 @@
                     </button>
                 </div>
 
-                <!-- Botões de gerenciamento -->
-                <div class="btn-group" style="margin-bottom: 25px;">
-                    <button class="btn btn-success" onclick="exportarAgendaJSON()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Exportar Agenda
-                    </button>
-                    <button class="btn btn-primary" onclick="importarAgendaJSON()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        Importar Agenda
-                    </button>
-                    <button class="btn btn-secondary" onclick="arquivarConcluidos()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                            <rect x="1" y="3" width="22" height="5"></rect>
-                            <line x1="10" y1="12" x2="14" y2="12"></line>
-                        </svg>
-                        Arquivar Concluídos
-                    </button>
+                <!-- Paginação -->
+                <div id="agendaPaginacao" class="agenda-paginacao" style="display: none;">
+                    <div class="paginacao-info">
+                        Mostrando <strong id="paginacaoMostrando">0</strong> de <strong id="paginacaoTotal">0</strong> prazos
+                    </div>
+                    <div class="paginacao-controles">
+                        <button class="paginacao-btn" id="btnPaginaAnterior" onclick="mudarPagina(paginaAtual - 1)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                            Anterior
+                        </button>
+                        <div class="paginacao-numero">
+                            Página <strong id="paginacaoNumero">1</strong> de <strong id="paginacaoPaginas">1</strong>
+                        </div>
+                        <button class="paginacao-btn" id="btnProximaPagina" onclick="mudarPagina(paginaAtual + 1)">
+                            Próxima
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Lista de Prazos -->
@@ -3463,6 +3671,36 @@
                     </svg>
                     <h3>Nenhum prazo encontrado</h3>
                     <p>Calcule prazos na aba "Calculadora" e salve-os na agenda.</p>
+                </div>
+
+                <!-- Botões de gerenciamento ao final -->
+                <div class="agenda-acoes-gerenciamento">
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="exportarAgendaJSON()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Exportar Agenda
+                        </button>
+                        <button class="btn btn-primary" onclick="importarAgendaJSON()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Importar Agenda
+                        </button>
+                        <button class="btn btn-secondary" onclick="arquivarConcluidos()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                <rect x="1" y="3" width="22" height="5"></rect>
+                                <line x1="10" y1="12" x2="14" y2="12"></line>
+                            </svg>
+                            Arquivar Concluídos
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3645,6 +3883,8 @@
         let prazoEmEdicao = null; // ID do prazo sendo editado
         let undoState = null; // Estado para desfazer ações
         let undoTimeout = null; // Timeout para limpar undo
+        let paginaAtual = 1; // Página atual na lista
+        const ITENS_POR_PAGINA = 20; // Limite de itens por página
 
         // ========================================
         // CONSTANTES
@@ -5863,14 +6103,41 @@
                 return;
             }
 
-            // Pedir título se não houver descrição
-            let titulo = descricaoPrazo || prompt('Digite um título para este prazo:', 'Prazo sem título');
-            if (!titulo) titulo = 'Prazo sem título';
+            // Preencher modal com descrição existente (se houver)
+            document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
+            document.getElementById('inputDescricaoPrazo').value = descricaoPrazo || '';
+
+            // Abrir modal
+            document.getElementById('modalInputTitulo').classList.add('active');
+
+            // Focar no campo de título
+            setTimeout(() => {
+                document.getElementById('inputTituloPrazo').focus();
+            }, 100);
+        }
+
+        // Fechar modal de input
+        function fecharModalInputTitulo() {
+            document.getElementById('modalInputTitulo').classList.remove('active');
+            document.getElementById('inputTituloPrazo').value = '';
+            document.getElementById('inputDescricaoPrazo').value = '';
+        }
+
+        // Confirmar e salvar prazo
+        function confirmarSalvarPrazo() {
+            const titulo = document.getElementById('inputTituloPrazo').value.trim();
+            const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
+
+            if (!titulo) {
+                alert('Por favor, digite um título para o prazo.');
+                document.getElementById('inputTituloPrazo').focus();
+                return;
+            }
 
             const novoPrazo = {
                 id: gerarId(),
                 titulo: titulo,
-                descricao: descricaoPrazo || '',
+                descricao: descricao,
                 dataInicio: new Date(dataInicio + 'T00:00:00'),
                 dataFinal: new Date(dataFinal),
                 diasSolicitados: parseInt(diasUteis),
@@ -5893,6 +6160,9 @@
 
             prazos.push(novoPrazo);
             salvarPrazosStorage();
+
+            // Fechar modal
+            fecharModalInputTitulo();
 
             // Mostrar mensagem de sucesso
             alert('✅ Prazo salvo na agenda com sucesso!');
@@ -7068,6 +7338,36 @@
     <div id="toastUndo" class="toast-undo">
         <span class="toast-undo-texto" id="toastUndoTexto">Prazo marcado como concluído</span>
         <button class="toast-undo-btn" onclick="desfazerAcao()">Desfazer</button>
+    </div>
+
+    <!-- Modal de Input de Título -->
+    <div id="modalInputTitulo" class="modal-input-titulo">
+        <div class="modal-input-content">
+            <div class="modal-input-header">
+                <h3>💾 Salvar Prazo na Agenda</h3>
+            </div>
+            <div class="modal-input-body">
+                <div class="modal-input-group">
+                    <label for="inputTituloPrazo">Título do Prazo *</label>
+                    <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+                </div>
+                <div class="modal-input-group">
+                    <label for="inputDescricaoPrazo">Descrição (opcional)</label>
+                    <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-input-footer">
+                <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Salvar na Agenda
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Input invisível para importação de arquivo -->
