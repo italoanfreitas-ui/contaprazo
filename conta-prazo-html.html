@@ -2014,6 +2014,815 @@
                 padding: 8px 12px;
             }
         }
+
+        /* ==================== MINHA AGENDA - ESTILOS ==================== */
+
+        /* Separador elegante para botão Salvar na Agenda */
+        .resultado-separador {
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .resultado-separador::before,
+        .resultado-separador::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+        }
+
+        .resultado-separador-texto {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botão Salvar na Agenda */
+        .btn-salvar-agenda {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+            width: 100%;
+        }
+
+        .btn-salvar-agenda:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-salvar-agenda:active {
+            transform: translateY(0);
+        }
+
+        .btn-salvar-agenda svg {
+            flex-shrink: 0;
+        }
+
+        /* Filtros da Agenda */
+        .agenda-filtros {
+            display: flex;
+            gap: 10px;
+            background: #f9fafb;
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filtro-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 16px;
+            border: 2px solid transparent;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #6b7280;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .filtro-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .filtro-btn.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        }
+
+        .filtro-badge {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .filtro-btn.active .filtro-badge {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Lista de Prazos Linear */
+        .agenda-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .prazo-item {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 20px;
+            transition: all 0.2s;
+            display: grid;
+            grid-template-columns: 32px 1fr 140px auto;
+            gap: 16px;
+            align-items: center;
+            cursor: default;
+        }
+
+        .prazo-item:last-child {
+            border-bottom: none;
+        }
+
+        .prazo-item:hover {
+            background: #f9fafb;
+        }
+
+        .prazo-item:hover .prazo-acoes {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .prazo-item.concluido {
+            opacity: 0.65;
+            background: #fafafa;
+        }
+
+        .prazo-item.concluido:hover {
+            opacity: 0.8;
+            background: #f5f5f5;
+        }
+
+        /* Checkbox customizado */
+        .prazo-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prazo-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #d1d5db;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .prazo-checkbox:hover {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .prazo-checkbox.checked {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+
+        .prazo-checkbox.checked svg {
+            display: block;
+        }
+
+        .prazo-checkbox svg {
+            display: none;
+            width: 14px;
+            height: 14px;
+            stroke: white;
+            stroke-width: 3;
+        }
+
+        /* Conteúdo do prazo */
+        .prazo-conteudo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .prazo-header {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .prazo-titulo {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .prazo-item.concluido .prazo-titulo {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .prazo-descricao {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.4;
+            margin: 2px 0 0 0;
+            word-break: break-word;
+        }
+
+        .prazo-item.concluido .prazo-descricao {
+            color: #9ca3af;
+        }
+
+        /* Data Final - Destaque Principal */
+        .prazo-data-final-destaque {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
+            border-left: 3px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        .prazo-data-final-destaque svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            stroke: #3b82f6;
+        }
+
+        .prazo-data-final-texto {
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .prazo-data-final-texto strong {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        /* Badges de Status - Discreto */
+        .prazo-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-atrasado {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-vencendo {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .badge-pendente {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-concluido {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Informações secundárias */
+        .prazo-info-secundaria {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .prazo-info-secundaria-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Contador Regressivo - Discreto mas Claro */
+        .prazo-contador {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            min-width: 140px;
+        }
+
+        .contador-numero {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            line-height: 1;
+        }
+
+        .contador-label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .prazo-item.concluido .prazo-contador {
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .prazo-item.concluido .contador-numero,
+        .prazo-item.concluido .contador-label {
+            color: #9ca3af;
+        }
+
+        /* Atrasado - vermelho */
+        .contador-atrasado .contador-numero {
+            color: #dc2626;
+        }
+
+        /* Vencendo - laranja */
+        .contador-vencendo .contador-numero {
+            color: #ea580c;
+        }
+
+        /* Pendente - azul */
+        .contador-pendente .contador-numero {
+            color: #3b82f6;
+        }
+
+        /* Botões de ação (hover) */
+        .prazo-acoes {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .prazo-btn-acao {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .prazo-btn-acao:hover {
+            transform: scale(1.1);
+        }
+
+        .prazo-btn-acao svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .prazo-btn-ver:hover {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .prazo-btn-editar:hover {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .prazo-btn-excluir:hover {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Estado vazio */
+        .agenda-vazia {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .agenda-vazia svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .agenda-vazia h3 {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .agenda-vazia p {
+            font-size: 0.95rem;
+            color: #9ca3af;
+        }
+
+        /* Modal de Detalhes */
+        .modal-detalhes {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-detalhes.active {
+            display: flex;
+        }
+
+        .modal-detalhes-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-detalhes-header {
+            padding: 24px 30px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-detalhes-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-detalhes-fechar {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #6b7280;
+        }
+
+        .modal-detalhes-fechar:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .modal-detalhes-body {
+            padding: 30px;
+        }
+
+        .modal-detalhes-acoes {
+            padding: 20px 30px;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* Toast de Undo */
+        .toast-undo {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f2937;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toast-undo.active {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-undo-texto {
+            font-size: 0.95rem;
+        }
+
+        .toast-undo-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .toast-undo-btn:hover {
+            background: #2563eb;
+        }
+
+        /* Paginação da Agenda */
+        .agenda-paginacao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .paginacao-info {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .paginacao-info strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .paginacao-controles {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .paginacao-btn {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .paginacao-btn:hover:not(:disabled) {
+            background: #f9fafb;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .paginacao-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .paginacao-numero {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .paginacao-numero.ativa {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* Botões de Gerenciamento da Agenda */
+        .agenda-acoes-gerenciamento {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Modal de Input de Título */
+        .modal-input-titulo {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-input-titulo.active {
+            display: flex;
+        }
+
+        .modal-input-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        .modal-input-header {
+            padding: 24px 30px 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-input-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-input-body {
+            padding: 25px 30px;
+        }
+
+        .modal-input-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .modal-input-group input,
+        .modal-input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .modal-input-group input:focus,
+        .modal-input-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .modal-input-footer {
+            padding: 20px 30px;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Responsividade Mobile */
+        @media (max-width: 768px) {
+            .prazo-item {
+                grid-template-columns: 32px 1fr;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .prazo-contador {
+                grid-column: 2;
+                align-items: flex-start;
+                margin-top: 8px;
+            }
+
+            .prazo-acoes {
+                opacity: 1;
+                visibility: visible;
+                grid-column: 2;
+                justify-content: flex-end;
+            }
+
+            .filtro-btn {
+                min-width: 100px;
+                font-size: 0.85rem;
+                padding: 8px 12px;
+            }
+
+            .modal-detalhes-content {
+                max-height: 90vh;
+            }
+
+            .modal-detalhes-header,
+            .modal-detalhes-body,
+            .modal-detalhes-acoes {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .prazo-titulo {
+                font-size: 1rem;
+            }
+
+            .contador-numero {
+                font-size: 1.5rem;
+            }
+
+            .agenda-filtros {
+                gap: 6px;
+                padding: 6px;
+            }
+
+            .filtro-btn {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+                min-width: 90px;
+            }
+        }
     </style>
     <!-- Biblioteca html2canvas para exportação de PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -2101,6 +2910,21 @@
     "></path>
             </svg>
             Editor de Feriados
+        </button>
+        <button class="nav-tab" onclick="trocarPagina('agenda')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="M8 14h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M16 14h.01"></path>
+                <path d="M8 18h.01"></path>
+                <path d="M12 18h.01"></path>
+                <path d="M16 18h.01"></path>
+            </svg>
+            Minha Agenda
         </button>
         <button class="nav-tab" onclick="trocarPagina('ajuda')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2770,6 +3594,118 @@
         </div>
         <!-- Fim Página de Ajuda -->
 
+        <!-- Página Minha Agenda -->
+        <div id="paginaAgenda" class="page-content">
+            <div class="card">
+                <h3 class="section-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Minha Agenda de Prazos
+                </h3>
+                <div class="section-divider"></div>
+
+                <!-- Filtros -->
+                <div class="agenda-filtros">
+                    <button class="filtro-btn active" onclick="filtrarPrazos('todos')" data-filtro="todos">
+                        <span>Todos</span>
+                        <span class="filtro-badge" id="badge-todos">0</span>
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarPrazos('atrasados')" data-filtro="atrasados">
+                        <span>🔴 Atrasados</span>
+                        <span class="filtro-badge" id="badge-atrasados">0</span>
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarPrazos('vencendo')" data-filtro="vencendo">
+                        <span>🟠 Vencendo</span>
+                        <span class="filtro-badge" id="badge-vencendo">0</span>
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarPrazos('pendentes')" data-filtro="pendentes">
+                        <span>🔵 Pendentes</span>
+                        <span class="filtro-badge" id="badge-pendentes">0</span>
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarPrazos('concluidos')" data-filtro="concluidos">
+                        <span>✅ Concluídos</span>
+                        <span class="filtro-badge" id="badge-concluidos">0</span>
+                    </button>
+                </div>
+
+                <!-- Paginação -->
+                <div id="agendaPaginacao" class="agenda-paginacao" style="display: none;">
+                    <div class="paginacao-info">
+                        Mostrando <strong id="paginacaoMostrando">0</strong> de <strong id="paginacaoTotal">0</strong> prazos
+                    </div>
+                    <div class="paginacao-controles">
+                        <button class="paginacao-btn" id="btnPaginaAnterior" onclick="mudarPagina(paginaAtual - 1)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                            Anterior
+                        </button>
+                        <div class="paginacao-numero">
+                            Página <strong id="paginacaoNumero">1</strong> de <strong id="paginacaoPaginas">1</strong>
+                        </div>
+                        <button class="paginacao-btn" id="btnProximaPagina" onclick="mudarPagina(paginaAtual + 1)">
+                            Próxima
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Prazos -->
+                <div id="agendaLista" class="agenda-lista">
+                    <!-- Prazos serão renderizados aqui via JavaScript -->
+                </div>
+
+                <!-- Estado Vazio -->
+                <div id="agendaVazia" class="agenda-vazia" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <h3>Nenhum prazo encontrado</h3>
+                    <p>Calcule prazos na aba "Calculadora" e salve-os na agenda.</p>
+                </div>
+
+                <!-- Botões de gerenciamento ao final -->
+                <div class="agenda-acoes-gerenciamento">
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="exportarAgendaJSON()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Exportar Agenda
+                        </button>
+                        <button class="btn btn-primary" onclick="importarAgendaJSON()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Importar Agenda
+                        </button>
+                        <button class="btn btn-secondary" onclick="arquivarConcluidos()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                <rect x="1" y="3" width="22" height="5"></rect>
+                                <line x1="10" y1="12" x2="14" y2="12"></line>
+                            </svg>
+                            Arquivar Concluídos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fim Página Minha Agenda -->
+
         <!-- Rodapé Persistente -->
         <div class="rodape">
             <p>
@@ -2940,6 +3876,17 @@
         let calculoRealizado = false; // Controla se já foi feito um cálculo
 
         // ========================================
+        // VARIÁVEIS DA AGENDA DE PRAZOS
+        // ========================================
+        let prazos = []; // Array de prazos salvos
+        let filtroAtual = 'todos'; // Filtro ativo
+        let prazoEmEdicao = null; // ID do prazo sendo editado
+        let undoState = null; // Estado para desfazer ações
+        let undoTimeout = null; // Timeout para limpar undo
+        let paginaAtual = 1; // Página atual na lista
+        const ITENS_POR_PAGINA = 20; // Limite de itens por página
+
+        // ========================================
         // CONSTANTES
         // ========================================
         const TEMPOS = {
@@ -3011,11 +3958,13 @@
                 navTabs: {
                     calculo: navTabElements[0],
                     gerenciamento: navTabElements[1],
-                    ajuda: navTabElements[2]
+                    agenda: navTabElements[2],
+                    ajuda: navTabElements[3]
                 },
                 paginas: {
                     calculo: document.getElementById('paginaCalculo'),
                     gerenciamento: document.getElementById('paginaGerenciamento'),
+                    agenda: document.getElementById('paginaAgenda'),
                     ajuda: document.getElementById('paginaAjuda')
                 }
             };
@@ -3360,6 +4309,19 @@
                             Exportar PNG
                         </button>
                     </div>
+
+                    <!-- Separador e Botão Salvar na Agenda -->
+                    <div class="resultado-separador">
+                        <span class="resultado-separador-texto">GERENCIAR PRAZO</span>
+                    </div>
+                    <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Salvar na Minha Agenda
+                    </button>
 
                     <div class="detalhamento">
                         <h3>
@@ -4989,6 +5951,7 @@
             // Esconder todas as páginas
             cacheDom.paginas.calculo.classList.remove('active');
             cacheDom.paginas.gerenciamento.classList.remove('active');
+            cacheDom.paginas.agenda.classList.remove('active');
             cacheDom.paginas.ajuda.classList.remove('active');
 
             // Remover active de todas as tabs
@@ -5002,10 +5965,970 @@
                 cacheDom.paginas.gerenciamento.classList.add('active');
                 cacheDom.navTabs.gerenciamento.classList.add('active');
                 carregarEditoresFeriados();
+            } else if (pagina === 'agenda') {
+                cacheDom.paginas.agenda.classList.add('active');
+                cacheDom.navTabs.agenda.classList.add('active');
+                carregarAgenda();
             } else if (pagina === 'ajuda') {
                 cacheDom.paginas.ajuda.classList.add('active');
                 cacheDom.navTabs.ajuda.classList.add('active');
             }
+        }
+
+        // ========================================
+        // FUNÇÕES DA AGENDA DE PRAZOS
+        // ========================================
+
+        // Carregar prazos do localStorage
+        function carregarPrazosStorage() {
+            const prazosStorage = localStorage.getItem('agendaPrazos');
+            if (prazosStorage) {
+                try {
+                    prazos = JSON.parse(prazosStorage);
+                    // Converter strings de data de volta para objetos Date
+                    prazos = prazos.map(prazo => ({
+                        ...prazo,
+                        dataInicio: new Date(prazo.dataInicio),
+                        dataFinal: new Date(prazo.dataFinal),
+                        dataCriacao: new Date(prazo.dataCriacao),
+                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
+                            ...dia,
+                            data: new Date(dia.data)
+                        }))
+                    }));
+                } catch (error) {
+                    console.error('Erro ao carregar prazos:', error);
+                    prazos = [];
+                }
+            }
+        }
+
+        // Salvar prazos no localStorage
+        function salvarPrazosStorage() {
+            try {
+                localStorage.setItem('agendaPrazos', JSON.stringify(prazos));
+            } catch (error) {
+                console.error('Erro ao salvar prazos:', error);
+                alert('Erro ao salvar prazos no armazenamento local. Verifique o espaço disponível.');
+            }
+        }
+
+        // Gerar ID único
+        function gerarId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Calcular status do prazo
+        function calcularStatus(prazo) {
+            if (prazo.status === 'concluido') return 'concluido';
+
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            const dataFinal = new Date(prazo.dataFinal);
+            dataFinal.setHours(0, 0, 0, 0);
+
+            if (dataFinal < hoje) {
+                return 'atrasado';
+            } else if (dataFinal.getTime() === hoje.getTime()) {
+                return 'vencendo';
+            } else {
+                // Vencendo em até 3 dias
+                const diffTime = dataFinal - hoje;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays <= 3) {
+                    return 'vencendo';
+                }
+                return 'pendente';
+            }
+        }
+
+        // Calcular dias restantes (respeitando o tipo original)
+        function calcularDiasRestantes(prazo) {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            const dataFinal = new Date(prazo.dataFinal);
+            dataFinal.setHours(0, 0, 0, 0);
+
+            const diffTime = dataFinal - hoje;
+            const diffDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // Se já passou ou é hoje
+            if (diffDias < 0) {
+                const diasAtrasados = Math.abs(diffDias);
+                if (prazo.tipoDias === 'uteis') {
+                    // Contar dias úteis atrasados
+                    let diasUteisAtrasados = 0;
+                    let dataAtual = new Date(dataFinal);
+                    dataAtual.setDate(dataAtual.getDate() + 1);
+
+                    while (dataAtual <= hoje) {
+                        if (!ehFimDeSemana(dataAtual) && !ehFeriado(dataAtual)) {
+                            diasUteisAtrasados++;
+                        }
+                        dataAtual.setDate(dataAtual.getDate() + 1);
+                    }
+
+                    return { numero: diasUteisAtrasados, tipo: 'uteis', atrasado: true };
+                } else {
+                    return { numero: diasAtrasados, tipo: 'corridos', atrasado: true };
+                }
+            } else if (diffDias === 0) {
+                return { numero: 0, tipo: prazo.tipoDias, hoje: true };
+            }
+
+            // Calcular dias restantes
+            if (prazo.tipoDias === 'uteis') {
+                let diasUteis = 0;
+                let dataAtual = new Date(hoje);
+                dataAtual.setDate(dataAtual.getDate() + 1);
+
+                while (dataAtual <= dataFinal) {
+                    if (!ehFimDeSemana(dataAtual) && !ehFeriado(dataAtual)) {
+                        diasUteis++;
+                    }
+                    dataAtual.setDate(dataAtual.getDate() + 1);
+                }
+
+                return { numero: diasUteis, tipo: 'uteis', atrasado: false };
+            } else {
+                return { numero: diffDias, tipo: 'corridos', atrasado: false };
+            }
+        }
+
+        // Salvar prazo na agenda
+        function salvarNaAgenda() {
+            if (!calculoRealizado || !dataFinal) {
+                alert('Realize um cálculo primeiro antes de salvar na agenda.');
+                return;
+            }
+
+            // Preencher modal com descrição existente (se houver)
+            document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
+            document.getElementById('inputDescricaoPrazo').value = descricaoPrazo || '';
+
+            // Abrir modal
+            document.getElementById('modalInputTitulo').classList.add('active');
+
+            // Focar no campo de título
+            setTimeout(() => {
+                document.getElementById('inputTituloPrazo').focus();
+            }, 100);
+        }
+
+        // Fechar modal de input
+        function fecharModalInputTitulo() {
+            document.getElementById('modalInputTitulo').classList.remove('active');
+            document.getElementById('inputTituloPrazo').value = '';
+            document.getElementById('inputDescricaoPrazo').value = '';
+        }
+
+        // Confirmar e salvar prazo
+        function confirmarSalvarPrazo() {
+            const titulo = document.getElementById('inputTituloPrazo').value.trim();
+            const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
+
+            if (!titulo) {
+                alert('Por favor, digite um título para o prazo.');
+                document.getElementById('inputTituloPrazo').focus();
+                return;
+            }
+
+            const novoPrazo = {
+                id: gerarId(),
+                titulo: titulo,
+                descricao: descricao,
+                dataInicio: new Date(dataInicio + 'T00:00:00'),
+                dataFinal: new Date(dataFinal),
+                diasSolicitados: parseInt(diasUteis),
+                tipoDias: usarDiasUteis ? 'uteis' : 'corridos',
+                status: 'pendente',
+                dataCriacao: new Date(),
+                dataConclusao: null,
+                detalhamentoDias: todosOsDias.map(dia => ({
+                    data: new Date(dia.data),
+                    contado: dia.contado,
+                    motivo: dia.motivo,
+                    numero: dia.numero
+                })),
+                feriadosUsados: {
+                    fixos: {...feriadosFixos},
+                    moveis: {...feriadosMoveis},
+                    personalizados: Array.from(feriadosPersonalizados.entries())
+                }
+            };
+
+            prazos.push(novoPrazo);
+            salvarPrazosStorage();
+
+            // Fechar modal
+            fecharModalInputTitulo();
+
+            // Mostrar mensagem de sucesso
+            alert('✅ Prazo salvo na agenda com sucesso!');
+
+            // Trocar para a aba da agenda
+            trocarPagina('agenda');
+        }
+
+        // Carregar e renderizar agenda
+        function carregarAgenda() {
+            carregarPrazosStorage();
+            renderizarPrazos();
+            verificarPrazosVencendo();
+        }
+
+        // Renderizar lista de prazos
+        function renderizarPrazos() {
+            const container = document.getElementById('agendaLista');
+            const vazio = document.getElementById('agendaVazia');
+            const paginacao = document.getElementById('agendaPaginacao');
+
+            // Filtrar prazos
+            let prazosFiltrados = prazos.filter(prazo => {
+                const status = calcularStatus(prazo);
+                prazo.statusCalculado = status; // Armazenar status calculado
+
+                if (filtroAtual === 'todos') return true;
+                return status === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
+            });
+
+            // Ordenar: atrasados primeiro, depois vencendo, depois pendentes, concluídos por último
+            const ordemStatus = { atrasado: 1, vencendo: 2, pendente: 3, concluido: 4 };
+            prazosFiltrados.sort((a, b) => {
+                const statusA = a.status === 'concluido' ? 'concluido' : a.statusCalculado;
+                const statusB = b.status === 'concluido' ? 'concluido' : b.statusCalculado;
+                const ordemA = ordemStatus[statusA] || 5;
+                const ordemB = ordemStatus[statusB] || 5;
+                if (ordemA !== ordemB) return ordemA - ordemB;
+                return b.dataFinal - a.dataFinal; // Mais próximo primeiro
+            });
+
+            // Atualizar badges de contadores
+            atualizarBadgesFiltros();
+
+            // Calcular paginação
+            const totalItens = prazosFiltrados.length;
+            const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
+
+            // Ajustar página atual se estiver fora do limite
+            if (paginaAtual > totalPaginas && totalPaginas > 0) {
+                paginaAtual = totalPaginas;
+            }
+            if (paginaAtual < 1) {
+                paginaAtual = 1;
+            }
+
+            // Renderizar
+            if (totalItens === 0) {
+                container.innerHTML = '';
+                vazio.style.display = 'block';
+                paginacao.style.display = 'none';
+            } else {
+                vazio.style.display = 'none';
+
+                // Mostrar paginação apenas se houver mais de ITENS_POR_PAGINA itens
+                if (totalItens > ITENS_POR_PAGINA) {
+                    paginacao.style.display = 'flex';
+
+                    // Calcular início e fim da página atual
+                    const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+                    const fim = inicio + ITENS_POR_PAGINA;
+                    const prazosNaPagina = prazosFiltrados.slice(inicio, fim);
+
+                    // Atualizar informações da paginação
+                    document.getElementById('paginacaoMostrando').textContent =
+                        `${inicio + 1}-${Math.min(fim, totalItens)}`;
+                    document.getElementById('paginacaoTotal').textContent = totalItens;
+                    document.getElementById('paginacaoNumero').textContent = paginaAtual;
+                    document.getElementById('paginacaoPaginas').textContent = totalPaginas;
+
+                    // Habilitar/desabilitar botões de navegação
+                    const btnAnterior = document.getElementById('btnPaginaAnterior');
+                    const btnProxima = document.getElementById('btnProximaPagina');
+
+                    if (paginaAtual <= 1) {
+                        btnAnterior.disabled = true;
+                        btnAnterior.style.opacity = '0.5';
+                        btnAnterior.style.cursor = 'not-allowed';
+                    } else {
+                        btnAnterior.disabled = false;
+                        btnAnterior.style.opacity = '1';
+                        btnAnterior.style.cursor = 'pointer';
+                    }
+
+                    if (paginaAtual >= totalPaginas) {
+                        btnProxima.disabled = true;
+                        btnProxima.style.opacity = '0.5';
+                        btnProxima.style.cursor = 'not-allowed';
+                    } else {
+                        btnProxima.disabled = false;
+                        btnProxima.style.opacity = '1';
+                        btnProxima.style.cursor = 'pointer';
+                    }
+
+                    // Renderizar apenas os itens da página atual
+                    container.innerHTML = prazosNaPagina.map(prazo => renderizarItemPrazo(prazo)).join('');
+                } else {
+                    // Menos de ITENS_POR_PAGINA itens - ocultar paginação
+                    paginacao.style.display = 'none';
+                    container.innerHTML = prazosFiltrados.map(prazo => renderizarItemPrazo(prazo)).join('');
+                }
+            }
+        }
+
+        // Renderizar item individual
+        function renderizarItemPrazo(prazo) {
+            const status = prazo.status === 'concluido' ? 'concluido' : prazo.statusCalculado;
+            const diasRestantes = calcularDiasRestantes(prazo);
+            const checked = prazo.status === 'concluido' ? 'checked' : '';
+            const classConcluido = prazo.status === 'concluido' ? 'concluido' : '';
+
+            // Badge de status - discreto
+            let badgeHTML = '';
+            if (status === 'atrasado') {
+                badgeHTML = '<span class="prazo-badge badge-atrasado">Atrasado</span>';
+            } else if (status === 'vencendo') {
+                badgeHTML = '<span class="prazo-badge badge-vencendo">Vencendo</span>';
+            } else if (status === 'pendente') {
+                badgeHTML = '<span class="prazo-badge badge-pendente">Pendente</span>';
+            } else if (status === 'concluido') {
+                badgeHTML = '<span class="prazo-badge badge-concluido">Concluído</span>';
+            }
+
+            // Contador regressivo - discreto mas claro
+            let contadorHTML = '';
+            if (prazo.status === 'concluido') {
+                const dataConc = prazo.dataConclusao ? new Date(prazo.dataConclusao).toLocaleDateString('pt-BR') : '';
+                contadorHTML = `
+                    <div class="prazo-contador">
+                        <div class="contador-numero">✓</div>
+                        <div class="contador-label">Concluído<br>${dataConc}</div>
+                    </div>
+                `;
+            } else {
+                const classContador = status === 'atrasado' ? 'contador-atrasado' :
+                                      status === 'vencendo' ? 'contador-vencendo' : 'contador-pendente';
+                let labelContador = '';
+                let prefixo = '';
+
+                if (diasRestantes.atrasado) {
+                    prefixo = '-';
+                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                } else if (diasRestantes.hoje) {
+                    labelContador = 'Vence hoje!';
+                } else {
+                    prefixo = '';
+                    labelContador = `${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                }
+
+                contadorHTML = `
+                    <div class="prazo-contador ${classContador}">
+                        <div class="contador-numero">${prefixo}${diasRestantes.numero}</div>
+                        <div class="contador-label">${labelContador}</div>
+                    </div>
+                `;
+            }
+
+            // Formatações
+            const dataInicioFormatada = new Date(prazo.dataInicio).toLocaleDateString('pt-BR');
+            const dataFinalFormatada = new Date(prazo.dataFinal).toLocaleDateString('pt-BR');
+
+            // Descrição (opcional)
+            const descricaoHTML = prazo.descricao ?
+                `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
+
+            return `
+                <div class="prazo-item ${classConcluido}" data-id="${prazo.id}">
+                    <div class="prazo-checkbox-wrapper">
+                        <div class="prazo-checkbox ${checked}" onclick="toggleConcluido('${prazo.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="prazo-conteudo">
+                        <div class="prazo-header">
+                            <h3 class="prazo-titulo">${prazo.titulo}</h3>
+                            ${badgeHTML}
+                        </div>
+                        ${descricaoHTML}
+                        <div class="prazo-data-final-destaque">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <div class="prazo-data-final-texto">
+                                Prazo final: <strong>${dataFinalFormatada}</strong>
+                            </div>
+                        </div>
+                        <div class="prazo-info-secundaria">
+                            <div class="prazo-info-secundaria-item">
+                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}
+                            </div>
+                            <div class="prazo-info-secundaria-item">
+                                • Início: ${dataInicioFormatada}
+                            </div>
+                        </div>
+                    </div>
+                    ${contadorHTML}
+                    <div class="prazo-acoes">
+                        <button class="prazo-btn-acao prazo-btn-ver" onclick="abrirDetalhes('${prazo.id}')" title="Ver detalhes">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button class="prazo-btn-acao prazo-btn-editar" onclick="abrirEdicao('${prazo.id}')" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="prazo-btn-acao prazo-btn-excluir" onclick="excluirPrazo('${prazo.id}')" title="Excluir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Atualizar badges dos filtros
+        function atualizarBadgesFiltros() {
+            const contadores = {
+                todos: prazos.length,
+                atrasados: 0,
+                vencendo: 0,
+                pendentes: 0,
+                concluidos: 0
+            };
+
+            prazos.forEach(prazo => {
+                const status = calcularStatus(prazo);
+                if (status === 'atrasado') contadores.atrasados++;
+                else if (status === 'vencendo') contadores.vencendo++;
+                else if (status === 'pendente') contadores.pendentes++;
+                else if (status === 'concluido') contadores.concluidos++;
+            });
+
+            document.getElementById('badge-todos').textContent = contadores.todos;
+            document.getElementById('badge-atrasados').textContent = contadores.atrasados;
+            document.getElementById('badge-vencendo').textContent = contadores.vencendo;
+            document.getElementById('badge-pendentes').textContent = contadores.pendentes;
+            document.getElementById('badge-concluidos').textContent = contadores.concluidos;
+        }
+
+        // Filtrar prazos
+        function filtrarPrazos(filtro) {
+            filtroAtual = filtro;
+
+            // Atualizar botões de filtro
+            document.querySelectorAll('.filtro-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filtro === filtro) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Resetar para primeira página ao mudar filtro
+            paginaAtual = 1;
+            renderizarPrazos();
+        }
+
+        // Mudar página da lista
+        function mudarPagina(novaPagina) {
+            paginaAtual = novaPagina;
+            renderizarPrazos();
+            // Scroll suave para o topo da lista
+            document.getElementById('agendaLista').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Toggle concluído
+        function toggleConcluido(id) {
+            const prazo = prazos.find(p => p.id === id);
+            if (!prazo) return;
+
+            // Salvar estado anterior para undo
+            undoState = {
+                action: 'toggleConcluido',
+                prazoId: id,
+                estadoAnterior: prazo.status,
+                dataConclusaoAnterior: prazo.dataConclusao
+            };
+
+            // Toggle status
+            if (prazo.status === 'concluido') {
+                prazo.status = 'pendente';
+                prazo.dataConclusao = null;
+            } else {
+                prazo.status = 'concluido';
+                prazo.dataConclusao = new Date();
+            }
+
+            salvarPrazosStorage();
+            renderizarPrazos();
+
+            // Mostrar toast de undo
+            mostrarToastUndo(prazo.status === 'concluido' ? 'Prazo marcado como concluído' : 'Prazo desmarcado');
+        }
+
+        // Mostrar toast de undo
+        function mostrarToastUndo(mensagem) {
+            const toast = document.getElementById('toastUndo');
+            const texto = document.getElementById('toastUndoTexto');
+
+            texto.textContent = mensagem;
+            toast.classList.add('active');
+
+            // Limpar timeout anterior
+            if (undoTimeout) clearTimeout(undoTimeout);
+
+            // Auto-esconder após 5 segundos
+            undoTimeout = setTimeout(() => {
+                esconderToastUndo();
+            }, 5000);
+        }
+
+        // Esconder toast de undo
+        function esconderToastUndo() {
+            const toast = document.getElementById('toastUndo');
+            toast.classList.remove('active');
+            undoState = null;
+        }
+
+        // Desfazer ação
+        function desfazerAcao() {
+            if (!undoState) return;
+
+            if (undoState.action === 'toggleConcluido') {
+                const prazo = prazos.find(p => p.id === undoState.prazoId);
+                if (prazo) {
+                    prazo.status = undoState.estadoAnterior;
+                    prazo.dataConclusao = undoState.dataConclusaoAnterior;
+                    salvarPrazosStorage();
+                    renderizarPrazos();
+                }
+            }
+
+            esconderToastUndo();
+        }
+
+        // Abrir detalhes do prazo
+        function abrirDetalhes(id) {
+            const prazo = prazos.find(p => p.id === id);
+            if (!prazo) return;
+
+            prazoEmEdicao = id; // Guardar ID para ações no modal
+
+            // Preencher título
+            document.getElementById('modalDetalhesTitulo').textContent = prazo.titulo;
+
+            // Construir corpo com os mesmos dados do resultado original
+            const dataInicioFormatada = prazo.dataInicio.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = prazo.dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = prazo.tipoDias === 'uteis' ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (prazo.descricao) {
+                descricaoHTML = `
+                    <div class="resultado-descricao">
+                        <strong>Descrição:</strong> ${prazo.descricao}
+                    </div>
+                `;
+            }
+
+            // Status e contador
+            const status = calcularStatus(prazo);
+            const diasRestantes = calcularDiasRestantes(prazo);
+            let statusHTML = '';
+
+            if (prazo.status === 'concluido') {
+                const dataConcFormatada = prazo.dataConclusao ? prazo.dataConclusao.toLocaleDateString('pt-BR') : '';
+                statusHTML = `
+                    <div class="resultado-info" style="background: #d1fae5; padding: 15px; border-radius: 8px; border-left: 4px solid #059669;">
+                        <strong>Status:</strong> <span style="color: #065f46; font-weight: 700;">✓ Concluído em ${dataConcFormatada}</span>
+                    </div>
+                `;
+            } else {
+                let labelContador = '';
+                let corBarra = '';
+
+                if (diasRestantes.atrasado) {
+                    labelContador = `${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'} atrasado${diasRestantes.numero > 1 ? 's' : ''}`;
+                    corBarra = '#dc2626';
+                } else if (diasRestantes.hoje) {
+                    labelContador = 'Vence hoje!';
+                    corBarra = '#ea580c';
+                } else {
+                    labelContador = `Faltam ${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    corBarra = '#3b82f6';
+                }
+
+                statusHTML = `
+                    <div class="resultado-info" style="background: ${corBarra}15; padding: 15px; border-radius: 8px; border-left: 4px solid ${corBarra};">
+                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700; font-size: 1.125rem;">${labelContador}</span>
+                    </div>
+                `;
+            }
+
+            const html = `
+                <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
+                    ${descricaoHTML}
+                    <div class="resultado-info">
+                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                    </div>
+                    <div class="resultado-info">
+                        <strong>Dias ${tipoDias} Contados:</strong> ${prazo.diasSolicitados}
+                    </div>
+                    <div class="resultado-info">
+                        <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
+                    </div>
+                    ${statusHTML}
+
+                    <div class="detalhamento" style="margin-top: 20px; max-height: 300px;">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Detalhamento (Auditoria)
+                        </h3>
+                        ${prazo.detalhamentoDias.map(dia => {
+                            const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                                weekday: 'short',
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+
+                            if (dia.contado) {
+                                return `<div class="dia-item dia-contado">
+                                    <span class="dia-numero">${dia.numero}</span>
+                                    <span>${dataFormatada}</span>
+                                </div>`;
+                            } else {
+                                return `<div class="dia-item dia-nao-contado">
+                                    <span class="dia-numero">X</span>
+                                    <span>${dataFormatada} - ${dia.motivo}</span>
+                                </div>`;
+                            }
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modalDetalhesBody').innerHTML = html;
+            document.getElementById('modalDetalhesPrazo').classList.add('active');
+        }
+
+        // Fechar modal de detalhes
+        function fecharModalDetalhes() {
+            document.getElementById('modalDetalhesPrazo').classList.remove('active');
+            prazoEmEdicao = null;
+        }
+
+        // Marcar concluído do modal
+        function marcarConcluidoModal() {
+            if (prazoEmEdicao) {
+                toggleConcluido(prazoEmEdicao);
+                fecharModalDetalhes();
+            }
+        }
+
+        // Abrir modal de edição
+        function abrirEdicao(id) {
+            const prazo = prazos.find(p => p.id === id);
+            if (!prazo) return;
+
+            prazoEmEdicao = id;
+
+            document.getElementById('editTitulo').value = prazo.titulo;
+            document.getElementById('editDescricao').value = prazo.descricao || '';
+            document.getElementById('modalEditarPrazo').classList.add('active');
+        }
+
+        // Editar prazo do modal de detalhes
+        function editarPrazoModal() {
+            if (prazoEmEdicao) {
+                fecharModalDetalhes();
+                abrirEdicao(prazoEmEdicao);
+            }
+        }
+
+        // Fechar modal de edição
+        function fecharModalEditar() {
+            document.getElementById('modalEditarPrazo').classList.remove('active');
+            prazoEmEdicao = null;
+        }
+
+        // Salvar edição
+        function salvarEdicao() {
+            if (!prazoEmEdicao) return;
+
+            const prazo = prazos.find(p => p.id === prazoEmEdicao);
+            if (!prazo) return;
+
+            const novoTitulo = document.getElementById('editTitulo').value.trim();
+            const novaDescricao = document.getElementById('editDescricao').value.trim();
+
+            if (!novoTitulo) {
+                alert('O título não pode estar vazio.');
+                return;
+            }
+
+            prazo.titulo = novoTitulo;
+            prazo.descricao = novaDescricao;
+
+            salvarPrazosStorage();
+            renderizarPrazos();
+            fecharModalEditar();
+
+            alert('✅ Prazo atualizado com sucesso!');
+        }
+
+        // Excluir prazo
+        function excluirPrazo(id) {
+            if (!confirm('Tem certeza que deseja excluir este prazo? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            prazos = prazos.filter(p => p.id !== id);
+            salvarPrazosStorage();
+            renderizarPrazos();
+        }
+
+        // Excluir prazo do modal
+        function excluirPrazoModal() {
+            if (prazoEmEdicao) {
+                fecharModalDetalhes();
+                excluirPrazo(prazoEmEdicao);
+            }
+        }
+
+        // Exportar agenda para JSON
+        function exportarAgendaJSON() {
+            if (prazos.length === 0) {
+                alert('Não há prazos para exportar.');
+                return;
+            }
+
+            const dataExport = {
+                versao: '1.0',
+                dataExportacao: new Date().toISOString(),
+                totalPrazos: prazos.length,
+                prazos: prazos
+            };
+
+            const json = JSON.stringify(dataExport, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `contaprazo-agenda-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert('✅ Agenda exportada com sucesso!');
+        }
+
+        // Importar agenda
+        function importarAgendaJSON() {
+            document.getElementById('inputImportAgenda').click();
+        }
+
+        // Processar importação
+        function processarImportAgenda(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (!data.prazos || !Array.isArray(data.prazos)) {
+                        throw new Error('Formato de arquivo inválido');
+                    }
+
+                    const confirmacao = confirm(
+                        `Deseja importar ${data.prazos.length} prazo(s)?\n\n` +
+                        `Escolha:\n` +
+                        `OK = Substituir agenda atual\n` +
+                        `Cancelar = Mesclar com agenda atual`
+                    );
+
+                    if (confirmacao) {
+                        // Substituir
+                        prazos = data.prazos.map(prazo => ({
+                            ...prazo,
+                            dataInicio: new Date(prazo.dataInicio),
+                            dataFinal: new Date(prazo.dataFinal),
+                            dataCriacao: new Date(prazo.dataCriacao),
+                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
+                                ...dia,
+                                data: new Date(dia.data)
+                            }))
+                        }));
+                    } else {
+                        // Mesclar
+                        const novosprazos = data.prazos.map(prazo => ({
+                            ...prazo,
+                            id: gerarId(), // Novo ID para evitar conflitos
+                            dataInicio: new Date(prazo.dataInicio),
+                            dataFinal: new Date(prazo.dataFinal),
+                            dataCriacao: new Date(prazo.dataCriacao),
+                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
+                                ...dia,
+                                data: new Date(dia.data)
+                            }))
+                        }));
+                        prazos.push(...novosprazos);
+                    }
+
+                    salvarPrazosStorage();
+                    renderizarPrazos();
+                    alert('✅ Agenda importada com sucesso!');
+
+                } catch (error) {
+                    alert('❌ Erro ao importar agenda: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file);
+            // Limpar input para permitir importar o mesmo arquivo novamente
+            event.target.value = '';
+        }
+
+        // Arquivar concluídos
+        function arquivarConcluidos() {
+            const concluidos = prazos.filter(p => p.status === 'concluido');
+
+            if (concluidos.length === 0) {
+                alert('Não há prazos concluídos para arquivar.');
+                return;
+            }
+
+            // Calcular data limite (90 dias atrás)
+            const dataLimite = new Date();
+            dataLimite.setDate(dataLimite.getDate() - 90);
+
+            const concluidosAntigos = concluidos.filter(p => {
+                const dataConclusao = p.dataConclusao ? new Date(p.dataConclusao) : new Date(p.dataFinal);
+                return dataConclusao < dataLimite;
+            });
+
+            if (concluidosAntigos.length === 0) {
+                alert('Não há prazos concluídos há mais de 90 dias para arquivar.');
+                return;
+            }
+
+            if (!confirm(`Deseja arquivar ${concluidosAntigos.length} prazo(s) concluído(s) há mais de 90 dias?\n\nEles serão exportados para um arquivo JSON e removidos da agenda.`)) {
+                return;
+            }
+
+            // Exportar antes de remover
+            const dataExport = {
+                versao: '1.0',
+                dataArquivamento: new Date().toISOString(),
+                totalPrazos: concluidosAntigos.length,
+                prazos: concluidosAntigos
+            };
+
+            const json = JSON.stringify(dataExport, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `contaprazo-arquivo-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // Remover da agenda
+            const idsRemover = new Set(concluidosAntigos.map(p => p.id));
+            prazos = prazos.filter(p => !idsRemover.has(p.id));
+
+            salvarPrazosStorage();
+            renderizarPrazos();
+
+            alert(`✅ ${concluidosAntigos.length} prazo(s) arquivado(s) com sucesso!`);
+        }
+
+        // Verificar prazos vencendo (ao carregar página)
+        function verificarPrazosVencendo() {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            let atrasados = 0;
+            let vencendoHoje = 0;
+            let vencendoProximos3Dias = 0;
+
+            prazos.forEach(prazo => {
+                if (prazo.status === 'concluido') return;
+
+                const dataFinal = new Date(prazo.dataFinal);
+                dataFinal.setHours(0, 0, 0, 0);
+
+                if (dataFinal < hoje) {
+                    atrasados++;
+                } else if (dataFinal.getTime() === hoje.getTime()) {
+                    vencendoHoje++;
+                } else {
+                    const diffDays = Math.ceil((dataFinal - hoje) / (1000 * 60 * 60 * 24));
+                    if (diffDays <= 3) {
+                        vencendoProximos3Dias++;
+                    }
+                }
+            });
+
+            // Mostrar banner se houver prazos vencendo ou atrasados
+            if (atrasados > 0 || vencendoHoje > 0) {
+                let mensagem = '';
+                if (atrasados > 0 && vencendoHoje > 0) {
+                    mensagem = `Você tem ${atrasados} prazo(s) atrasado(s) e ${vencendoHoje} vencendo hoje!`;
+                } else if (atrasados > 0) {
+                    mensagem = `Você tem ${atrasados} prazo(s) atrasado(s)!`;
+                } else {
+                    mensagem = `Você tem ${vencendoHoje} prazo(s) vencendo hoje!`;
+                }
+
+                mostrarBannerPrazos(mensagem, 'urgente');
+            } else if (vencendoProximos3Dias > 0) {
+                mostrarBannerPrazos(`Você tem ${vencendoProximos3Dias} prazo(s) vencendo nos próximos 3 dias.`, 'aviso');
+            }
+        }
+
+        // Mostrar banner de prazos
+        function mostrarBannerPrazos(mensagem, tipo) {
+            const banner = document.getElementById('updateBanner');
+            const title = document.getElementById('updateBannerTitle');
+            const description = document.getElementById('updateBannerDescription');
+
+            if (tipo === 'urgente') {
+                title.textContent = '⚠️ Atenção: Prazos Urgentes!';
+            } else {
+                title.textContent = '📅 Prazos Próximos';
+            }
+
+            description.textContent = mensagem;
+
+            // Modificar botão para ir à agenda
+            const btnAtualizar = banner.querySelector('.update-banner-btn-primary');
+            btnAtualizar.textContent = 'Ver Agenda';
+            btnAtualizar.onclick = function() {
+                trocarPagina('agenda');
+                fecharBannerAtualizacao();
+            };
+
+            banner.classList.add('active');
         }
 
         // Carregar editores de feriados
@@ -5360,6 +7283,10 @@
                 }, 0);
             }
 
+            // Carregar prazos da agenda e verificar vencimentos
+            carregarPrazosStorage();
+            verificarPrazosVencendo();
+
             // Inicia verificação periódica de atualizações de feriados
             iniciarVerificacaoPeriodica();
         });
@@ -5418,6 +7345,110 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de Detalhes do Prazo -->
+    <div id="modalDetalhesPrazo" class="modal-detalhes">
+        <div class="modal-detalhes-content">
+            <div class="modal-detalhes-header">
+                <h2 class="modal-detalhes-titulo" id="modalDetalhesTitulo">Detalhes do Prazo</h2>
+                <button class="modal-detalhes-fechar" onclick="fecharModalDetalhes()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-detalhes-body" id="modalDetalhesBody">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+            <div class="modal-detalhes-acoes">
+                <button class="btn btn-success" onclick="marcarConcluidoModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Marcar Concluído
+                </button>
+                <button class="btn btn-primary" onclick="editarPrazoModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Editar
+                </button>
+                <button class="btn btn-red" onclick="excluirPrazoModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="modalEditarPrazo" class="modal-aviso">
+        <div class="modal-aviso-content" style="max-width: 500px;">
+            <div class="modal-aviso-icon">✏️</div>
+            <h3>Editar Prazo</h3>
+            <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
+                Edite o título e a descrição do prazo. As datas e cálculos são mantidos para auditoria.
+            </p>
+            <div style="margin: 20px 0;">
+                <label for="editTitulo" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Título:</label>
+                <input type="text" id="editTitulo" placeholder="Ex: Recurso Processo 12345"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem;">
+            </div>
+            <div style="margin: 20px 0;">
+                <label for="editDescricao" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Descrição (opcional):</label>
+                <textarea id="editDescricao" placeholder="Detalhes adicionais..." rows="3"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="fecharModalEditar()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarEdicao()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Undo -->
+    <div id="toastUndo" class="toast-undo">
+        <span class="toast-undo-texto" id="toastUndoTexto">Prazo marcado como concluído</span>
+        <button class="toast-undo-btn" onclick="desfazerAcao()">Desfazer</button>
+    </div>
+
+    <!-- Modal de Input de Título -->
+    <div id="modalInputTitulo" class="modal-input-titulo">
+        <div class="modal-input-content">
+            <div class="modal-input-header">
+                <h3>💾 Salvar Prazo na Agenda</h3>
+            </div>
+            <div class="modal-input-body">
+                <div class="modal-input-group">
+                    <label for="inputTituloPrazo">Título do Prazo *</label>
+                    <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+                </div>
+                <div class="modal-input-group">
+                    <label for="inputDescricaoPrazo">Descrição (opcional)</label>
+                    <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-input-footer">
+                <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Salvar na Agenda
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input invisível para importação de arquivo -->
+    <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
 </body>
 </html>
