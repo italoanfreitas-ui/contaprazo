@@ -2165,12 +2165,18 @@
             border-left: 3px solid #ea580c;
         }
 
+        /* Vence HOJE - mais urgente que vencendo */
+        .prazo-item-vence-hoje {
+            background: #fed7aa;
+            border-left: 3px solid #f97316;
+        }
+
         .prazo-item-concluido {
             background: #f0fdf4;
             border-left: 3px solid #16a34a;
         }
 
-        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-concluido) {
+        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-vence-hoje):not(.prazo-item-concluido) {
             background: #f9fafb;
         }
 
@@ -2180,6 +2186,10 @@
 
         .prazo-item-vencendo:hover {
             background: #fef3c7;
+        }
+
+        .prazo-item-vence-hoje:hover {
+            background: #fdba74;
         }
 
         .prazo-item-concluido:hover {
@@ -2348,16 +2358,22 @@
         .prazo-info-secundaria {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 0;
             font-size: 0.8rem;
             color: #9ca3af;
             margin-top: 4px;
+            align-items: center;
         }
 
         .prazo-info-secundaria-item {
-            display: flex;
+            display: inline-flex;
             align-items: center;
+            padding: 0 8px;
             gap: 4px;
+        }
+
+        .prazo-info-secundaria-item:first-child {
+            padding-left: 0;
         }
 
         /* Contador Regressivo - Discreto mas Claro */
@@ -2492,6 +2508,11 @@
             z-index: 1000;
             overflow: hidden;
             border: 1px solid #e5e7eb;
+        }
+
+        .prazo-menu-dropdown.dropdown-up {
+            top: auto;
+            bottom: 40px;
         }
 
         .prazo-menu-dropdown.active {
@@ -6386,9 +6407,9 @@
                 return;
             }
 
-            // Preencher modal com descrição existente (se houver)
+            // Preencher modal - só título com descrição, campo descrição vazio
             document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
-            document.getElementById('inputDescricaoPrazo').value = descricaoPrazo || '';
+            document.getElementById('inputDescricaoPrazo').value = ''; // Deixar vazio para usuário preencher
 
             // Abrir modal
             document.getElementById('modalInputTitulo').classList.add('active');
@@ -6591,7 +6612,12 @@
             if (status === 'atrasado') {
                 classeFundo = 'prazo-item-atrasado';
             } else if (status === 'vencendo') {
-                classeFundo = 'prazo-item-vencendo';
+                // Diferenciar "vence hoje" de "vence em 3 dias"
+                if (diasRestantes.hoje) {
+                    classeFundo = 'prazo-item-vence-hoje';
+                } else {
+                    classeFundo = 'prazo-item-vencendo';
+                }
             } else if (status === 'concluido') {
                 classeFundo = 'prazo-item-concluido';
             }
@@ -6615,15 +6641,22 @@
                 contadorInline = `<span class="prazo-contador-inline concluido">• Concluído em ${dataConc}</span>`;
             } else {
                 if (diasRestantes.atrasado) {
-                    // Atrasado: mostrar negativo em vermelho
-                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
+                    // Atrasado: mostrar negativo em vermelho (com concordância)
+                    const textoTipo = diasRestantes.tipo === 'uteis'
+                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 } else if (diasRestantes.hoje) {
                     // Vence hoje: texto chamativo
                     contadorInline = `<span class="prazo-contador-inline vence-hoje">• <strong>VENCE HOJE</strong></span>`;
                 } else {
-                    // Pendente ou vencendo: mostrar positivo
+                    // Pendente ou vencendo: mostrar positivo (com concordância)
                     const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
-                    contadorInline = `<span class="prazo-contador-inline ${classe}">• Faltam <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
+                    const textoTipo = diasRestantes.tipo === 'uteis'
+                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                    const verbo = diasRestantes.numero === 1 ? 'Falta' : 'Faltam';
+                    contadorInline = `<span class="prazo-contador-inline ${classe}">• ${verbo} <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 }
             }
 
@@ -6663,7 +6696,9 @@
                         </div>
                         <div class="prazo-info-secundaria">
                             <span class="prazo-info-secundaria-item">
-                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}
+                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis'
+                                    ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
+                                    : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
                             <span class="prazo-info-secundaria-item">
                                 • Início: ${dataInicioFormatada}
@@ -6717,11 +6752,30 @@
             todosMenus.forEach(m => {
                 if (m !== menu) {
                     m.classList.remove('active');
+                    m.classList.remove('dropdown-up');
                 }
             });
 
             // Toggle menu atual
+            const wasActive = menu.classList.contains('active');
             menu.classList.toggle('active');
+
+            // Se estiver abrindo, verificar posição
+            if (!wasActive) {
+                // Remover classe anterior
+                menu.classList.remove('dropdown-up');
+
+                // Aguardar renderização para calcular posição
+                setTimeout(() => {
+                    const menuRect = menu.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+
+                    // Se o menu ultrapassar a viewport, abrir para cima
+                    if (menuRect.bottom > viewportHeight - 20) {
+                        menu.classList.add('dropdown-up');
+                    }
+                }, 0);
+            }
         }
 
         // Fechar todos os menus de prazo
