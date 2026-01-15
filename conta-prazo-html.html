@@ -2368,17 +2368,12 @@
         .prazo-info-secundaria-item {
             display: inline-flex;
             align-items: center;
-            padding: 0 8px;
             gap: 4px;
-        }
-
-        .prazo-info-secundaria-item:first-child {
-            padding-left: 0;
         }
 
         .prazo-info-secundaria-separador {
             color: #d1d5db;
-            padding: 0 8px;
+            margin: 0 8px;
             user-select: none;
         }
 
@@ -2744,6 +2739,45 @@
             bottom: 0;
             background: white;
             border-radius: 0 0 16px 16px;
+        }
+
+        .modal-fechar {
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-fechar:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .opcao-arquivamento {
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opcao-arquivamento:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .opcao-arquivamento.opcao-perigo:hover {
+            border-color: #dc2626;
+            background: #fef2f2;
         }
 
         /* Toast de Undo */
@@ -3821,6 +3855,15 @@
                         <span>✅ Concluídos</span>
                         <span class="filtro-badge" id="badge-concluidos">0</span>
                     </button>
+                    <button class="filtro-btn filtro-toggle" onclick="toggleVisualizacaoArquivados()" id="btnVerArquivados" title="Ver prazos arquivados">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
+                        </svg>
+                        <span id="textoVerArquivados">Ver Arquivados</span>
+                        <span class="filtro-badge" id="badge-arquivados">0</span>
+                    </button>
                 </div>
 
                 <!-- Paginação -->
@@ -4220,7 +4263,7 @@
             fecharModalReset();
 
             // Mostra mensagem de sucesso
-            alert('✅ Configurações restauradas com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+            mostrarNotificacao('Configurações restauradas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
             // Marca flag para voltar à primeira aba após reload
             sessionStorage.setItem('reloadToTop', 'true');
@@ -4368,7 +4411,7 @@
             descricaoPrazo = document.getElementById('descricaoPrazo').value.trim();
 
             if (!dataInicio || !diasUteis) {
-                alert('Por favor, preencha a data de início e a quantidade de dias.');
+                mostrarNotificacao('Por favor, preencha a data de início e a quantidade de dias.', 'aviso');
                 return;
             }
 
@@ -4666,7 +4709,7 @@
 
         function limparFeriadosPersonalizados() {
             if (feriadosPersonalizados.size === 0) {
-                alert('⚠️ Não há feriados personalizados para limpar.');
+                mostrarNotificacao('Não há feriados personalizados para limpar.', 'info');
                 return;
             }
 
@@ -4674,7 +4717,7 @@
             if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.\n\nA página será recarregada para aplicar as mudanças.`)) {
                 feriadosPersonalizados.clear();
                 localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
-                alert('✅ Feriados personalizados limpos com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+                mostrarNotificacao('Feriados personalizados limpos com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
                 // Marca flag para voltar à primeira aba após reload
                 sessionStorage.setItem('reloadToTop', 'true');
@@ -4919,7 +4962,7 @@
                     configImportacaoPendente = config;
                     document.getElementById('modalImportar').classList.add('active');
                 } catch (error) {
-                    alert('❌ Erro ao importar configuração. Verifique o arquivo.');
+                    mostrarNotificacao('Erro ao importar configuração. Verifique o arquivo.', 'erro');
                 }
             };
             reader.readAsText(file);
@@ -4981,14 +5024,14 @@
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                alert(`✅ Feriados substituídos com sucesso!\n\n${quantidade} data(s) importada(s).\n\nA página será recarregada para aplicar as mudanças.`);
+                mostrarNotificacao(`Feriados substituídos com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
             } else if (tipo === 'mesclar') {
                 dadosConvertidos.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                alert(`✅ Feriados mesclados com sucesso!\n\n${quantidade} data(s) importada(s).\n\nA página será recarregada para aplicar as mudanças.`);
+                mostrarNotificacao(`Feriados mesclados com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
             }
 
             // Salva no formato novo: array de objetos {data, nome}
@@ -5414,7 +5457,7 @@
         // Função para atualizar feriados a partir do banner
         function atualizarFeriadosAPartirDoBanner() {
             if (atualizacoesDisponiveis.length === 0) {
-                alert('Nenhuma atualização disponível.');
+                mostrarNotificacao('Nenhuma atualização disponível.', 'info');
                 return;
             }
 
@@ -5517,7 +5560,7 @@
 
         function abrirModalExportPDF() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro para exportar.');
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
             document.getElementById('modalExportPDF').classList.add('active');
@@ -5538,7 +5581,7 @@
 
         function abrirModalExportPNG() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro para exportar.');
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
             document.getElementById('modalExportPNG').classList.add('active');
@@ -5645,7 +5688,7 @@
 
         function exportarPDFResumido() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro para exportar.');
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
 
@@ -5746,13 +5789,13 @@
                     popup.print();
                 }, 500);
             } else {
-                alert('⚠️ Pop-up bloqueado.\n\nPor favor, permita pop-ups para este site.');
+                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site.', 'aviso');
             }
         }
 
         function exportarPDFCompleto() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro para exportar.');
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
 
@@ -5826,7 +5869,7 @@
                     popup.print();
                 }, 500);
             } else {
-                alert('⚠️ Pop-up bloqueado.\n\nPor favor, permita pop-ups para este site ou use os botões de exportar imagem.');
+                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site ou use os botões de exportar imagem.', 'aviso');
             }
         }
 
@@ -5855,7 +5898,7 @@
 
         function exportarImagemResumo() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro.');
+                mostrarNotificacao('Calcule um prazo primeiro.', 'aviso');
                 return;
             }
 
@@ -5999,13 +6042,13 @@
             }).catch(error => {
                 document.body.removeChild(container);
                 console.error('Erro ao gerar imagem:', error);
-                alert('Erro ao gerar imagem. Por favor, tente novamente.');
+                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
         }
 
         function exportarImagemCompleta() {
             if (!dataFinal) {
-                alert('Calcule um prazo primeiro.');
+                mostrarNotificacao('Calcule um prazo primeiro.', 'aviso');
                 return;
             }
 
@@ -6118,7 +6161,7 @@
             }).catch(error => {
                 document.body.removeChild(container);
                 console.error('Erro ao gerar imagem:', error);
-                alert('Erro ao gerar imagem. Por favor, tente novamente.');
+                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
         }
 
@@ -6132,7 +6175,7 @@
             link.click();
             URL.revokeObjectURL(url);
 
-            alert('✅ Calculadora baixada com sucesso!\n\nAgora você pode compartilhar este arquivo HTML com outras pessoas. Basta abrir o arquivo em qualquer navegador para usar a calculadora offline.');
+            mostrarNotificacao('Calculadora baixada com sucesso! Agora você pode compartilhar este arquivo HTML com outras pessoas. Basta abrir o arquivo em qualquer navegador para usar a calculadora offline.', 'sucesso');
         }
 
         // Polyfill para roundRect (compatibilidade com navegadores antigos)
@@ -6218,7 +6261,43 @@
                 localStorage.setItem('agendaPrazos', JSON.stringify(prazos));
             } catch (error) {
                 console.error('Erro ao salvar prazos:', error);
-                alert('Erro ao salvar prazos no armazenamento local. Verifique o espaço disponível.');
+                mostrarNotificacao('Erro ao salvar prazos. Verifique o espaço disponível.', 'erro');
+            }
+        }
+
+        // Carregar prazos arquivados do localStorage
+        function carregarArquivadosStorage() {
+            const arquivadosStorage = localStorage.getItem('agendaPrazosArquivados');
+            if (arquivadosStorage) {
+                try {
+                    prazosArquivados = JSON.parse(arquivadosStorage);
+                    // Converter strings de data de volta para objetos Date
+                    prazosArquivados = prazosArquivados.map(prazo => ({
+                        ...prazo,
+                        dataInicio: new Date(prazo.dataInicio),
+                        dataFinal: new Date(prazo.dataFinal),
+                        dataCriacao: new Date(prazo.dataCriacao),
+                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                        dataArquivamento: prazo.dataArquivamento ? new Date(prazo.dataArquivamento) : null,
+                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
+                            ...dia,
+                            data: new Date(dia.data)
+                        }))
+                    }));
+                } catch (error) {
+                    console.error('Erro ao carregar arquivados:', error);
+                    prazosArquivados = [];
+                }
+            }
+        }
+
+        // Salvar prazos arquivados no localStorage
+        function salvarArquivadosStorage() {
+            try {
+                localStorage.setItem('agendaPrazosArquivados', JSON.stringify(prazosArquivados));
+            } catch (error) {
+                console.error('Erro ao salvar arquivados:', error);
+                mostrarNotificacao('Erro ao salvar arquivados. Verifique o espaço disponível.', 'erro');
             }
         }
 
@@ -6307,7 +6386,7 @@
         // Salvar prazo na agenda
         function salvarNaAgenda() {
             if (!calculoRealizado || !dataFinal) {
-                alert('Realize um cálculo primeiro antes de salvar na agenda.');
+                mostrarNotificacao('Realize um cálculo primeiro antes de salvar na agenda.', 'aviso');
                 return;
             }
 
@@ -6337,7 +6416,7 @@
             const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
 
             if (!titulo) {
-                alert('Por favor, digite um título para o prazo.');
+                mostrarNotificacao('Por favor, digite um título para o prazo.', 'aviso');
                 document.getElementById('inputTituloPrazo').focus();
                 return;
             }
@@ -6433,9 +6512,92 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Sistema de notificações genérico
+        let notificacaoTimeout;
+        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
+            const banner = document.getElementById('bannerNotificacao');
+            const titulo = document.getElementById('notificacaoTitulo');
+            const descricao = document.getElementById('notificacaoDescricao');
+            const icone = document.getElementById('notificacaoIcone');
+            const btnPrimario = document.getElementById('notificacaoBtnPrimario');
+            const btnSecundario = document.getElementById('notificacaoBtnSecundario');
+
+            // Configurar conteúdo
+            if (tipo === 'sucesso') {
+                titulo.textContent = 'Sucesso!';
+                icone.textContent = '✅';
+            } else if (tipo === 'erro') {
+                titulo.textContent = 'Erro';
+                icone.textContent = '❌';
+            } else if (tipo === 'aviso') {
+                titulo.textContent = 'Atenção';
+                icone.textContent = '⚠️';
+            } else if (tipo === 'info') {
+                titulo.textContent = 'Informação';
+                icone.textContent = 'ℹ️';
+            }
+
+            descricao.textContent = mensagem;
+
+            // Configurar botões
+            if (botaoTexto && botaoCallback) {
+                btnPrimario.textContent = botaoTexto;
+                btnPrimario.style.display = 'inline-flex';
+                btnPrimario.onclick = () => {
+                    botaoCallback();
+                    fecharNotificacao();
+                };
+            } else {
+                btnPrimario.style.display = 'none';
+            }
+
+            // Mostrar banner
+            banner.classList.add('active');
+
+            // Limpar timeout anterior
+            if (notificacaoTimeout) {
+                clearTimeout(notificacaoTimeout);
+            }
+
+            // Auto-fechar após 5 segundos (com pausa no hover)
+            notificacaoTimeout = setTimeout(() => {
+                fecharNotificacao();
+            }, 5000);
+
+            // Pausar countdown no hover
+            banner.addEventListener('mouseenter', pausarNotificacao);
+            banner.addEventListener('mouseleave', retomarNotificacao);
+        }
+
+        function pausarNotificacao() {
+            if (notificacaoTimeout) {
+                clearTimeout(notificacaoTimeout);
+            }
+        }
+
+        function retomarNotificacao() {
+            notificacaoTimeout = setTimeout(() => {
+                fecharNotificacao();
+            }, 5000);
+        }
+
+        function fecharNotificacao() {
+            const banner = document.getElementById('bannerNotificacao');
+            banner.classList.add('hiding');
+
+            setTimeout(() => {
+                banner.classList.remove('active', 'hiding');
+            }, 400);
+
+            // Remover event listeners
+            banner.removeEventListener('mouseenter', pausarNotificacao);
+            banner.removeEventListener('mouseleave', retomarNotificacao);
+        }
+
         // Carregar e renderizar agenda
         function carregarAgenda() {
             carregarPrazosStorage();
+            carregarArquivadosStorage();
             renderizarPrazos();
             verificarPrazosVencendo();
         }
@@ -6446,8 +6608,11 @@
             const vazio = document.getElementById('agendaVazia');
             const paginacao = document.getElementById('agendaPaginacao');
 
+            // Selecionar fonte de dados baseado no modo de visualização
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+
             // Filtrar prazos
-            let prazosFiltrados = prazos.filter(prazo => {
+            let prazosFiltrados = fonteDados.filter(prazo => {
                 const status = calcularStatus(prazo);
                 prazo.statusCalculado = status; // Armazenar status calculado
 
@@ -6743,7 +6908,8 @@
                 atrasados: 0,
                 vencendo: 0,
                 pendentes: 0,
-                concluidos: 0
+                concluidos: 0,
+                arquivados: prazosArquivados.length
             };
 
             prazos.forEach(prazo => {
@@ -6759,6 +6925,7 @@
             document.getElementById('badge-vencendo').textContent = contadores.vencendo;
             document.getElementById('badge-pendentes').textContent = contadores.pendentes;
             document.getElementById('badge-concluidos').textContent = contadores.concluidos;
+            document.getElementById('badge-arquivados').textContent = contadores.arquivados;
         }
 
         // Filtrar prazos
@@ -7018,7 +7185,7 @@
             const novaDescricao = document.getElementById('editDescricao').value.trim();
 
             if (!novoTitulo) {
-                alert('O título não pode estar vazio.');
+                mostrarNotificacao('O título não pode estar vazio.', 'aviso');
                 return;
             }
 
@@ -7029,7 +7196,7 @@
             renderizarPrazos();
             fecharModalEditar();
 
-            alert('✅ Prazo atualizado com sucesso!');
+            mostrarNotificacao('Prazo atualizado com sucesso!', 'sucesso');
         }
 
         // Excluir prazo
@@ -7055,7 +7222,7 @@
         // Exportar agenda para JSON
         function exportarAgendaJSON() {
             if (prazos.length === 0) {
-                alert('Não há prazos para exportar.');
+                mostrarNotificacao('Não há prazos para exportar.', 'info');
                 return;
             }
 
@@ -7075,7 +7242,7 @@
             a.click();
             URL.revokeObjectURL(url);
 
-            alert('✅ Agenda exportada com sucesso!');
+            mostrarNotificacao('Agenda exportada com sucesso!', 'sucesso');
         }
 
         // Importar agenda
@@ -7136,10 +7303,10 @@
 
                     salvarPrazosStorage();
                     renderizarPrazos();
-                    alert('✅ Agenda importada com sucesso!');
+                    mostrarNotificacao('Agenda importada com sucesso!', 'sucesso');
 
                 } catch (error) {
-                    alert('❌ Erro ao importar agenda: ' + error.message);
+                    mostrarNotificacao('Erro ao importar agenda: ' + error.message, 'erro');
                 }
             };
 
@@ -7149,57 +7316,139 @@
         }
 
         // Arquivar concluídos
+        // Abrir modal de arquivamento
         function arquivarConcluidos() {
             const concluidos = prazos.filter(p => p.status === 'concluido');
 
             if (concluidos.length === 0) {
-                alert('Não há prazos concluídos para arquivar.');
+                mostrarNotificacao('Não há prazos concluídos para arquivar.', 'info');
                 return;
             }
 
-            // Calcular data limite (90 dias atrás)
-            const dataLimite = new Date();
-            dataLimite.setDate(dataLimite.getDate() - 90);
+            document.getElementById('modalArquivamento').classList.add('active');
+        }
 
-            const concluidosAntigos = concluidos.filter(p => {
+        function fecharModalArquivamento() {
+            document.getElementById('modalArquivamento').classList.remove('active');
+        }
+
+        // Arquivar prazos antigos (>90 dias)
+        function arquivarAntigos() {
+            const dataLimite = new Date();
+            dataLimite.setDate(dataLimite.getDate() - DIAS_PARA_ARQUIVAR);
+
+            const concluidosAntigos = prazos.filter(p => {
+                if (p.status !== 'concluido') return false;
                 const dataConclusao = p.dataConclusao ? new Date(p.dataConclusao) : new Date(p.dataFinal);
                 return dataConclusao < dataLimite;
             });
 
             if (concluidosAntigos.length === 0) {
-                alert('Não há prazos concluídos há mais de 90 dias para arquivar.');
+                mostrarNotificacao(`Não há prazos concluídos há mais de ${DIAS_PARA_ARQUIVAR} dias.`, 'info');
+                fecharModalArquivamento();
                 return;
             }
 
-            if (!confirm(`Deseja arquivar ${concluidosAntigos.length} prazo(s) concluído(s) há mais de 90 dias?\n\nEles serão exportados para um arquivo JSON e removidos da agenda.`)) {
-                return;
-            }
+            // Adicionar data de arquivamento e mover para arquivados
+            concluidosAntigos.forEach(prazo => {
+                prazo.dataArquivamento = new Date();
+            });
 
-            // Exportar antes de remover
-            const dataExport = {
-                versao: '1.0',
-                dataArquivamento: new Date().toISOString(),
-                totalPrazos: concluidosAntigos.length,
-                prazos: concluidosAntigos
-            };
+            prazosArquivados.push(...concluidosAntigos);
 
-            const json = JSON.stringify(dataExport, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `contaprazo-arquivo-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-
-            // Remover da agenda
+            // Remover da lista de ativos
             const idsRemover = new Set(concluidosAntigos.map(p => p.id));
             prazos = prazos.filter(p => !idsRemover.has(p.id));
 
             salvarPrazosStorage();
+            salvarArquivadosStorage();
             renderizarPrazos();
 
-            alert(`✅ ${concluidosAntigos.length} prazo(s) arquivado(s) com sucesso!`);
+            fecharModalArquivamento();
+            mostrarNotificacao(`${concluidosAntigos.length} prazo(s) arquivado(s) com sucesso!`, 'sucesso');
+        }
+
+        // Arquivar todos os concluídos
+        function arquivarTodos() {
+            const concluidos = prazos.filter(p => p.status === 'concluido');
+
+            if (concluidos.length === 0) {
+                mostrarNotificacao('Não há prazos concluídos para arquivar.', 'info');
+                fecharModalArquivamento();
+                return;
+            }
+
+            // Adicionar data de arquivamento e mover para arquivados
+            concluidos.forEach(prazo => {
+                prazo.dataArquivamento = new Date();
+            });
+
+            prazosArquivados.push(...concluidos);
+
+            // Remover da lista de ativos
+            prazos = prazos.filter(p => p.status !== 'concluido');
+
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+            renderizarPrazos();
+
+            fecharModalArquivamento();
+            mostrarNotificacao(`${concluidos.length} prazo(s) arquivado(s) com sucesso!`, 'sucesso');
+        }
+
+        // Excluir definitivamente todos os concluídos
+        function excluirTodosConcluidos() {
+            const concluidos = prazos.filter(p => p.status === 'concluido');
+
+            if (concluidos.length === 0) {
+                mostrarNotificacao('Não há prazos concluídos para excluir.', 'info');
+                fecharModalArquivamento();
+                return;
+            }
+
+            // Remover da lista de ativos
+            prazos = prazos.filter(p => p.status !== 'concluido');
+
+            salvarPrazosStorage();
+            renderizarPrazos();
+
+            fecharModalArquivamento();
+            mostrarNotificacao(`${concluidos.length} prazo(s) excluído(s) definitivamente.`, 'sucesso');
+        }
+
+        // Toggle visualização entre prazos ativos e arquivados
+        function toggleVisualizacaoArquivados() {
+            const btn = document.getElementById('btnVerArquivados');
+            const textoBtn = document.getElementById('textoVerArquivados');
+
+            if (modoVisualizacao === 'ativos') {
+                // Mudar para arquivados
+                modoVisualizacao = 'arquivados';
+                textoBtn.textContent = 'Ver Ativos';
+                btn.classList.add('active');
+                filtroAtual = 'todos'; // Resetar filtro ao mudar visualização
+
+                // Desativar outros filtros visualmente
+                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.opacity = '0.5';
+                });
+            } else {
+                // Mudar para ativos
+                modoVisualizacao = 'ativos';
+                textoBtn.textContent = 'Ver Arquivados';
+                btn.classList.remove('active');
+
+                // Reativar outros filtros
+                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
+                    btn.style.opacity = '1';
+                });
+                document.querySelector('.filtro-btn[data-filtro="todos"]').classList.add('active');
+            }
+
+            // Resetar para primeira página e renderizar
+            paginaAtual = 1;
+            renderizarPrazos();
         }
 
         // Verificar prazos vencendo (ao carregar página)
@@ -7387,11 +7636,11 @@
 
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
-                    alert('✅ Feriados personalizados salvos com sucesso!');
+                    mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
                     mostrarAvisoRecalculo();
                 }
             } catch (error) {
-                alert('❌ Erro ao processar os feriados:\n\n' + error.message);
+                mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
         }
 
@@ -7496,7 +7745,7 @@
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
 
-                    alert('✅ Configurações salvas com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+                    mostrarNotificacao('Configurações salvas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
                     // Marca flag para voltar à primeira aba após reload
                     sessionStorage.setItem('reloadToTop', 'true');
@@ -7505,7 +7754,7 @@
                     location.reload();
                 }
             } catch (error) {
-                alert('❌ Erro ao processar os feriados:\n\n' + error.message);
+                mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
         }
 
@@ -7555,7 +7804,7 @@
             localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
             localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
 
-            alert('✅ Feriados padrão restaurados com sucesso!\n\nA página será recarregada para aplicar as mudanças.');
+            mostrarNotificacao('Feriados padrão restaurados com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
             // Marca flag para voltar à primeira aba após reload
             sessionStorage.setItem('reloadToTop', 'true');
@@ -7805,6 +8054,81 @@
                 <button class="update-banner-btn update-banner-btn-secondary" onclick="fecharBannerPrazoSalvo()">
                     OK
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner de Notificação Genérico -->
+    <div id="bannerNotificacao" class="update-banner">
+        <div class="update-banner-content">
+            <div class="update-banner-icon" id="notificacaoIcone">✅</div>
+            <div class="update-banner-text">
+                <div class="update-banner-title" id="notificacaoTitulo">Sucesso!</div>
+                <div class="update-banner-description" id="notificacaoDescricao">Operação realizada com sucesso.</div>
+            </div>
+            <div class="update-banner-actions">
+                <button class="update-banner-btn update-banner-btn-primary" id="notificacaoBtnPrimario" style="display:none;">
+                    Ação
+                </button>
+                <button class="update-banner-btn update-banner-btn-secondary" id="notificacaoBtnSecundario" onclick="fecharNotificacao()">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Arquivamento -->
+    <div id="modalArquivamento" class="modal-detalhes">
+        <div class="modal-detalhes-content" style="max-width: 600px;">
+            <div class="modal-detalhes-header">
+                <h2>Arquivar Prazos Concluídos</h2>
+                <button class="modal-fechar" onclick="fecharModalArquivamento()">×</button>
+            </div>
+            <div class="modal-detalhes-body">
+                <p style="margin-bottom: 20px; color: #6b7280;">
+                    Escolha como deseja gerenciar os prazos concluídos:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="opcao-arquivamento" onclick="arquivarAntigos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">📦</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Arquivar antigos (>90 dias)
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Move prazos concluídos há mais de 90 dias para o arquivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opcao-arquivamento" onclick="arquivarTodos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">📁</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Arquivar todos os concluídos
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Move TODOS os prazos concluídos para o arquivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opcao-arquivamento opcao-perigo" onclick="excluirTodosConcluidos()">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">🗑️</div>
+                            <div>
+                                <div style="font-weight: 600; color: #dc2626; margin-bottom: 4px;">
+                                    Excluir definitivamente
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    Remove permanentemente todos os prazos concluídos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
