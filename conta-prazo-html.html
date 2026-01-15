@@ -2165,12 +2165,18 @@
             border-left: 3px solid #ea580c;
         }
 
+        /* Vence HOJE - mais urgente que vencendo */
+        .prazo-item-vence-hoje {
+            background: #fed7aa;
+            border-left: 3px solid #f97316;
+        }
+
         .prazo-item-concluido {
             background: #f0fdf4;
             border-left: 3px solid #16a34a;
         }
 
-        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-concluido) {
+        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-vence-hoje):not(.prazo-item-concluido) {
             background: #f9fafb;
         }
 
@@ -2180,6 +2186,10 @@
 
         .prazo-item-vencendo:hover {
             background: #fef3c7;
+        }
+
+        .prazo-item-vence-hoje:hover {
+            background: #fdba74;
         }
 
         .prazo-item-concluido:hover {
@@ -2348,16 +2358,22 @@
         .prazo-info-secundaria {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 0;
             font-size: 0.8rem;
             color: #9ca3af;
             margin-top: 4px;
+            align-items: center;
         }
 
         .prazo-info-secundaria-item {
-            display: flex;
+            display: inline-flex;
             align-items: center;
+            padding: 0 8px;
             gap: 4px;
+        }
+
+        .prazo-info-secundaria-item:first-child {
+            padding-left: 0;
         }
 
         /* Contador Regressivo - Discreto mas Claro */
@@ -2492,6 +2508,11 @@
             z-index: 1000;
             overflow: hidden;
             border: 1px solid #e5e7eb;
+        }
+
+        .prazo-menu-dropdown.dropdown-up {
+            top: auto;
+            bottom: 40px;
         }
 
         .prazo-menu-dropdown.active {
@@ -2761,111 +2782,6 @@
 
         .toast-undo-btn:hover {
             background: #2563eb;
-        }
-
-        /* Toast de Sucesso */
-        .toast-sucesso {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: white;
-            padding: 20px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 3000;
-            opacity: 0;
-            transform: translateX(400px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid #16a34a;
-            max-width: 400px;
-        }
-
-        .toast-sucesso.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .toast-sucesso-icone {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .toast-sucesso-icone svg {
-            width: 24px;
-            height: 24px;
-            stroke: white;
-            stroke-width: 3;
-        }
-
-        .toast-sucesso-conteudo {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast-sucesso-titulo {
-            font-weight: 700;
-            color: #1f2937;
-            font-size: 0.95rem;
-        }
-
-        .toast-sucesso-mensagem {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .toast-sucesso-acoes {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .toast-sucesso-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .toast-sucesso-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .toast-sucesso-fechar {
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .toast-sucesso-fechar:hover {
-            background: #f3f4f6;
-            color: #1f2937;
         }
 
         /* Paginação da Agenda */
@@ -4148,12 +4064,15 @@
         // VARIÁVEIS DA AGENDA DE PRAZOS
         // ========================================
         let prazos = []; // Array de prazos salvos
+        let prazosArquivados = []; // Array de prazos arquivados
+        let modoVisualizacao = 'ativos'; // 'ativos' ou 'arquivados'
         let filtroAtual = 'todos'; // Filtro ativo
         let prazoEmEdicao = null; // ID do prazo sendo editado
         let undoState = null; // Estado para desfazer ações
         let undoTimeout = null; // Timeout para limpar undo
         let paginaAtual = 1; // Página atual na lista
         const ITENS_POR_PAGINA = 20; // Limite de itens por página
+        const DIAS_PARA_ARQUIVAR = 90; // Dias após conclusão para arquivar automaticamente
 
         // ========================================
         // CONSTANTES
@@ -6386,9 +6305,9 @@
                 return;
             }
 
-            // Preencher modal com descrição existente (se houver)
+            // Preencher modal - só título com descrição, campo descrição vazio
             document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
-            document.getElementById('inputDescricaoPrazo').value = descricaoPrazo || '';
+            document.getElementById('inputDescricaoPrazo').value = ''; // Deixar vazio para usuário preencher
 
             // Abrir modal
             document.getElementById('modalInputTitulo').classList.add('active');
@@ -6447,31 +6366,65 @@
             // Fechar modal
             fecharModalInputTitulo();
 
-            // Mostrar toast de sucesso (sem redirecionar automaticamente)
-            mostrarToastSucesso();
+            // Mostrar banner de sucesso (sem redirecionar automaticamente)
+            mostrarBannerPrazoSalvo();
         }
 
-        // Mostrar toast de sucesso
-        function mostrarToastSucesso() {
-            const toast = document.getElementById('toastSucesso');
-            toast.classList.add('active');
+        // Mostrar banner de prazo salvo
+        let bannerPrazoSalvoTimeout;
+        function mostrarBannerPrazoSalvo() {
+            const banner = document.getElementById('bannerPrazoSalvo');
+            banner.classList.add('active');
 
-            // Auto-fechar após 5 segundos
-            setTimeout(() => {
-                fecharToastSucesso();
+            // Limpar timeout anterior se existir
+            if (bannerPrazoSalvoTimeout) {
+                clearTimeout(bannerPrazoSalvoTimeout);
+            }
+
+            // Auto-fechar após 5 segundos (com pausa no hover)
+            bannerPrazoSalvoTimeout = setTimeout(() => {
+                fecharBannerPrazoSalvo();
+            }, 5000);
+
+            // Pausar countdown no hover
+            banner.addEventListener('mouseenter', pausarBannerPrazoSalvo);
+            banner.addEventListener('mouseleave', retomarBannerPrazoSalvo);
+        }
+
+        // Pausar auto-fechamento do banner
+        function pausarBannerPrazoSalvo() {
+            if (bannerPrazoSalvoTimeout) {
+                clearTimeout(bannerPrazoSalvoTimeout);
+            }
+        }
+
+        // Retomar auto-fechamento do banner
+        function retomarBannerPrazoSalvo() {
+            bannerPrazoSalvoTimeout = setTimeout(() => {
+                fecharBannerPrazoSalvo();
             }, 5000);
         }
 
-        // Fechar toast de sucesso
-        function fecharToastSucesso() {
-            const toast = document.getElementById('toastSucesso');
-            toast.classList.remove('active');
+        // Fechar banner de prazo salvo
+        function fecharBannerPrazoSalvo() {
+            const banner = document.getElementById('bannerPrazoSalvo');
+            banner.classList.add('hiding');
+
+            setTimeout(() => {
+                banner.classList.remove('active', 'hiding');
+            }, 400);
+
+            // Remover event listeners
+            banner.removeEventListener('mouseenter', pausarBannerPrazoSalvo);
+            banner.removeEventListener('mouseleave', retomarBannerPrazoSalvo);
         }
 
-        // Ir para a agenda (ao clicar no botão "Ver" do toast)
+        // Ir para a agenda (ao clicar no botão "Ver Agenda")
         function irParaAgenda() {
-            fecharToastSucesso();
+            fecharBannerPrazoSalvo();
             trocarPagina('agenda');
+            // Scroll para o topo da página
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Carregar e renderizar agenda
@@ -6591,7 +6544,12 @@
             if (status === 'atrasado') {
                 classeFundo = 'prazo-item-atrasado';
             } else if (status === 'vencendo') {
-                classeFundo = 'prazo-item-vencendo';
+                // Diferenciar "vence hoje" de "vence em 3 dias"
+                if (diasRestantes.hoje) {
+                    classeFundo = 'prazo-item-vence-hoje';
+                } else {
+                    classeFundo = 'prazo-item-vencendo';
+                }
             } else if (status === 'concluido') {
                 classeFundo = 'prazo-item-concluido';
             }
@@ -6615,15 +6573,22 @@
                 contadorInline = `<span class="prazo-contador-inline concluido">• Concluído em ${dataConc}</span>`;
             } else {
                 if (diasRestantes.atrasado) {
-                    // Atrasado: mostrar negativo em vermelho
-                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
+                    // Atrasado: mostrar negativo em vermelho (com concordância)
+                    const textoTipo = diasRestantes.tipo === 'uteis'
+                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                    contadorInline = `<span class="prazo-contador-inline atrasado">• Atrasado há <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 } else if (diasRestantes.hoje) {
                     // Vence hoje: texto chamativo
                     contadorInline = `<span class="prazo-contador-inline vence-hoje">• <strong>VENCE HOJE</strong></span>`;
                 } else {
-                    // Pendente ou vencendo: mostrar positivo
+                    // Pendente ou vencendo: mostrar positivo (com concordância)
                     const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
-                    contadorInline = `<span class="prazo-contador-inline ${classe}">• Faltam <strong>${diasRestantes.numero}</strong> ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}</span>`;
+                    const textoTipo = diasRestantes.tipo === 'uteis'
+                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                    const verbo = diasRestantes.numero === 1 ? 'Falta' : 'Faltam';
+                    contadorInline = `<span class="prazo-contador-inline ${classe}">• ${verbo} <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
                 }
             }
 
@@ -6663,7 +6628,9 @@
                         </div>
                         <div class="prazo-info-secundaria">
                             <span class="prazo-info-secundaria-item">
-                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis' ? 'dias úteis' : 'dias corridos'}
+                                ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis'
+                                    ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
+                                    : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
                             <span class="prazo-info-secundaria-item">
                                 • Início: ${dataInicioFormatada}
@@ -6717,11 +6684,30 @@
             todosMenus.forEach(m => {
                 if (m !== menu) {
                     m.classList.remove('active');
+                    m.classList.remove('dropdown-up');
                 }
             });
 
             // Toggle menu atual
+            const wasActive = menu.classList.contains('active');
             menu.classList.toggle('active');
+
+            // Se estiver abrindo, verificar posição
+            if (!wasActive) {
+                // Remover classe anterior
+                menu.classList.remove('dropdown-up');
+
+                // Aguardar renderização para calcular posição
+                setTimeout(() => {
+                    const menuRect = menu.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+
+                    // Se o menu ultrapassar a viewport, abrir para cima
+                    if (menuRect.bottom > viewportHeight - 20) {
+                        menu.classList.add('dropdown-up');
+                    }
+                }, 0);
+            }
         }
 
         // Fechar todos os menus de prazo
@@ -7792,30 +7778,22 @@
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
-    <!-- Toast de Sucesso ao Salvar Prazo -->
-    <div id="toastSucesso" class="toast-sucesso">
-        <div class="toast-sucesso-icone">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
-        <div class="toast-sucesso-conteudo">
-            <div class="toast-sucesso-titulo">Prazo salvo com sucesso!</div>
-            <div class="toast-sucesso-mensagem">O prazo foi adicionado à sua agenda.</div>
-        </div>
-        <div class="toast-sucesso-acoes">
-            <button class="toast-sucesso-btn" onclick="irParaAgenda()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 18l6-6-6-6"></path>
-                </svg>
-                Ver
-            </button>
-            <button class="toast-sucesso-fechar" onclick="fecharToastSucesso()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+    <!-- Banner de Notificação de Prazo Salvo -->
+    <div id="bannerPrazoSalvo" class="update-banner">
+        <div class="update-banner-content">
+            <div class="update-banner-icon">✅</div>
+            <div class="update-banner-text">
+                <div class="update-banner-title">Prazo salvo com sucesso!</div>
+                <div class="update-banner-description">O prazo foi adicionado à sua agenda.</div>
+            </div>
+            <div class="update-banner-actions">
+                <button class="update-banner-btn update-banner-btn-primary" onclick="irParaAgenda()">
+                    Ver Agenda
+                </button>
+                <button class="update-banner-btn update-banner-btn-secondary" onclick="fecharBannerPrazoSalvo()">
+                    OK
+                </button>
+            </div>
         </div>
     </div>
 
