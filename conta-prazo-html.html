@@ -594,6 +594,32 @@
             overflow-y: auto;
         }
 
+        /* Estilos de scrollbar para .detalhamento (Chromium/WebKit) */
+        .detalhamento::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .detalhamento::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 8px;
+        }
+
+        .detalhamento::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+            border: 2px solid white;
+        }
+
+        .detalhamento::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos de scrollbar para Firefox */
+        .detalhamento {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+
         .detalhamento h3 {
             color: #1f2937;
             margin-bottom: 10px;
@@ -1187,6 +1213,74 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+        }
+
+        /* Toggle Switch para seleção de método PDF */
+        .pdf-method-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-method-toggle label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .pdf-method-toggle label.active {
+            color: #1f2937;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #3b82f6;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #16a34a;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(28px);
         }
 
         /* Modal de Aviso de Recálculo */
@@ -2875,6 +2969,32 @@
             flex: 1;
         }
 
+        /* Estilos de scrollbar para .modal-detalhes-body (Chromium/WebKit) */
+        .modal-detalhes-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 16px;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 16px;
+            border: 2px solid white;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos de scrollbar para Firefox */
+        .modal-detalhes-body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+
         .modal-detalhes-acoes {
             padding: 12px 16px;
             border-top: 2px solid #e5e7eb;
@@ -3196,6 +3316,8 @@
     </style>
     <!-- Biblioteca html2canvas para exportação de PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Biblioteca html2pdf.js para geração de PDF com nomenclatura automática -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <!-- Cabeçalho Global -->
@@ -4263,6 +4385,18 @@
         <div class="modal-content">
             <div class="modal-header">Exportar PDF</div>
             <div class="modal-body">
+                <!-- Toggle para escolher método de exportação -->
+                <div class="pdf-method-toggle">
+                    <label id="labelImprimirPDF" class="active">🖨️ Imprimir PDF</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleMetodoPDF" onchange="toggleMetodoPDF()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label id="labelGerarPDF">💾 Gerar PDF</label>
+                </div>
+                <div id="descricaoMetodoPDF" style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
+                    Abre janela de impressão do navegador (permite salvar como PDF)
+                </div>
                 Escolha o tipo de export PDF:
             </div>
             <div class="modal-options">
@@ -5795,6 +5929,12 @@
                 mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
+            // Resetar toggle para método padrão (imprimir)
+            document.getElementById('toggleMetodoPDF').checked = false;
+            document.getElementById('labelImprimirPDF').classList.add('active');
+            document.getElementById('labelGerarPDF').classList.remove('active');
+            document.getElementById('descricaoMetodoPDF').textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
+
             document.getElementById('modalExportPDF').classList.add('active');
         }
 
@@ -5802,12 +5942,43 @@
             document.getElementById('modalExportPDF').classList.remove('active');
         }
 
-        function finalizarExportPDF(tipo) {
-            fecharModalExportPDF();
-            if (tipo === 'resumido') {
-                exportarPDFResumido();
+        function toggleMetodoPDF() {
+            const toggle = document.getElementById('toggleMetodoPDF');
+            const labelImprimir = document.getElementById('labelImprimirPDF');
+            const labelGerar = document.getElementById('labelGerarPDF');
+            const descricao = document.getElementById('descricaoMetodoPDF');
+
+            if (toggle.checked) {
+                // Modo Gerar PDF
+                labelImprimir.classList.remove('active');
+                labelGerar.classList.add('active');
+                descricao.textContent = 'Gera arquivo PDF diretamente com nome automático baseado na descrição do prazo';
             } else {
-                exportarPDFCompleto();
+                // Modo Imprimir PDF
+                labelImprimir.classList.add('active');
+                labelGerar.classList.remove('active');
+                descricao.textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
+            }
+        }
+
+        function finalizarExportPDF(tipo) {
+            const usarGerador = document.getElementById('toggleMetodoPDF').checked;
+            fecharModalExportPDF();
+
+            if (usarGerador) {
+                // Usar html2pdf.js para gerar PDF com nomenclatura automática
+                if (tipo === 'resumido') {
+                    gerarPDFResumido();
+                } else {
+                    gerarPDFCompleto();
+                }
+            } else {
+                // Usar método tradicional (window.print)
+                if (tipo === 'resumido') {
+                    exportarPDFResumido();
+                } else {
+                    exportarPDFCompleto();
+                }
             }
         }
 
@@ -6396,6 +6567,262 @@
                 mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
         }
+
+        // ==================== FUNÇÕES DE GERAÇÃO DE PDF COM HTML2PDF.JS ====================
+
+        function gerarPDFResumido() {
+            if (!dataFinal) {
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
+                return;
+            }
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (descricaoPrazo) {
+                descricaoHTML = `
+                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
+                    </div>
+                `;
+            }
+
+            // Gerar visualização dos dias
+            let diasVisuaisHTML = '';
+            todosOsDias.forEach((dia, index) => {
+                const diaNum = dia.data.getDate();
+                const isInicio = index === 0;
+                const isFinal = index === todosOsDias.length - 1;
+
+                const ehFds = ehFimDeSemana(dia.data);
+                const ehFer = ehFeriado(dia.data);
+                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
+                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
+
+                let cor = '#fef3c7';
+                let borda = '1px solid #fbbf24';
+                let textoCor = '#92400e';
+
+                if (isInicio) {
+                    cor = '#3b82f6';
+                    borda = '2px solid #2563eb';
+                    textoCor = '#ffffff';
+                } else if (isFinal) {
+                    cor = '#16a34a';
+                    borda = '2px solid #15803d';
+                    textoCor = '#ffffff';
+                } else if (usarDiasUteis) {
+                    if (ehPersonalizado) {
+                        cor = '#e9d5ff';
+                        borda = '1px solid #c084fc';
+                        textoCor = '#6b21a8';
+                    } else if (ehFer) {
+                        cor = '#fecaca';
+                        borda = '1px solid #f87171';
+                        textoCor = '#991b1b';
+                    } else if (ehFds) {
+                        cor = '#e5e7eb';
+                        borda = '1px solid #d1d5db';
+                        textoCor = '#6b7280';
+                    }
+                }
+
+                let mesIndicador = '';
+                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
+                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                }
+
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
+            });
+
+            // Formatar visualização dos dias com legenda
+            const diasVisuaisHTMLFormatado = `
+                <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
+                    <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
+                    <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
+                    </div>
+                </div>
+            `;
+
+            // HTML completo do PDF
+            const htmlContent = `
+<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
+        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
+            <div style="display: flex; align-items: center; line-height: 1;">
+                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
+            </div>
+            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
+            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
+        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
+        ${diasVisuaisHTMLFormatado}
+    </div>
+</div>
+            `;
+
+            // Criar elemento temporário
+            const container = document.createElement('div');
+            container.innerHTML = htmlContent;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.background = 'white';
+            document.body.appendChild(container);
+
+            // Gerar nome do arquivo
+            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+            const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
+
+            // Configurar e gerar PDF
+            const opt = {
+                margin: 10,
+                filename: nomeArquivo,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+            }).catch(error => {
+                document.body.removeChild(container);
+                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                console.error('Erro ao gerar PDF:', error);
+            });
+        }
+
+        function gerarPDFCompleto() {
+            if (!dataFinal) {
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
+                return;
+            }
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (descricaoPrazo) {
+                descricaoHTML = `
+                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
+                    </div>
+                `;
+            }
+
+            // Gerar lista detalhada de dias
+            let diasDetalhesHTML = '';
+            todosOsDias.forEach(dia => {
+                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                if (dia.contado) {
+                    diasDetalhesHTML += `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #dcfce7; border-left: 4px solid #22c55e; font-size: 0.9rem;">
+                            <span style="font-weight: bold; min-width: 30px; color: #166534;">${dia.numero}</span>
+                            <span>${dataFormatada}</span>
+                        </div>
+                    `;
+                } else {
+                    diasDetalhesHTML += `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #fef2f2; border-left: 4px solid #ef4444; font-size: 0.9rem;">
+                            <span style="font-weight: bold; min-width: 30px; color: #991b1b;">X</span>
+                            <span>${dataFormatada} - ${dia.motivo}</span>
+                        </div>
+                    `;
+                }
+            });
+
+            // HTML completo do PDF
+            const htmlContent = `
+<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
+        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
+            <div style="display: flex; align-items: center; line-height: 1;">
+                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
+            </div>
+            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
+            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
+        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
+    </div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
+        <h3 style="color: #1f2937; margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline;">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Detalhamento (Auditoria)
+        </h3>
+        ${diasDetalhesHTML}
+    </div>
+</div>
+            `;
+
+            // Criar elemento temporário
+            const container = document.createElement('div');
+            container.innerHTML = htmlContent;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.background = 'white';
+            document.body.appendChild(container);
+
+            // Gerar nome do arquivo
+            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+            const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
+
+            // Configurar e gerar PDF
+            const opt = {
+                margin: 10,
+                filename: nomeArquivo,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+            }).catch(error => {
+                document.body.removeChild(container);
+                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                console.error('Erro ao gerar PDF:', error);
+            });
+        }
+
+        // ==================== FIM DAS FUNÇÕES DE GERAÇÃO DE PDF ====================
 
         function baixarCalculadora() {
             const htmlCompleto = document.documentElement.outerHTML;
@@ -7446,9 +7873,6 @@
 
             document.getElementById('modalDetalhesBody').innerHTML = html;
 
-            // Resetar scroll ao abrir modal
-            document.getElementById('modalDetalhesBody').scrollTop = 0;
-
             // Renderizar botões de ação baseado se é arquivado ou não
             const acoesContainer = document.querySelector('.modal-detalhes-acoes');
             if (isArquivado) {
@@ -7497,6 +7921,12 @@
             }
 
             document.getElementById('modalDetalhesPrazo').classList.add('active');
+
+            // Resetar scroll ao abrir modal (após adicionar classe 'active')
+            // Usar setTimeout para garantir que o modal já está visível
+            setTimeout(() => {
+                document.getElementById('modalDetalhesBody').scrollTop = 0;
+            }, 0);
         }
 
         // Fechar modal de detalhes
@@ -8018,9 +8448,19 @@
             // Mostrar botões de filtro e arquivados novamente
             document.getElementById('btnSelecionar').style.display = 'inline-flex';
             document.getElementById('btnVerArquivados').style.display = 'inline-flex';
-            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                btn.style.display = 'inline-flex';
-            });
+
+            // Restaurar visibilidade dos botões de filtro baseado no modo de visualização
+            if (modoVisualizacao === 'arquivados') {
+                // Se estamos vendo arquivados, ocultar filtros de status
+                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            } else {
+                // Se estamos vendo ativos, mostrar todos os filtros
+                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                    btn.style.display = 'inline-flex';
+                });
+            }
 
             // Ocultar barra de seleção
             document.getElementById('barraSelecao').style.display = 'none';
