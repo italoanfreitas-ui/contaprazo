@@ -2127,6 +2127,154 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Barra de Seleção Múltipla */
+        .barra-selecao {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .barra-selecao-info {
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .barra-selecao-acoes {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        .barra-selecao-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 4px;
+        }
+
+        .btn-selecao {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-selecao:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-selecao-cancelar {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-selecao-cancelar:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
+        .menu-acoes-selecao {
+            position: absolute;
+            top: 100%;
+            right: 60px;
+            margin-top: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+            min-width: 220px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .menu-acoes-selecao button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: white;
+            color: #1f2937;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .menu-acoes-selecao button:hover {
+            background: #f3f4f6;
+        }
+
+        .menu-acoes-selecao button svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+
+        /* Checkbox de Seleção no Card */
+        .checkbox-selecao {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .checkbox-selecao:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .checkbox-selecao.selecionado {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .checkbox-selecao.selecionado::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .prazo-item.modo-selecao {
+            grid-template-columns: 20px 32px 1fr auto;
+        }
+
         /* Lista de Prazos Linear */
         .agenda-lista {
             display: flex;
@@ -2661,8 +2809,8 @@
             background: white;
             border-radius: 16px;
             width: 100%;
-            max-width: 900px;
-            max-height: 85vh;
+            max-width: 700px;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
@@ -2680,7 +2828,7 @@
         }
 
         .modal-detalhes-header {
-            padding: 24px 30px;
+            padding: 16px 20px;
             border-bottom: 2px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
@@ -2693,7 +2841,7 @@
         }
 
         .modal-detalhes-titulo {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #1f2937;
             margin: 0;
@@ -2719,11 +2867,11 @@
         }
 
         .modal-detalhes-body {
-            padding: 30px;
+            padding: 20px;
         }
 
         .modal-detalhes-acoes {
-            padding: 20px 30px;
+            padding: 16px 20px;
             border-top: 2px solid #e5e7eb;
             display: flex;
             gap: 10px;
@@ -3626,6 +3774,29 @@
 
             <div class="help-section">
                 <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Minha Agenda de Prazos
+                </h3>
+                <p><strong>Salve e organize</strong> seus prazos calculados em uma agenda completa com filtros, edição e arquivamento.</p>
+                <ul>
+                    <li><strong>Salvar Prazo:</strong> Após calcular, clique em "Salvar na Minha Agenda" para adicionar título e descrição.</li>
+                    <li><strong>Filtros Inteligentes:</strong> Visualize prazos por status - Todos, Atrasados, Vencendo (≤3 dias), Pendentes, Concluídos.</li>
+                    <li><strong>Marcar como Concluído:</strong> Clique no checkbox verde ao lado de cada prazo para marcar/desmarcar conclusão.</li>
+                    <li><strong>Seleção Múltipla:</strong> Clique em "Selecionar" para entrar no modo de seleção e realizar ações em lote (marcar concluídos, arquivar ou excluir vários prazos de uma vez).</li>
+                    <li><strong>Menu de Ações (⋮):</strong> Ver detalhes completos, editar, arquivar ou excluir cada prazo individualmente.</li>
+                    <li><strong>Arquivamento:</strong> Prazos podem ser arquivados individualmente ou em lote. Use "Ver Arquivados" para acessar prazos arquivados. Você pode desarquivar (escolhendo voltar como pendente ou concluído) ou excluir permanentemente.</li>
+                    <li><strong>Exportar/Importar:</strong> Exporte sua agenda completa em JSON para backup ou compartilhe com outros dispositivos através da função "Importar Agenda".</li>
+                    <li><strong>Notificações:</strong> Ao abrir a página, um banner alerta sobre prazos vencendo nos próximos dias.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06
@@ -3848,6 +4019,13 @@
                         <span>✅ Concluídos</span>
                         <span class="filtro-badge" id="badge-concluidos">0</span>
                     </button>
+                    <button class="filtro-btn filtro-toggle" onclick="entrarModoSelecao()" id="btnSelecionar" title="Selecionar múltiplos prazos">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Selecionar</span>
+                    </button>
                     <button class="filtro-btn filtro-toggle" onclick="toggleVisualizacaoArquivados()" id="btnVerArquivados" title="Ver prazos arquivados">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
                             <polyline points="21 8 21 21 3 21 3 8"></polyline>
@@ -3857,6 +4035,61 @@
                         <span id="textoVerArquivados">Ver Arquivados</span>
                         <span class="filtro-badge" id="badge-arquivados">0</span>
                     </button>
+                </div>
+
+                <!-- Barra de Ações de Seleção Múltipla -->
+                <div id="barraSelecao" class="barra-selecao" style="display: none;">
+                    <div class="barra-selecao-info">
+                        <strong id="contadorSelecionados">0</strong> selecionado(s)
+                    </div>
+                    <div class="barra-selecao-acoes">
+                        <button class="btn-selecao btn-selecao-todos" onclick="selecionarTodos()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                            </svg>
+                            Todos
+                        </button>
+                        <button class="btn-selecao btn-selecao-nenhum" onclick="selecionarNenhum()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            </svg>
+                            Nenhum
+                        </button>
+                        <div class="barra-selecao-divider"></div>
+                        <button class="btn-selecao btn-selecao-acoes" onclick="toggleMenuAcoesSelecao()">
+                            Ações
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="menuAcoesSelecao" class="menu-acoes-selecao" style="display: none;">
+                            <button onclick="marcarSelecionadosConcluidos()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Marcar como Concluídos
+                            </button>
+                            <button onclick="arquivarSelecionados()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                    <rect x="1" y="3" width="22" height="5"></rect>
+                                    <line x1="10" y1="12" x2="14" y2="12"></line>
+                                </svg>
+                                Arquivar Selecionados
+                            </button>
+                            <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Excluir Selecionados
+                            </button>
+                        </div>
+                        <button class="btn-selecao btn-selecao-cancelar" onclick="sairModoSelecao()">
+                            ✕ Cancelar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Paginação -->
@@ -4115,6 +4348,8 @@
         let paginaAtual = 1; // Página atual na lista
         const ITENS_POR_PAGINA = 20; // Limite de itens por página
         const DIAS_PARA_ARQUIVAR = 90; // Dias após conclusão para arquivar automaticamente
+        let modoSelecao = false; // Modo de seleção múltipla ativo
+        let prazosSelecionados = new Set(); // IDs dos prazos selecionados
 
         // ========================================
         // CONSTANTES
@@ -6765,10 +7000,16 @@
             const descricaoHTML = prazo.descricao ?
                 `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
 
+            const isSelecionado = prazosSelecionados.has(prazo.id);
+            const checkboxSelecaoHTML = modoSelecao ? `
+                <div class="checkbox-selecao ${isSelecionado ? 'selecionado' : ''}" onclick="toggleSelecaoPrazo('${prazo.id}')"></div>
+            ` : '';
+
             return `
-                <div class="prazo-item ${classeFundo}" data-id="${prazo.id}">
+                <div class="prazo-item ${classeFundo} ${modoSelecao ? 'modo-selecao' : ''}" data-id="${prazo.id}">
+                    ${checkboxSelecaoHTML}
                     <div class="prazo-checkbox-wrapper">
-                        <div class="prazo-checkbox ${checked} ${isArquivado ? 'disabled' : ''}" ${isArquivado ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado ? 'cursor: not-allowed; opacity: 0.5;' : ''}">
+                        <div class="prazo-checkbox ${checked} ${isArquivado || modoSelecao ? 'disabled' : ''}" ${isArquivado || modoSelecao ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado || modoSelecao ? 'cursor: not-allowed; opacity: 0.5;' : ''}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
@@ -6850,6 +7091,14 @@
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                     </svg>
                                     Editar
+                                </button>
+                                <button class="prazo-menu-item menu-arquivar" onclick="arquivarPrazoIndividual('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                        <rect x="1" y="3" width="22" height="5"></rect>
+                                        <line x1="10" y1="12" x2="14" y2="12"></line>
+                                    </svg>
+                                    Arquivar
                                 </button>
                                 <button class="prazo-menu-item menu-excluir" onclick="excluirPrazo('${prazo.id}'); fecharMenusPrazo();">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -7080,7 +7329,11 @@
 
         // Abrir detalhes do prazo
         function abrirDetalhes(id) {
-            const prazo = prazos.find(p => p.id === id);
+            // Buscar em prazos ativos ou arquivados
+            let prazo = prazos.find(p => p.id === id);
+            if (!prazo) {
+                prazo = prazosArquivados.find(p => p.id === id);
+            }
             if (!prazo) return;
 
             prazoEmEdicao = id; // Guardar ID para ações no modal
@@ -7538,6 +7791,231 @@
 
             mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
         }
+
+        // Arquivar prazo individual (sem precisar marcar como concluído)
+        function arquivarPrazoIndividual(id) {
+            const prazo = prazos.find(p => p.id === id);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                return;
+            }
+
+            // Adicionar data de arquivamento
+            prazo.dataArquivamento = new Date();
+
+            // Mover para arquivados
+            prazosArquivados.push(prazo);
+
+            // Remover da lista de ativos
+            prazos = prazos.filter(p => p.id !== id);
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Atualizar UI
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo arquivado com sucesso!', 'sucesso');
+        }
+
+        // ========================================
+        // SISTEMA DE SELEÇÃO MÚLTIPLA
+        // ========================================
+
+        function entrarModoSelecao() {
+            modoSelecao = true;
+            prazosSelecionados.clear();
+
+            // Ocultar botões de filtro e arquivados
+            document.getElementById('btnSelecionar').style.display = 'none';
+            document.getElementById('btnVerArquivados').style.display = 'none';
+            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                btn.style.display = 'none';
+            });
+
+            // Mostrar barra de seleção
+            document.getElementById('barraSelecao').style.display = 'flex';
+
+            // Re-renderizar lista para mostrar checkboxes
+            renderizarPrazos();
+        }
+
+        function sairModoSelecao() {
+            modoSelecao = false;
+            prazosSelecionados.clear();
+
+            // Mostrar botões de filtro e arquivados novamente
+            document.getElementById('btnSelecionar').style.display = 'inline-flex';
+            document.getElementById('btnVerArquivados').style.display = 'inline-flex';
+            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                btn.style.display = 'inline-flex';
+            });
+
+            // Ocultar barra de seleção
+            document.getElementById('barraSelecao').style.display = 'none';
+
+            // Fechar menu de ações se estiver aberto
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+
+            // Re-renderizar lista sem checkboxes
+            renderizarPrazos();
+        }
+
+        function toggleSelecaoPrazo(id) {
+            if (prazosSelecionados.has(id)) {
+                prazosSelecionados.delete(id);
+            } else {
+                prazosSelecionados.add(id);
+            }
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+
+            // Re-renderizar para atualizar checkboxes
+            renderizarPrazos();
+        }
+
+        function selecionarTodos() {
+            // Selecionar todos os prazos visíveis na página atual
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+
+            // Filtrar conforme filtro atual
+            const prazosFiltrados = fonteDados.filter(prazo => {
+                const status = calcularStatus(prazo);
+                if (filtroAtual === 'todos') return true;
+                return status === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
+            });
+
+            prazosFiltrados.forEach(prazo => {
+                prazosSelecionados.add(prazo.id);
+            });
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+
+            // Re-renderizar
+            renderizarPrazos();
+        }
+
+        function selecionarNenhum() {
+            prazosSelecionados.clear();
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = 0;
+
+            // Re-renderizar
+            renderizarPrazos();
+        }
+
+        function toggleMenuAcoesSelecao() {
+            const menu = document.getElementById('menuAcoesSelecao');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function marcarSelecionadosConcluidos() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+
+            prazosSelecionados.forEach(id => {
+                const prazo = fonteDados.find(p => p.id === id);
+                if (prazo && prazo.status !== 'concluido') {
+                    prazo.status = 'concluido';
+                    prazo.dataConclusao = new Date();
+                }
+            });
+
+            // Salvar
+            if (modoVisualizacao === 'arquivados') {
+                salvarArquivadosStorage();
+            } else {
+                salvarPrazosStorage();
+            }
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosSelecionados.size} prazo(s) marcado(s) como concluído(s)!`, 'sucesso');
+        }
+
+        function arquivarSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            if (modoVisualizacao === 'arquivados') {
+                mostrarNotificacao('Você já está vendo prazos arquivados.', 'info');
+                return;
+            }
+
+            const prazosParaArquivar = [];
+
+            prazosSelecionados.forEach(id => {
+                const prazo = prazos.find(p => p.id === id);
+                if (prazo) {
+                    prazo.dataArquivamento = new Date();
+                    prazosParaArquivar.push(prazo);
+                }
+            });
+
+            // Mover para arquivados
+            prazosArquivados.push(...prazosParaArquivar);
+
+            // Remover dos ativos
+            prazos = prazos.filter(p => !prazosSelecionados.has(p.id));
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosParaArquivar.length} prazo(s) arquivado(s)!`, 'sucesso');
+        }
+
+        function excluirSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            const quantidade = prazosSelecionados.size;
+
+            if (modoVisualizacao === 'arquivados') {
+                // Excluir dos arquivados
+                prazosArquivados = prazosArquivados.filter(p => !prazosSelecionados.has(p.id));
+                salvarArquivadosStorage();
+            } else {
+                // Excluir dos ativos
+                prazos = prazos.filter(p => !prazosSelecionados.has(p.id));
+                salvarPrazosStorage();
+            }
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${quantidade} prazo(s) excluído(s)!`, 'sucesso');
+        }
+
+        // Fechar menu de ações ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuAcoesSelecao');
+            const btnAcoes = event.target.closest('.btn-selecao-acoes');
+
+            if (menu && !btnAcoes && !event.target.closest('.menu-acoes-selecao')) {
+                menu.style.display = 'none';
+            }
+        });
 
         // Toggle visualização entre prazos ativos e arquivados
         function toggleVisualizacaoArquivados() {
