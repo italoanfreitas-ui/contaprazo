@@ -1,0 +1,32 @@
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.log
+
+# Node (caso seja usado no futuro)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Backups locais
+backup/
+*.backup
+
+# Arquivos de teste local
+test-local.*
