@@ -554,8 +554,8 @@
         }
 
         .resultado-info {
-            margin: 15px 0;
-            font-size: 1.125rem;
+            margin: 8px 0;
+            font-size: 1rem;
         }
 
         .resultado-info strong {
@@ -565,11 +565,12 @@
         .resultado-descricao {
             background: white;
             border-left: 4px solid #3b82f6;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 10px;
+            margin: 10px 0;
             border-radius: 6px;
             font-style: italic;
             color: #1f2937;
+            font-size: 0.95rem;
         }
 
         .resultado-descricao strong {
@@ -579,7 +580,7 @@
 
         .data-final {
             color: #15803d;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
         }
 
@@ -587,25 +588,53 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 400px;
+            padding: 12px;
+            margin-top: 12px;
+            max-height: 300px;
             overflow-y: auto;
+        }
+
+        /* Estilos de scrollbar para .detalhamento (Chromium/WebKit) */
+        .detalhamento::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .detalhamento::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 8px;
+        }
+
+        .detalhamento::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+            border: 2px solid white;
+        }
+
+        .detalhamento::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos de scrollbar para Firefox */
+        .detalhamento {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
         }
 
         .detalhamento h3 {
             color: #1f2937;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         .dia-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 12px;
-            margin: 5px 0;
+            gap: 10px;
+            padding: 8px;
+            margin: 3px 0;
             border-radius: 6px;
             border-left: 4px solid;
+            font-size: 0.9rem;
         }
 
         .dia-contado {
@@ -1184,6 +1213,74 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+        }
+
+        /* Toggle Switch para seleção de método PDF */
+        .pdf-method-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-method-toggle label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .pdf-method-toggle label.active {
+            color: #1f2937;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #3b82f6;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #16a34a;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(28px);
         }
 
         /* Modal de Aviso de Recálculo */
@@ -2127,6 +2224,154 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
+        /* Barra de Seleção Múltipla */
+        .barra-selecao {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .barra-selecao-info {
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .barra-selecao-acoes {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            position: relative;
+        }
+
+        .barra-selecao-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 4px;
+        }
+
+        .btn-selecao {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-selecao:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-selecao-cancelar {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-selecao-cancelar:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
+        .menu-acoes-selecao {
+            position: absolute;
+            top: 100%;
+            right: 60px;
+            margin-top: 8px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+            min-width: 220px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .menu-acoes-selecao button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: white;
+            color: #1f2937;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .menu-acoes-selecao button:hover {
+            background: #f3f4f6;
+        }
+
+        .menu-acoes-selecao button svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+
+        /* Checkbox de Seleção no Card */
+        .checkbox-selecao {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .checkbox-selecao:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .checkbox-selecao.selecionado {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .checkbox-selecao.selecionado::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .prazo-item.modo-selecao {
+            grid-template-columns: 20px 32px 1fr auto;
+        }
+
         /* Lista de Prazos Linear */
         .agenda-lista {
             display: flex;
@@ -2498,22 +2743,15 @@
         }
 
         .prazo-menu-dropdown {
-            position: absolute;
-            right: 0;
-            top: 40px;
+            position: fixed;
             background: white;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             min-width: 160px;
             display: none;
-            z-index: 1000;
+            z-index: 10000;
             overflow: hidden;
             border: 1px solid #e5e7eb;
-        }
-
-        .prazo-menu-dropdown.dropdown-up {
-            top: auto;
-            bottom: 40px;
         }
 
         .prazo-menu-dropdown.active {
@@ -2668,9 +2906,10 @@
             background: white;
             border-radius: 16px;
             width: 100%;
-            max-width: 900px;
-            max-height: 85vh;
-            overflow-y: auto;
+            max-width: 700px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
         }
@@ -2687,28 +2926,27 @@
         }
 
         .modal-detalhes-header {
-            padding: 24px 30px;
+            padding: 12px 16px;
             border-bottom: 2px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
             background: white;
             z-index: 10;
             border-radius: 16px 16px 0 0;
+            flex-shrink: 0;
         }
 
         .modal-detalhes-titulo {
-            font-size: 1.5rem;
+            font-size: 1.125rem;
             font-weight: 700;
             color: #1f2937;
             margin: 0;
         }
 
         .modal-detalhes-fechar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border: none;
             background: #f3f4f6;
             border-radius: 6px;
@@ -2726,19 +2964,46 @@
         }
 
         .modal-detalhes-body {
-            padding: 30px;
+            padding: 12px 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Estilos de scrollbar para .modal-detalhes-body (Chromium/WebKit) */
+        .modal-detalhes-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 16px;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 16px;
+            border: 2px solid white;
+        }
+
+        .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos de scrollbar para Firefox */
+        .modal-detalhes-body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
         }
 
         .modal-detalhes-acoes {
-            padding: 20px 30px;
+            padding: 12px 16px;
             border-top: 2px solid #e5e7eb;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            position: sticky;
-            bottom: 0;
             background: white;
             border-radius: 0 0 16px 16px;
+            flex-shrink: 0;
         }
 
         .modal-fechar {
@@ -3051,6 +3316,8 @@
     </style>
     <!-- Biblioteca html2canvas para exportação de PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Biblioteca html2pdf.js para geração de PDF com nomenclatura automática -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <!-- Cabeçalho Global -->
@@ -3633,6 +3900,29 @@
 
             <div class="help-section">
                 <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Minha Agenda de Prazos
+                </h3>
+                <p><strong>Salve e organize</strong> seus prazos calculados em uma agenda completa com filtros, edição e arquivamento.</p>
+                <ul>
+                    <li><strong>Salvar Prazo:</strong> Após calcular, clique em "Salvar na Minha Agenda" para adicionar título e descrição.</li>
+                    <li><strong>Filtros Inteligentes:</strong> Visualize prazos por status - Todos, Atrasados, Vencendo (≤3 dias), Pendentes, Concluídos.</li>
+                    <li><strong>Marcar como Concluído:</strong> Clique no checkbox verde ao lado de cada prazo para marcar/desmarcar conclusão.</li>
+                    <li><strong>Seleção Múltipla:</strong> Clique em "Selecionar" para entrar no modo de seleção e realizar ações em lote (marcar concluídos, arquivar ou excluir vários prazos de uma vez).</li>
+                    <li><strong>Menu de Ações (⋮):</strong> Ver detalhes completos, editar, arquivar ou excluir cada prazo individualmente.</li>
+                    <li><strong>Arquivamento:</strong> Prazos podem ser arquivados individualmente ou em lote. Use "Ver Arquivados" para acessar prazos arquivados. Você pode desarquivar (escolhendo voltar como pendente ou concluído) ou excluir permanentemente.</li>
+                    <li><strong>Exportar/Importar:</strong> Exporte sua agenda completa em JSON para backup ou compartilhe com outros dispositivos através da função "Importar Agenda".</li>
+                    <li><strong>Notificações:</strong> Ao abrir a página, um banner alerta sobre prazos vencendo nos próximos dias.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06
@@ -3855,6 +4145,13 @@
                         <span>✅ Concluídos</span>
                         <span class="filtro-badge" id="badge-concluidos">0</span>
                     </button>
+                    <button class="filtro-btn filtro-toggle" onclick="entrarModoSelecao()" id="btnSelecionar" title="Selecionar múltiplos prazos">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Selecionar</span>
+                    </button>
                     <button class="filtro-btn filtro-toggle" onclick="toggleVisualizacaoArquivados()" id="btnVerArquivados" title="Ver prazos arquivados">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
                             <polyline points="21 8 21 21 3 21 3 8"></polyline>
@@ -3864,6 +4161,61 @@
                         <span id="textoVerArquivados">Ver Arquivados</span>
                         <span class="filtro-badge" id="badge-arquivados">0</span>
                     </button>
+                </div>
+
+                <!-- Barra de Ações de Seleção Múltipla -->
+                <div id="barraSelecao" class="barra-selecao" style="display: none;">
+                    <div class="barra-selecao-info">
+                        <strong id="contadorSelecionados">0</strong> selecionado(s)
+                    </div>
+                    <div class="barra-selecao-acoes">
+                        <button class="btn-selecao btn-selecao-todos" onclick="selecionarTodos()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                            </svg>
+                            Todos
+                        </button>
+                        <button class="btn-selecao btn-selecao-nenhum" onclick="selecionarNenhum()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            </svg>
+                            Nenhum
+                        </button>
+                        <div class="barra-selecao-divider"></div>
+                        <button class="btn-selecao btn-selecao-acoes" onclick="toggleMenuAcoesSelecao()">
+                            Ações
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div id="menuAcoesSelecao" class="menu-acoes-selecao" style="display: none;">
+                            <button onclick="marcarSelecionadosConcluidos()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Marcar como Concluídos
+                            </button>
+                            <button onclick="arquivarSelecionados()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                    <rect x="1" y="3" width="22" height="5"></rect>
+                                    <line x1="10" y1="12" x2="14" y2="12"></line>
+                                </svg>
+                                Arquivar Selecionados
+                            </button>
+                            <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Excluir Selecionados
+                            </button>
+                        </div>
+                        <button class="btn-selecao btn-selecao-cancelar" onclick="sairModoSelecao()">
+                            ✕ Cancelar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Paginação -->
@@ -4033,6 +4385,18 @@
         <div class="modal-content">
             <div class="modal-header">Exportar PDF</div>
             <div class="modal-body">
+                <!-- Toggle para escolher método de exportação -->
+                <div class="pdf-method-toggle">
+                    <label id="labelImprimirPDF" class="active">🖨️ Imprimir PDF</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleMetodoPDF" onchange="toggleMetodoPDF()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label id="labelGerarPDF">💾 Gerar PDF</label>
+                </div>
+                <div id="descricaoMetodoPDF" style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
+                    Abre janela de impressão do navegador (permite salvar como PDF)
+                </div>
                 Escolha o tipo de export PDF:
             </div>
             <div class="modal-options">
@@ -4122,6 +4486,8 @@
         let paginaAtual = 1; // Página atual na lista
         const ITENS_POR_PAGINA = 20; // Limite de itens por página
         const DIAS_PARA_ARQUIVAR = 90; // Dias após conclusão para arquivar automaticamente
+        let modoSelecao = false; // Modo de seleção múltipla ativo
+        let prazosSelecionados = new Set(); // IDs dos prazos selecionados
 
         // ========================================
         // CONSTANTES
@@ -5563,6 +5929,12 @@
                 mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
+            // Resetar toggle para método padrão (imprimir)
+            document.getElementById('toggleMetodoPDF').checked = false;
+            document.getElementById('labelImprimirPDF').classList.add('active');
+            document.getElementById('labelGerarPDF').classList.remove('active');
+            document.getElementById('descricaoMetodoPDF').textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
+
             document.getElementById('modalExportPDF').classList.add('active');
         }
 
@@ -5570,12 +5942,43 @@
             document.getElementById('modalExportPDF').classList.remove('active');
         }
 
-        function finalizarExportPDF(tipo) {
-            fecharModalExportPDF();
-            if (tipo === 'resumido') {
-                exportarPDFResumido();
+        function toggleMetodoPDF() {
+            const toggle = document.getElementById('toggleMetodoPDF');
+            const labelImprimir = document.getElementById('labelImprimirPDF');
+            const labelGerar = document.getElementById('labelGerarPDF');
+            const descricao = document.getElementById('descricaoMetodoPDF');
+
+            if (toggle.checked) {
+                // Modo Gerar PDF
+                labelImprimir.classList.remove('active');
+                labelGerar.classList.add('active');
+                descricao.textContent = 'Gera arquivo PDF diretamente com nome automático baseado na descrição do prazo';
             } else {
-                exportarPDFCompleto();
+                // Modo Imprimir PDF
+                labelImprimir.classList.add('active');
+                labelGerar.classList.remove('active');
+                descricao.textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
+            }
+        }
+
+        function finalizarExportPDF(tipo) {
+            const usarGerador = document.getElementById('toggleMetodoPDF').checked;
+            fecharModalExportPDF();
+
+            if (usarGerador) {
+                // Usar html2pdf.js para gerar PDF com nomenclatura automática
+                if (tipo === 'resumido') {
+                    gerarPDFResumido();
+                } else {
+                    gerarPDFCompleto();
+                }
+            } else {
+                // Usar método tradicional (window.print)
+                if (tipo === 'resumido') {
+                    exportarPDFResumido();
+                } else {
+                    exportarPDFCompleto();
+                }
             }
         }
 
@@ -6165,6 +6568,262 @@
             });
         }
 
+        // ==================== FUNÇÕES DE GERAÇÃO DE PDF COM HTML2PDF.JS ====================
+
+        function gerarPDFResumido() {
+            if (!dataFinal) {
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
+                return;
+            }
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (descricaoPrazo) {
+                descricaoHTML = `
+                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
+                    </div>
+                `;
+            }
+
+            // Gerar visualização dos dias
+            let diasVisuaisHTML = '';
+            todosOsDias.forEach((dia, index) => {
+                const diaNum = dia.data.getDate();
+                const isInicio = index === 0;
+                const isFinal = index === todosOsDias.length - 1;
+
+                const ehFds = ehFimDeSemana(dia.data);
+                const ehFer = ehFeriado(dia.data);
+                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
+                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
+
+                let cor = '#fef3c7';
+                let borda = '1px solid #fbbf24';
+                let textoCor = '#92400e';
+
+                if (isInicio) {
+                    cor = '#3b82f6';
+                    borda = '2px solid #2563eb';
+                    textoCor = '#ffffff';
+                } else if (isFinal) {
+                    cor = '#16a34a';
+                    borda = '2px solid #15803d';
+                    textoCor = '#ffffff';
+                } else if (usarDiasUteis) {
+                    if (ehPersonalizado) {
+                        cor = '#e9d5ff';
+                        borda = '1px solid #c084fc';
+                        textoCor = '#6b21a8';
+                    } else if (ehFer) {
+                        cor = '#fecaca';
+                        borda = '1px solid #f87171';
+                        textoCor = '#991b1b';
+                    } else if (ehFds) {
+                        cor = '#e5e7eb';
+                        borda = '1px solid #d1d5db';
+                        textoCor = '#6b7280';
+                    }
+                }
+
+                let mesIndicador = '';
+                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
+                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                }
+
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
+            });
+
+            // Formatar visualização dos dias com legenda
+            const diasVisuaisHTMLFormatado = `
+                <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
+                    <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
+                    <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
+                    </div>
+                </div>
+            `;
+
+            // HTML completo do PDF
+            const htmlContent = `
+<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
+        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
+            <div style="display: flex; align-items: center; line-height: 1;">
+                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
+            </div>
+            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
+            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
+        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
+        ${diasVisuaisHTMLFormatado}
+    </div>
+</div>
+            `;
+
+            // Criar elemento temporário
+            const container = document.createElement('div');
+            container.innerHTML = htmlContent;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.background = 'white';
+            document.body.appendChild(container);
+
+            // Gerar nome do arquivo
+            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+            const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
+
+            // Configurar e gerar PDF
+            const opt = {
+                margin: 10,
+                filename: nomeArquivo,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+            }).catch(error => {
+                document.body.removeChild(container);
+                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                console.error('Erro ao gerar PDF:', error);
+            });
+        }
+
+        function gerarPDFCompleto() {
+            if (!dataFinal) {
+                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
+                return;
+            }
+
+            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
+            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+
+            let descricaoHTML = '';
+            if (descricaoPrazo) {
+                descricaoHTML = `
+                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
+                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
+                    </div>
+                `;
+            }
+
+            // Gerar lista detalhada de dias
+            let diasDetalhesHTML = '';
+            todosOsDias.forEach(dia => {
+                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                if (dia.contado) {
+                    diasDetalhesHTML += `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #dcfce7; border-left: 4px solid #22c55e; font-size: 0.9rem;">
+                            <span style="font-weight: bold; min-width: 30px; color: #166534;">${dia.numero}</span>
+                            <span>${dataFormatada}</span>
+                        </div>
+                    `;
+                } else {
+                    diasDetalhesHTML += `
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #fef2f2; border-left: 4px solid #ef4444; font-size: 0.9rem;">
+                            <span style="font-weight: bold; min-width: 30px; color: #991b1b;">X</span>
+                            <span>${dataFormatada} - ${dia.motivo}</span>
+                        </div>
+                    `;
+                }
+            });
+
+            // HTML completo do PDF
+            const htmlContent = `
+<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
+        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
+            <div style="display: flex; align-items: center; line-height: 1;">
+                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
+            </div>
+            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
+            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
+        </div>
+    </div>
+    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
+        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
+        ${descricaoHTML}
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
+        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
+    </div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
+        <h3 style="color: #1f2937; margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline;">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Detalhamento (Auditoria)
+        </h3>
+        ${diasDetalhesHTML}
+    </div>
+</div>
+            `;
+
+            // Criar elemento temporário
+            const container = document.createElement('div');
+            container.innerHTML = htmlContent;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.background = 'white';
+            document.body.appendChild(container);
+
+            // Gerar nome do arquivo
+            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+            const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
+
+            // Configurar e gerar PDF
+            const opt = {
+                margin: 10,
+                filename: nomeArquivo,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+            }).catch(error => {
+                document.body.removeChild(container);
+                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                console.error('Erro ao gerar PDF:', error);
+            });
+        }
+
+        // ==================== FIM DAS FUNÇÕES DE GERAÇÃO DE PDF ====================
+
         function baixarCalculadora() {
             const htmlCompleto = document.documentElement.outerHTML;
             const blob = new Blob([htmlCompleto], { type: 'text/html' });
@@ -6709,6 +7368,7 @@
             const status = prazo.status === 'concluido' ? 'concluido' : prazo.statusCalculado;
             const diasRestantes = calcularDiasRestantes(prazo);
             const checked = prazo.status === 'concluido' ? 'checked' : '';
+            const isArquivado = modoVisualizacao === 'arquivados';
 
             // Classe de coloração de fundo conforme status
             let classeFundo = '';
@@ -6771,10 +7431,16 @@
             const descricaoHTML = prazo.descricao ?
                 `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
 
+            const isSelecionado = prazosSelecionados.has(prazo.id);
+            const checkboxSelecaoHTML = modoSelecao ? `
+                <div class="checkbox-selecao ${isSelecionado ? 'selecionado' : ''}" onclick="toggleSelecaoPrazo('${prazo.id}')"></div>
+            ` : '';
+
             return `
-                <div class="prazo-item ${classeFundo}" data-id="${prazo.id}">
+                <div class="prazo-item ${classeFundo} ${modoSelecao ? 'modo-selecao' : ''}" data-id="${prazo.id}">
+                    ${checkboxSelecaoHTML}
                     <div class="prazo-checkbox-wrapper">
-                        <div class="prazo-checkbox ${checked}" onclick="toggleConcluido('${prazo.id}')">
+                        <div class="prazo-checkbox ${checked} ${isArquivado || modoSelecao ? 'disabled' : ''}" ${isArquivado || modoSelecao ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado || modoSelecao ? 'cursor: not-allowed; opacity: 0.5;' : ''}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
@@ -6819,27 +7485,60 @@
                             </svg>
                         </button>
                         <div class="prazo-menu-dropdown" id="menu-${prazo.id}">
-                            <button class="prazo-menu-item menu-ver" onclick="abrirDetalhes('${prazo.id}'); fecharMenusPrazo();">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                                Ver Detalhes
-                            </button>
-                            <button class="prazo-menu-item menu-editar" onclick="abrirEdicao('${prazo.id}'); fecharMenusPrazo();">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                                Editar
-                            </button>
-                            <button class="prazo-menu-item menu-excluir" onclick="excluirPrazo('${prazo.id}'); fecharMenusPrazo();">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                                Excluir
-                            </button>
+                            ${isArquivado ? `
+                                <button class="prazo-menu-item menu-ver" onclick="abrirDetalhes('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    Ver Detalhes
+                                </button>
+                                <button class="prazo-menu-item menu-desarquivar" onclick="abrirModalDesarquivar('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                        <rect x="1" y="3" width="22" height="5"></rect>
+                                        <line x1="10" y1="12" x2="14" y2="12"></line>
+                                    </svg>
+                                    Desarquivar
+                                </button>
+                                <button class="prazo-menu-item menu-excluir" onclick="excluirArquivadoPermanentemente('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Excluir Permanentemente
+                                </button>
+                            ` : `
+                                <button class="prazo-menu-item menu-ver" onclick="abrirDetalhes('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    Ver Detalhes
+                                </button>
+                                <button class="prazo-menu-item menu-editar" onclick="abrirEdicao('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                    Editar
+                                </button>
+                                <button class="prazo-menu-item menu-arquivar" onclick="arquivarPrazoIndividual('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                        <rect x="1" y="3" width="22" height="5"></rect>
+                                        <line x1="10" y1="12" x2="14" y2="12"></line>
+                                    </svg>
+                                    Arquivar
+                                </button>
+                                <button class="prazo-menu-item menu-excluir" onclick="excluirPrazo('${prazo.id}'); fecharMenusPrazo();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Excluir
+                                </button>
+                            `}
                         </div>
                     </div>
                 </div>
@@ -6857,34 +7556,56 @@
             todosMenus.forEach(m => {
                 if (m !== menu) {
                     m.classList.remove('active');
-                    m.classList.remove('dropdown-up');
                 }
             });
 
             // Toggle menu atual
             const wasActive = menu.classList.contains('active');
-            menu.classList.toggle('active');
 
-            // Se estiver abrindo, verificar posição
-            if (!wasActive) {
-                // Remover classe anterior
-                menu.classList.remove('dropdown-up');
-
-                // Aguardar renderização para calcular posição
-                setTimeout(() => {
-                    const buttonRect = button.getBoundingClientRect();
-                    const viewportHeight = window.innerHeight;
-                    const menuHeight = 150; // Altura aproximada do menu (3 itens)
-
-                    // Calcular espaço disponível abaixo do botão
-                    const spaceBelow = viewportHeight - buttonRect.bottom;
-
-                    // Se não houver espaço suficiente abaixo, abrir para cima
-                    if (spaceBelow < menuHeight + 20) {
-                        menu.classList.add('dropdown-up');
-                    }
-                }, 0);
+            if (wasActive) {
+                menu.classList.remove('active');
+                return;
             }
+
+            // Abrir menu e posicionar
+            menu.classList.add('active');
+
+            // Aguardar renderização para calcular posição exata
+            setTimeout(() => {
+                const buttonRect = button.getBoundingClientRect();
+                const menuRect = menu.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+
+                // Posição horizontal: alinhar à direita do botão
+                let left = buttonRect.right - menuRect.width;
+
+                // Se sair da tela pela esquerda, alinhar à esquerda do botão
+                if (left < 10) {
+                    left = buttonRect.left;
+                }
+
+                // Se ainda sair pela direita, ajustar
+                if (left + menuRect.width > viewportWidth - 10) {
+                    left = viewportWidth - menuRect.width - 10;
+                }
+
+                // Posição vertical: inicialmente abaixo do botão
+                let top = buttonRect.bottom + 5;
+
+                // Se sair da tela por baixo, mostrar acima do botão
+                if (top + menuRect.height > viewportHeight - 10) {
+                    top = buttonRect.top - menuRect.height - 5;
+                }
+
+                // Se ainda sair por cima, forçar dentro da viewport
+                if (top < 10) {
+                    top = 10;
+                }
+
+                menu.style.left = `${left}px`;
+                menu.style.top = `${top}px`;
+            }, 0);
         }
 
         // Fechar todos os menus de prazo
@@ -6930,6 +7651,20 @@
 
         // Filtrar prazos
         function filtrarPrazos(filtro) {
+            // Se estiver vendo arquivados, voltar para ativos automaticamente
+            if (modoVisualizacao === 'arquivados') {
+                modoVisualizacao = 'ativos';
+                const btnVerArquivados = document.getElementById('btnVerArquivados');
+                const textoBtn = document.getElementById('textoVerArquivados');
+                btnVerArquivados.classList.remove('active');
+                textoBtn.textContent = 'Ver Arquivados';
+
+                // Mostrar os filtros de status novamente
+                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
+                    btn.style.display = 'inline-flex';
+                });
+            }
+
             filtroAtual = filtro;
 
             // Atualizar botões de filtro
@@ -7025,7 +7760,14 @@
 
         // Abrir detalhes do prazo
         function abrirDetalhes(id) {
-            const prazo = prazos.find(p => p.id === id);
+            // Buscar em prazos ativos ou arquivados
+            let prazo = prazos.find(p => p.id === id);
+            let isArquivado = false;
+
+            if (!prazo) {
+                prazo = prazosArquivados.find(p => p.id === id);
+                isArquivado = true;
+            }
             if (!prazo) return;
 
             prazoEmEdicao = id; // Guardar ID para ações no modal
@@ -7055,7 +7797,7 @@
             if (prazo.status === 'concluido') {
                 const dataConcFormatada = prazo.dataConclusao ? prazo.dataConclusao.toLocaleDateString('pt-BR') : '';
                 statusHTML = `
-                    <div class="resultado-info" style="background: #d1fae5; padding: 15px; border-radius: 8px; border-left: 4px solid #059669;">
+                    <div class="resultado-info" style="background: #d1fae5; padding: 10px; border-radius: 8px; border-left: 4px solid #059669;">
                         <strong>Status:</strong> <span style="color: #065f46; font-weight: 700;">✓ Concluído em ${dataConcFormatada}</span>
                     </div>
                 `;
@@ -7075,8 +7817,8 @@
                 }
 
                 statusHTML = `
-                    <div class="resultado-info" style="background: ${corBarra}15; padding: 15px; border-radius: 8px; border-left: 4px solid ${corBarra};">
-                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700; font-size: 1.125rem;">${labelContador}</span>
+                    <div class="resultado-info" style="background: ${corBarra}15; padding: 10px; border-radius: 8px; border-left: 4px solid ${corBarra};">
+                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700;">${labelContador}</span>
                     </div>
                 `;
             }
@@ -7095,9 +7837,9 @@
                     </div>
                     ${statusHTML}
 
-                    <div class="detalhamento" style="margin-top: 20px; max-height: 300px;">
+                    <div class="detalhamento" style="margin-top: 12px;">
                         <h3>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
                                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -7130,7 +7872,61 @@
             `;
 
             document.getElementById('modalDetalhesBody').innerHTML = html;
+
+            // Renderizar botões de ação baseado se é arquivado ou não
+            const acoesContainer = document.querySelector('.modal-detalhes-acoes');
+            if (isArquivado) {
+                // Versão limitada para arquivados
+                acoesContainer.innerHTML = `
+                    <button class="btn btn-primary" onclick="desarquivarPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v5H3zM3 8h18v13H3z"></path>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                            <polyline points="9 14 12 17 15 14"></polyline>
+                        </svg>
+                        Desarquivar
+                    </button>
+                    <button class="btn btn-red" onclick="excluirPrazoArquivadoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir
+                    </button>
+                `;
+            } else {
+                // Versão completa para ativos
+                acoesContainer.innerHTML = `
+                    <button class="btn btn-success" onclick="marcarConcluidoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Marcar Concluído
+                    </button>
+                    <button class="btn btn-primary" onclick="editarPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn btn-red" onclick="excluirPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir
+                    </button>
+                `;
+            }
+
             document.getElementById('modalDetalhesPrazo').classList.add('active');
+
+            // Resetar scroll ao abrir modal (após adicionar classe 'active')
+            // Usar setTimeout para garantir que o modal já está visível
+            setTimeout(() => {
+                document.getElementById('modalDetalhesBody').scrollTop = 0;
+            }, 0);
         }
 
         // Fechar modal de detalhes
@@ -7217,6 +8013,65 @@
                 fecharModalDetalhes();
                 excluirPrazo(id); // Usar ID salvo
             }
+        }
+
+        // Desarquivar prazo do modal
+        function desarquivarPrazoModal() {
+            if (!prazoEmEdicao) return;
+
+            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                fecharModalDetalhes();
+                return;
+            }
+
+            // Manter o status atual (concluído ou pendente)
+            // mas remover dos arquivados
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+
+            // Adicionar de volta aos ativos
+            prazos.push(prazo);
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar modal e atualizar UI
+            fecharModalDetalhes();
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo desarquivado com sucesso!', 'sucesso');
+        }
+
+        // Excluir prazo arquivado do modal
+        function excluirPrazoArquivadoModal() {
+            if (!prazoEmEdicao) return;
+
+            if (!confirm('Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                fecharModalDetalhes();
+                return;
+            }
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+
+            // Salvar
+            salvarArquivadosStorage();
+
+            // Fechar modal e atualizar UI
+            fecharModalDetalhes();
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
         }
 
         // Exportar agenda para JSON
@@ -7416,10 +8271,404 @@
             mostrarNotificacao(`${concluidos.length} prazo(s) excluído(s) definitivamente.`, 'sucesso');
         }
 
+        // Funções para gerenciar arquivados individualmente
+        let prazoParaDesarquivar = null;
+
+        function abrirModalDesarquivar(id) {
+            prazoParaDesarquivar = id;
+            document.getElementById('modalDesarquivar').classList.add('active');
+        }
+
+        function fecharModalDesarquivar() {
+            prazoParaDesarquivar = null;
+            document.getElementById('modalDesarquivar').classList.remove('active');
+        }
+
+        function confirmarDesarquivar(novoStatus) {
+            if (!prazoParaDesarquivar) return;
+
+            // Encontrar o prazo nos arquivados
+            const prazo = prazosArquivados.find(p => p.id === prazoParaDesarquivar);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                fecharModalDesarquivar();
+                return;
+            }
+
+            // Atualizar status conforme escolha do usuário
+            prazo.status = novoStatus;
+            if (novoStatus === 'pendente') {
+                prazo.dataConclusao = null;
+            }
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoParaDesarquivar);
+
+            // Adicionar de volta aos ativos
+            prazos.push(prazo);
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Atualizar UI
+            renderizarPrazos();
+            fecharModalDesarquivar();
+
+            const statusTexto = novoStatus === 'pendente' ? 'pendente' : 'concluído';
+            mostrarNotificacao(`Prazo desarquivado com sucesso como ${statusTexto}!`, 'sucesso');
+        }
+
+        function excluirArquivadoPermanentemente(id) {
+            // Encontrar o prazo nos arquivados
+            const prazo = prazosArquivados.find(p => p.id === id);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                return;
+            }
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== id);
+
+            // Salvar
+            salvarArquivadosStorage();
+
+            // Atualizar UI
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
+        }
+
+        // Arquivar prazo individual (sem precisar marcar como concluído)
+        function arquivarPrazoIndividual(id) {
+            const prazo = prazos.find(p => p.id === id);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                return;
+            }
+
+            // Adicionar data de arquivamento
+            prazo.dataArquivamento = new Date();
+
+            // Mover para arquivados
+            prazosArquivados.push(prazo);
+
+            // Remover da lista de ativos
+            prazos = prazos.filter(p => p.id !== id);
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Atualizar UI
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo arquivado com sucesso!', 'sucesso');
+        }
+
+        // ========================================
+        // SISTEMA DE SELEÇÃO MÚLTIPLA
+        // ========================================
+
+        function entrarModoSelecao() {
+            modoSelecao = true;
+            prazosSelecionados.clear();
+
+            // Ocultar botões de filtro e arquivados
+            document.getElementById('btnSelecionar').style.display = 'none';
+            document.getElementById('btnVerArquivados').style.display = 'none';
+            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                btn.style.display = 'none';
+            });
+
+            // Mostrar barra de seleção
+            document.getElementById('barraSelecao').style.display = 'flex';
+
+            // Renderizar menu de ações baseado no modo de visualização
+            renderizarMenuAcoesSelecao();
+
+            // Re-renderizar lista para mostrar checkboxes
+            renderizarPrazos();
+        }
+
+        function renderizarMenuAcoesSelecao() {
+            const menuAcoes = document.getElementById('menuAcoesSelecao');
+
+            if (modoVisualizacao === 'arquivados') {
+                // Menu para prazos arquivados
+                menuAcoes.innerHTML = `
+                    <button onclick="desarquivarSelecionados()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 3h18v5H3zM3 8h18v13H3z"></path>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                            <polyline points="9 14 12 17 15 14"></polyline>
+                        </svg>
+                        Desarquivar Selecionados
+                    </button>
+                    <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir Selecionados
+                    </button>
+                `;
+            } else {
+                // Menu para prazos ativos
+                menuAcoes.innerHTML = `
+                    <button onclick="marcarSelecionadosConcluidos()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Marcar como Concluídos
+                    </button>
+                    <button onclick="arquivarSelecionados()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
+                        </svg>
+                        Arquivar Selecionados
+                    </button>
+                    <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir Selecionados
+                    </button>
+                `;
+            }
+        }
+
+        function sairModoSelecao() {
+            modoSelecao = false;
+            prazosSelecionados.clear();
+
+            // Mostrar botões de filtro e arquivados novamente
+            document.getElementById('btnSelecionar').style.display = 'inline-flex';
+            document.getElementById('btnVerArquivados').style.display = 'inline-flex';
+
+            // Restaurar visibilidade dos botões de filtro baseado no modo de visualização
+            if (modoVisualizacao === 'arquivados') {
+                // Se estamos vendo arquivados, ocultar filtros de status
+                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            } else {
+                // Se estamos vendo ativos, mostrar todos os filtros
+                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
+                    btn.style.display = 'inline-flex';
+                });
+            }
+
+            // Ocultar barra de seleção
+            document.getElementById('barraSelecao').style.display = 'none';
+
+            // Fechar menu de ações se estiver aberto
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+
+            // Re-renderizar lista sem checkboxes
+            renderizarPrazos();
+        }
+
+        function toggleSelecaoPrazo(id) {
+            if (prazosSelecionados.has(id)) {
+                prazosSelecionados.delete(id);
+            } else {
+                prazosSelecionados.add(id);
+            }
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+
+            // Re-renderizar para atualizar checkboxes
+            renderizarPrazos();
+        }
+
+        function selecionarTodos() {
+            // Selecionar todos os prazos visíveis na página atual
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+
+            // Filtrar conforme filtro atual
+            const prazosFiltrados = fonteDados.filter(prazo => {
+                const status = calcularStatus(prazo);
+                if (filtroAtual === 'todos') return true;
+                return status === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
+            });
+
+            prazosFiltrados.forEach(prazo => {
+                prazosSelecionados.add(prazo.id);
+            });
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+
+            // Re-renderizar
+            renderizarPrazos();
+        }
+
+        function selecionarNenhum() {
+            prazosSelecionados.clear();
+
+            // Atualizar contador
+            document.getElementById('contadorSelecionados').textContent = 0;
+
+            // Re-renderizar
+            renderizarPrazos();
+        }
+
+        function toggleMenuAcoesSelecao() {
+            const menu = document.getElementById('menuAcoesSelecao');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function marcarSelecionadosConcluidos() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+
+            prazosSelecionados.forEach(id => {
+                const prazo = fonteDados.find(p => p.id === id);
+                if (prazo && prazo.status !== 'concluido') {
+                    prazo.status = 'concluido';
+                    prazo.dataConclusao = new Date();
+                }
+            });
+
+            // Salvar
+            if (modoVisualizacao === 'arquivados') {
+                salvarArquivadosStorage();
+            } else {
+                salvarPrazosStorage();
+            }
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosSelecionados.size} prazo(s) marcado(s) como concluído(s)!`, 'sucesso');
+        }
+
+        function arquivarSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            if (modoVisualizacao === 'arquivados') {
+                mostrarNotificacao('Você já está vendo prazos arquivados.', 'info');
+                return;
+            }
+
+            const prazosParaArquivar = [];
+
+            prazosSelecionados.forEach(id => {
+                const prazo = prazos.find(p => p.id === id);
+                if (prazo) {
+                    prazo.dataArquivamento = new Date();
+                    prazosParaArquivar.push(prazo);
+                }
+            });
+
+            // Mover para arquivados
+            prazosArquivados.push(...prazosParaArquivar);
+
+            // Remover dos ativos
+            prazos = prazos.filter(p => !prazosSelecionados.has(p.id));
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosParaArquivar.length} prazo(s) arquivado(s)!`, 'sucesso');
+        }
+
+        function desarquivarSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            if (modoVisualizacao !== 'arquivados') {
+                mostrarNotificacao('Você não está vendo prazos arquivados.', 'info');
+                return;
+            }
+
+            const prazosParaDesarquivar = [];
+
+            prazosSelecionados.forEach(id => {
+                const prazo = prazosArquivados.find(p => p.id === id);
+                if (prazo) {
+                    prazosParaDesarquivar.push(prazo);
+                }
+            });
+
+            // Mover para ativos
+            prazos.push(...prazosParaDesarquivar);
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => !prazosSelecionados.has(p.id));
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosParaDesarquivar.length} prazo(s) desarquivado(s)!`, 'sucesso');
+        }
+
+        function excluirSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            const quantidade = prazosSelecionados.size;
+
+            if (modoVisualizacao === 'arquivados') {
+                // Excluir dos arquivados
+                prazosArquivados = prazosArquivados.filter(p => !prazosSelecionados.has(p.id));
+                salvarArquivadosStorage();
+            } else {
+                // Excluir dos ativos
+                prazos = prazos.filter(p => !prazosSelecionados.has(p.id));
+                salvarPrazosStorage();
+            }
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${quantidade} prazo(s) excluído(s)!`, 'sucesso');
+        }
+
+        // Fechar menu de ações ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuAcoesSelecao');
+            const btnAcoes = event.target.closest('.btn-selecao-acoes');
+
+            if (menu && !btnAcoes && !event.target.closest('.menu-acoes-selecao')) {
+                menu.style.display = 'none';
+            }
+        });
+
         // Toggle visualização entre prazos ativos e arquivados
         function toggleVisualizacaoArquivados() {
             const btn = document.getElementById('btnVerArquivados');
             const textoBtn = document.getElementById('textoVerArquivados');
+            const filtrosStatus = document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)');
 
             if (modoVisualizacao === 'ativos') {
                 // Mudar para arquivados
@@ -7428,10 +8677,10 @@
                 btn.classList.add('active');
                 filtroAtual = 'todos'; // Resetar filtro ao mudar visualização
 
-                // Desativar outros filtros visualmente
-                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
+                // Ocultar outros filtros
+                filtrosStatus.forEach(btn => {
                     btn.classList.remove('active');
-                    btn.style.opacity = '0.5';
+                    btn.style.display = 'none';
                 });
             } else {
                 // Mudar para ativos
@@ -7439,9 +8688,9 @@
                 textoBtn.textContent = 'Ver Arquivados';
                 btn.classList.remove('active');
 
-                // Reativar outros filtros
-                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
-                    btn.style.opacity = '1';
+                // Mostrar outros filtros novamente
+                filtrosStatus.forEach(btn => {
+                    btn.style.display = 'inline-flex';
                 });
                 document.querySelector('.filtro-btn[data-filtro="todos"]').classList.add('active');
             }
@@ -8124,6 +9373,49 @@
                                 </div>
                                 <div style="font-size: 0.875rem; color: #6b7280;">
                                     Remove permanentemente todos os prazos concluídos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Desarquivar -->
+    <div id="modalDesarquivar" class="modal-detalhes">
+        <div class="modal-detalhes-content" style="max-width: 500px;">
+            <div class="modal-detalhes-header">
+                <h2>Desarquivar Prazo</h2>
+                <button class="modal-fechar" onclick="fecharModalDesarquivar()">×</button>
+            </div>
+            <div class="modal-detalhes-body">
+                <p style="margin-bottom: 20px; color: #6b7280;">
+                    Escolha o status que o prazo terá ao voltar para a lista de ativos:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="opcao-arquivamento" onclick="confirmarDesarquivar('pendente')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">📋</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Voltar como Pendente
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    O prazo será reaberto e ficará com status pendente
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opcao-arquivamento" onclick="confirmarDesarquivar('concluido')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 1.5rem;">✅</div>
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">
+                                    Manter como Concluído
+                                </div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    O prazo permanecerá marcado como concluído
                                 </div>
                             </div>
                         </div>
