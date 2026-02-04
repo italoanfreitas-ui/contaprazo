@@ -554,8 +554,8 @@
         }
 
         .resultado-info {
-            margin: 15px 0;
-            font-size: 1.125rem;
+            margin: 8px 0;
+            font-size: 1rem;
         }
 
         .resultado-info strong {
@@ -565,11 +565,12 @@
         .resultado-descricao {
             background: white;
             border-left: 4px solid #3b82f6;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 10px;
+            margin: 10px 0;
             border-radius: 6px;
             font-style: italic;
             color: #1f2937;
+            font-size: 0.95rem;
         }
 
         .resultado-descricao strong {
@@ -579,7 +580,7 @@
 
         .data-final {
             color: #15803d;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
         }
 
@@ -587,25 +588,27 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 400px;
+            padding: 12px;
+            margin-top: 12px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
         .detalhamento h3 {
             color: #1f2937;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         .dia-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 12px;
-            margin: 5px 0;
+            gap: 10px;
+            padding: 8px;
+            margin: 3px 0;
             border-radius: 6px;
             border-left: 4px solid;
+            font-size: 0.9rem;
         }
 
         .dia-contado {
@@ -2811,7 +2814,8 @@
             width: 100%;
             max-width: 700px;
             max-height: 90vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
         }
@@ -2828,28 +2832,27 @@
         }
 
         .modal-detalhes-header {
-            padding: 16px 20px;
+            padding: 12px 16px;
             border-bottom: 2px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
             background: white;
             z-index: 10;
             border-radius: 16px 16px 0 0;
+            flex-shrink: 0;
         }
 
         .modal-detalhes-titulo {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 700;
             color: #1f2937;
             margin: 0;
         }
 
         .modal-detalhes-fechar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border: none;
             background: #f3f4f6;
             border-radius: 6px;
@@ -2867,19 +2870,20 @@
         }
 
         .modal-detalhes-body {
-            padding: 20px;
+            padding: 12px 16px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .modal-detalhes-acoes {
-            padding: 16px 20px;
+            padding: 12px 16px;
             border-top: 2px solid #e5e7eb;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            position: sticky;
-            bottom: 0;
             background: white;
             border-radius: 0 0 16px 16px;
+            flex-shrink: 0;
         }
 
         .modal-fechar {
@@ -7331,8 +7335,11 @@
         function abrirDetalhes(id) {
             // Buscar em prazos ativos ou arquivados
             let prazo = prazos.find(p => p.id === id);
+            let isArquivado = false;
+
             if (!prazo) {
                 prazo = prazosArquivados.find(p => p.id === id);
+                isArquivado = true;
             }
             if (!prazo) return;
 
@@ -7363,7 +7370,7 @@
             if (prazo.status === 'concluido') {
                 const dataConcFormatada = prazo.dataConclusao ? prazo.dataConclusao.toLocaleDateString('pt-BR') : '';
                 statusHTML = `
-                    <div class="resultado-info" style="background: #d1fae5; padding: 15px; border-radius: 8px; border-left: 4px solid #059669;">
+                    <div class="resultado-info" style="background: #d1fae5; padding: 10px; border-radius: 8px; border-left: 4px solid #059669;">
                         <strong>Status:</strong> <span style="color: #065f46; font-weight: 700;">✓ Concluído em ${dataConcFormatada}</span>
                     </div>
                 `;
@@ -7383,8 +7390,8 @@
                 }
 
                 statusHTML = `
-                    <div class="resultado-info" style="background: ${corBarra}15; padding: 15px; border-radius: 8px; border-left: 4px solid ${corBarra};">
-                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700; font-size: 1.125rem;">${labelContador}</span>
+                    <div class="resultado-info" style="background: ${corBarra}15; padding: 10px; border-radius: 8px; border-left: 4px solid ${corBarra};">
+                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700;">${labelContador}</span>
                     </div>
                 `;
             }
@@ -7403,9 +7410,9 @@
                     </div>
                     ${statusHTML}
 
-                    <div class="detalhamento" style="margin-top: 20px; max-height: 300px;">
+                    <div class="detalhamento" style="margin-top: 12px;">
                         <h3>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
                                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -7438,6 +7445,57 @@
             `;
 
             document.getElementById('modalDetalhesBody').innerHTML = html;
+
+            // Resetar scroll ao abrir modal
+            document.getElementById('modalDetalhesBody').scrollTop = 0;
+
+            // Renderizar botões de ação baseado se é arquivado ou não
+            const acoesContainer = document.querySelector('.modal-detalhes-acoes');
+            if (isArquivado) {
+                // Versão limitada para arquivados
+                acoesContainer.innerHTML = `
+                    <button class="btn btn-primary" onclick="desarquivarPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v5H3zM3 8h18v13H3z"></path>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                            <polyline points="9 14 12 17 15 14"></polyline>
+                        </svg>
+                        Desarquivar
+                    </button>
+                    <button class="btn btn-red" onclick="excluirPrazoArquivadoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir
+                    </button>
+                `;
+            } else {
+                // Versão completa para ativos
+                acoesContainer.innerHTML = `
+                    <button class="btn btn-success" onclick="marcarConcluidoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Marcar Concluído
+                    </button>
+                    <button class="btn btn-primary" onclick="editarPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn btn-red" onclick="excluirPrazoModal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir
+                    </button>
+                `;
+            }
+
             document.getElementById('modalDetalhesPrazo').classList.add('active');
         }
 
@@ -7525,6 +7583,65 @@
                 fecharModalDetalhes();
                 excluirPrazo(id); // Usar ID salvo
             }
+        }
+
+        // Desarquivar prazo do modal
+        function desarquivarPrazoModal() {
+            if (!prazoEmEdicao) return;
+
+            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                fecharModalDetalhes();
+                return;
+            }
+
+            // Manter o status atual (concluído ou pendente)
+            // mas remover dos arquivados
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+
+            // Adicionar de volta aos ativos
+            prazos.push(prazo);
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar modal e atualizar UI
+            fecharModalDetalhes();
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo desarquivado com sucesso!', 'sucesso');
+        }
+
+        // Excluir prazo arquivado do modal
+        function excluirPrazoArquivadoModal() {
+            if (!prazoEmEdicao) return;
+
+            if (!confirm('Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) {
+                mostrarNotificacao('Prazo não encontrado.', 'erro');
+                fecharModalDetalhes();
+                return;
+            }
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+
+            // Salvar
+            salvarArquivadosStorage();
+
+            // Fechar modal e atualizar UI
+            fecharModalDetalhes();
+            renderizarPrazos();
+
+            mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
         }
 
         // Exportar agenda para JSON
@@ -7837,8 +7954,61 @@
             // Mostrar barra de seleção
             document.getElementById('barraSelecao').style.display = 'flex';
 
+            // Renderizar menu de ações baseado no modo de visualização
+            renderizarMenuAcoesSelecao();
+
             // Re-renderizar lista para mostrar checkboxes
             renderizarPrazos();
+        }
+
+        function renderizarMenuAcoesSelecao() {
+            const menuAcoes = document.getElementById('menuAcoesSelecao');
+
+            if (modoVisualizacao === 'arquivados') {
+                // Menu para prazos arquivados
+                menuAcoes.innerHTML = `
+                    <button onclick="desarquivarSelecionados()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 3h18v5H3zM3 8h18v13H3z"></path>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                            <polyline points="9 14 12 17 15 14"></polyline>
+                        </svg>
+                        Desarquivar Selecionados
+                    </button>
+                    <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir Selecionados
+                    </button>
+                `;
+            } else {
+                // Menu para prazos ativos
+                menuAcoes.innerHTML = `
+                    <button onclick="marcarSelecionadosConcluidos()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Marcar como Concluídos
+                    </button>
+                    <button onclick="arquivarSelecionados()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
+                        </svg>
+                        Arquivar Selecionados
+                    </button>
+                    <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Excluir Selecionados
+                    </button>
+                `;
+            }
         }
 
         function sairModoSelecao() {
@@ -7979,6 +8149,43 @@
             sairModoSelecao();
 
             mostrarNotificacao(`${prazosParaArquivar.length} prazo(s) arquivado(s)!`, 'sucesso');
+        }
+
+        function desarquivarSelecionados() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            if (modoVisualizacao !== 'arquivados') {
+                mostrarNotificacao('Você não está vendo prazos arquivados.', 'info');
+                return;
+            }
+
+            const prazosParaDesarquivar = [];
+
+            prazosSelecionados.forEach(id => {
+                const prazo = prazosArquivados.find(p => p.id === id);
+                if (prazo) {
+                    prazosParaDesarquivar.push(prazo);
+                }
+            });
+
+            // Mover para ativos
+            prazos.push(...prazosParaDesarquivar);
+
+            // Remover dos arquivados
+            prazosArquivados = prazosArquivados.filter(p => !prazosSelecionados.has(p.id));
+
+            // Salvar
+            salvarPrazosStorage();
+            salvarArquivadosStorage();
+
+            // Fechar menu e sair do modo
+            document.getElementById('menuAcoesSelecao').style.display = 'none';
+            sairModoSelecao();
+
+            mostrarNotificacao(`${prazosParaDesarquivar.length} prazo(s) desarquivado(s)!`, 'sucesso');
         }
 
         function excluirSelecionados() {
