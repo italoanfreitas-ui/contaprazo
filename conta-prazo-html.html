@@ -6690,27 +6690,40 @@
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
 
-            // Configurar e gerar PDF diretamente do HTML string
-            const opt = {
-                margin: 10,
-                filename: nomeArquivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    logging: true,
-                    backgroundColor: '#ffffff'
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            // Criar elemento temporário visível no DOM para html2canvas renderizar
+            const container = document.createElement('div');
+            container.id = 'pdf-container-temp';
+            container.innerHTML = htmlContent;
+            container.style.cssText = 'position: absolute; top: 0; left: 0; width: 900px; background: white; z-index: -1;';
+            document.body.appendChild(container);
 
-            // Usar html2pdf diretamente com string HTML
-            html2pdf().set(opt).from(htmlContent).save().then(() => {
-                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-            }).catch(error => {
-                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                console.error('Erro ao gerar PDF:', error);
-            });
+            // Aguardar renderização do DOM antes de gerar PDF
+            setTimeout(() => {
+                const opt = {
+                    margin: 10,
+                    filename: nomeArquivo,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: true,
+                        backgroundColor: '#ffffff',
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: 900
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(container).save().then(() => {
+                    document.body.removeChild(container);
+                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+                }).catch(error => {
+                    document.body.removeChild(container);
+                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                    console.error('Erro ao gerar PDF:', error);
+                });
+            }, 100);
         }
 
         function gerarPDFCompleto() {
@@ -6798,28 +6811,41 @@
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
 
-            // Configurar e gerar PDF diretamente do HTML string
-            const opt = {
-                margin: 10,
-                filename: nomeArquivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    logging: true,
-                    backgroundColor: '#ffffff'
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
+            // Criar elemento temporário visível no DOM para html2canvas renderizar
+            const container = document.createElement('div');
+            container.id = 'pdf-container-temp-completo';
+            container.innerHTML = htmlContent;
+            container.style.cssText = 'position: absolute; top: 0; left: 0; width: 900px; background: white; z-index: -1;';
+            document.body.appendChild(container);
 
-            // Usar html2pdf diretamente com string HTML
-            html2pdf().set(opt).from(htmlContent).save().then(() => {
-                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-            }).catch(error => {
-                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                console.error('Erro ao gerar PDF:', error);
-            });
+            // Aguardar renderização do DOM antes de gerar PDF
+            setTimeout(() => {
+                const opt = {
+                    margin: 10,
+                    filename: nomeArquivo,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: true,
+                        backgroundColor: '#ffffff',
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: 900
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(container).save().then(() => {
+                    document.body.removeChild(container);
+                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+                }).catch(error => {
+                    document.body.removeChild(container);
+                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                    console.error('Erro ao gerar PDF:', error);
+                });
+            }, 100);
         }
 
         // ==================== FIM DAS FUNÇÕES DE GERAÇÃO DE PDF ====================
