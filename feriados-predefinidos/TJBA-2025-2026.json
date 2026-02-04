@@ -1,5 +1,58 @@
 {
   "feriadosPersonalizados": [
+    "01-01-2025 Recesso Forense – TJBA",
+    "02-01-2025 Recesso Forense – TJBA",
+    "03-01-2025 Recesso Forense – TJBA",
+    "04-01-2025 Recesso Forense – TJBA",
+    "05-01-2025 Recesso Forense – TJBA",
+    "06-01-2025 Recesso Forense – TJBA",
+    "07-01-2025 Recesso Forense – TJBA",
+    "08-01-2025 Recesso Forense – TJBA",
+    "09-01-2025 Recesso Forense – TJBA",
+    "10-01-2025 Recesso Forense – TJBA",
+    "11-01-2025 Recesso Forense – TJBA",
+    "12-01-2025 Recesso Forense – TJBA",
+    "13-01-2025 Recesso Forense – TJBA",
+    "14-01-2025 Recesso Forense – TJBA",
+    "15-01-2025 Recesso Forense – TJBA",
+    "16-01-2025 Recesso Forense – TJBA",
+    "17-01-2025 Recesso Forense – TJBA",
+    "18-01-2025 Recesso Forense – TJBA",
+    "19-01-2025 Recesso Forense – TJBA",
+    "20-01-2025 Recesso Forense – TJBA",
+
+    "16-01-2025 Suspensão do expediente forense e dos prazos – 5ª e 6ª Varas do JECRIM de Salvador (TJBA)",
+
+    "28-02-2025 Suspensão do expediente forense – Carnaval (TJBA)",
+    "01-03-2025 Suspensão do expediente forense – Carnaval (TJBA)",
+    "03-03-2025 Suspensão do expediente forense – Carnaval (TJBA)",
+    "04-03-2025 Suspensão do expediente forense – Carnaval (TJBA)",
+    "05-03-2025 Suspensão do expediente forense – Quarta-feira de Cinzas (TJBA)",
+
+    "18-04-2025 Suspensão do expediente forense – Endoenças / Sexta-feira Santa (TJBA)",
+    "19-04-2025 Suspensão do expediente forense – Endoenças (TJBA)",
+
+    "21-04-2025 Tiradentes – feriado forense (TJBA)",
+
+    "01-05-2025 Dia do Trabalhador – feriado forense (TJBA)",
+    "02-05-2025 Suspensão do expediente forense – pós-Dia do Trabalhador (TJBA)",
+
+    "19-06-2025 Corpus Christi – feriado forense (TJBA)",
+    "20-06-2025 Suspensão do expediente forense – Corpus Christi (TJBA)",
+
+    "23-06-2025 Suspensão do expediente forense – São João (TJBA)",
+    "24-06-2025 São João – feriado forense (TJBA)",
+
+    "02-07-2025 Independência da Bahia – feriado forense (TJBA)",
+
+    "11-08-2025 Dia do Magistrado / Dia do Advogado – feriado forense (TJBA)",
+
+    "27-10-2025 Suspensão do expediente forense – Dia do Servidor Público (TJBA)",
+    "28-10-2025 Dia do Servidor Público – feriado forense (TJBA)",
+
+    "20-11-2025 Dia da Consciência Negra – feriado forense (TJBA)",
+    "21-11-2025 Suspensão do expediente forense – Consciência Negra (TJBA)",
+
     "20-12-2025 Recesso Forense – TJBA",
     "21-12-2025 Recesso Forense – TJBA",
     "22-12-2025 Recesso Forense – TJBA",
@@ -12,6 +65,7 @@
     "29-12-2025 Recesso Forense – TJBA",
     "30-12-2025 Recesso Forense – TJBA",
     "31-12-2025 Recesso Forense – TJBA",
+
     "01-01-2026 Recesso Forense / Confraternização Universal – TJBA",
     "02-01-2026 Recesso Forense / Confraternização Universal – TJBA",
     "03-01-2026 Recesso Forense – TJBA",
@@ -32,32 +86,59 @@
     "18-01-2026 Recesso Forense – TJBA",
     "19-01-2026 Recesso Forense – TJBA",
     "20-01-2026 Recesso Forense – TJBA",
+
     "12-02-2026 Carnaval – TJBA",
     "13-02-2026 Carnaval – TJBA",
     "16-02-2026 Carnaval – TJBA",
     "17-02-2026 Carnaval – TJBA",
     "18-02-2026 Quarta-feira de Cinzas – TJBA",
+
     "02-04-2026 Endoenças – TJBA",
     "03-04-2026 Sexta-feira Santa – TJBA",
+
     "20-04-2026 Tiradentes – TJBA",
     "21-04-2026 Tiradentes – TJBA",
+
     "01-05-2026 Dia do Trabalhador – TJBA",
+
     "04-06-2026 Corpus Christi – TJBA",
     "05-06-2026 Corpus Christi – TJBA",
+
     "22-06-2026 São João – TJBA",
     "23-06-2026 São João – TJBA",
     "24-06-2026 São João – TJBA",
+
     "02-07-2026 Independência da Bahia – TJBA",
     "03-07-2026 Independência da Bahia – TJBA",
+
     "10-08-2026 Dia da Criação dos Cursos Jurídicos / Dia do Magistrado / Dia do Advogado – TJBA",
     "11-08-2026 Dia da Criação dos Cursos Jurídicos / Dia do Magistrado / Dia do Advogado – TJBA",
+
     "07-09-2026 Independência do Brasil – TJBA",
+
     "12-10-2026 Nossa Senhora da Conceição Aparecida – TJBA",
+
     "30-10-2026 Dia do Servidor Público – TJBA",
+
     "02-11-2026 Finados – TJBA",
+
     "20-11-2026 Consciência Negra – TJBA",
+
     "07-12-2026 Dia da Justiça – TJBA",
-    "08-12-2026 Dia da Justiça – TJBA"
+    "08-12-2026 Dia da Justiça – TJBA",
+
+    "20-12-2026 Recesso Forense – TJBA",
+    "21-12-2026 Recesso Forense – TJBA",
+    "22-12-2026 Recesso Forense – TJBA",
+    "23-12-2026 Recesso Forense – TJBA",
+    "24-12-2026 Recesso Forense – TJBA",
+    "25-12-2026 Recesso Forense – TJBA",
+    "26-12-2026 Recesso Forense – TJBA",
+    "27-12-2026 Recesso Forense – TJBA",
+    "28-12-2026 Recesso Forense – TJBA",
+    "29-12-2026 Recesso Forense – TJBA",
+    "30-12-2026 Recesso Forense – TJBA",
+    "31-12-2026 Recesso Forense – TJBA"
   ],
   "dataExportacao": "2025-12-18T01:06:53.009Z"
 }
