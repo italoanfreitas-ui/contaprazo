@@ -1238,48 +1238,50 @@
             color: #1f2937;
         }
 
-        .toggle-switch {
+        /* Toggle específico do modal PDF - usando escopo para não conflitar com outros toggles */
+        .pdf-method-toggle .pdf-toggle-switch {
             position: relative;
             display: inline-block;
             width: 56px;
             height: 28px;
         }
 
-        .toggle-switch input {
+        .pdf-method-toggle .pdf-toggle-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .toggle-slider {
+        .pdf-method-toggle .pdf-toggle-slider {
             position: absolute;
             cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #3b82f6;
+            background-color: #16a34a;
             transition: 0.3s;
             border-radius: 28px;
         }
 
-        .toggle-slider:before {
+        .pdf-method-toggle .pdf-toggle-slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
             background-color: white;
             transition: 0.3s;
             border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .toggle-switch input:checked + .toggle-slider {
+        .pdf-method-toggle .pdf-toggle-switch input:checked + .pdf-toggle-slider {
             background-color: #16a34a;
         }
 
-        .toggle-switch input:checked + .toggle-slider:before {
+        .pdf-method-toggle .pdf-toggle-switch input:checked + .pdf-toggle-slider:before {
             transform: translateX(28px);
         }
 
@@ -4388,9 +4390,9 @@
                 <!-- Toggle para escolher método de exportação -->
                 <div class="pdf-method-toggle">
                     <label id="labelImprimirPDF" class="active">🖨️ Imprimir PDF</label>
-                    <label class="toggle-switch">
+                    <label class="pdf-toggle-switch">
                         <input type="checkbox" id="toggleMetodoPDF" onchange="toggleMetodoPDF()">
-                        <span class="toggle-slider"></span>
+                        <span class="pdf-toggle-slider"></span>
                     </label>
                     <label id="labelGerarPDF">💾 Gerar PDF</label>
                 </div>
@@ -5929,11 +5931,10 @@
                 mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
-            // Resetar toggle para método padrão (imprimir)
-            document.getElementById('toggleMetodoPDF').checked = false;
-            document.getElementById('labelImprimirPDF').classList.add('active');
-            document.getElementById('labelGerarPDF').classList.remove('active');
-            document.getElementById('descricaoMetodoPDF').textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
+            // Restaurar preferência salva do usuário (ou usar padrão: imprimir)
+            const preferenciaSalva = localStorage.getItem('contaprazo_pdf_method') === 'gerar';
+            document.getElementById('toggleMetodoPDF').checked = preferenciaSalva;
+            atualizarUITogglePDF(preferenciaSalva);
 
             document.getElementById('modalExportPDF').classList.add('active');
         }
@@ -5942,23 +5943,30 @@
             document.getElementById('modalExportPDF').classList.remove('active');
         }
 
-        function toggleMetodoPDF() {
-            const toggle = document.getElementById('toggleMetodoPDF');
+        function atualizarUITogglePDF(usarGerar) {
             const labelImprimir = document.getElementById('labelImprimirPDF');
             const labelGerar = document.getElementById('labelGerarPDF');
             const descricao = document.getElementById('descricaoMetodoPDF');
 
-            if (toggle.checked) {
-                // Modo Gerar PDF
+            if (usarGerar) {
                 labelImprimir.classList.remove('active');
                 labelGerar.classList.add('active');
                 descricao.textContent = 'Gera arquivo PDF diretamente com nome automático baseado na descrição do prazo';
             } else {
-                // Modo Imprimir PDF
                 labelImprimir.classList.add('active');
                 labelGerar.classList.remove('active');
                 descricao.textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
             }
+        }
+
+        function toggleMetodoPDF() {
+            const toggle = document.getElementById('toggleMetodoPDF');
+            const usarGerar = toggle.checked;
+
+            // Salvar preferência do usuário
+            localStorage.setItem('contaprazo_pdf_method', usarGerar ? 'gerar' : 'imprimir');
+
+            atualizarUITogglePDF(usarGerar);
         }
 
         function finalizarExportPDF(tipo) {
@@ -6678,12 +6686,18 @@
 </div>
             `;
 
-            // Criar elemento temporário
+            // Criar elemento temporário - posicionado na viewport para html2canvas funcionar
+            const containerId = 'pdf-temp-container-' + Date.now();
             const container = document.createElement('div');
+            container.id = containerId;
             container.innerHTML = htmlContent;
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '900px';
             container.style.background = 'white';
+            container.style.zIndex = '9999';
+            container.style.pointerEvents = 'none';
             document.body.appendChild(container);
 
             // Gerar nome do arquivo
@@ -6695,7 +6709,11 @@
                 margin: 10,
                 filename: nomeArquivo,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -6790,12 +6808,18 @@
 </div>
             `;
 
-            // Criar elemento temporário
+            // Criar elemento temporário - posicionado na viewport para html2canvas funcionar
+            const containerId = 'pdf-temp-container-' + Date.now();
             const container = document.createElement('div');
+            container.id = containerId;
             container.innerHTML = htmlContent;
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '900px';
             container.style.background = 'white';
+            container.style.zIndex = '9999';
+            container.style.pointerEvents = 'none';
             document.body.appendChild(container);
 
             // Gerar nome do arquivo
@@ -6807,7 +6831,11 @@
                 margin: 10,
                 filename: nomeArquivo,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
