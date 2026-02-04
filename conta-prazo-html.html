@@ -6686,25 +6686,11 @@
 </div>
             `;
 
-            // Criar elemento temporário - posicionado na viewport para html2canvas funcionar
-            const containerId = 'pdf-temp-container-' + Date.now();
-            const container = document.createElement('div');
-            container.id = containerId;
-            container.innerHTML = htmlContent;
-            container.style.position = 'fixed';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.width = '900px';
-            container.style.background = 'white';
-            container.style.zIndex = '9999';
-            container.style.pointerEvents = 'none';
-            document.body.appendChild(container);
-
             // Gerar nome do arquivo
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
 
-            // Configurar e gerar PDF
+            // Configurar e gerar PDF diretamente do HTML string
             const opt = {
                 margin: 10,
                 filename: nomeArquivo,
@@ -6712,16 +6698,16 @@
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    logging: false
+                    logging: true,
+                    backgroundColor: '#ffffff'
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(container).save().then(() => {
-                document.body.removeChild(container);
+            // Usar html2pdf diretamente com string HTML
+            html2pdf().set(opt).from(htmlContent).save().then(() => {
                 mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
             }).catch(error => {
-                document.body.removeChild(container);
                 mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
                 console.error('Erro ao gerar PDF:', error);
             });
@@ -6808,25 +6794,11 @@
 </div>
             `;
 
-            // Criar elemento temporário - posicionado na viewport para html2canvas funcionar
-            const containerId = 'pdf-temp-container-' + Date.now();
-            const container = document.createElement('div');
-            container.id = containerId;
-            container.innerHTML = htmlContent;
-            container.style.position = 'fixed';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.width = '900px';
-            container.style.background = 'white';
-            container.style.zIndex = '9999';
-            container.style.pointerEvents = 'none';
-            document.body.appendChild(container);
-
             // Gerar nome do arquivo
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
 
-            // Configurar e gerar PDF
+            // Configurar e gerar PDF diretamente do HTML string
             const opt = {
                 margin: 10,
                 filename: nomeArquivo,
@@ -6834,17 +6806,17 @@
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    logging: false
+                    logging: true,
+                    backgroundColor: '#ffffff'
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
-            html2pdf().set(opt).from(container).save().then(() => {
-                document.body.removeChild(container);
+            // Usar html2pdf diretamente com string HTML
+            html2pdf().set(opt).from(htmlContent).save().then(() => {
                 mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
             }).catch(error => {
-                document.body.removeChild(container);
                 mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
                 console.error('Erro ao gerar PDF:', error);
             });
