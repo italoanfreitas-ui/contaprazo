@@ -28,6 +28,7 @@ ContaPrazo é uma aplicação web standalone (HTML + CSS + JavaScript puro) dese
 - Importação/exportação de conjuntos de feriados
 - Conjuntos pré-definidos online para diferentes estados/municípios
 - Atualização automática de feriados via repositório online
+- **Perfis de feriados**: salve e alterne entre conjuntos diferentes de feriados personalizados (ex: TJSP, TJRJ, TRF3)
 
 ### Minha Agenda
 - **Salvar prazos calculados** com título e descrição personalizados
@@ -47,7 +48,7 @@ ContaPrazo é uma aplicação web standalone (HTML + CSS + JavaScript puro) dese
 - **Alerta visual** ao abrir página com prazos vencendo
 
 ### Exportação e Compartilhamento
-- **Exportar para PDF** (resumido ou completo)
+- **Imprimir PDF** via nova aba (Ctrl+P / Cmd+P)
 - **Exportar como imagem PNG** (resumido ou completo)
 - **Copiar para área de transferência** (texto formatado ou puro)
 - **Abrir em nova aba** para impressão
@@ -85,6 +86,7 @@ Todos os dados são salvos localmente no navegador usando `localStorage`:
 - Prazos salvos na agenda
 - Prazos arquivados
 - Feriados personalizados configurados
+- Perfis de feriados criados
 - Configurações de feriados fixos e móveis (se alteradas)
 
 **Importante**: Os dados são específicos do navegador e dispositivo. Use a função de exportar/importar agenda para fazer backup ou transferir dados entre dispositivos.
@@ -165,7 +167,16 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 
 ## 📝 Changelog
 
-### Versão 1.3 (Atual)
+### Versão 1.4 (Atual)
+- **Sistema de perfis de feriados**: crie, gerencie e alterne entre perfis de feriados personalizados
+  - Até 10 perfis com nomes de até 30 caracteres
+  - Indicador de alterações não salvas
+  - Confirmação ao trocar perfil com alterações pendentes
+  - Gerenciamento completo (criar, renomear, excluir)
+- Remoção da geração direta de PDF (substituída por "Imprimir PDF" via nova aba)
+- Correção do toggle "Dias Úteis" que exibia sombra azul incorreta
+
+### Versão 1.3
 - Sistema completo de arquivamento de prazos
 - Substituição de todos os alerts por notificações elegantes
 - Modal para desarquivar com escolha de status
@@ -205,4 +216,4 @@ Este projeto não possui licença definida. Todos os direitos reservados ao auto
 
 ---
 
-**ContaPrazo Calculadora** • 2025 • Ferramenta desenvolvida para facilitar o cálculo de prazos processuais
+**ContaPrazo Calculadora** • 2026 • Ferramenta desenvolvida para facilitar o cálculo de prazos processuais
