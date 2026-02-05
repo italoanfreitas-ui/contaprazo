@@ -1220,8 +1220,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 0;
-            margin-bottom: 8px;
+            padding: 12px 0 14px 0;
+            margin-bottom: 14px;
             border-bottom: 1px solid #e5e7eb;
         }
 
@@ -4798,28 +4798,44 @@
         let perfilRenomeandoId = null; // ID do perfil sendo renomeado
         let feriadosSnapshotPerfil = null; // Snapshot dos feriados quando o perfil foi carregado
 
+        function obterSnapshotDePerfilSalvo(perfilId) {
+            if (!perfilId) return null;
+            const perfil = perfisData.find(p => p.id === perfilId);
+            if (!perfil || !perfil.feriados) return null;
+            const entries = perfil.feriados
+                .filter(f => f && f.data)
+                .map(f => [f.data, f.nome || ''])
+                .sort((a, b) => a[0].localeCompare(b[0]));
+            return JSON.stringify(entries);
+        }
+
         function inicializarPerfis() {
-            // Se houve importação antes do reload, NÃO sobrescreve com dados do perfil
-            // (o import já atualizou o perfil antes de recarregar)
             const importouAntes = sessionStorage.getItem('contaprazo_importou_feriados');
             if (importouAntes) {
                 sessionStorage.removeItem('contaprazo_importou_feriados');
-                // Recarrega perfisData do localStorage (pode ter sido atualizado pelo import)
-                perfisData = JSON.parse(localStorage.getItem(PERFIS_STORAGE_KEY) || '[]');
+                // Não sobrescreve feriados importados - mantém o que veio do localStorage
+                // Snapshot vem do perfil salvo (não dos feriados atuais), para detectar divergência
+                if (perfilAtivoId) {
+                    feriadosSnapshotPerfil = obterSnapshotDePerfilSalvo(perfilAtivoId) || obterSnapshotFeriados();
+                } else {
+                    feriadosSnapshotPerfil = obterSnapshotFeriados();
+                }
             } else if (perfilAtivoId) {
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     carregarFeriadosDoPerfil(perfil);
                 } else {
-                    // Perfil não encontrado, desativa
                     perfilAtivoId = null;
                     localStorage.removeItem(PERFIL_ATIVO_KEY);
                 }
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
+            } else {
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
             }
-            // Tira o snapshot inicial
-            feriadosSnapshotPerfil = obterSnapshotFeriados();
             atualizarUIPerfilAtivo();
             atualizarDropdownPerfis();
+            // Verifica se já há divergência (ex: após importação com perfil ativo)
+            verificarAlteracoesPerfil();
 
             // Mostra notificação pendente do reload anterior (se houver)
             const notifPendente = sessionStorage.getItem('contaprazo_notificacao_pendente');
@@ -4954,9 +4970,11 @@
 
         function efetuarTrocaPerfil(id) {
             if (id === null) {
-                // Selecionou "Nenhum" - mantém feriados atuais mas desvincula do perfil
+                // Selecionou "Nenhum" - limpa feriados personalizados
                 perfilAtivoId = null;
                 localStorage.removeItem(PERFIL_ATIVO_KEY);
+                feriadosPersonalizados.clear();
+                salvarFeriadosNoLocalStorage();
                 feriadosSnapshotPerfil = obterSnapshotFeriados();
                 perfilTemAlteracoes = false;
             } else {
@@ -5832,16 +5850,7 @@
                 feriadosPersonalizados.clear();
                 localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
 
-                // Se há perfil ativo, limpa os feriados do perfil também
-                if (perfilAtivoId) {
-                    const perfilAtivo = perfisData.find(p => p.id === perfilAtivoId);
-                    if (perfilAtivo) {
-                        perfilAtivo.feriados = [];
-                        salvarPerfisNoLocalStorage();
-                    }
-                }
-
-                // Marca flags para o reload
+                // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
                 sessionStorage.setItem('reloadToTop', 'true');
                 sessionStorage.setItem('contaprazo_importou_feriados', 'true');
                 sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
@@ -6168,15 +6177,6 @@
                 nome: nome || ''
             }));
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
-
-            // Se há perfil ativo, atualiza os feriados do perfil também
-            if (perfilAtivoId) {
-                const perfilAtivo = perfisData.find(p => p.id === perfilAtivoId);
-                if (perfilAtivo) {
-                    perfilAtivo.feriados = dadosParaSalvar;
-                    salvarPerfisNoLocalStorage();
-                }
-            }
 
             // Salva metadata do conjunto importado (se for de um conjunto predefinido)
             if (conjuntoPendenteMetadata) {
