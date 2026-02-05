@@ -1573,43 +1573,123 @@
         .help-section {
             background: white;
             border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: 22px;
+            margin-bottom: 16px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .help-section h3 {
             color: #1f2937;
-            font-size: 1.25rem;
-            margin-bottom: 15px;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .help-section h3 svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .help-section h4 {
+            font-size: 0.92rem;
+            color: #1f2937;
+            font-weight: 600;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .help-section h4 svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
         }
 
         .help-section p {
             color: #4b5563;
-            line-height: 1.8;
-            margin-bottom: 12px;
+            font-size: 0.84rem;
+            line-height: 1.7;
+            margin-bottom: 8px;
         }
 
-        .help-section ul {
-            margin-left: 20px;
+        .help-section ul,
+        .help-section ol {
+            margin-left: 18px;
             color: #4b5563;
-            line-height: 1.8;
+            font-size: 0.84rem;
+            line-height: 1.7;
         }
 
         .help-section li {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .help-section code {
             background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 1px 5px;
+            border-radius: 3px;
             font-family: monospace;
-            font-size: 0.9em;
+            font-size: 0.88em;
             color: #3b82f6;
+        }
+
+        .help-section pre {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+
+        .help-callout {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .help-callout.info {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .help-callout.success {
+            background: #ecfdf5;
+            border-left: 3px solid #10b981;
+        }
+
+        .help-callout.warning {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .help-note {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .help-section .help-reset {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .help-section .help-reset p {
+            color: #6b7280;
+            font-size: 0.82rem;
+            margin-bottom: 12px;
         }
 
         /* Gerenciamento Avançado */
@@ -1906,9 +1986,7 @@
                 font-size: 0.8rem;
             }
 
-            /* Reduzir tamanho dos parágrafos nas abas de editor e ajuda */
-            .batch-editor p,
-            .help-section p {
+            .batch-editor p {
                 font-size: 0.85rem;
             }
 
@@ -1916,32 +1994,15 @@
                 font-size: 0.95rem;
             }
 
-            .help-section h3 {
-                font-size: 1.1rem;
-            }
-
-            .help-section h4 {
-                font-size: 1rem;
-            }
-
-            /* Adicionar ajustes para listas e outros elementos da ajuda */
+            .help-section { padding: 18px; }
+            .help-section h3 { font-size: 0.98rem; }
+            .help-section h4 { font-size: 0.88rem; }
+            .help-section p,
             .help-section ul,
-            .help-section ol {
-                font-size: 0.85rem;
-            }
-
-            .help-section li {
-                font-size: inherit;
-                margin-bottom: 6px;
-            }
-
-            .help-section code {
-                font-size: 0.85em;
-            }
-
-            .help-section strong {
-                font-size: inherit;
-            }
+            .help-section ol { font-size: 0.82rem; }
+            .help-section li { margin-bottom: 4px; }
+            .help-callout { font-size: 0.8rem; }
+            .help-note { font-size: 0.78rem; }
         }
 
         /* Telas muito pequenas - ajustes adicionais com zoom out mais agressivo */
@@ -2037,77 +2098,21 @@
             }
 
             /* Ajustes completos para aba de Ajuda em telas muito pequenas */
-            .help-section {
-                padding: 15px;
-            }
-
-            .help-section h3 {
-                font-size: 1rem !important;
-            }
-
-            .help-section h4 {
-                font-size: 0.9rem !important;
-            }
-
+            .help-section { padding: 14px; margin-bottom: 12px; }
+            .help-section h3 { font-size: 0.92rem; gap: 6px; margin-bottom: 8px; }
+            .help-section h3 svg { width: 18px; height: 18px; }
+            .help-section h4 { font-size: 0.84rem; margin-top: 14px; }
+            .help-section h4 svg { width: 14px; height: 14px; }
             .help-section p,
             .help-section ul,
-            .help-section ol {
-                font-size: 0.8rem !important;
-            }
-
-            .help-section li {
-                font-size: inherit;
-                margin-bottom: 6px;
-            }
-
-            .help-section code {
-                font-size: 0.8em;
-                padding: 1px 4px;
-            }
-
-            /* Sobrescrever estilos inline específicos em telas pequenas */
-            .help-section h4[style*="font-size"],
-            .help-section p[style*="font-size"]:not([style*="background"]),
-            .help-section div[style*="font-size"],
-            .help-section ol[style*="font-size"],
-            .help-section ul[style*="font-size"] {
-                font-size: 0.8rem !important;
-            }
-
-            /* h4 sem font-size mas com outros estilos inline */
-            .help-section h4[style]:not([style*="font-size"]) {
-                font-size: 0.8rem !important;
-            }
-
-            /* Ajustar boxes destacados (divs e parágrafos com backgrounds coloridos) */
-            .help-section div[style*="background"],
-            .help-section p[style*="background"] {
-                padding: 10px !important;
-                font-size: 0.75rem !important;
-                line-height: 1.6 !important;
-            }
-
-            /* Ajustar elementos filhos dentro dos boxes com background */
-            .help-section div[style*="background"] h4,
-            .help-section div[style*="background"] h5,
-            .help-section div[style*="background"] p,
-            .help-section div[style*="background"] ul,
-            .help-section div[style*="background"] ol {
-                font-size: 0.75rem !important;
-            }
-
-            /* Ajustar strong dentro dos boxes */
-            .help-section p[style*="background"] strong,
-            .help-section div[style*="background"] strong {
-                font-size: inherit;
-            }
-
-            /* Ajustar blocos de código */
-            .help-section pre[style],
-            .help-section code[style] {
-                font-size: 0.75rem !important;
-                padding: 10px !important;
-            }
+            .help-section ol { font-size: 0.78rem; line-height: 1.6; }
+            .help-section li { margin-bottom: 3px; }
+            .help-section pre { font-size: 0.72rem; padding: 10px; }
+            .help-section code { font-size: 0.85em; padding: 1px 4px; }
+            .help-callout { font-size: 0.76rem; padding: 8px 10px; }
+            .help-note { font-size: 0.74rem; }
+            .help-section .help-reset { margin-top: 24px; padding-top: 16px; }
+            .help-section .help-reset p { font-size: 0.78rem; }
 
             .batch-editor {
                 padding: 15px;
@@ -4055,7 +4060,7 @@
         <div id="paginaAjuda" class="page-content">
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <!-- brilho principal -->
     <path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z" />
 
@@ -4079,7 +4084,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -4098,7 +4103,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
                     </svg>
@@ -4114,7 +4119,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
@@ -4123,14 +4128,14 @@
                 </h3>
                 <p>Você pode exportar os resultados em diferentes formatos:</p>
                 <ul>
-                    <li><strong>Exportar PDF:</strong> Gera um documento HTML que pode ser impresso ou salvo como PDF (use Ctrl+P ou Cmd+P). Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
+                    <li><strong>Imprimir PDF:</strong> Abre uma nova aba formatada para impressão. Use Ctrl+P (ou Cmd+P) e selecione "Salvar como PDF". Disponível nos formatos resumido e completo.</li>
                     <li><strong>Exportar PNG:</strong> Salva uma imagem do cálculo. Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
                 </ul>
             </div>
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -4148,7 +4153,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -4171,7 +4176,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06
             a2 2 0 1 1-2.83 2.83l-.06-.06
@@ -4207,34 +4212,29 @@
                     <li><strong>Feriados Móveis:</strong> Feriados que mudam de data a cada ano (Carnaval, Páscoa, Corpus Christi). Também podem ser ativados/desativados.</li>
                     <li><strong>Feriados Personalizados:</strong> Datas específicas que você marca clicando no calendário (ex: feriados municipais, ponto facultativo local).</li>
                 </ul>
-                <h4 style="margin-top: 24px; font-size: 1rem; color: #1f2937; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <h4>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
                     Exportar/Importar Feriados Personalizados
                 </h4>
-                <p style="margin-top: 12px;">
-                    Você pode salvar seus feriados personalizados em um arquivo JSON e compartilhá-lo com colegas, equipes ou setores que precisem das mesmas exceções de calendário. Isso é especialmente útil para:
+                <p>
+                    Você pode salvar seus feriados personalizados em um arquivo JSON e compartilhá-lo com colegas ou equipes. Isso é útil para:
                 </p>
-                <ul style="margin-top: 8px;">
+                <ul>
                     <li>Equipes jurídicas que seguem o mesmo calendário forense</li>
                     <li>Departamentos que compartilham feriados municipais ou estaduais</li>
-                    <li>Grupos de trabalho com pontos facultativos específicos</li>
                     <li>Backup e restauração de suas configurações personalizadas</li>
                 </ul>
-                <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>Como funciona:</strong> Exporte seus feriados clicando em "Exportar JSON" na aba de Feriados. Compartilhe o arquivo com outras pessoas (e-mail, chat, drive). Ao importar, escolha <strong>"Substituir"</strong> para sobrescrever os atuais ou <strong>"Mesclar"</strong> para adicionar aos existentes.
+                <p class="help-callout info">
+                    <strong>Como funciona:</strong> Exporte seus feriados clicando em "Exportar JSON" na aba de Feriados. Ao importar, escolha <strong>"Substituir"</strong> para sobrescrever os atuais ou <strong>"Mesclar"</strong> para adicionar aos existentes.
                 </p>
 
-                <h4 style="margin-top: 20px; font-size: 0.95rem; color: #4b5563; font-weight: 600;">
-                    📋 Formato do arquivo exportado
-                </h4>
-                <p style="margin-top: 8px; font-size: 0.875rem;">
-                    O arquivo JSON segue esta estrutura:
-                </p>
-                <pre style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; overflow-x: auto; font-size: 0.875rem; line-height: 1.5; margin-top: 8px;"><code>{
+                <h4>📋 Formato do arquivo exportado</h4>
+                <p>O arquivo JSON segue esta estrutura:</p>
+                <pre><code>{
   "feriadosPersonalizados": [
     "25-12-2025 Natal",
     "24-12-2025 Véspera de Natal",
@@ -4243,68 +4243,65 @@
   ],
   "dataExportacao": "2025-12-16T12:35:09.540Z"
 }</code></pre>
-                <p style="margin-top: 8px; font-size: 0.875rem; color: #6b7280;">
-                    <strong>Nota:</strong> As datas dos feriados personalizados devem estar no formato <code>DD-MM-YYYY Nome</code> (dia-mês-ano seguido do nome). O nome é opcional - se omitido, o feriado será exibido como "Feriado/Ponto Facultativo" no cálculo. O campo "dataExportacao" é gerado automaticamente.
+                <p class="help-note">
+                    <strong>Nota:</strong> Formato <code>DD-MM-YYYY Nome</code> (nome opcional). O campo "dataExportacao" é gerado automaticamente.
                 </p>
 
-                <h4 style="margin-top: 24px; font-size: 1rem; color: #1f2937; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <h4>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
-                    ☁️ Conjuntos Pré-definidos Online (NOVO!)
+                    Conjuntos Pré-definidos Online
                 </h4>
-                <p style="margin-top: 12px;">
-                    Agora você pode importar conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos! Ao clicar em <strong>"Importar Feriados"</strong>, escolha a opção <strong>"Conjuntos Pré-definidos Online"</strong> para acessar:
+                <p>
+                    Importe conjuntos de feriados pré-configurados diretamente online. Ao clicar em <strong>"Importar Feriados"</strong>, escolha <strong>"Conjuntos Pré-definidos Online"</strong> para acessar:
                 </p>
-                <ul style="margin-top: 8px;">
-                    <li><strong>TJBA - Tribunal de Justiça da Bahia:</strong> Calendário forense oficial com feriados e pontos facultativos</li>
-                    <li><strong>Prefeituras Municipais:</strong> Feriados municipais e pontos facultativos de cidades específicas</li>
-                    <li><strong>Outros conjuntos:</strong> Calendários atualizados para diversos órgãos e jurisdições</li>
+                <ul>
+                    <li><strong>TJBA:</strong> Calendário forense oficial com feriados e pontos facultativos</li>
+                    <li><strong>Prefeituras Municipais:</strong> Feriados municipais de cidades específicas</li>
+                    <li><strong>Outros conjuntos:</strong> Calendários para diversos órgãos e jurisdições</li>
                 </ul>
-                <p style="margin-top: 12px; padding: 12px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>💡 Vantagem:</strong> Os conjuntos online são atualizados automaticamente conforme novos decretos e portarias são publicados. Você sempre terá acesso à versão mais recente sem precisar baixar novos arquivos!
+                <p class="help-callout success">
+                    <strong>Vantagem:</strong> Os conjuntos online são atualizados automaticamente conforme novos decretos e portarias são publicados.
                 </p>
-                <p style="margin-top: 12px; font-size: 0.875rem;">
-                    <strong>Como usar:</strong>
-                </p>
-                <ol style="margin-top: 8px; font-size: 0.875rem;">
-                    <li>Clique em <strong>"Importar Feriados"</strong> (disponível no menu Calculadora ou Editor de Feriados)</li>
-                    <li>Escolha <strong>"☁️ Conjuntos Pré-definidos Online"</strong></li>
-                    <li>Selecione o conjunto desejado da lista (ex: TJBA, PMVC, etc.)</li>
-                    <li>Escolha se deseja <strong>Substituir</strong> (apagar atuais) ou <strong>Mesclar</strong> (adicionar aos existentes)</li>
-                    <li>Pronto! Os feriados serão importados automaticamente</li>
+                <p><strong>Como usar:</strong></p>
+                <ol>
+                    <li>Clique em <strong>"Importar Feriados"</strong> (menu Calculadora ou Editor de Feriados)</li>
+                    <li>Escolha <strong>"Conjuntos Pré-definidos Online"</strong></li>
+                    <li>Selecione o conjunto desejado (ex: TJBA, PMVC)</li>
+                    <li>Escolha <strong>Substituir</strong> ou <strong>Mesclar</strong></li>
                 </ol>
-                <p style="margin-top: 12px; padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 0.875rem;">
-                    <strong>⚠️ Observação:</strong> Se você também tiver feriados personalizados específicos (ex: aniversário do setor), recomendamos escolher <strong>"Mesclar"</strong> para manter seus feriados e adicionar os do conjunto online.
+                <p class="help-callout warning">
+                    <strong>Observação:</strong> Se tiver feriados personalizados que deseja manter, escolha <strong>"Mesclar"</strong> para adicionar sem apagar os existentes.
                 </p>
             </div>
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Perfis de Feriados
                 </h3>
                 <p>
-                    Perfis permitem salvar e alternar entre diferentes conjuntos de feriados personalizados. Isso é útil para quem trabalha com múltiplas jurisdições ou precisa alternar entre calendários forenses distintos (ex: TJSP, TJRJ, TRF3).
+                    Perfis permitem salvar e alternar entre diferentes conjuntos de feriados personalizados. Útil para quem trabalha com múltiplas jurisdições (ex: TJSP, TJRJ, TRF3).
                 </p>
-                <ul style="margin-top: 8px;">
+                <ul>
                     <li><strong>Criar perfil:</strong> Clique no botão <strong>"+"</strong> na barra de perfis (acima do calendário). O perfil salvará os feriados personalizados atuais.</li>
-                    <li><strong>Alternar perfis:</strong> Clique na pílula do perfil ativo para abrir o dropdown e selecionar outro perfil. Selecionar <strong>"Nenhum"</strong> limpa os feriados personalizados.</li>
-                    <li><strong>Alterações não salvas:</strong> Um indicador amarelo aparece quando os feriados atuais diferem dos salvos no perfil. Clique em <strong>"Salvar"</strong> para atualizar o perfil.</li>
-                    <li><strong>Gerenciar:</strong> Clique no ícone de engrenagem <strong>"⚙"</strong> para renomear ou excluir perfis existentes.</li>
+                    <li><strong>Alternar perfis:</strong> Clique na pílula do perfil ativo para abrir o dropdown. Selecionar <strong>"Nenhum"</strong> limpa os feriados personalizados.</li>
+                    <li><strong>Alterações não salvas:</strong> Um indicador amarelo aparece quando há divergência. Clique em <strong>"Salvar"</strong> para atualizar o perfil.</li>
+                    <li><strong>Gerenciar:</strong> Clique no ícone de engrenagem para renomear ou excluir perfis.</li>
                 </ul>
-                <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>Limite:</strong> Você pode criar até 10 perfis, com nomes de até 30 caracteres. Os perfis são salvos localmente no navegador.
+                <p class="help-callout info">
+                    <strong>Limite:</strong> Até 10 perfis, com nomes de até 30 caracteres. Salvos localmente no navegador.
                 </p>
             </div>
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
                         <line x1="4" y1="22" x2="4" y2="15"></line>
                     </svg>
@@ -4318,20 +4315,18 @@
                     <li><strong>Feriados Móveis:</strong> Edite os feriados que mudam de ano para ano (formato: <code>DD-MM-YYYY Nome</code>).</li>
                     <li><strong>Feriados Personalizados:</strong> Gerencie os feriados adicionados clicando no calendário ou importados de JSON (formato: <code>DD-MM-YYYY Nome</code>, nome é opcional). Você pode adicionar, editar ou remover feriados específicos diretamente no editor de texto, incluindo nomes descritivos para melhor identificação.</li>
                 </ul>
-                <p style="margin-top: 12px;">
-                    <strong>Ações disponíveis:</strong>
-                </p>
+                <p><strong>Ações disponíveis:</strong></p>
                 <ul>
                     <li><strong>Salvar:</strong> Substitui as configurações atuais pelas novas.</li>
                     <li><strong>Resetar:</strong> Restaura os feriados fixos/móveis padrão do Brasil.</li>
-                    <li><strong>Importar/Exportar JSON:</strong> Permite importar ou exportar feriados personalizados em formato JSON.</li>
+                    <li><strong>Importar/Exportar JSON:</strong> Importar ou exportar feriados personalizados.</li>
                     <li><strong>Limpar Todos:</strong> Remove todos os feriados personalizados.</li>
                 </ul>
             </div>
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -4351,7 +4346,7 @@
 
             <div class="help-section">
                 <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
                         <line x1="12" y1="12" x2="12" y2="16"></line>
@@ -4359,19 +4354,16 @@
                     Dicas e Boas Práticas
                 </h3>
                 <ul>
-                    <li>Sempre verifique se o tipo de dias (úteis ou corridos) está correto antes de calcular.</li>
-                    <li>Use a descrição para documentar o motivo do cálculo - isso ajuda ao exportar ou revisar depois.</li>
-                    <li>Confira a legenda do calendário para entender como cada dia está sendo categorizado.</li>
-                    <li>Exporte seus feriados personalizados periodicamente para não perdê-los (são salvos localmente no navegador).</li>
-                    <li>Use o detalhamento para conferir se algum dia foi contado ou não contado corretamente.</li>
-                    <li>O botão "Limpar" remove o resultado atual e permite fazer um novo cálculo rapidamente.</li>
+                    <li>Verifique se o tipo de dias (úteis ou corridos) está correto antes de calcular.</li>
+                    <li>Use a descrição para documentar o motivo do cálculo.</li>
+                    <li>Confira a legenda do calendário para entender as cores de cada tipo de dia.</li>
+                    <li>Exporte seus feriados periodicamente para backup (são salvos localmente no navegador).</li>
+                    <li>Use o detalhamento para conferir se algum dia foi contado corretamente.</li>
                 </ul>
 
-                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e7eb; text-align: center;">
-                    <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">
-                        Precisa restaurar a calculadora para as configurações originais?
-                    </p>
-                    <button class="btn btn-secondary" onclick="confirmarResetCompleto()" style="font-size: 0.875rem; padding: 8px 16px;">
+                <div class="help-reset">
+                    <p>Precisa restaurar a calculadora para as configurações originais?</p>
+                    <button class="btn btn-secondary" onclick="confirmarResetCompleto()" style="font-size: 0.82rem; padding: 8px 16px;">
                         🔄 Restaurar Configurações Padrão
                     </button>
                 </div>
@@ -4653,21 +4645,21 @@
     <!-- Modal para escolher tipo de export PDF -->
     <div class="modal" id="modalExportPDF">
         <div class="modal-content">
-            <div class="modal-header">Exportar PDF</div>
+            <div class="modal-header">Imprimir PDF</div>
             <div class="modal-body">
                 <div style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
-                    Abre a janela de impressão do navegador. Use "Salvar como PDF" para gerar o arquivo.
+                    Uma nova aba será aberta com o conteúdo formatado.<br>Use <strong>Ctrl+P</strong> (ou <strong>Cmd+P</strong>) e selecione <strong>"Salvar como PDF"</strong> para gerar o arquivo.
                 </div>
-                Escolha o tipo de export PDF:
+                Escolha o formato:
             </div>
             <div class="modal-options">
                 <div class="modal-option" onclick="finalizarExportPDF('resumido')">
                     <div class="modal-option-title">📄 Resumido</div>
-                    <div class="modal-option-desc">Export compacto com visualização gráfica dos dias considerados.</div>
+                    <div class="modal-option-desc">Formato compacto com visualização gráfica dos dias considerados.</div>
                 </div>
                 <div class="modal-option" onclick="finalizarExportPDF('completo')">
                     <div class="modal-option-title">📋 Completo</div>
-                    <div class="modal-option-desc">Export detalhado com lista completa de todos os dias do período.</div>
+                    <div class="modal-option-desc">Formato detalhado com lista completa de todos os dias do período.</div>
                 </div>
             </div>
             <div class="modal-buttons">
@@ -5686,10 +5678,12 @@
                     <div class="btn-group" style="margin-top: 20px;">
                         <button class="btn btn-red" onclick="abrirModalExportPDF()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"></path>
+                                <rect x="6" y="18" width="12" height="0" rx="1"></rect>
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
                             </svg>
-                            Exportar PDF
+                            Imprimir PDF
                         </button>
                         <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
