@@ -1215,74 +1215,274 @@
             justify-content: flex-end;
         }
 
-        /* Toggle Switch para seleção de método PDF */
-        .pdf-method-toggle {
+        /* Sistema de Perfis de Feriados Personalizados */
+        .perfis-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 14px 0;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .perfis-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .perfis-bar-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .perfil-dropdown {
+            position: relative;
+        }
+
+        .perfil-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 150px;
+        }
+
+        .perfil-pill:hover {
+            background: #cbd5e1;
+        }
+
+        .perfil-pill.active {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            color: #1e40af;
+        }
+
+        .perfil-pill.unsaved {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+        .perfil-pill-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100px;
+        }
+
+        .perfil-pill-arrow {
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .perfil-pill-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .perfil-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 180px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .perfil-dropdown-menu.show {
+            display: block;
+        }
+
+        .perfil-dropdown-item {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .perfil-dropdown-item:hover {
+            background: #f1f5f9;
+        }
+
+        .perfil-dropdown-item.selected {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .perfil-dropdown-item.none {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .perfis-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .perfil-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            padding: 16px;
-            background: #f9fafb;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .pdf-method-toggle label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #6b7280;
-            transition: color 0.2s;
-        }
-
-        .pdf-method-toggle label.active {
-            color: #1f2937;
-        }
-
-        /* Toggle específico do modal PDF - usando escopo para não conflitar com outros toggles */
-        .pdf-method-toggle .pdf-toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 56px;
+            width: 28px;
             height: 28px;
-        }
-
-        .pdf-method-toggle .pdf-toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .pdf-method-toggle .pdf-toggle-slider {
-            position: absolute;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #16a34a;
-            transition: 0.3s;
-            border-radius: 28px;
+            transition: all 0.2s;
         }
 
-        .pdf-method-toggle .pdf-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: 0.3s;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        .perfil-btn:hover {
+            background: #f1f5f9;
+            color: #374151;
+            border-color: #cbd5e1;
         }
 
-        .pdf-method-toggle .pdf-toggle-switch input:checked + .pdf-toggle-slider {
-            background-color: #16a34a;
+        .perfil-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .pdf-method-toggle .pdf-toggle-switch input:checked + .pdf-toggle-slider:before {
-            transform: translateX(28px);
+        .perfil-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .perfil-btn-save {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #166534;
+            padding: 4px 10px;
+            width: auto;
+            font-size: 0.7rem;
+            font-weight: 600;
+            gap: 4px;
+        }
+
+        .perfil-btn-save:hover {
+            background: #bbf7d0;
+        }
+
+        .perfil-unsaved-indicator {
+            display: none;
+            font-size: 0.7rem;
+            color: #d97706;
+            font-weight: 500;
+        }
+
+        .perfil-unsaved-indicator.show {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Modal de Gerenciar Perfis */
+        .modal-perfis-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .modal-perfil-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-perfil-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-perfil-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .modal-perfil-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .modal-perfil-count {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .modal-perfil-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-perfil-btn {
+            padding: 4px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            background: white;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .modal-perfil-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .modal-perfil-btn.delete {
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .modal-perfil-btn.delete:hover {
+            background: #fef2f2;
+        }
+
+        .modal-perfis-empty {
+            padding: 30px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .modal-input-small {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .modal-input-small:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         /* Modal de Aviso de Recálculo */
@@ -3316,9 +3516,7 @@
             }
         }
     </style>
-    <!-- Biblioteca html2pdf.js para geração de PDF (carregar primeiro) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Biblioteca html2canvas para exportação de PNG (carregar depois para sobrescrever a versão do bundle) -->
+    <!-- Biblioteca html2canvas para exportação de PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
@@ -3523,6 +3721,54 @@
                         Calendário Interativo
                     </h3>
                     <div class="section-divider"></div>
+
+                    <!-- Barra de Perfis de Feriados -->
+                    <div class="perfis-bar">
+                        <div class="perfis-bar-left">
+                            <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
+                            <div class="perfil-dropdown">
+                                <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
+                                    <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
+                                    <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="perfil-dropdown-menu" id="perfilDropdownMenu">
+                                    <div class="perfil-dropdown-item none" onclick="selecionarPerfil(null)">Nenhum</div>
+                                </div>
+                            </div>
+                            <span class="perfil-unsaved-indicator" id="perfilUnsavedIndicator">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Alterações
+                            </span>
+                        </div>
+                        <div class="perfis-bar-right">
+                            <button class="perfil-btn perfil-btn-save" id="btnSalvarPerfil" onclick="salvarAlteracoesPerfil()" style="display: none;" title="Salvar alterações no perfil">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Salvar
+                            </button>
+                            <button class="perfil-btn" onclick="abrirModalCriarPerfil()" title="Criar novo perfil">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
 
             <div class="calendario-header">
                 <div class="calendario-nav-row">
@@ -4037,6 +4283,28 @@
             <div class="help-section">
                 <h3>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Perfis de Feriados
+                </h3>
+                <p>
+                    Perfis permitem salvar e alternar entre diferentes conjuntos de feriados personalizados. Isso é útil para quem trabalha com múltiplas jurisdições ou precisa alternar entre calendários forenses distintos (ex: TJSP, TJRJ, TRF3).
+                </p>
+                <ul style="margin-top: 8px;">
+                    <li><strong>Criar perfil:</strong> Clique no botão <strong>"+"</strong> na barra de perfis (acima do calendário). O perfil salvará os feriados personalizados atuais.</li>
+                    <li><strong>Alternar perfis:</strong> Clique na pílula do perfil ativo para abrir o dropdown e selecionar outro perfil. Selecionar <strong>"Nenhum"</strong> limpa os feriados personalizados.</li>
+                    <li><strong>Alterações não salvas:</strong> Um indicador amarelo aparece quando os feriados atuais diferem dos salvos no perfil. Clique em <strong>"Salvar"</strong> para atualizar o perfil.</li>
+                    <li><strong>Gerenciar:</strong> Clique no ícone de engrenagem <strong>"⚙"</strong> para renomear ou excluir perfis existentes.</li>
+                </ul>
+                <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
+                    <strong>Limite:</strong> Você pode criar até 10 perfis, com nomes de até 30 caracteres. Os perfis são salvos localmente no navegador.
+                </p>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
                         <line x1="4" y1="22" x2="4" y2="15"></line>
                     </svg>
@@ -4307,7 +4575,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.3 • 2025 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.4 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -4387,24 +4655,15 @@
         <div class="modal-content">
             <div class="modal-header">Exportar PDF</div>
             <div class="modal-body">
-                <!-- Toggle para escolher método de exportação -->
-                <div class="pdf-method-toggle">
-                    <label id="labelImprimirPDF" class="active">🖨️ Imprimir PDF</label>
-                    <label class="pdf-toggle-switch">
-                        <input type="checkbox" id="toggleMetodoPDF" onchange="toggleMetodoPDF()">
-                        <span class="pdf-toggle-slider"></span>
-                    </label>
-                    <label id="labelGerarPDF">💾 Gerar PDF</label>
-                </div>
-                <div id="descricaoMetodoPDF" style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
-                    Abre janela de impressão do navegador (permite salvar como PDF)
+                <div style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
+                    Abre a janela de impressão do navegador. Use "Salvar como PDF" para gerar o arquivo.
                 </div>
                 Escolha o tipo de export PDF:
             </div>
             <div class="modal-options">
                 <div class="modal-option" onclick="finalizarExportPDF('resumido')">
                     <div class="modal-option-title">📄 Resumido</div>
-                    <div class="modal-option-desc">Export compacto com visualização gráfica dos dias considerados (similar ao PNG resumido).</div>
+                    <div class="modal-option-desc">Export compacto com visualização gráfica dos dias considerados.</div>
                 </div>
                 <div class="modal-option" onclick="finalizarExportPDF('completo')">
                     <div class="modal-option-title">📋 Completo</div>
@@ -4413,6 +4672,77 @@
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="fecharModalExportPDF()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para criar novo perfil -->
+    <div class="modal" id="modalCriarPerfil">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">Criar Novo Perfil</div>
+            <div class="modal-body">
+                <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
+                    O perfil salvará os <strong id="qtdFeriadosAtuais">0</strong> feriados personalizados atuais.
+                </p>
+                <div class="modal-input-group">
+                    <label for="inputNomePerfil">Nome do perfil (máx. 30 caracteres)</label>
+                    <input type="text" id="inputNomePerfil" class="modal-input-small" maxlength="30" placeholder="Ex: TJSP, TJRJ, Escritório X...">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalCriarPerfil()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmarCriarPerfil()">Criar Perfil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para gerenciar perfis -->
+    <div class="modal" id="modalGerenciarPerfis">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">Gerenciar Perfis</div>
+            <div class="modal-body">
+                <div class="modal-perfis-list" id="listaPerfisModal">
+                    <div class="modal-perfis-empty">Nenhum perfil criado ainda.</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalGerenciarPerfis()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para renomear perfil -->
+    <div class="modal" id="modalRenomearPerfil">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">Renomear Perfil</div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="inputRenomearPerfil">Novo nome (máx. 30 caracteres)</label>
+                    <input type="text" id="inputRenomearPerfil" class="modal-input-small" maxlength="30">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalRenomearPerfil()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmarRenomearPerfil()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para trocar perfil com alterações não salvas -->
+    <div class="modal" id="modalConfirmarTrocaPerfil">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">Alterações Não Salvas</div>
+            <div class="modal-body">
+                <p style="font-size: 0.9rem; color: #374151;">
+                    Existem alterações não salvas no perfil atual. Deseja salvar antes de trocar?
+                </p>
+            </div>
+            <div class="modal-buttons" style="justify-content: space-between;">
+                <button class="btn btn-secondary" onclick="descartarETrocarPerfil()">Descartar</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -4474,6 +4804,458 @@
         let configImportacaoPendente = null;
         let conjuntoPendenteMetadata = null; // Armazena metadata do conjunto sendo importado
         let calculoRealizado = false; // Controla se já foi feito um cálculo
+
+        // ========================================
+        // SISTEMA DE PERFIS DE FERIADOS
+        // ========================================
+        const PERFIS_STORAGE_KEY = 'contaprazo_perfis';
+        const PERFIL_ATIVO_KEY = 'contaprazo_perfil_ativo';
+        const MAX_PERFIS = 10;
+        const MAX_NOME_PERFIL = 30;
+
+        let perfisData = JSON.parse(localStorage.getItem(PERFIS_STORAGE_KEY) || '[]');
+        let perfilAtivoId = localStorage.getItem(PERFIL_ATIVO_KEY) || null;
+        let perfilTemAlteracoes = false;
+        let perfilPendenteId = null; // ID do perfil para trocar quando há alterações não salvas
+        let perfilRenomeandoId = null; // ID do perfil sendo renomeado
+        let feriadosSnapshotPerfil = null; // Snapshot dos feriados quando o perfil foi carregado
+
+        function obterSnapshotDePerfilSalvo(perfilId) {
+            if (!perfilId) return null;
+            const perfil = perfisData.find(p => p.id === perfilId);
+            if (!perfil || !perfil.feriados) return null;
+            const entries = perfil.feriados
+                .filter(f => f && f.data)
+                .map(f => [f.data, f.nome || ''])
+                .sort((a, b) => a[0].localeCompare(b[0]));
+            return JSON.stringify(entries);
+        }
+
+        function inicializarPerfis() {
+            const importouAntes = sessionStorage.getItem('contaprazo_importou_feriados');
+            if (importouAntes) {
+                sessionStorage.removeItem('contaprazo_importou_feriados');
+                // Não sobrescreve feriados importados - mantém o que veio do localStorage
+                // Snapshot vem do perfil salvo (não dos feriados atuais), para detectar divergência
+                if (perfilAtivoId) {
+                    feriadosSnapshotPerfil = obterSnapshotDePerfilSalvo(perfilAtivoId) || obterSnapshotFeriados();
+                } else {
+                    feriadosSnapshotPerfil = obterSnapshotFeriados();
+                }
+            } else if (perfilAtivoId) {
+                const perfil = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfil) {
+                    carregarFeriadosDoPerfil(perfil);
+                } else {
+                    perfilAtivoId = null;
+                    localStorage.removeItem(PERFIL_ATIVO_KEY);
+                }
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
+            } else {
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
+            }
+            atualizarUIPerfilAtivo();
+            atualizarDropdownPerfis();
+            // Verifica se já há divergência (ex: após importação com perfil ativo)
+            verificarAlteracoesPerfil();
+
+            // Mostra notificação pendente do reload anterior (se houver)
+            const notifPendente = sessionStorage.getItem('contaprazo_notificacao_pendente');
+            if (notifPendente) {
+                sessionStorage.removeItem('contaprazo_notificacao_pendente');
+                try {
+                    const notif = JSON.parse(notifPendente);
+                    setTimeout(() => mostrarNotificacao(notif.mensagem, notif.tipo), 300);
+                } catch(e) {}
+            }
+        }
+
+        function obterSnapshotFeriados() {
+            return JSON.stringify(
+                Array.from(feriadosPersonalizados.entries()).sort((a, b) => a[0].localeCompare(b[0]))
+            );
+        }
+
+        function verificarAlteracoesPerfil() {
+            if (!perfilAtivoId) {
+                perfilTemAlteracoes = false;
+                atualizarIndicadorAlteracoes();
+                return;
+            }
+            const snapshotAtual = obterSnapshotFeriados();
+            perfilTemAlteracoes = (snapshotAtual !== feriadosSnapshotPerfil);
+            atualizarIndicadorAlteracoes();
+        }
+
+        function atualizarIndicadorAlteracoes() {
+            const indicator = document.getElementById('perfilUnsavedIndicator');
+            const btnSalvar = document.getElementById('btnSalvarPerfil');
+            const pill = document.getElementById('perfilPill');
+
+            if (perfilTemAlteracoes && perfilAtivoId) {
+                indicator.classList.add('show');
+                btnSalvar.style.display = 'flex';
+                pill.classList.add('unsaved');
+                pill.classList.remove('active');
+            } else {
+                indicator.classList.remove('show');
+                btnSalvar.style.display = 'none';
+                pill.classList.remove('unsaved');
+                if (perfilAtivoId) {
+                    pill.classList.add('active');
+                }
+            }
+        }
+
+        function atualizarUIPerfilAtivo() {
+            const pillText = document.getElementById('perfilPillText');
+            const pill = document.getElementById('perfilPill');
+
+            if (perfilAtivoId) {
+                const perfil = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfil) {
+                    pillText.textContent = perfil.nome;
+                    pillText.title = perfil.nome;
+                    pill.classList.add('active');
+                } else {
+                    pillText.textContent = 'Nenhum';
+                    pillText.title = '';
+                    pill.classList.remove('active');
+                    perfilAtivoId = null;
+                    localStorage.removeItem(PERFIL_ATIVO_KEY);
+                }
+            } else {
+                pillText.textContent = 'Nenhum';
+                pillText.title = '';
+                pill.classList.remove('active');
+            }
+            atualizarIndicadorAlteracoes();
+        }
+
+        function atualizarDropdownPerfis() {
+            const menu = document.getElementById('perfilDropdownMenu');
+            let html = '<div class="perfil-dropdown-item none' + (!perfilAtivoId ? ' selected' : '') + '" onclick="selecionarPerfil(null)">Nenhum</div>';
+
+            perfisData.forEach(perfil => {
+                const selected = perfil.id === perfilAtivoId ? ' selected' : '';
+                const nomeDisplay = perfil.nome.length > 20 ? perfil.nome.substring(0, 20) + '...' : perfil.nome;
+                html += '<div class="perfil-dropdown-item' + selected + '" onclick="selecionarPerfil(\'' + perfil.id + '\')" title="' + perfil.nome + '">' + nomeDisplay + '</div>';
+            });
+
+            menu.innerHTML = html;
+        }
+
+        function togglePerfilDropdown() {
+            const menu = document.getElementById('perfilDropdownMenu');
+            const arrow = document.getElementById('perfilPillArrow');
+            const isOpen = menu.classList.contains('show');
+
+            if (isOpen) {
+                menu.classList.remove('show');
+                arrow.classList.remove('open');
+            } else {
+                atualizarDropdownPerfis();
+                menu.classList.add('show');
+                arrow.classList.add('open');
+
+                // Fecha ao clicar fora
+                setTimeout(() => {
+                    const fecharDropdown = (e) => {
+                        if (!e.target.closest('.perfil-dropdown')) {
+                            menu.classList.remove('show');
+                            arrow.classList.remove('open');
+                            document.removeEventListener('click', fecharDropdown);
+                        }
+                    };
+                    document.addEventListener('click', fecharDropdown);
+                }, 10);
+            }
+        }
+
+        function selecionarPerfil(id) {
+            // Fecha dropdown
+            document.getElementById('perfilDropdownMenu').classList.remove('show');
+            document.getElementById('perfilPillArrow').classList.remove('open');
+
+            // Se é o mesmo perfil, não faz nada
+            if (id === perfilAtivoId) return;
+
+            // Se há alterações não salvas no perfil atual, pergunta
+            if (perfilTemAlteracoes && perfilAtivoId) {
+                perfilPendenteId = id;
+                abrirModalConfirmarTrocaPerfil();
+                return;
+            }
+
+            efetuarTrocaPerfil(id);
+        }
+
+        function efetuarTrocaPerfil(id) {
+            if (id === null) {
+                // Selecionou "Nenhum" - limpa feriados personalizados
+                perfilAtivoId = null;
+                localStorage.removeItem(PERFIL_ATIVO_KEY);
+                feriadosPersonalizados.clear();
+                salvarFeriadosNoLocalStorage();
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
+                perfilTemAlteracoes = false;
+            } else {
+                const perfil = perfisData.find(p => p.id === id);
+                if (perfil) {
+                    carregarFeriadosDoPerfil(perfil);
+                    perfilAtivoId = id;
+                    localStorage.setItem(PERFIL_ATIVO_KEY, id);
+                    feriadosSnapshotPerfil = obterSnapshotFeriados();
+                    perfilTemAlteracoes = false;
+                }
+            }
+
+            atualizarUIPerfilAtivo();
+            renderizarCalendario();
+            mostrarAvisoRecalculo();
+        }
+
+        function carregarFeriadosDoPerfil(perfil) {
+            feriadosPersonalizados.clear();
+            if (perfil.feriados && Array.isArray(perfil.feriados)) {
+                perfil.feriados.forEach(item => {
+                    if (item && item.data) {
+                        feriadosPersonalizados.set(item.data, item.nome || '');
+                    }
+                });
+            }
+            // Atualiza localStorage dos feriados
+            salvarFeriadosNoLocalStorage();
+        }
+
+        function salvarFeriadosNoLocalStorage() {
+            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                data,
+                nome: nome || ''
+            }));
+            localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+        }
+
+        function salvarPerfisNoLocalStorage() {
+            localStorage.setItem(PERFIS_STORAGE_KEY, JSON.stringify(perfisData));
+        }
+
+        // === Modais de Perfil ===
+
+        function abrirModalCriarPerfil() {
+            if (perfisData.length >= MAX_PERFIS) {
+                mostrarNotificacao('Limite de ' + MAX_PERFIS + ' perfis atingido. Exclua um perfil existente antes de criar outro.', 'erro');
+                return;
+            }
+            document.getElementById('qtdFeriadosAtuais').textContent = feriadosPersonalizados.size;
+            document.getElementById('inputNomePerfil').value = '';
+            document.getElementById('modalCriarPerfil').classList.add('active');
+            setTimeout(() => document.getElementById('inputNomePerfil').focus(), 100);
+        }
+
+        function fecharModalCriarPerfil() {
+            document.getElementById('modalCriarPerfil').classList.remove('active');
+        }
+
+        function confirmarCriarPerfil() {
+            const nome = document.getElementById('inputNomePerfil').value.trim();
+            if (!nome) {
+                mostrarNotificacao('Digite um nome para o perfil.', 'erro');
+                return;
+            }
+            if (nome.length > MAX_NOME_PERFIL) {
+                mostrarNotificacao('O nome do perfil deve ter no máximo ' + MAX_NOME_PERFIL + ' caracteres.', 'erro');
+                return;
+            }
+
+            // Verifica duplicatas
+            if (perfisData.some(p => p.nome.toLowerCase() === nome.toLowerCase())) {
+                mostrarNotificacao('Já existe um perfil com esse nome.', 'erro');
+                return;
+            }
+
+            const novoPerfil = {
+                id: 'perfil_' + Date.now(),
+                nome: nome,
+                feriados: Array.from(feriadosPersonalizados.entries()).map(([data, nomeFeriado]) => ({
+                    data,
+                    nome: nomeFeriado || ''
+                })),
+                criadoEm: new Date().toISOString()
+            };
+
+            perfisData.push(novoPerfil);
+            salvarPerfisNoLocalStorage();
+
+            // Ativa o perfil recém-criado
+            perfilAtivoId = novoPerfil.id;
+            localStorage.setItem(PERFIL_ATIVO_KEY, novoPerfil.id);
+            feriadosSnapshotPerfil = obterSnapshotFeriados();
+            perfilTemAlteracoes = false;
+
+            fecharModalCriarPerfil();
+            atualizarUIPerfilAtivo();
+            atualizarDropdownPerfis();
+            mostrarNotificacao('Perfil "' + nome + '" criado com sucesso!', 'sucesso');
+        }
+
+        function abrirModalGerenciarPerfis() {
+            renderizarListaPerfis();
+            document.getElementById('modalGerenciarPerfis').classList.add('active');
+        }
+
+        function fecharModalGerenciarPerfis() {
+            document.getElementById('modalGerenciarPerfis').classList.remove('active');
+        }
+
+        function renderizarListaPerfis() {
+            const container = document.getElementById('listaPerfisModal');
+
+            if (perfisData.length === 0) {
+                container.innerHTML = '<div class="modal-perfis-empty">Nenhum perfil criado ainda.</div>';
+                return;
+            }
+
+            let html = '';
+            perfisData.forEach(perfil => {
+                const qtdFeriados = perfil.feriados ? perfil.feriados.length : 0;
+                const ehAtivo = perfil.id === perfilAtivoId;
+                html += '<div class="modal-perfil-item">';
+                html += '  <div class="modal-perfil-info">';
+                html += '    <span class="modal-perfil-name">' + perfil.nome + (ehAtivo ? ' <span style="color: #3b82f6; font-size: 0.75rem;">(ativo)</span>' : '') + '</span>';
+                html += '    <span class="modal-perfil-count">' + qtdFeriados + ' feriado' + (qtdFeriados !== 1 ? 's' : '') + '</span>';
+                html += '  </div>';
+                html += '  <div class="modal-perfil-actions">';
+                html += '    <button class="modal-perfil-btn" onclick="abrirModalRenomearPerfil(\'' + perfil.id + '\')">Renomear</button>';
+                html += '    <button class="modal-perfil-btn delete" onclick="excluirPerfil(\'' + perfil.id + '\')">Excluir</button>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function excluirPerfil(id) {
+            const perfil = perfisData.find(p => p.id === id);
+            if (!perfil) return;
+
+            if (!confirm('Excluir o perfil "' + perfil.nome + '"?\n\nOs feriados carregados atualmente não serão afetados.')) {
+                return;
+            }
+
+            perfisData = perfisData.filter(p => p.id !== id);
+            salvarPerfisNoLocalStorage();
+
+            // Se o perfil excluído era o ativo, desvincula
+            if (perfilAtivoId === id) {
+                perfilAtivoId = null;
+                localStorage.removeItem(PERFIL_ATIVO_KEY);
+                feriadosSnapshotPerfil = obterSnapshotFeriados();
+                perfilTemAlteracoes = false;
+            }
+
+            renderizarListaPerfis();
+            atualizarUIPerfilAtivo();
+            atualizarDropdownPerfis();
+            mostrarNotificacao('Perfil "' + perfil.nome + '" excluído.', 'sucesso');
+        }
+
+        function abrirModalRenomearPerfil(id) {
+            const perfil = perfisData.find(p => p.id === id);
+            if (!perfil) return;
+
+            perfilRenomeandoId = id;
+            document.getElementById('inputRenomearPerfil').value = perfil.nome;
+            document.getElementById('modalRenomearPerfil').classList.add('active');
+            setTimeout(() => document.getElementById('inputRenomearPerfil').focus(), 100);
+        }
+
+        function fecharModalRenomearPerfil() {
+            document.getElementById('modalRenomearPerfil').classList.remove('active');
+            perfilRenomeandoId = null;
+        }
+
+        function confirmarRenomearPerfil() {
+            const novoNome = document.getElementById('inputRenomearPerfil').value.trim();
+            if (!novoNome) {
+                mostrarNotificacao('Digite um nome para o perfil.', 'erro');
+                return;
+            }
+            if (novoNome.length > MAX_NOME_PERFIL) {
+                mostrarNotificacao('O nome do perfil deve ter no máximo ' + MAX_NOME_PERFIL + ' caracteres.', 'erro');
+                return;
+            }
+
+            // Verifica duplicatas (excluindo o próprio perfil)
+            if (perfisData.some(p => p.id !== perfilRenomeandoId && p.nome.toLowerCase() === novoNome.toLowerCase())) {
+                mostrarNotificacao('Já existe um perfil com esse nome.', 'erro');
+                return;
+            }
+
+            const perfil = perfisData.find(p => p.id === perfilRenomeandoId);
+            if (perfil) {
+                perfil.nome = novoNome;
+                salvarPerfisNoLocalStorage();
+                renderizarListaPerfis();
+                atualizarUIPerfilAtivo();
+                atualizarDropdownPerfis();
+                mostrarNotificacao('Perfil renomeado para "' + novoNome + '".', 'sucesso');
+            }
+
+            fecharModalRenomearPerfil();
+        }
+
+        function salvarAlteracoesPerfil() {
+            if (!perfilAtivoId) return;
+
+            const perfil = perfisData.find(p => p.id === perfilAtivoId);
+            if (!perfil) return;
+
+            perfil.feriados = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                data,
+                nome: nome || ''
+            }));
+
+            salvarPerfisNoLocalStorage();
+            feriadosSnapshotPerfil = obterSnapshotFeriados();
+            perfilTemAlteracoes = false;
+            atualizarIndicadorAlteracoes();
+            mostrarNotificacao('Alterações salvas no perfil "' + perfil.nome + '".', 'sucesso');
+        }
+
+        // === Modal de confirmação de troca com alterações não salvas ===
+
+        function abrirModalConfirmarTrocaPerfil() {
+            document.getElementById('modalConfirmarTrocaPerfil').classList.add('active');
+        }
+
+        function fecharModalConfirmarTrocaPerfil() {
+            document.getElementById('modalConfirmarTrocaPerfil').classList.remove('active');
+            perfilPendenteId = null;
+        }
+
+        function salvarETrocarPerfil() {
+            salvarAlteracoesPerfil();
+            fecharModalConfirmarTrocaPerfil();
+            const idPendente = perfilPendenteId;
+            perfilPendenteId = null;
+            efetuarTrocaPerfil(idPendente);
+        }
+
+        function descartarETrocarPerfil() {
+            fecharModalConfirmarTrocaPerfil();
+            perfilTemAlteracoes = false;
+            const idPendente = perfilPendenteId;
+            perfilPendenteId = null;
+            efetuarTrocaPerfil(idPendente);
+        }
+
+        // Hook: marcar alterações quando feriados mudam (chamado pelo toggleDia e importação)
+        function notificarAlteracaoFeriados() {
+            if (perfilAtivoId) {
+                verificarAlteracoesPerfil();
+            }
+        }
 
         // ========================================
         // VARIÁVEIS DA AGENDA DE PRAZOS
@@ -4627,14 +5409,18 @@
             // Remove preferência de não mostrar aviso
             localStorage.removeItem('naoMostrarAvisoRecalculo');
 
+            // Limpa perfis de feriados
+            localStorage.removeItem(PERFIS_STORAGE_KEY);
+            localStorage.removeItem(PERFIL_ATIVO_KEY);
+            perfisData = [];
+            perfilAtivoId = null;
+
             // Fecha o modal
             fecharModalReset();
 
-            // Mostra mensagem de sucesso
-            mostrarNotificacao('Configurações restauradas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações restauradas com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações padrão
             location.reload();
@@ -5085,10 +5871,11 @@
             if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.\n\nA página será recarregada para aplicar as mudanças.`)) {
                 feriadosPersonalizados.clear();
                 localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
-                mostrarNotificacao('Feriados personalizados limpos com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
-                // Marca flag para voltar à primeira aba após reload
+                // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
                 sessionStorage.setItem('reloadToTop', 'true');
+                sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+                sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
 
                 // Recarrega a página para aplicar as configurações
                 location.reload();
@@ -5278,6 +6065,9 @@
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
             renderizarCalendario();
 
+            // Notifica o sistema de perfis sobre alteração
+            notificarAlteracaoFeriados();
+
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
         }
@@ -5385,6 +6175,7 @@
             const dadosConvertidos = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
             const quantidade = dadosConvertidos.length;
 
+            let msgNotificacao = '';
             if (tipo === 'substituir') {
                 feriadosPersonalizados.clear();
                 dadosConvertidos.forEach(item => {
@@ -5392,14 +6183,14 @@
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                mostrarNotificacao(`Feriados substituídos com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
+                msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
             } else if (tipo === 'mesclar') {
                 dadosConvertidos.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                mostrarNotificacao(`Feriados mesclados com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
+                msgNotificacao = `Feriados mesclados com sucesso! ${quantidade} data(s) importada(s).`;
             }
 
             // Salva no formato novo: array de objetos {data, nome}
@@ -5420,8 +6211,10 @@
 
             fecharModal();
 
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: msgNotificacao, tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações
             location.reload();
@@ -5931,11 +6724,6 @@
                 mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
-            // Restaurar preferência salva do usuário (ou usar padrão: imprimir)
-            const preferenciaSalva = localStorage.getItem('contaprazo_pdf_method') === 'gerar';
-            document.getElementById('toggleMetodoPDF').checked = preferenciaSalva;
-            atualizarUITogglePDF(preferenciaSalva);
-
             document.getElementById('modalExportPDF').classList.add('active');
         }
 
@@ -5943,50 +6731,12 @@
             document.getElementById('modalExportPDF').classList.remove('active');
         }
 
-        function atualizarUITogglePDF(usarGerar) {
-            const labelImprimir = document.getElementById('labelImprimirPDF');
-            const labelGerar = document.getElementById('labelGerarPDF');
-            const descricao = document.getElementById('descricaoMetodoPDF');
-
-            if (usarGerar) {
-                labelImprimir.classList.remove('active');
-                labelGerar.classList.add('active');
-                descricao.textContent = 'Gera arquivo PDF diretamente com nome automático baseado na descrição do prazo';
-            } else {
-                labelImprimir.classList.add('active');
-                labelGerar.classList.remove('active');
-                descricao.textContent = 'Abre janela de impressão do navegador (permite salvar como PDF)';
-            }
-        }
-
-        function toggleMetodoPDF() {
-            const toggle = document.getElementById('toggleMetodoPDF');
-            const usarGerar = toggle.checked;
-
-            // Salvar preferência do usuário
-            localStorage.setItem('contaprazo_pdf_method', usarGerar ? 'gerar' : 'imprimir');
-
-            atualizarUITogglePDF(usarGerar);
-        }
-
         function finalizarExportPDF(tipo) {
-            const usarGerador = document.getElementById('toggleMetodoPDF').checked;
             fecharModalExportPDF();
-
-            if (usarGerador) {
-                // Usar html2pdf.js para gerar PDF com nomenclatura automática
-                if (tipo === 'resumido') {
-                    gerarPDFResumido();
-                } else {
-                    gerarPDFCompleto();
-                }
+            if (tipo === 'resumido') {
+                exportarPDFResumido();
             } else {
-                // Usar método tradicional (window.print)
-                if (tipo === 'resumido') {
-                    exportarPDFResumido();
-                } else {
-                    exportarPDFCompleto();
-                }
+                exportarPDFCompleto();
             }
         }
 
@@ -6575,274 +7325,6 @@
                 mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
         }
-
-        // ==================== FUNÇÕES DE GERAÇÃO DE PDF COM HTML2PDF.JS ====================
-
-        function gerarPDFResumido() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
-                return;
-            }
-
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
-            }
-
-            // Gerar visualização dos dias
-            let diasVisuaisHTML = '';
-            todosOsDias.forEach((dia, index) => {
-                const diaNum = dia.data.getDate();
-                const isInicio = index === 0;
-                const isFinal = index === todosOsDias.length - 1;
-
-                const ehFds = ehFimDeSemana(dia.data);
-                const ehFer = ehFeriado(dia.data);
-                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
-                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
-
-                let cor = '#fef3c7';
-                let borda = '1px solid #fbbf24';
-                let textoCor = '#92400e';
-
-                if (isInicio) {
-                    cor = '#3b82f6';
-                    borda = '2px solid #2563eb';
-                    textoCor = '#ffffff';
-                } else if (isFinal) {
-                    cor = '#16a34a';
-                    borda = '2px solid #15803d';
-                    textoCor = '#ffffff';
-                } else if (usarDiasUteis) {
-                    if (ehPersonalizado) {
-                        cor = '#e9d5ff';
-                        borda = '1px solid #c084fc';
-                        textoCor = '#6b21a8';
-                    } else if (ehFer) {
-                        cor = '#fecaca';
-                        borda = '1px solid #f87171';
-                        textoCor = '#991b1b';
-                    } else if (ehFds) {
-                        cor = '#e5e7eb';
-                        borda = '1px solid #d1d5db';
-                        textoCor = '#6b7280';
-                    }
-                }
-
-                let mesIndicador = '';
-                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
-                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
-                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                }
-
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
-            });
-
-            // Formatar visualização dos dias com legenda
-            const diasVisuaisHTMLFormatado = `
-                <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
-                    <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
-                    <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
-                    </div>
-                </div>
-            `;
-
-            // HTML completo do PDF
-            const htmlContent = `
-<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
-    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
-        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
-            <div style="display: flex; align-items: center; line-height: 1;">
-                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
-            </div>
-            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
-            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
-        </div>
-    </div>
-    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
-        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
-        ${diasVisuaisHTMLFormatado}
-    </div>
-</div>
-            `;
-
-            // Gerar nome do arquivo
-            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
-            const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
-
-            // Criar elemento temporário VISÍVEL no DOM (pisca brevemente)
-            const container = document.createElement('div');
-            container.id = 'pdf-temp-container';
-            container.innerHTML = htmlContent;
-            container.style.cssText = 'position: fixed; top: 0; left: 0; width: 900px; background: white; z-index: 99999; max-height: 100vh; overflow: auto;';
-            document.body.appendChild(container);
-
-            // Aguardar renderização
-            setTimeout(() => {
-                const opt = {
-                    margin: 10,
-                    filename: nomeArquivo,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        scrollY: -window.scrollY
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                html2pdf().set(opt).from(container).save().then(() => {
-                    document.body.removeChild(container);
-                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-                }).catch(error => {
-                    document.body.removeChild(container);
-                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                    console.error('Erro ao gerar PDF:', error);
-                });
-            }, 100);
-        }
-
-        function gerarPDFCompleto() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
-                return;
-            }
-
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
-            }
-
-            // Gerar lista detalhada de dias
-            let diasDetalhesHTML = '';
-            todosOsDias.forEach(dia => {
-                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                    weekday: 'short',
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-
-                if (dia.contado) {
-                    diasDetalhesHTML += `
-                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #dcfce7; border-left: 4px solid #22c55e; font-size: 0.9rem;">
-                            <span style="font-weight: bold; min-width: 30px; color: #166534;">${dia.numero}</span>
-                            <span>${dataFormatada}</span>
-                        </div>
-                    `;
-                } else {
-                    diasDetalhesHTML += `
-                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; margin: 5px 0; border-radius: 6px; background: #fef2f2; border-left: 4px solid #ef4444; font-size: 0.9rem;">
-                            <span style="font-weight: bold; min-width: 30px; color: #991b1b;">X</span>
-                            <span>${dataFormatada} - ${dia.motivo}</span>
-                        </div>
-                    `;
-                }
-            });
-
-            // HTML completo do PDF
-            const htmlContent = `
-<div style="font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white;">
-    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white;">CP</div>
-        <div style="font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; line-height: 1; height: fit-content;">
-            <div style="display: flex; align-items: center; line-height: 1;">
-                <span style="color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Conta</span><span style="color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0;">Prazo</span>
-            </div>
-            <span style="color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center;">|</span>
-            <span style="font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px);">Calculadora de Prazos</span>
-        </div>
-    </div>
-    <div style="background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px;">
-        <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px;">Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div style="margin: 15px 0; font-size: 16px;"><strong>Data Final do Prazo:</strong> <span style="color: #15803d; font-size: 20px; font-weight: bold;">${dataFinalFormatada}</span></div>
-    </div>
-    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
-        <h3 style="color: #1f2937; margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline;">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            Detalhamento (Auditoria)
-        </h3>
-        ${diasDetalhesHTML}
-    </div>
-</div>
-            `;
-
-            // Gerar nome do arquivo
-            const prefixo = sanitizarNomeArquivo(descricaoPrazo);
-            const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
-
-            // Criar elemento temporário VISÍVEL no DOM (pisca brevemente)
-            const container = document.createElement('div');
-            container.id = 'pdf-temp-container-completo';
-            container.innerHTML = htmlContent;
-            container.style.cssText = 'position: fixed; top: 0; left: 0; width: 900px; background: white; z-index: 99999; max-height: 100vh; overflow: auto;';
-            document.body.appendChild(container);
-
-            // Aguardar renderização
-            setTimeout(() => {
-                const opt = {
-                    margin: 10,
-                    filename: nomeArquivo,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        scrollY: -window.scrollY
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
-
-                html2pdf().set(opt).from(container).save().then(() => {
-                    document.body.removeChild(container);
-                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-                }).catch(error => {
-                    document.body.removeChild(container);
-                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                    console.error('Erro ao gerar PDF:', error);
-                });
-            }, 100);
-        }
-
-        // ==================== FIM DAS FUNÇÕES DE GERAÇÃO DE PDF ====================
 
         function baixarCalculadora() {
             const htmlCompleto = document.documentElement.outerHTML;
@@ -8905,6 +9387,7 @@
 
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
+                    notificarAlteracaoFeriados();
                     mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
                     mostrarAvisoRecalculo();
                 }
@@ -9014,10 +9497,9 @@
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
 
-                    mostrarNotificacao('Configurações salvas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-                    // Marca flag para voltar à primeira aba após reload
+                    // Marca flags para o reload
                     sessionStorage.setItem('reloadToTop', 'true');
+                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
 
                     // Recarrega a página para aplicar as configurações
                     location.reload();
@@ -9073,10 +9555,9 @@
             localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
             localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
 
-            mostrarNotificacao('Feriados padrão restaurados com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados padrão restaurados com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações
             location.reload();
@@ -9103,6 +9584,7 @@
             mostrarAvisoRecalculo();
         });
 
+        inicializarPerfis();
         renderizarCalendario();
         atualizarTextoBotaoVisualizacao();
 
