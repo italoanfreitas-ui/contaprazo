@@ -3316,10 +3316,10 @@
             }
         }
     </style>
-    <!-- Biblioteca html2canvas para exportação de PNG -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Biblioteca html2pdf.js para geração de PDF com nomenclatura automática -->
+    <!-- Biblioteca html2pdf.js para geração de PDF (carregar primeiro) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Biblioteca html2canvas para exportação de PNG (carregar depois para sobrescrever a versão do bundle) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <!-- Cabeçalho Global -->
@@ -6690,27 +6690,39 @@
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-resumo.pdf` : `contaprazo-resumo-${Date.now()}.pdf`;
 
-            // Configurar opções do PDF
-            const opt = {
-                margin: 10,
-                filename: nomeArquivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            // Criar iframe temporário para renderização isolada
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'position: fixed; top: 0; left: 0; width: 900px; height: 100%; border: none; opacity: 0; pointer-events: none; z-index: -1;';
+            document.body.appendChild(iframe);
 
-            // Gerar PDF diretamente da string HTML
-            // O html2pdf.js cria internamente um container temporário
-            html2pdf().set(opt).from(htmlContent).save().then(() => {
-                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-            }).catch(error => {
-                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                console.error('Erro ao gerar PDF:', error);
-            });
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`<!DOCTYPE html><html><head><style>body{margin:0;padding:0;background:white;}</style></head><body>${htmlContent}</body></html>`);
+            iframeDoc.close();
+
+            // Aguardar renderização do iframe
+            setTimeout(() => {
+                const opt = {
+                    margin: 10,
+                    filename: nomeArquivo,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(iframeDoc.body.firstChild).save().then(() => {
+                    document.body.removeChild(iframe);
+                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+                }).catch(error => {
+                    document.body.removeChild(iframe);
+                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                    console.error('Erro ao gerar PDF:', error);
+                });
+            }, 200);
         }
 
         function gerarPDFCompleto() {
@@ -6798,27 +6810,40 @@
             const prefixo = sanitizarNomeArquivo(descricaoPrazo);
             const nomeArquivo = prefixo ? `${prefixo}contaprazo-completo.pdf` : `contaprazo-completo-${Date.now()}.pdf`;
 
-            // Configurar opções do PDF
-            const opt = {
-                margin: 10,
-                filename: nomeArquivo,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
+            // Criar iframe temporário para renderização isolada
+            const iframe = document.createElement('iframe');
+            iframe.style.cssText = 'position: fixed; top: 0; left: 0; width: 900px; height: 100%; border: none; opacity: 0; pointer-events: none; z-index: -1;';
+            document.body.appendChild(iframe);
 
-            // Gerar PDF diretamente da string HTML
-            html2pdf().set(opt).from(htmlContent).save().then(() => {
-                mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
-            }).catch(error => {
-                mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
-                console.error('Erro ao gerar PDF:', error);
-            });
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`<!DOCTYPE html><html><head><style>body{margin:0;padding:0;background:white;}</style></head><body>${htmlContent}</body></html>`);
+            iframeDoc.close();
+
+            // Aguardar renderização do iframe
+            setTimeout(() => {
+                const opt = {
+                    margin: 10,
+                    filename: nomeArquivo,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(iframeDoc.body.firstChild).save().then(() => {
+                    document.body.removeChild(iframe);
+                    mostrarNotificacao('PDF gerado com sucesso!', 'sucesso');
+                }).catch(error => {
+                    document.body.removeChild(iframe);
+                    mostrarNotificacao('Erro ao gerar PDF. Tente usar o método "Imprimir PDF".', 'erro');
+                    console.error('Erro ao gerar PDF:', error);
+                });
+            }, 200);
         }
 
         // ==================== FIM DAS FUNÇÕES DE GERAÇÃO DE PDF ====================
