@@ -3725,9 +3725,9 @@
                     <!-- Barra de Perfis de Feriados -->
                     <div class="perfis-bar">
                         <div class="perfis-bar-left">
-                            <span class="perfis-bar-label">Perfil:</span>
+                            <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
                             <div class="perfil-dropdown">
-                                <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()">
+                                <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
                                     <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
                                     <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -4277,6 +4277,28 @@
                 </ol>
                 <p style="margin-top: 12px; padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 0.875rem;">
                     <strong>⚠️ Observação:</strong> Se você também tiver feriados personalizados específicos (ex: aniversário do setor), recomendamos escolher <strong>"Mesclar"</strong> para manter seus feriados e adicionar os do conjunto online.
+                </p>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Perfis de Feriados
+                </h3>
+                <p>
+                    Perfis permitem salvar e alternar entre diferentes conjuntos de feriados personalizados. Isso é útil para quem trabalha com múltiplas jurisdições ou precisa alternar entre calendários forenses distintos (ex: TJSP, TJRJ, TRF3).
+                </p>
+                <ul style="margin-top: 8px;">
+                    <li><strong>Criar perfil:</strong> Clique no botão <strong>"+"</strong> na barra de perfis (acima do calendário). O perfil salvará os feriados personalizados atuais.</li>
+                    <li><strong>Alternar perfis:</strong> Clique na pílula do perfil ativo para abrir o dropdown e selecionar outro perfil. Selecionar <strong>"Nenhum"</strong> limpa os feriados personalizados.</li>
+                    <li><strong>Alterações não salvas:</strong> Um indicador amarelo aparece quando os feriados atuais diferem dos salvos no perfil. Clique em <strong>"Salvar"</strong> para atualizar o perfil.</li>
+                    <li><strong>Gerenciar:</strong> Clique no ícone de engrenagem <strong>"⚙"</strong> para renomear ou excluir perfis existentes.</li>
+                </ul>
+                <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
+                    <strong>Limite:</strong> Você pode criar até 10 perfis, com nomes de até 30 caracteres. Os perfis são salvos localmente no navegador.
                 </p>
             </div>
 
