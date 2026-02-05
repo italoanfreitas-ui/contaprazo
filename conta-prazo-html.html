@@ -1220,11 +1220,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 8px 0;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .perfis-bar-left {
@@ -4801,8 +4799,14 @@
         let feriadosSnapshotPerfil = null; // Snapshot dos feriados quando o perfil foi carregado
 
         function inicializarPerfis() {
-            // Se há perfil ativo, carrega os feriados desse perfil
-            if (perfilAtivoId) {
+            // Se houve importação antes do reload, NÃO sobrescreve com dados do perfil
+            // (o import já atualizou o perfil antes de recarregar)
+            const importouAntes = sessionStorage.getItem('contaprazo_importou_feriados');
+            if (importouAntes) {
+                sessionStorage.removeItem('contaprazo_importou_feriados');
+                // Recarrega perfisData do localStorage (pode ter sido atualizado pelo import)
+                perfisData = JSON.parse(localStorage.getItem(PERFIS_STORAGE_KEY) || '[]');
+            } else if (perfilAtivoId) {
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     carregarFeriadosDoPerfil(perfil);
@@ -4816,6 +4820,16 @@
             feriadosSnapshotPerfil = obterSnapshotFeriados();
             atualizarUIPerfilAtivo();
             atualizarDropdownPerfis();
+
+            // Mostra notificação pendente do reload anterior (se houver)
+            const notifPendente = sessionStorage.getItem('contaprazo_notificacao_pendente');
+            if (notifPendente) {
+                sessionStorage.removeItem('contaprazo_notificacao_pendente');
+                try {
+                    const notif = JSON.parse(notifPendente);
+                    setTimeout(() => mostrarNotificacao(notif.mensagem, notif.tipo), 300);
+                } catch(e) {}
+            }
         }
 
         function obterSnapshotFeriados() {
@@ -5355,14 +5369,18 @@
             // Remove preferência de não mostrar aviso
             localStorage.removeItem('naoMostrarAvisoRecalculo');
 
+            // Limpa perfis de feriados
+            localStorage.removeItem(PERFIS_STORAGE_KEY);
+            localStorage.removeItem(PERFIL_ATIVO_KEY);
+            perfisData = [];
+            perfilAtivoId = null;
+
             // Fecha o modal
             fecharModalReset();
 
-            // Mostra mensagem de sucesso
-            mostrarNotificacao('Configurações restauradas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações restauradas com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações padrão
             location.reload();
@@ -5813,10 +5831,20 @@
             if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.\n\nA página será recarregada para aplicar as mudanças.`)) {
                 feriadosPersonalizados.clear();
                 localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
-                mostrarNotificacao('Feriados personalizados limpos com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
 
-                // Marca flag para voltar à primeira aba após reload
+                // Se há perfil ativo, limpa os feriados do perfil também
+                if (perfilAtivoId) {
+                    const perfilAtivo = perfisData.find(p => p.id === perfilAtivoId);
+                    if (perfilAtivo) {
+                        perfilAtivo.feriados = [];
+                        salvarPerfisNoLocalStorage();
+                    }
+                }
+
+                // Marca flags para o reload
                 sessionStorage.setItem('reloadToTop', 'true');
+                sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+                sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
 
                 // Recarrega a página para aplicar as configurações
                 location.reload();
@@ -6116,6 +6144,7 @@
             const dadosConvertidos = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
             const quantidade = dadosConvertidos.length;
 
+            let msgNotificacao = '';
             if (tipo === 'substituir') {
                 feriadosPersonalizados.clear();
                 dadosConvertidos.forEach(item => {
@@ -6123,14 +6152,14 @@
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                mostrarNotificacao(`Feriados substituídos com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
+                msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
             } else if (tipo === 'mesclar') {
                 dadosConvertidos.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
                     }
                 });
-                mostrarNotificacao(`Feriados mesclados com sucesso! ${quantidade} data(s) importada(s). A página será recarregada para aplicar as mudanças.`, 'sucesso');
+                msgNotificacao = `Feriados mesclados com sucesso! ${quantidade} data(s) importada(s).`;
             }
 
             // Salva no formato novo: array de objetos {data, nome}
@@ -6139,6 +6168,15 @@
                 nome: nome || ''
             }));
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+
+            // Se há perfil ativo, atualiza os feriados do perfil também
+            if (perfilAtivoId) {
+                const perfilAtivo = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfilAtivo) {
+                    perfilAtivo.feriados = dadosParaSalvar;
+                    salvarPerfisNoLocalStorage();
+                }
+            }
 
             // Salva metadata do conjunto importado (se for de um conjunto predefinido)
             if (conjuntoPendenteMetadata) {
@@ -6151,8 +6189,10 @@
 
             fecharModal();
 
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: msgNotificacao, tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações
             location.reload();
@@ -9435,10 +9475,9 @@
                     atualizarVisualizacaoFeriados();
                     renderizarCalendario();
 
-                    mostrarNotificacao('Configurações salvas com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-                    // Marca flag para voltar à primeira aba após reload
+                    // Marca flags para o reload
                     sessionStorage.setItem('reloadToTop', 'true');
+                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
 
                     // Recarrega a página para aplicar as configurações
                     location.reload();
@@ -9494,10 +9533,9 @@
             localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
             localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
 
-            mostrarNotificacao('Feriados padrão restaurados com sucesso! A página será recarregada para aplicar as mudanças.', 'sucesso');
-
-            // Marca flag para voltar à primeira aba após reload
+            // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados padrão restaurados com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações
             location.reload();
