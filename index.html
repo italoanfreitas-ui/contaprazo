@@ -400,6 +400,86 @@
             flex-wrap: wrap;
         }
 
+        /* Pills de tipos de feriado no formulário de cálculo */
+        .tipos-feriado-calc-group {
+            margin-bottom: 20px;
+        }
+
+        .tipos-feriado-calc-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tipos-feriado-calc-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .tipos-feriado-calc-hint {
+            font-size: 0.72rem;
+            color: #9ca3af;
+        }
+
+        .tipos-feriado-pills {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tipos-feriado-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 0;
+        }
+
+        .tipos-feriado-mini-switch {
+            position: relative;
+            width: 34px;
+            height: 18px;
+            background: #d1d5db;
+            border-radius: 9px;
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+
+        .tipos-feriado-mini-switch.active {
+            background: #16a34a;
+        }
+
+        .tipos-feriado-mini-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 7px;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .tipos-feriado-mini-switch.active .tipos-feriado-mini-slider {
+            transform: translateX(16px);
+        }
+
+        .tipos-feriado-toggle-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #374151;
+            transition: color 0.2s;
+        }
+
+        .tipos-feriado-toggle-row.inativo .tipos-feriado-toggle-label {
+            color: #9ca3af;
+        }
+
         .btn {
             padding: 12px 20px;
             border: none;
@@ -3822,7 +3902,7 @@
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
                         <div class="toggle-container">
-                            <div class="toggle-wrapper">
+                            <div class="toggle-wrapper" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                                 <div class="toggle-switch active" id="toggleTipoDias" onclick="toggleTipoDias()">
                                     <div class="toggle-slider"></div>
                                 </div>
@@ -3842,6 +3922,27 @@
             <div class="form-group" style="margin-bottom: 20px;">
                 <label for="descricaoPrazo">Descrição (Opcional)</label>
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
+            </div>
+
+            <div class="tipos-feriado-calc-group">
+                <div class="tipos-feriado-calc-header">
+                    <span class="tipos-feriado-calc-label">Feriados a serem considerados no cálculo</span>
+                    <span class="tipos-feriado-calc-hint">Afeta o calendário e o resultado</span>
+                </div>
+                <div class="tipos-feriado-pills">
+                    <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
+                        <div class="tipos-feriado-mini-switch active" id="switchFixos"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Fixos</span>
+                    </div>
+                    <div class="tipos-feriado-toggle-row" id="rowMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
+                        <div class="tipos-feriado-mini-switch active" id="switchMoveis"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Móveis</span>
+                    </div>
+                    <div class="tipos-feriado-toggle-row" id="rowPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
+                        <div class="tipos-feriado-mini-switch active" id="switchPersonalizados"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Personalizados</span>
+                    </div>
+                </div>
             </div>
 
             <div class="btn-group">
@@ -3961,29 +4062,6 @@
                 <div class="config-feriados-header">
                     <div class="config-feriados-header-btn" onclick="toggleConfigFeriados()">
                         <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Configurar Feriados</h3>
-                    </div>
-                    <!-- Chip de tipos de feriado: stopPropagation para não colapsar o painel -->
-                    <div class="tipos-feriado-wrapper" onclick="event.stopPropagation()">
-                        <button class="tipos-feriado-chip" id="tiposFeriadoChip" onclick="toggleTiposFeriadoDropdown(event)" title="Escolher tipos de feriado incluídos no cálculo">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.6;"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
-                            Incluir no cálculo
-                            <span class="tipos-feriado-badge" id="tiposFeriadoBadge">3/3</span>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.5;"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </button>
-                        <div class="tipos-feriado-dropdown" id="tiposFeriadoDropdown">
-                            <div class="tipos-feriado-item" id="tiposRow-fixos" onclick="toggleFeriados('fixos')">
-                                <span class="tipos-feriado-check" id="tiposCheck-fixos">✓</span>
-                                <span>Feriados Nacionais</span>
-                            </div>
-                            <div class="tipos-feriado-item" id="tiposRow-moveis" onclick="toggleFeriados('moveis')">
-                                <span class="tipos-feriado-check" id="tiposCheck-moveis">✓</span>
-                                <span>Feriados Móveis</span>
-                            </div>
-                            <div class="tipos-feriado-item" id="tiposRow-personalizados" onclick="toggleFeriados('personalizados')">
-                                <span class="tipos-feriado-check" id="tiposCheck-personalizados">✓</span>
-                                <span>Personalizados</span>
-                            </div>
-                        </div>
                     </div>
                     <!-- Seta de recolher: exclusiva para colapsar o painel -->
                     <span class="config-feriados-toggle" id="configToggleIcon" onclick="toggleConfigFeriados()" title="Recolher/Expandir">▼</span>
@@ -4957,9 +5035,10 @@
             });
         }
 
-        let feriadosFixosAtivos = true;
-        let feriadosMoveisAtivos = true;
-        let feriadosPersonalizadosAtivos = true;
+        const _tiposSalvos = JSON.parse(localStorage.getItem('tiposFeriadoAtivos') || 'null');
+        let feriadosFixosAtivos = _tiposSalvos ? _tiposSalvos.fixos !== false : true;
+        let feriadosMoveisAtivos = _tiposSalvos ? _tiposSalvos.moveis !== false : true;
+        let feriadosPersonalizadosAtivos = _tiposSalvos ? _tiposSalvos.personalizados !== false : true;
         let dataInicio = null;
         let diasUteis = null;
         let todosOsDias = [];
@@ -5591,6 +5670,9 @@
             // Remove preferência de não mostrar aviso
             localStorage.removeItem('naoMostrarAvisoRecalculo');
 
+            // Remove preferência de tipos de feriado (volta a todos ativos)
+            localStorage.removeItem('tiposFeriadoAtivos');
+
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
             localStorage.removeItem(PERFIL_ATIVO_KEY);
@@ -5976,6 +6058,13 @@
             document.getElementById('toggleTipoDias').classList.add('active');
             document.getElementById('labelTipoDias').textContent = 'Dias Úteis';
 
+            // Resetar tipos de feriado para padrão (todos ativos)
+            feriadosFixosAtivos = true;
+            feriadosMoveisAtivos = true;
+            feriadosPersonalizadosAtivos = true;
+            salvarTiposFeriadoAtivos();
+            atualizarPillsTiposFeriado();
+
             renderizarCalendario();
         }
 
@@ -5988,28 +6077,38 @@
                 feriadosPersonalizadosAtivos = !feriadosPersonalizadosAtivos;
             }
 
-            atualizarChipTiposFeriado();
+            salvarTiposFeriadoAtivos();
+            atualizarPillsTiposFeriado();
             renderizarCalendario();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
         }
 
-        function atualizarChipTiposFeriado() {
-            const ativos = (feriadosFixosAtivos ? 1 : 0) + (feriadosMoveisAtivos ? 1 : 0) + (feriadosPersonalizadosAtivos ? 1 : 0);
-            const badge = document.getElementById('tiposFeriadoBadge');
-            if (badge) {
-                badge.textContent = ativos + '/3';
-                badge.className = 'tipos-feriado-badge' + (ativos === 0 ? ' zero' : ativos < 3 ? ' incompleto' : '');
-            }
-            const estados = { fixos: feriadosFixosAtivos, moveis: feriadosMoveisAtivos, personalizados: feriadosPersonalizadosAtivos };
-            Object.entries(estados).forEach(([tipo, ativo]) => {
-                const row = document.getElementById('tiposRow-' + tipo);
-                const check = document.getElementById('tiposCheck-' + tipo);
+        function salvarTiposFeriadoAtivos() {
+            localStorage.setItem('tiposFeriadoAtivos', JSON.stringify({
+                fixos: feriadosFixosAtivos,
+                moveis: feriadosMoveisAtivos,
+                personalizados: feriadosPersonalizadosAtivos
+            }));
+        }
+
+        function atualizarPillsTiposFeriado() {
+            const map = {
+                fixos: { ativo: feriadosFixosAtivos, switchId: 'switchFixos', rowId: 'rowFixos' },
+                moveis: { ativo: feriadosMoveisAtivos, switchId: 'switchMoveis', rowId: 'rowMoveis' },
+                personalizados: { ativo: feriadosPersonalizadosAtivos, switchId: 'switchPersonalizados', rowId: 'rowPersonalizados' }
+            };
+            Object.values(map).forEach(({ ativo, switchId, rowId }) => {
+                const sw = document.getElementById(switchId);
+                const row = document.getElementById(rowId);
+                if (sw) sw.classList.toggle('active', ativo);
                 if (row) row.classList.toggle('inativo', !ativo);
-                if (check) check.textContent = ativo ? '✓' : '✗';
             });
         }
+
+        // Mantido como alias para compatibilidade com chamadas existentes
+        function atualizarChipTiposFeriado() { atualizarPillsTiposFeriado(); }
 
         function toggleTiposFeriadoDropdown(event) {
             event.stopPropagation();
