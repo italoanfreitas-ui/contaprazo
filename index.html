@@ -5331,10 +5331,10 @@
             const dataCompleta = formatarDataCompleta(data);
             const ano = data.getFullYear();
 
-            // Respeita os flags de ativação — mesma ordem de prioridade de ehFeriado()
+            // Personalizados têm prioridade de nomeação sobre fixos e móveis
+            if (feriadosPersonalizadosAtivos && feriadosPersonalizados.has(dataCompleta)) return feriadosPersonalizados.get(dataCompleta) || null;
             if (feriadosFixosAtivos && feriadosFixos[dataStr]) return feriadosFixos[dataStr];
             if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) return feriadosMoveis[ano][dataStr];
-            if (feriadosPersonalizadosAtivos && feriadosPersonalizados.has(dataCompleta)) return feriadosPersonalizados.get(dataCompleta) || null;
 
             return null;
         }
