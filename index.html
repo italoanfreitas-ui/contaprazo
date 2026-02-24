@@ -6578,7 +6578,11 @@
 
             } catch (error) {
                 console.error('Erro ao carregar conjuntos pré-definidos:', error);
-                mostrarMensagemErro(listaPredefinidos, `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`);
+                const isParseError = error instanceof SyntaxError;
+                const msg = isParseError
+                    ? `Erro ao ler manifest.json (JSON inválido). Verifique a sintaxe do arquivo.`
+                    : `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`;
+                mostrarMensagemErro(listaPredefinidos, msg);
             }
         }
 
@@ -6955,7 +6959,11 @@
 
             } catch (error) {
                 console.error('Erro ao carregar conjuntos pré-definidos:', error);
-                mostrarMensagemErro(listaPredefinidos, `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`);
+                const isParseError = error instanceof SyntaxError;
+                const msg = isParseError
+                    ? `Erro ao ler manifest.json (JSON inválido). Verifique a sintaxe do arquivo.`
+                    : `Erro ao carregar conjuntos pré-definidos.\nVerifique sua conexão com a internet.`;
+                mostrarMensagemErro(listaPredefinidos, msg);
             }
         }
 
