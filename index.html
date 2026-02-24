@@ -660,6 +660,45 @@
             color: #991b1b;
         }
 
+        /* Nota de conjuntos de feriados online utilizados */
+        .conjuntos-obs {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .conjuntos-obs-label {
+            display: block;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+
+        .conjunto-obs-item {
+            margin-top: 3px;
+        }
+
+        .conjunto-obs-nome {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .conjunto-obs-desc {
+            color: #6b7280;
+        }
+
+        .conjunto-obs-desc::before {
+            content: ' — ';
+        }
+
         /* Removido margin-top para alinhar com o formulário no layout de duas colunas */
         @media (max-width: 1024px) {
             .calendario {
@@ -4575,7 +4614,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.4 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.5 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -5024,6 +5063,10 @@
                     }
                 });
             }
+            // Restaura metadata dos conjuntos importados associados a este perfil
+            if (perfil.conjuntosImportados !== undefined) {
+                localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(perfil.conjuntosImportados));
+            }
             // Atualiza localStorage dos feriados
             salvarFeriadosNoLocalStorage();
         }
@@ -5081,6 +5124,7 @@
                     data,
                     nome: nomeFeriado || ''
                 })),
+                conjuntosImportados: obterMetadataConjuntos(),
                 criadoEm: new Date().toISOString()
             };
 
@@ -5215,6 +5259,7 @@
                 data,
                 nome: nome || ''
             }));
+            perfil.conjuntosImportados = obterMetadataConjuntos();
 
             salvarPerfisNoLocalStorage();
             feriadosSnapshotPerfil = obterSnapshotFeriados();
@@ -5747,6 +5792,23 @@
                             }
                         }).join('')}
                     </div>
+
+                    ${(() => {
+                        const conjuntos = obterMetadataConjuntos();
+                        if (!conjuntos || conjuntos.length === 0) return '';
+                        const itens = conjuntos.map(c => `
+                            <div class="conjunto-obs-item">
+                                <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
+                                ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
+                            </div>
+                        `).join('');
+                        return `
+                            <div class="conjuntos-obs">
+                                <span class="conjuntos-obs-label">Feriados online utilizados:</span>
+                                ${itens}
+                            </div>
+                        `;
+                    })()}
                 </div>
             `;
 
@@ -6204,11 +6266,24 @@
 
             // Salva metadata do conjunto importado (se for de um conjunto predefinido)
             if (conjuntoPendenteMetadata) {
-                salvarMetadataConjunto(
-                    conjuntoPendenteMetadata.nome,
-                    conjuntoPendenteMetadata.arquivo,
-                    conjuntoPendenteMetadata.dataAtualizacao
-                );
+                if (tipo === 'substituir') {
+                    // Substituição: descarta todos os conjuntos anteriores, guarda apenas o novo
+                    localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify([{
+                        nome: conjuntoPendenteMetadata.nome,
+                        arquivo: conjuntoPendenteMetadata.arquivo,
+                        descricao: conjuntoPendenteMetadata.descricao || '',
+                        dataAtualizacao: conjuntoPendenteMetadata.dataAtualizacao,
+                        dataImportacao: new Date().toISOString()
+                    }]));
+                } else {
+                    // Mesclagem: mantém os anteriores e adiciona/atualiza o novo
+                    salvarMetadataConjunto(
+                        conjuntoPendenteMetadata.nome,
+                        conjuntoPendenteMetadata.arquivo,
+                        conjuntoPendenteMetadata.descricao || '',
+                        conjuntoPendenteMetadata.dataAtualizacao
+                    );
+                }
             }
 
             fecharModal();
@@ -6299,7 +6374,8 @@
                              data-url="${escapeHtml(urlArquivo)}"
                              data-nome="${escapeHtml(conjunto.nome)}"
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
-                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}">
+                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
+                             data-descricao="${escapeHtml(conjunto.descricao || '')}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
@@ -6316,7 +6392,8 @@
                             this.dataset.url,
                             this.dataset.nome,
                             this.dataset.arquivo,
-                            this.dataset.dataAtualizacao
+                            this.dataset.dataAtualizacao,
+                            this.dataset.descricao || ''
                         );
                     });
                 });
@@ -6332,7 +6409,7 @@
             abrirModalSelecionarFonte();
         }
 
-        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null) {
+        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '') {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
             mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
@@ -6363,6 +6440,7 @@
                     conjuntoPendenteMetadata = {
                         nome: nome,
                         arquivo: arquivo,
+                        descricao: descricao || '',
                         dataAtualizacao: dataAtualizacao
                     };
                 } else {
@@ -6403,17 +6481,18 @@
             }
         }
 
-        function salvarMetadataConjunto(nome, arquivo, dataAtualizacao) {
+        function salvarMetadataConjunto(nome, arquivo, descricao, dataAtualizacao) {
             try {
                 const metadata = obterMetadataConjuntos();
 
-                // Remove entrada anterior se existir
+                // Remove entrada anterior se existir (deduplicação por arquivo)
                 const novaMetadata = metadata.filter(item => item.arquivo !== arquivo);
 
                 // Adiciona nova entrada
                 novaMetadata.push({
                     nome: nome,
                     arquivo: arquivo,
+                    descricao: descricao || '',
                     dataAtualizacao: dataAtualizacao,
                     dataImportacao: new Date().toISOString()
                 });
@@ -6766,6 +6845,30 @@
         // ==================== FUNÇÕES AUXILIARES PARA EXPORTS ====================
 
         /**
+         * Gera HTML de nota de rodapé com os conjuntos de feriados online utilizados.
+         * Retorna string vazia se não houver nenhum conjunto importado.
+         * @param {string} [contexto='print'] - 'print' para PDF, 'image' para PNG
+         */
+        function gerarHTMLConjuntosNota(contexto = 'print') {
+            const conjuntos = obterMetadataConjuntos();
+            if (!conjuntos || conjuntos.length === 0) return '';
+
+            const itensHTML = conjuntos.map(c => `
+                <div style="margin-top: 6px;">
+                    <span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>
+                    ${c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : ''}
+                </div>
+            `).join('');
+
+            return `
+                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
+                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
+                    ${itensHTML}
+                </div>
+            `;
+        }
+
+        /**
          * Gera o cabeçalho HTML padronizado para exports PDF/PNG
          * @param {Object} params - Parâmetros do cabeçalho
          * @param {string} params.dataInicioFormatada - Data inicial formatada
@@ -6787,7 +6890,8 @@
                 descricaoHTML = '',
                 conteudoEspecifico,
                 diasVisuaisHTML = '',
-                estilosAdicionais = ''
+                estilosAdicionais = '',
+                conjuntosHTML = ''
             } = params;
 
             return `<!DOCTYPE html>
@@ -6836,6 +6940,7 @@
         ${diasVisuaisHTML}
     </div>
     ${conteudoEspecifico}
+    ${conjuntosHTML}
     <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
         <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
         <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
@@ -6941,7 +7046,8 @@
                 diasContados: diasUteis,
                 descricaoHTML,
                 diasVisuaisHTML: diasVisuaisHTMLFormatado,
-                conteudoEspecifico: ''
+                conteudoEspecifico: '',
+                conjuntosHTML: gerarHTMLConjuntosNota('print')
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7020,7 +7126,8 @@
                 diasContados: diasUteis,
                 descricaoHTML,
                 conteudoEspecifico,
-                estilosAdicionais
+                estilosAdicionais,
+                conjuntosHTML: gerarHTMLConjuntosNota('print')
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7174,6 +7281,7 @@
             </div>
         </div>
     </div>
+    ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
             // Renderizar com html2canvas
@@ -7290,6 +7398,7 @@
         <h3>Detalhamento</h3>
         ${listaHTML}
     </div>
+    ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
             // Criar elemento temporário invisível
