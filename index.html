@@ -7034,16 +7034,12 @@
             if (!conjuntos || conjuntos.length === 0) return '';
 
             const itensHTML = conjuntos.map(c => {
-                // Nome: link clicável no PDF (abre em browser); texto simples no PNG (bitmap)
+                // Nome: link clicável apenas no PDF (abre em browser); PNG é bitmap, sem hiperlinks
                 const nomeHTML = (contexto === 'print' && c.link)
                     ? `<a href="${escapeHtml(c.link)}" style="font-weight:600; color:#374151; text-decoration:underline; text-underline-offset:2px;" title="Ver ato normativo">${escapeHtml(c.nome)}</a>`
                     : `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
-                // Para PNG, exibe a URL em texto caso exista
-                const linkTextoHTML = (contexto === 'image' && c.link)
-                    ? `<span style="color:#9ca3af; font-size:10px; display:block; margin-top:1px;">${escapeHtml(c.link)}</span>`
-                    : '';
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
-                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linkTextoHTML}</div>`;
+                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}</div>`;
             }).join('');
 
             return `
