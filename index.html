@@ -691,6 +691,20 @@
             color: #374151;
         }
 
+        .conjunto-obs-link {
+            font-weight: 600;
+            color: #374151;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            text-decoration-color: #d1d5db;
+            cursor: pointer;
+        }
+
+        .conjunto-obs-link:hover {
+            color: #1d4ed8;
+            text-decoration-color: #1d4ed8;
+        }
+
         .conjunto-obs-desc {
             color: #6b7280;
         }
@@ -5919,7 +5933,10 @@
                         if (!conjuntos || conjuntos.length === 0) return '';
                         const itens = conjuntos.map(c => `
                             <div class="conjunto-obs-item">
-                                <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
+                                ${c.link
+                                    ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
+                                    : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
+                                }
                                 ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
                             </div>
                         `).join('');
@@ -6429,6 +6446,7 @@
                         nome: conjuntoPendenteMetadata.nome,
                         arquivo: conjuntoPendenteMetadata.arquivo,
                         descricao: conjuntoPendenteMetadata.descricao || '',
+                        link: conjuntoPendenteMetadata.link || '',
                         dataAtualizacao: conjuntoPendenteMetadata.dataAtualizacao,
                         dataImportacao: new Date().toISOString()
                     }]));
@@ -6438,6 +6456,7 @@
                         conjuntoPendenteMetadata.nome,
                         conjuntoPendenteMetadata.arquivo,
                         conjuntoPendenteMetadata.descricao || '',
+                        conjuntoPendenteMetadata.link || '',
                         conjuntoPendenteMetadata.dataAtualizacao
                     );
                 }
@@ -6532,7 +6551,8 @@
                              data-nome="${escapeHtml(conjunto.nome)}"
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
-                             data-descricao="${escapeHtml(conjunto.descricao || '')}">
+                             data-descricao="${escapeHtml(conjunto.descricao || '')}"
+                             data-link="${escapeHtml(conjunto.link || '')}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
@@ -6550,7 +6570,8 @@
                             this.dataset.nome,
                             this.dataset.arquivo,
                             this.dataset.dataAtualizacao,
-                            this.dataset.descricao || ''
+                            this.dataset.descricao || '',
+                            this.dataset.link || ''
                         );
                     });
                 });
@@ -6566,7 +6587,7 @@
             abrirModalSelecionarFonte();
         }
 
-        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '') {
+        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', link = '') {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
             mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
@@ -6598,6 +6619,7 @@
                         nome: nome,
                         arquivo: arquivo,
                         descricao: descricao || '',
+                        link: link || '',
                         dataAtualizacao: dataAtualizacao
                     };
                 } else {
@@ -6638,7 +6660,7 @@
             }
         }
 
-        function salvarMetadataConjunto(nome, arquivo, descricao, dataAtualizacao) {
+        function salvarMetadataConjunto(nome, arquivo, descricao, link, dataAtualizacao) {
             try {
                 const metadata = obterMetadataConjuntos();
 
@@ -6650,6 +6672,7 @@
                     nome: nome,
                     arquivo: arquivo,
                     descricao: descricao || '',
+                    link: link || '',
                     dataAtualizacao: dataAtualizacao,
                     dataImportacao: new Date().toISOString()
                 });
@@ -7010,12 +7033,18 @@
             const conjuntos = obterMetadataConjuntos();
             if (!conjuntos || conjuntos.length === 0) return '';
 
-            const itensHTML = conjuntos.map(c => `
-                <div style="margin-top: 6px;">
-                    <span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>
-                    ${c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : ''}
-                </div>
-            `).join('');
+            const itensHTML = conjuntos.map(c => {
+                // Nome: link clicável no PDF (abre em browser); texto simples no PNG (bitmap)
+                const nomeHTML = (contexto === 'print' && c.link)
+                    ? `<a href="${escapeHtml(c.link)}" style="font-weight:600; color:#374151; text-decoration:underline; text-underline-offset:2px;" title="Ver ato normativo">${escapeHtml(c.nome)}</a>`
+                    : `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
+                // Para PNG, exibe a URL em texto caso exista
+                const linkTextoHTML = (contexto === 'image' && c.link)
+                    ? `<span style="color:#9ca3af; font-size:10px; display:block; margin-top:1px;">${escapeHtml(c.link)}</span>`
+                    : '';
+                const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
+                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linkTextoHTML}</div>`;
+            }).join('');
 
             return `
                 <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
