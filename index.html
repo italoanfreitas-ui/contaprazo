@@ -891,7 +891,6 @@
         .config-feriados-header-btn {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             flex: 1;
             cursor: pointer;
             user-select: none;
@@ -944,9 +943,7 @@
         .tipos-feriado-badge.zero { background: #dc2626; }
 
         .tipos-feriado-dropdown {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 6px);
+            position: fixed;
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 10px;
@@ -1011,8 +1008,12 @@
 
         .config-feriados-toggle {
             font-size: 1.2rem;
-            color: #6b7280;
+            color: #9ca3af;
             transition: transform 0.3s;
+            cursor: pointer;
+            flex-shrink: 0;
+            user-select: none;
+            padding: 4px 2px;
         }
 
         .config-feriados-toggle.aberto {
@@ -3946,13 +3947,14 @@
                 <div class="config-feriados-header">
                     <div class="config-feriados-header-btn" onclick="toggleConfigFeriados()">
                         <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Configurar Feriados</h3>
-                        <span class="config-feriados-toggle" id="configToggleIcon">▼</span>
                     </div>
-                    <div class="tipos-feriado-wrapper">
+                    <!-- Chip de tipos de feriado: stopPropagation para não colapsar o painel -->
+                    <div class="tipos-feriado-wrapper" onclick="event.stopPropagation()">
                         <button class="tipos-feriado-chip" id="tiposFeriadoChip" onclick="toggleTiposFeriadoDropdown(event)" title="Escolher tipos de feriado incluídos no cálculo">
-                            Feriados no cálculo
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.6;"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                            Incluir no cálculo
                             <span class="tipos-feriado-badge" id="tiposFeriadoBadge">3/3</span>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.5;"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </button>
                         <div class="tipos-feriado-dropdown" id="tiposFeriadoDropdown">
                             <div class="tipos-feriado-item" id="tiposRow-fixos" onclick="toggleFeriados('fixos')">
@@ -3969,6 +3971,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Seta de recolher: exclusiva para colapsar o painel -->
+                    <span class="config-feriados-toggle" id="configToggleIcon" onclick="toggleConfigFeriados()" title="Recolher/Expandir">▼</span>
                 </div>
                 <div class="config-feriados-content" id="configFeriadosContent">
                     <div class="config-feriados-body">
@@ -4806,9 +4810,6 @@
         <div class="modal-content">
             <div class="modal-header">Exportar PDF</div>
             <div class="modal-body">
-                <div style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
-                    Abre a janela de impressão do navegador. Use "Salvar como PDF" para gerar o arquivo.
-                </div>
                 Escolha o tipo de export PDF:
             </div>
             <div class="modal-options">
@@ -5009,6 +5010,14 @@
             atualizarDropdownPerfis();
             // Verifica se já há divergência (ex: após importação com perfil ativo)
             verificarAlteracoesPerfil();
+
+            // Após qualquer importação (substituir ou mesclar) com perfil ativo,
+            // sempre sinaliza alterações não salvas — mesmo que os feriados sejam
+            // idênticos, os metadados dos conjuntos podem ter mudado.
+            if (importouAntes && perfilAtivoId) {
+                perfilTemAlteracoes = true;
+                atualizarIndicadorAlteracoes();
+            }
 
             // Mostra notificação pendente do reload anterior (se houver)
             const notifPendente = sessionStorage.getItem('contaprazo_notificacao_pendente');
@@ -5988,12 +5997,19 @@
         function toggleTiposFeriadoDropdown(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('tiposFeriadoDropdown');
+            const chip = event.currentTarget;
             const isActive = dropdown.classList.contains('active');
             if (!isActive) {
+                // Posiciona o dropdown com position:fixed baseado no rect do botão
+                const rect = chip.getBoundingClientRect();
+                dropdown.style.top = (rect.bottom + 6) + 'px';
+                // Alinha pela borda direita do chip
+                const rightOffset = window.innerWidth - rect.right;
+                dropdown.style.right = Math.max(8, rightOffset) + 'px';
+                dropdown.style.left = 'auto';
                 dropdown.classList.add('active');
                 setTimeout(() => {
                     document.addEventListener('click', function fecharTiposDropdown(e) {
-                        const chip = document.getElementById('tiposFeriadoChip');
                         if (!dropdown.contains(e.target) && chip && !chip.contains(e.target)) {
                             dropdown.classList.remove('active');
                             document.removeEventListener('click', fecharTiposDropdown);
