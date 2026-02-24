@@ -5331,10 +5331,12 @@
             const dataCompleta = formatarDataCompleta(data);
             const ano = data.getFullYear();
 
-            return feriadosFixos[dataStr] ||
-                (feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) ||
-                (feriadosPersonalizados.has(dataCompleta) && feriadosPersonalizados.get(dataCompleta)) ||
-                null;
+            // Respeita os flags de ativação — mesma ordem de prioridade de ehFeriado()
+            if (feriadosFixosAtivos && feriadosFixos[dataStr]) return feriadosFixos[dataStr];
+            if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][dataStr]) return feriadosMoveis[ano][dataStr];
+            if (feriadosPersonalizadosAtivos && feriadosPersonalizados.has(dataCompleta)) return feriadosPersonalizados.get(dataCompleta) || null;
+
+            return null;
         }
 
         // Cache de seletores DOM
