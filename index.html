@@ -660,6 +660,45 @@
             color: #991b1b;
         }
 
+        /* Nota de conjuntos de feriados online utilizados */
+        .conjuntos-obs {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .conjuntos-obs-label {
+            display: block;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+
+        .conjunto-obs-item {
+            margin-top: 3px;
+        }
+
+        .conjunto-obs-nome {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .conjunto-obs-desc {
+            color: #6b7280;
+        }
+
+        .conjunto-obs-desc::before {
+            content: ' — ';
+        }
+
         /* Removido margin-top para alinhar com o formulário no layout de duas colunas */
         @media (max-width: 1024px) {
             .calendario {
@@ -844,15 +883,118 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            cursor: pointer;
-            user-select: none;
+            padding: 10px 20px;
             background: #f9fafb;
-            transition: background 0.2s;
+            gap: 12px;
         }
 
-        .config-feriados-header:hover {
+        .config-feriados-header-btn {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.15s;
+        }
+
+        .config-feriados-header-btn:hover {
+            opacity: 0.75;
+        }
+
+        /* Chip dropdown de tipos de feriado */
+        .tipos-feriado-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .tipos-feriado-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .tipos-feriado-chip:hover {
             background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .tipos-feriado-badge {
+            background: #16a34a;
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+            min-width: 26px;
+            text-align: center;
+        }
+
+        .tipos-feriado-badge.incompleto { background: #f59e0b; }
+        .tipos-feriado-badge.zero { background: #dc2626; }
+
+        .tipos-feriado-dropdown {
+            position: fixed;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 190px;
+            display: none;
+            z-index: 10001;
+            overflow: hidden;
+        }
+
+        .tipos-feriado-dropdown.active {
+            display: block;
+            animation: menuSlideIn 0.15s ease-out;
+        }
+
+        .tipos-feriado-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #1f2937;
+            transition: background 0.1s;
+            user-select: none;
+        }
+
+        .tipos-feriado-item:hover { background: #f9fafb; }
+        .tipos-feriado-item + .tipos-feriado-item { border-top: 1px solid #f3f4f6; }
+
+        .tipos-feriado-item.inativo { color: #9ca3af; }
+
+        .tipos-feriado-check {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1.5px solid #86efac;
+            flex-shrink: 0;
+        }
+
+        .tipos-feriado-item.inativo .tipos-feriado-check {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border-color: #d1d5db;
         }
 
         .config-feriados-header h3 {
@@ -866,8 +1008,12 @@
 
         .config-feriados-toggle {
             font-size: 1.2rem;
-            color: #6b7280;
+            color: #9ca3af;
             transition: transform 0.3s;
+            cursor: pointer;
+            flex-shrink: 0;
+            user-select: none;
+            padding: 4px 2px;
         }
 
         .config-feriados-toggle.aberto {
@@ -3798,29 +3944,38 @@
             <div class="calendario-grid" id="calendarioGrid"></div>
 
             <div class="config-feriados">
-                <div class="config-feriados-header" onclick="toggleConfigFeriados()">
-                    <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Configurar Feriados</h3>
-                    <span class="config-feriados-toggle" id="configToggleIcon">▼</span>
+                <div class="config-feriados-header">
+                    <div class="config-feriados-header-btn" onclick="toggleConfigFeriados()">
+                        <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Configurar Feriados</h3>
+                    </div>
+                    <!-- Chip de tipos de feriado: stopPropagation para não colapsar o painel -->
+                    <div class="tipos-feriado-wrapper" onclick="event.stopPropagation()">
+                        <button class="tipos-feriado-chip" id="tiposFeriadoChip" onclick="toggleTiposFeriadoDropdown(event)" title="Escolher tipos de feriado incluídos no cálculo">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.6;"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                            Incluir no cálculo
+                            <span class="tipos-feriado-badge" id="tiposFeriadoBadge">3/3</span>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; opacity:0.5;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="tipos-feriado-dropdown" id="tiposFeriadoDropdown">
+                            <div class="tipos-feriado-item" id="tiposRow-fixos" onclick="toggleFeriados('fixos')">
+                                <span class="tipos-feriado-check" id="tiposCheck-fixos">✓</span>
+                                <span>Feriados Nacionais</span>
+                            </div>
+                            <div class="tipos-feriado-item" id="tiposRow-moveis" onclick="toggleFeriados('moveis')">
+                                <span class="tipos-feriado-check" id="tiposCheck-moveis">✓</span>
+                                <span>Feriados Móveis</span>
+                            </div>
+                            <div class="tipos-feriado-item" id="tiposRow-personalizados" onclick="toggleFeriados('personalizados')">
+                                <span class="tipos-feriado-check" id="tiposCheck-personalizados">✓</span>
+                                <span>Personalizados</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Seta de recolher: exclusiva para colapsar o painel -->
+                    <span class="config-feriados-toggle" id="configToggleIcon" onclick="toggleConfigFeriados()" title="Recolher/Expandir">▼</span>
                 </div>
                 <div class="config-feriados-content" id="configFeriadosContent">
                     <div class="config-feriados-body">
-                        <div class="config-secao">
-                            <h4>Incluir no Cálculo</h4>
-                            <div class="btn-group">
-                                <button class="toggle-btn toggle-ativo" id="toggleFixos" onclick="toggleFeriados('fixos')">
-                                    ✓ Feriados Nacionais
-                                </button>
-                                <button class="toggle-btn toggle-ativo" id="toggleMoveis" onclick="toggleFeriados('moveis')">
-                                    ✓ Feriados Móveis
-                                </button>
-                                <button class="toggle-btn toggle-ativo" id="togglePersonalizados" onclick="toggleFeriados('personalizados')">
-                                    ✓ Feriados Personalizados
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="config-divisor"></div>
-
                         <div class="config-secao">
                             <h4>Gerenciar Feriados Personalizados</h4>
                             <div class="btn-group">
@@ -4575,7 +4730,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.4 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.5 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -4655,9 +4810,6 @@
         <div class="modal-content">
             <div class="modal-header">Exportar PDF</div>
             <div class="modal-body">
-                <div style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
-                    Abre a janela de impressão do navegador. Use "Salvar como PDF" para gerar o arquivo.
-                </div>
                 Escolha o tipo de export PDF:
             </div>
             <div class="modal-options">
@@ -4859,6 +5011,14 @@
             // Verifica se já há divergência (ex: após importação com perfil ativo)
             verificarAlteracoesPerfil();
 
+            // Após qualquer importação (substituir ou mesclar) com perfil ativo,
+            // sempre sinaliza alterações não salvas — mesmo que os feriados sejam
+            // idênticos, os metadados dos conjuntos podem ter mudado.
+            if (importouAntes && perfilAtivoId) {
+                perfilTemAlteracoes = true;
+                atualizarIndicadorAlteracoes();
+            }
+
             // Mostra notificação pendente do reload anterior (se houver)
             const notifPendente = sessionStorage.getItem('contaprazo_notificacao_pendente');
             if (notifPendente) {
@@ -5024,6 +5184,10 @@
                     }
                 });
             }
+            // Restaura metadata dos conjuntos importados associados a este perfil
+            if (perfil.conjuntosImportados !== undefined) {
+                localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(perfil.conjuntosImportados));
+            }
             // Atualiza localStorage dos feriados
             salvarFeriadosNoLocalStorage();
         }
@@ -5081,6 +5245,7 @@
                     data,
                     nome: nomeFeriado || ''
                 })),
+                conjuntosImportados: obterMetadataConjuntos(),
                 criadoEm: new Date().toISOString()
             };
 
@@ -5215,6 +5380,7 @@
                 data,
                 nome: nome || ''
             }));
+            perfil.conjuntosImportados = obterMetadataConjuntos();
 
             salvarPerfisNoLocalStorage();
             feriadosSnapshotPerfil = obterSnapshotFeriados();
@@ -5747,6 +5913,23 @@
                             }
                         }).join('')}
                     </div>
+
+                    ${(() => {
+                        const conjuntos = obterMetadataConjuntos();
+                        if (!conjuntos || conjuntos.length === 0) return '';
+                        const itens = conjuntos.map(c => `
+                            <div class="conjunto-obs-item">
+                                <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
+                                ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
+                            </div>
+                        `).join('');
+                        return `
+                            <div class="conjuntos-obs">
+                                <span class="conjuntos-obs-label">Feriados online utilizados:</span>
+                                ${itens}
+                            </div>
+                        `;
+                    })()}
                 </div>
             `;
 
@@ -5780,26 +5963,62 @@
         }
 
         function toggleFeriados(tipo) {
-            const btn = document.getElementById('toggle' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
-
             if (tipo === 'fixos') {
                 feriadosFixosAtivos = !feriadosFixosAtivos;
-                btn.className = feriadosFixosAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
-                btn.textContent = (feriadosFixosAtivos ? '✓' : '✗') + ' Feriados Nacionais';
             } else if (tipo === 'moveis') {
                 feriadosMoveisAtivos = !feriadosMoveisAtivos;
-                btn.className = feriadosMoveisAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
-                btn.textContent = (feriadosMoveisAtivos ? '✓' : '✗') + ' Feriados Móveis';
             } else if (tipo === 'personalizados') {
                 feriadosPersonalizadosAtivos = !feriadosPersonalizadosAtivos;
-                btn.className = feriadosPersonalizadosAtivos ? 'toggle-btn toggle-ativo' : 'toggle-btn toggle-inativo';
-                btn.textContent = (feriadosPersonalizadosAtivos ? '✓' : '✗') + ' Feriados Personalizados';
             }
 
+            atualizarChipTiposFeriado();
             renderizarCalendario();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
+        }
+
+        function atualizarChipTiposFeriado() {
+            const ativos = (feriadosFixosAtivos ? 1 : 0) + (feriadosMoveisAtivos ? 1 : 0) + (feriadosPersonalizadosAtivos ? 1 : 0);
+            const badge = document.getElementById('tiposFeriadoBadge');
+            if (badge) {
+                badge.textContent = ativos + '/3';
+                badge.className = 'tipos-feriado-badge' + (ativos === 0 ? ' zero' : ativos < 3 ? ' incompleto' : '');
+            }
+            const estados = { fixos: feriadosFixosAtivos, moveis: feriadosMoveisAtivos, personalizados: feriadosPersonalizadosAtivos };
+            Object.entries(estados).forEach(([tipo, ativo]) => {
+                const row = document.getElementById('tiposRow-' + tipo);
+                const check = document.getElementById('tiposCheck-' + tipo);
+                if (row) row.classList.toggle('inativo', !ativo);
+                if (check) check.textContent = ativo ? '✓' : '✗';
+            });
+        }
+
+        function toggleTiposFeriadoDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('tiposFeriadoDropdown');
+            const chip = event.currentTarget;
+            const isActive = dropdown.classList.contains('active');
+            if (!isActive) {
+                // Posiciona o dropdown com position:fixed baseado no rect do botão
+                const rect = chip.getBoundingClientRect();
+                dropdown.style.top = (rect.bottom + 6) + 'px';
+                // Alinha pela borda direita do chip
+                const rightOffset = window.innerWidth - rect.right;
+                dropdown.style.right = Math.max(8, rightOffset) + 'px';
+                dropdown.style.left = 'auto';
+                dropdown.classList.add('active');
+                setTimeout(() => {
+                    document.addEventListener('click', function fecharTiposDropdown(e) {
+                        if (!dropdown.contains(e.target) && chip && !chip.contains(e.target)) {
+                            dropdown.classList.remove('active');
+                            document.removeEventListener('click', fecharTiposDropdown);
+                        }
+                    });
+                }, 10);
+            } else {
+                dropdown.classList.remove('active');
+            }
         }
 
         function atualizarTextoBotaoVisualizacao() {
@@ -6204,11 +6423,24 @@
 
             // Salva metadata do conjunto importado (se for de um conjunto predefinido)
             if (conjuntoPendenteMetadata) {
-                salvarMetadataConjunto(
-                    conjuntoPendenteMetadata.nome,
-                    conjuntoPendenteMetadata.arquivo,
-                    conjuntoPendenteMetadata.dataAtualizacao
-                );
+                if (tipo === 'substituir') {
+                    // Substituição: descarta todos os conjuntos anteriores, guarda apenas o novo
+                    localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify([{
+                        nome: conjuntoPendenteMetadata.nome,
+                        arquivo: conjuntoPendenteMetadata.arquivo,
+                        descricao: conjuntoPendenteMetadata.descricao || '',
+                        dataAtualizacao: conjuntoPendenteMetadata.dataAtualizacao,
+                        dataImportacao: new Date().toISOString()
+                    }]));
+                } else {
+                    // Mesclagem: mantém os anteriores e adiciona/atualiza o novo
+                    salvarMetadataConjunto(
+                        conjuntoPendenteMetadata.nome,
+                        conjuntoPendenteMetadata.arquivo,
+                        conjuntoPendenteMetadata.descricao || '',
+                        conjuntoPendenteMetadata.dataAtualizacao
+                    );
+                }
             }
 
             fecharModal();
@@ -6299,7 +6531,8 @@
                              data-url="${escapeHtml(urlArquivo)}"
                              data-nome="${escapeHtml(conjunto.nome)}"
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
-                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}">
+                             data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
+                             data-descricao="${escapeHtml(conjunto.descricao || '')}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-data">📅 Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</div>
@@ -6316,7 +6549,8 @@
                             this.dataset.url,
                             this.dataset.nome,
                             this.dataset.arquivo,
-                            this.dataset.dataAtualizacao
+                            this.dataset.dataAtualizacao,
+                            this.dataset.descricao || ''
                         );
                     });
                 });
@@ -6332,7 +6566,7 @@
             abrirModalSelecionarFonte();
         }
 
-        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null) {
+        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '') {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
             mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
@@ -6363,6 +6597,7 @@
                     conjuntoPendenteMetadata = {
                         nome: nome,
                         arquivo: arquivo,
+                        descricao: descricao || '',
                         dataAtualizacao: dataAtualizacao
                     };
                 } else {
@@ -6403,17 +6638,18 @@
             }
         }
 
-        function salvarMetadataConjunto(nome, arquivo, dataAtualizacao) {
+        function salvarMetadataConjunto(nome, arquivo, descricao, dataAtualizacao) {
             try {
                 const metadata = obterMetadataConjuntos();
 
-                // Remove entrada anterior se existir
+                // Remove entrada anterior se existir (deduplicação por arquivo)
                 const novaMetadata = metadata.filter(item => item.arquivo !== arquivo);
 
                 // Adiciona nova entrada
                 novaMetadata.push({
                     nome: nome,
                     arquivo: arquivo,
+                    descricao: descricao || '',
                     dataAtualizacao: dataAtualizacao,
                     dataImportacao: new Date().toISOString()
                 });
@@ -6766,6 +7002,30 @@
         // ==================== FUNÇÕES AUXILIARES PARA EXPORTS ====================
 
         /**
+         * Gera HTML de nota de rodapé com os conjuntos de feriados online utilizados.
+         * Retorna string vazia se não houver nenhum conjunto importado.
+         * @param {string} [contexto='print'] - 'print' para PDF, 'image' para PNG
+         */
+        function gerarHTMLConjuntosNota(contexto = 'print') {
+            const conjuntos = obterMetadataConjuntos();
+            if (!conjuntos || conjuntos.length === 0) return '';
+
+            const itensHTML = conjuntos.map(c => `
+                <div style="margin-top: 6px;">
+                    <span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>
+                    ${c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : ''}
+                </div>
+            `).join('');
+
+            return `
+                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
+                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
+                    ${itensHTML}
+                </div>
+            `;
+        }
+
+        /**
          * Gera o cabeçalho HTML padronizado para exports PDF/PNG
          * @param {Object} params - Parâmetros do cabeçalho
          * @param {string} params.dataInicioFormatada - Data inicial formatada
@@ -6787,7 +7047,8 @@
                 descricaoHTML = '',
                 conteudoEspecifico,
                 diasVisuaisHTML = '',
-                estilosAdicionais = ''
+                estilosAdicionais = '',
+                conjuntosHTML = ''
             } = params;
 
             return `<!DOCTYPE html>
@@ -6826,6 +7087,7 @@
             <span class="brand-separator">|</span>
             <span class="brand-subtitle">Calculadora de Prazos</span>
         </div>
+        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
@@ -6836,6 +7098,7 @@
         ${diasVisuaisHTML}
     </div>
     ${conteudoEspecifico}
+    ${conjuntosHTML}
     <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
         <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
         <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
@@ -6941,7 +7204,8 @@
                 diasContados: diasUteis,
                 descricaoHTML,
                 diasVisuaisHTML: diasVisuaisHTMLFormatado,
-                conteudoEspecifico: ''
+                conteudoEspecifico: '',
+                conjuntosHTML: gerarHTMLConjuntosNota('print')
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7020,7 +7284,8 @@
                 diasContados: diasUteis,
                 descricaoHTML,
                 conteudoEspecifico,
-                estilosAdicionais
+                estilosAdicionais,
+                conjuntosHTML: gerarHTMLConjuntosNota('print')
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7154,6 +7419,7 @@
             <span class="brand-separator">|</span>
             <span class="brand-subtitle">Calculadora de Prazos</span>
         </div>
+        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
@@ -7174,6 +7440,7 @@
             </div>
         </div>
     </div>
+    ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
             // Renderizar com html2canvas
@@ -7278,6 +7545,7 @@
             <span class="brand-separator">|</span>
             <span class="brand-subtitle">Calculadora de Prazos</span>
         </div>
+        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
@@ -7290,6 +7558,7 @@
         <h3>Detalhamento</h3>
         ${listaHTML}
     </div>
+    ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
             // Criar elemento temporário invisível
@@ -9590,6 +9859,7 @@
         });
 
         inicializarPerfis();
+        atualizarChipTiposFeriado();
         renderizarCalendario();
         atualizarTextoBotaoVisualizacao();
 

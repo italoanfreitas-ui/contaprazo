@@ -167,7 +167,23 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 
 ## 📝 Changelog
 
-### Versão 1.4 (Atual)
+### Versão 1.5 (Atual)
+- **Rastreabilidade de conjuntos de feriados online**: título e descrição de cada conjunto importado agora são salvos e exibidos em locais estratégicos
+  - Exibidos discretamente após o detalhamento do cálculo na tela
+  - Incluídos nos exports PDF e PNG (seção "Feriados online utilizados")
+  - Persistidos nos perfis de feriados (`conjuntosImportados`), sendo restaurados ao carregar o perfil
+  - Lógica de substituir/mesclar refletida nos metadados: substituir descarta conjuntos anteriores; mesclar os acumula
+- **Indicador de alterações de perfil após importação**: ao importar feriados (substituir ou mesclar) com um perfil ativo, o indicador de alterações não salvas é sempre exibido
+- **Exports PDF e PNG**: link discreto para `contaprazo.netlify.app` adicionado no cabeçalho de todos os exports
+- **Modal Export PDF**: formatação alinhada ao modal de PNG (texto simplificado)
+- **Dropdown de tipos de feriado** (chip "Incluir no cálculo"):
+  - Dropdown usa `position: fixed` — fica sempre visível, acima de qualquer elemento, inclusive com painel colapsado
+  - Layout do cabeçalho reestruturado: chip entre o título e a seta de colapso, eliminando o triângulo cinza confuso
+  - `stopPropagation` no chip para não colapsar o painel ao clicar
+- **Feriados personalizados têm prioridade de nome** sobre fixos e móveis em `obterNomeFeriado()`
+- Versão atualizada para 1.5 no rodapé
+
+### Versão 1.4
 - **Sistema de perfis de feriados**: crie, gerencie e alterne entre perfis de feriados personalizados
   - Até 10 perfis com nomes de até 30 caracteres
   - Indicador de alterações não salvas
