@@ -425,47 +425,59 @@
 
         .tipos-feriado-pills {
             display: flex;
-            gap: 8px;
+            gap: 20px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
-        .tipo-feriado-pill {
-            display: inline-flex;
+        .tipos-feriado-toggle-row {
+            display: flex;
             align-items: center;
-            gap: 5px;
-            padding: 5px 13px;
-            border-radius: 20px;
-            border: 1.5px solid #d1d5db;
-            background: #f9fafb;
-            color: #9ca3af;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 0;
+        }
+
+        .tipos-feriado-mini-switch {
+            position: relative;
+            width: 34px;
+            height: 18px;
+            background: #d1d5db;
+            border-radius: 9px;
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+
+        .tipos-feriado-mini-switch.active {
+            background: #16a34a;
+        }
+
+        .tipos-feriado-mini-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 7px;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .tipos-feriado-mini-switch.active .tipos-feriado-mini-slider {
+            transform: translateX(16px);
+        }
+
+        .tipos-feriado-toggle-label {
             font-size: 0.8rem;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            user-select: none;
+            color: #374151;
+            transition: color 0.2s;
         }
 
-        .tipo-feriado-pill:hover {
-            border-color: #9ca3af;
-            background: #f3f4f6;
-        }
-
-        .tipo-feriado-pill.ativo {
-            background: #f0fdf4;
-            border-color: #86efac;
-            color: #15803d;
-        }
-
-        .tipo-feriado-pill.ativo:hover {
-            background: #dcfce7;
-            border-color: #4ade80;
-        }
-
-        .tipo-feriado-pill-icon {
-            font-size: 0.68rem;
-            font-weight: 700;
-            width: 14px;
-            text-align: center;
+        .tipos-feriado-toggle-row.inativo .tipos-feriado-toggle-label {
+            color: #9ca3af;
         }
 
         .btn {
@@ -3890,7 +3902,7 @@
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
                         <div class="toggle-container">
-                            <div class="toggle-wrapper">
+                            <div class="toggle-wrapper" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                                 <div class="toggle-switch active" id="toggleTipoDias" onclick="toggleTipoDias()">
                                     <div class="toggle-slider"></div>
                                 </div>
@@ -3914,19 +3926,22 @@
 
             <div class="tipos-feriado-calc-group">
                 <div class="tipos-feriado-calc-header">
-                    <span class="tipos-feriado-calc-label">Feriados no cálculo</span>
+                    <span class="tipos-feriado-calc-label">Feriados a serem considerados no cálculo</span>
                     <span class="tipos-feriado-calc-hint">Afeta o calendário e o resultado</span>
                 </div>
                 <div class="tipos-feriado-pills">
-                    <button class="tipo-feriado-pill ativo" id="pillFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
-                        <span class="tipo-feriado-pill-icon">✓</span> Nacionais
-                    </button>
-                    <button class="tipo-feriado-pill ativo" id="pillMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
-                        <span class="tipo-feriado-pill-icon">✓</span> Móveis
-                    </button>
-                    <button class="tipo-feriado-pill ativo" id="pillPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
-                        <span class="tipo-feriado-pill-icon">✓</span> Personalizados
-                    </button>
+                    <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
+                        <div class="tipos-feriado-mini-switch active" id="switchFixos"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Fixos</span>
+                    </div>
+                    <div class="tipos-feriado-toggle-row" id="rowMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
+                        <div class="tipos-feriado-mini-switch active" id="switchMoveis"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Móveis</span>
+                    </div>
+                    <div class="tipos-feriado-toggle-row" id="rowPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
+                        <div class="tipos-feriado-mini-switch active" id="switchPersonalizados"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-toggle-label">Personalizados</span>
+                    </div>
                 </div>
             </div>
 
@@ -6080,16 +6095,15 @@
 
         function atualizarPillsTiposFeriado() {
             const map = {
-                fixos: { ativo: feriadosFixosAtivos, id: 'pillFixos' },
-                moveis: { ativo: feriadosMoveisAtivos, id: 'pillMoveis' },
-                personalizados: { ativo: feriadosPersonalizadosAtivos, id: 'pillPersonalizados' }
+                fixos: { ativo: feriadosFixosAtivos, switchId: 'switchFixos', rowId: 'rowFixos' },
+                moveis: { ativo: feriadosMoveisAtivos, switchId: 'switchMoveis', rowId: 'rowMoveis' },
+                personalizados: { ativo: feriadosPersonalizadosAtivos, switchId: 'switchPersonalizados', rowId: 'rowPersonalizados' }
             };
-            Object.values(map).forEach(({ ativo, id }) => {
-                const pill = document.getElementById(id);
-                if (!pill) return;
-                pill.classList.toggle('ativo', ativo);
-                const icon = pill.querySelector('.tipo-feriado-pill-icon');
-                if (icon) icon.textContent = ativo ? '✓' : '✗';
+            Object.values(map).forEach(({ ativo, switchId, rowId }) => {
+                const sw = document.getElementById(switchId);
+                const row = document.getElementById(rowId);
+                if (sw) sw.classList.toggle('active', ativo);
+                if (row) row.classList.toggle('inativo', !ativo);
             });
         }
 
