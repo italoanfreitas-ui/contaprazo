@@ -270,7 +270,7 @@
         .dias-input-wrapper {
             display: flex;
             gap: 10px;
-            align-items: flex-start;
+            align-items: stretch;
         }
 
         .dias-input-container {
@@ -344,19 +344,33 @@
 
         /* Segmented Control — Dias Úteis / Dias Corridos */
         .segmented-control {
-            display: inline-flex;
+            position: relative;
+            display: flex;
+            align-items: stretch;
             background: #e5e7eb;
             border-radius: 8px;
             padding: 3px;
             gap: 2px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .seg-glider {
+            position: absolute;
+            top: 3px;
+            bottom: 3px;
+            left: 3px;
+            width: calc(50% - 4px);
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
         }
 
         .segmented-btn {
+            position: relative;
             flex: 1;
-            padding: 8px 6px;
+            padding: 0 14px;
             border: none;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -364,15 +378,16 @@
             cursor: pointer;
             background: transparent;
             color: #6b7280;
-            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            transition: color 0.2s;
             white-space: nowrap;
-            line-height: 1.2;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .segmented-btn.active {
-            background: #ffffff;
             color: #16a34a;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
         }
 
         .segmented-btn:not(.active):hover {
@@ -425,45 +440,42 @@
             padding: 2px 0;
         }
 
-        .tipos-feriado-mini-switch {
+        .tipos-feriado-checkbox {
             position: relative;
-            width: 34px;
-            height: 18px;
-            background: #d1d5db;
-            border-radius: 9px;
-            transition: background 0.25s;
+            width: 17px;
+            height: 17px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
             flex-shrink: 0;
+            transition: border-color 0.2s, background 0.2s;
         }
 
-        .tipos-feriado-mini-switch.active {
+        .tipos-feriado-checkbox.active {
+            border-color: #16a34a;
             background: #16a34a;
         }
 
-        .tipos-feriado-mini-slider {
+        .tipos-feriado-checkbox::after {
+            content: '\2714';
             position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 14px;
-            height: 14px;
-            background: white;
-            border-radius: 7px;
-            transition: transform 0.25s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 11px;
+            color: white;
+            line-height: 1;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .tipos-feriado-mini-switch.active .tipos-feriado-mini-slider {
-            transform: translateX(16px);
+        .tipos-feriado-checkbox.active::after {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .tipos-feriado-toggle-label {
             font-size: 0.8rem;
             font-weight: 500;
             color: #374151;
-            transition: color 0.2s;
-        }
-
-        .tipos-feriado-toggle-row.inativo .tipos-feriado-toggle-label {
-            color: #9ca3af;
         }
 
         .btn {
@@ -3888,6 +3900,7 @@
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
                         <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
+                            <span class="seg-glider" id="segGlider"></span>
                             <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
                             <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
                         </div>
@@ -3913,15 +3926,15 @@
                 </div>
                 <div class="tipos-feriado-pills">
                     <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
-                        <div class="tipos-feriado-mini-switch active" id="switchFixos"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-checkbox active" id="switchFixos"></span>
                         <span class="tipos-feriado-toggle-label">Fixos</span>
                     </div>
                     <div class="tipos-feriado-toggle-row" id="rowMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
-                        <div class="tipos-feriado-mini-switch active" id="switchMoveis"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-checkbox active" id="switchMoveis"></span>
                         <span class="tipos-feriado-toggle-label">Móveis</span>
                     </div>
                     <div class="tipos-feriado-toggle-row" id="rowPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
-                        <div class="tipos-feriado-mini-switch active" id="switchPersonalizados"><div class="tipos-feriado-mini-slider"></div></div>
+                        <span class="tipos-feriado-checkbox active" id="switchPersonalizados"></span>
                         <span class="tipos-feriado-toggle-label">Personalizados</span>
                     </div>
                 </div>
@@ -5706,11 +5719,21 @@
 
             document.getElementById('btnDiasUteis').classList.toggle('active', uteis);
             document.getElementById('btnDiasCorridos').classList.toggle('active', !uteis);
+            posicionarGlider();
 
             atualizarVisibilidadeFeriados();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
+        }
+
+        function posicionarGlider() {
+            const glider = document.getElementById('segGlider');
+            const activeBtn = document.getElementById(usarDiasUteis ? 'btnDiasUteis' : 'btnDiasCorridos');
+            if (glider && activeBtn) {
+                glider.style.left = activeBtn.offsetLeft + 'px';
+                glider.style.width = activeBtn.offsetWidth + 'px';
+            }
         }
 
         function atualizarVisibilidadeFeriados() {
@@ -5998,6 +6021,7 @@
                     </div>
 
                     ${(() => {
+                        if (!usarDiasUteis) return '';
                         const conjuntos = obterMetadataConjuntos();
                         if (!conjuntos || conjuntos.length === 0) return '';
                         const itens = conjuntos.map(c => `
@@ -6044,6 +6068,7 @@
             usarDiasUteis = true;
             document.getElementById('btnDiasUteis').classList.add('active');
             document.getElementById('btnDiasCorridos').classList.remove('active');
+            posicionarGlider();
             atualizarVisibilidadeFeriados();
 
             // Resetar tipos de feriado para padrão (todos ativos)
@@ -7125,6 +7150,7 @@
          * @param {string} [contexto='print'] - 'print' para PDF, 'image' para PNG
          */
         function gerarHTMLConjuntosNota(contexto = 'print') {
+            if (!usarDiasUteis) return '';
             const conjuntos = obterMetadataConjuntos();
             if (!conjuntos || conjuntos.length === 0) return '';
 
@@ -9982,6 +10008,7 @@
         atualizarChipTiposFeriado();
         renderizarCalendario();
         atualizarTextoBotaoVisualizacao();
+        posicionarGlider();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
