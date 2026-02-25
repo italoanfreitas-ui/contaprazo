@@ -45,7 +45,7 @@
         body {
             font-family: system-ui, -apple-system, sans-serif;
             background: #f9fafb;
-            padding: 20px;
+            padding: 16px;
             line-height: 1.6;
         }
 
@@ -95,24 +95,24 @@
 
         .nav-tabs {
             max-width: 1200px;
-            margin: 0 auto 30px;
+            margin: 0 auto 16px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: #f9fafb;
-            padding: 6px;
+            padding: 4px;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .nav-tab {
             flex: 1;
-            padding: 12px 20px;
+            padding: 9px 16px;
             border: none;
             background: transparent;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             color: #6b7280;
             transition: all 0.2s;
             display: flex;
@@ -143,7 +143,7 @@
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 20px;
             align-items: start;
         }
 
@@ -157,8 +157,8 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
         }
 
         .section-title {
@@ -169,6 +169,135 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 0; /* permite que o título encolha ao lado da badge */
+        }
+
+        /* Linha de cabeçalho do card do calendário: título à esquerda, badge à direita */
+        .card-cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px; /* espaço acima do section-divider */
+        }
+
+        .card-cal-header .section-title {
+            margin-bottom: 0; /* margin gerenciada pelo container pai */
+        }
+
+        /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
+           max-width evita que nomes longos (até 30 chars) empurrem o título. */
+        .perfil-badge {
+            flex-shrink: 0;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.72rem;
+            color: #6b7280;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 3px 10px;
+            line-height: 1.4;
+            cursor: default;
+        }
+
+        .perfil-badge strong {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        /* Container relativo para o dropdown ancorado na badge */
+        .perfil-badge-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Dropdown inline abaixo da badge — mesma fonte visual do dropdown do rodapé */
+        .perfil-badge-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            min-width: 170px;
+            overflow: hidden;
+        }
+
+        .perfil-badge-dropdown.show {
+            display: block;
+        }
+
+        .perfil-badge-dropdown-item {
+            padding: 9px 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #374151;
+            transition: background 0.15s;
+        }
+
+        .perfil-badge-dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+        .perfil-badge-dropdown-item.selected {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .perfil-badge-dropdown-item.none {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        /* Estado sem perfil ativo: badge indicativa, clicável, guia o usuário */
+        .perfil-badge.sem-perfil {
+            border-style: dashed;
+            border-color: #d1d5db;
+            color: #9ca3af;
+            background: transparent;
+            font-style: italic;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+
+        .perfil-badge.sem-perfil:hover {
+            border-color: #9ca3af;
+            color: #6b7280;
+            background: #f9fafb;
+        }
+
+        /* Rodapé do card do calendário: perfis + config-feriados ficam juntos */
+        .card-cal-footer {
+            border-top: 1px solid #f3f4f6;
+            margin-top: 16px;
+            padding-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Frame elegante ao redor da barra de gerenciamento de perfis */
+        .perfis-frame {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            padding: 10px 14px 12px;
+        }
+
+        .perfis-frame-label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 8px;
         }
 
         .section-title svg {
@@ -244,8 +373,8 @@
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 14px;
+            margin-bottom: 14px;
         }
 
         /* Reduzir minmax do form-grid em telas pequenas */
@@ -893,6 +1022,21 @@
             background: #f3f4f6;
             padding: 4px;
             border-radius: 8px;
+            position: relative; /* necessário para o viz-glider absoluto */
+        }
+
+        /* Glider deslizante do toggle de visualização — mesma mecânica do seg-glider */
+        .viz-glider {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .visualizacao-toggle button {
@@ -902,14 +1046,15 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: color 0.2s;
             color: #6b7280;
+            position: relative; /* acima do viz-glider */
+            z-index: 1;
         }
 
         .visualizacao-toggle button.active {
-            background: white;
+            /* background e box-shadow removidos: o viz-glider os fornece */
             color: #1f2937;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .calendario-anual {
@@ -1467,6 +1612,13 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
+        /* Dentro do frame elegante, a barra não precisa do separador herdado */
+        .perfis-frame .perfis-bar {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
         .perfis-bar-left {
             display: flex;
             align-items: center;
@@ -1504,9 +1656,9 @@
         }
 
         .perfil-pill.active {
-            background: #dbeafe;
-            border-color: #93c5fd;
-            color: #1e40af;
+            background: white;
+            border-color: #16a34a;
+            color: #15803d;
         }
 
         .perfil-pill.unsaved {
@@ -3971,64 +4123,22 @@
             <!-- Coluna direita: Calendário -->
             <div>
                 <div class="card calendario">
-                    <h3 class="section-title">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Calendário Interativo
-                    </h3>
-                    <div class="section-divider"></div>
-
-                    <!-- Barra de Perfis de Feriados -->
-                    <div class="perfis-bar">
-                        <div class="perfis-bar-left">
-                            <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
-                            <div class="perfil-dropdown">
-                                <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
-                                    <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
-                                    <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="perfil-dropdown-menu" id="perfilDropdownMenu">
-                                    <div class="perfil-dropdown-item none" onclick="selecionarPerfil(null)">Nenhum</div>
-                                </div>
-                            </div>
-                            <span class="perfil-unsaved-indicator" id="perfilUnsavedIndicator">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
-                                Alterações
-                            </span>
-                        </div>
-                        <div class="perfis-bar-right">
-                            <button class="perfil-btn perfil-btn-save" id="btnSalvarPerfil" onclick="salvarAlteracoesPerfil()" style="display: none;" title="Salvar alterações no perfil">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                    <polyline points="7 3 7 8 15 8"></polyline>
-                                </svg>
-                                Salvar
-                            </button>
-                            <button class="perfil-btn" onclick="abrirModalCriarPerfil()" title="Criar novo perfil">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </button>
-                            <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                                </svg>
-                            </button>
+                    <div class="card-cal-header">
+                        <h3 class="section-title">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Calendário Interativo
+                        </h3>
+                        <div class="perfil-badge-container">
+                            <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
+                            <div class="perfil-badge-dropdown" id="perfilBadgeDropdown"></div>
                         </div>
                     </div>
+                    <div class="section-divider"></div>
 
             <div class="calendario-header">
                 <div class="calendario-nav-row">
@@ -4046,6 +4156,7 @@
                 </div>
                 <div class="calendario-actions-row">
                     <div class="visualizacao-toggle">
+                        <span class="viz-glider" id="vizGlider"></span>
                         <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
                         <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
                     </div>
@@ -4056,6 +4167,58 @@
             </div>
 
             <div class="calendario-grid" id="calendarioGrid"></div>
+
+            <!-- Rodapé do card: seleção de perfil + configuração de feriados juntos -->
+            <div class="card-cal-footer">
+                <div class="perfis-frame">
+                    <span class="perfis-frame-label">Perfil de Feriados</span>
+                    <div class="perfis-bar">
+                    <div class="perfis-bar-left">
+                        <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
+                        <div class="perfil-dropdown">
+                            <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
+                                <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
+                                <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </div>
+                            <div class="perfil-dropdown-menu" id="perfilDropdownMenu">
+                                <div class="perfil-dropdown-item none" onclick="selecionarPerfil(null)">Nenhum</div>
+                            </div>
+                        </div>
+                        <span class="perfil-unsaved-indicator" id="perfilUnsavedIndicator">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Alterações
+                        </span>
+                    </div>
+                    <div class="perfis-bar-right">
+                        <button class="perfil-btn perfil-btn-save" id="btnSalvarPerfil" onclick="salvarAlteracoesPerfil()" style="display: none;" title="Salvar alterações no perfil">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Salvar
+                        </button>
+                        <button class="perfil-btn" onclick="abrirModalCriarPerfil()" title="Criar novo perfil">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                        <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                </div><!-- /perfis-frame -->
 
             <div class="config-feriados">
                 <div class="config-feriados-header">
@@ -4105,6 +4268,7 @@
                     </div>
                 </div>
             </div>
+            </div><!-- /card-cal-footer -->
 
             <div class="legenda">
                 <h3>Legenda:</h3>
@@ -5182,6 +5346,73 @@
                 pill.classList.remove('active');
             }
             atualizarIndicadorAlteracoes();
+            atualizarBadgePerfil();
+        }
+
+        function atualizarBadgePerfil() {
+            const badge = document.getElementById('perfilBadge');
+            if (!badge) return;
+
+            if (perfilAtivoId) {
+                const perfil = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfil) {
+                    badge.className = 'perfil-badge';
+                    const nomeSeguro = perfil.nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    badge.innerHTML = 'Perfil Ativo: <strong>' + nomeSeguro + '</strong>';
+                    badge.title = 'Clique para trocar o perfil';
+                    badge.style.cursor = 'pointer';
+                    badge.style.display = '';
+                    badge.onclick = toggleBadgeDropdown;
+                    return;
+                }
+            }
+
+            // Nenhum perfil ativo — badge indicativa e clicável para abrir o dropdown inline
+            badge.className = 'perfil-badge sem-perfil';
+            badge.textContent = 'Sem perfil selecionado';
+            badge.title = 'Clique para selecionar um perfil de feriados';
+            badge.style.cursor = 'pointer';
+            badge.style.display = '';
+            badge.onclick = toggleBadgeDropdown;
+        }
+
+        function atualizarBadgeDropdown() {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (!menu) return;
+            let html = '<div class="perfil-badge-dropdown-item none' + (!perfilAtivoId ? ' selected' : '') + '" onclick="selecionarPerfilDaBadge(null)">Nenhum</div>';
+            perfisData.forEach(perfil => {
+                const selected = perfil.id === perfilAtivoId ? ' selected' : '';
+                const nomeDisplay = perfil.nome.length > 22 ? perfil.nome.substring(0, 22) + '...' : perfil.nome;
+                html += '<div class="perfil-badge-dropdown-item' + selected + '" onclick="selecionarPerfilDaBadge(\'' + perfil.id + '\')" title="' + perfil.nome.replace(/"/g,'&quot;') + '">' + nomeDisplay + '</div>';
+            });
+            menu.innerHTML = html;
+        }
+
+        function toggleBadgeDropdown() {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (!menu) return;
+            const isOpen = menu.classList.contains('show');
+            if (isOpen) {
+                menu.classList.remove('show');
+            } else {
+                atualizarBadgeDropdown();
+                menu.classList.add('show');
+                setTimeout(() => {
+                    const fechar = (e) => {
+                        if (!e.target.closest('.perfil-badge-container')) {
+                            menu.classList.remove('show');
+                            document.removeEventListener('click', fechar);
+                        }
+                    };
+                    document.addEventListener('click', fechar);
+                }, 0);
+            }
+        }
+
+        function selecionarPerfilDaBadge(id) {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (menu) menu.classList.remove('show');
+            selecionarPerfil(id);
         }
 
         function atualizarDropdownPerfis() {
@@ -5740,6 +5971,24 @@
             }
         }
 
+        function posicionarGliderVisualizacao() {
+            const glider = document.getElementById('vizGlider');
+            const activeBtn = document.getElementById(
+                visualizacaoCalendario === 'mensal' ? 'btnMensal' : 'btnAnual'
+            );
+            if (glider && activeBtn) {
+                glider.style.left = activeBtn.offsetLeft + 'px';
+                glider.style.width = activeBtn.offsetWidth + 'px';
+            }
+        }
+
+        // Reposiciona ambos os gliders quando o layout muda por resize de janela.
+        // Sem isso, o retângulo branco "congela" ao redimensionar.
+        window.addEventListener('resize', () => {
+            posicionarGlider();
+            posicionarGliderVisualizacao();
+        });
+
         function atualizarVisibilidadeFeriados() {
             const secaoFeriados = document.querySelector('.tipos-feriado-calc-group');
             if (secaoFeriados) {
@@ -6182,6 +6431,7 @@
 
             document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
             document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
+            posicionarGliderVisualizacao();
 
             // Atualizar texto do botão se for mensal
             if (tipo === 'mensal') {
@@ -10014,6 +10264,7 @@
         renderizarCalendario();
         atualizarTextoBotaoVisualizacao();
         posicionarGlider();
+        posicionarGliderVisualizacao();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
