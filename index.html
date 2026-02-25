@@ -208,6 +208,23 @@
             font-weight: 600;
         }
 
+        /* Estado sem perfil ativo: badge indicativa, clicável, guia o usuário */
+        .perfil-badge.sem-perfil {
+            border-style: dashed;
+            border-color: #d1d5db;
+            color: #9ca3af;
+            background: transparent;
+            font-style: italic;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+
+        .perfil-badge.sem-perfil:hover {
+            border-color: #9ca3af;
+            color: #6b7280;
+            background: #f9fafb;
+        }
+
         /* Rodapé do card do calendário: perfis + config-feriados ficam juntos */
         .card-cal-footer {
             border-top: 1px solid #f3f4f6;
@@ -215,7 +232,25 @@
             padding-top: 14px;
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 8px;
+        }
+
+        /* Frame elegante ao redor da barra de gerenciamento de perfis */
+        .perfis-frame {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            padding: 10px 14px 12px;
+        }
+
+        .perfis-frame-label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 8px;
         }
 
         .section-title svg {
@@ -4044,7 +4079,7 @@
                             </svg>
                             Calendário Interativo
                         </h3>
-                        <span class="perfil-badge" id="perfilBadge" style="display:none">Perfil Ativo: <strong id="perfilBadgeNome"></strong></span>
+                        <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
                     </div>
                     <div class="section-divider"></div>
 
@@ -4078,8 +4113,9 @@
 
             <!-- Rodapé do card: seleção de perfil + configuração de feriados juntos -->
             <div class="card-cal-footer">
-                <!-- Barra de Perfis de Feriados (movida do topo para o rodapé) -->
-                <div class="perfis-bar">
+                <div class="perfis-frame">
+                    <span class="perfis-frame-label">Perfil de Feriados</span>
+                    <div class="perfis-bar">
                     <div class="perfis-bar-left">
                         <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
                         <div class="perfil-dropdown">
@@ -4125,6 +4161,7 @@
                         </button>
                     </div>
                 </div>
+                </div><!-- /perfis-frame -->
 
             <div class="config-feriados">
                 <div class="config-feriados-header">
@@ -5257,21 +5294,36 @@
 
         function atualizarBadgePerfil() {
             const badge = document.getElementById('perfilBadge');
-            const badgeNome = document.getElementById('perfilBadgeNome');
-            if (!badge || !badgeNome) return;
+            if (!badge) return;
 
             if (perfilAtivoId) {
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
-                    // Truncar nomes muito longos na badge (o CSS também tem text-overflow mas
-                    // garantimos que o title mostre o nome completo)
-                    badgeNome.textContent = perfil.nome;
+                    badge.className = 'perfil-badge';
+                    // Conteúdo com strong — nome é texto livre do usuário, sem risco XSS local
+                    const nomeSeguro = perfil.nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    badge.innerHTML = 'Perfil Ativo: <strong>' + nomeSeguro + '</strong>';
                     badge.title = 'Perfil Ativo: ' + perfil.nome;
+                    badge.style.cursor = 'default';
+                    badge.onclick = null;
                     badge.style.display = '';
                     return;
                 }
             }
-            badge.style.display = 'none';
+
+            // Nenhum perfil ativo — badge indicativa e clicável para abrir o seletor
+            badge.className = 'perfil-badge sem-perfil';
+            badge.textContent = 'Sem perfil selecionado';
+            badge.title = 'Clique para selecionar um perfil de feriados';
+            badge.style.cursor = 'pointer';
+            badge.style.display = '';
+            badge.onclick = function() {
+                const pill = document.getElementById('perfilPill');
+                if (pill) {
+                    pill.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    setTimeout(function() { pill.click(); }, 350);
+                }
+            };
         }
 
         function atualizarDropdownPerfis() {
