@@ -363,12 +363,8 @@
             background: #ffffff;
             border-radius: 6px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
-        }
-
-        .seg-glider.right {
-            transform: translateX(calc(100% + 2px));
         }
 
         .segmented-btn {
@@ -463,15 +459,13 @@
         .tipos-feriado-checkbox::after {
             content: '';
             position: absolute;
-            left: 3px;
-            top: 0px;
-            width: 5px;
-            height: 9px;
-            border: 2px solid white;
-            border-top: none;
-            border-left: none;
-            transform: rotate(45deg) scale(0);
-            transform-origin: center bottom;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.5L4.5 9L10 3' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 10px;
+            transform: scale(0);
+            transform-origin: center;
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -5726,12 +5720,21 @@
 
             document.getElementById('btnDiasUteis').classList.toggle('active', uteis);
             document.getElementById('btnDiasCorridos').classList.toggle('active', !uteis);
-            document.getElementById('segGlider').classList.toggle('right', !uteis);
+            posicionarGlider();
 
             atualizarVisibilidadeFeriados();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
+        }
+
+        function posicionarGlider() {
+            const glider = document.getElementById('segGlider');
+            const activeBtn = document.getElementById(usarDiasUteis ? 'btnDiasUteis' : 'btnDiasCorridos');
+            if (glider && activeBtn) {
+                glider.style.left = activeBtn.offsetLeft + 'px';
+                glider.style.width = activeBtn.offsetWidth + 'px';
+            }
         }
 
         function atualizarVisibilidadeFeriados() {
@@ -6066,7 +6069,7 @@
             usarDiasUteis = true;
             document.getElementById('btnDiasUteis').classList.add('active');
             document.getElementById('btnDiasCorridos').classList.remove('active');
-            document.getElementById('segGlider').classList.remove('right');
+            posicionarGlider();
             atualizarVisibilidadeFeriados();
 
             // Resetar tipos de feriado para padrão (todos ativos)
@@ -10006,6 +10009,7 @@
         atualizarChipTiposFeriado();
         renderizarCalendario();
         atualizarTextoBotaoVisualizacao();
+        posicionarGlider();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
