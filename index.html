@@ -267,14 +267,25 @@
             gap: 8px;
         }
 
+        /* Empilha input e segmented control verticalmente: ambos ocupam 100% da
+           largura automaticamente via align-items: stretch (padrão do flex column).
+           Evita o colapso de altura que acontecia quando o wrap jogava o segmented
+           control para sua própria linha sem garantia de min-height. */
         .dias-input-wrapper {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            align-items: stretch;
         }
 
         .dias-input-container {
-            flex: 1;
+            display: flex;
+        }
+
+        /* O input de número não tem width por padrão (usa tamanho do browser, ~200px).
+           Forçar 100% garante que ele preencha toda a coluna, sem espaço em branco. */
+        .dias-input-container input {
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .data-input-wrapper {
@@ -351,7 +362,8 @@
             border-radius: 8px;
             padding: 3px;
             gap: 2px;
-            flex-shrink: 0;
+            /* min-height alinhado à altura do input (padding 12px × 2 + font 1rem + 2px borda) */
+            min-height: 44px;
         }
 
         .seg-glider {
@@ -370,7 +382,7 @@
         .segmented-btn {
             position: relative;
             flex: 1;
-            padding: 0 14px;
+            padding: 8px 14px;
             border: none;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -1165,42 +1177,34 @@
             color: #4b5563;
         }
 
+        /* Layout fluido para múltiplos meses: auto-fit decide o número de colunas
+           com base no espaço real disponível, sem depender de breakpoints fixos.
+           minmax(240px, 1fr) garante que cada mês tenha ao menos 240px —
+           espaço suficiente para as 7 colunas de dias sem overflow. */
         .calendario-multi-meses {
             display: grid;
-            gap: 20px;
-            grid-template-columns: 1fr;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         }
 
-        /* Layout responsivo para múltiplos meses */
-        @media (min-width: 600px) and (max-width: 1023px) {
-            .calendario-multi-meses.meses-2 {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            .calendario-multi-meses.meses-3 {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-            }
+        /* Células menores em modo multi-mês (sempre, não só em certos breakpoints) */
+        .calendario-multi-meses .calendario-grid {
+            gap: 3px;
+        }
 
-            /* Ajustes para calendários menores em multi-mês */
-            .calendario-multi-meses .calendario-grid {
-                gap: 3px;
-            }
+        .calendario-multi-meses .calendario-dia-semana {
+            padding: 6px 2px;
+            font-size: 0.65rem;
+        }
 
-            .calendario-multi-meses .calendario-dia-semana {
-                padding: 6px 2px;
-                font-size: 0.65rem;
-            }
+        .calendario-multi-meses .calendario-dia {
+            min-height: 30px;
+            font-size: 0.75rem;
+        }
 
-            .calendario-multi-meses .calendario-dia {
-                min-height: 32px;
-                font-size: 0.75rem;
-            }
-
-            .mes-container h4 {
-                font-size: 0.8rem;
-                margin-bottom: 8px;
-            }
+        .calendario-multi-meses .mes-container h4 {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
         }
 
         .mes-container {
@@ -6241,23 +6245,24 @@
         }
 
         function calcularMesesVisiveis() {
-            const largura = window.innerWidth;
+            // Desktop (layout 2 colunas): sempre 1 mês — coluna do calendário é estreita
+            if (window.innerWidth > 1023) return 1;
 
-            // Desktop: 1 mês
-            if (largura > 1023) {
-                return 1;
-            }
-            // Tablets/telas médias: 2 ou 3 meses
-            else if (largura >= 800) {
-                return 3;
-            }
-            else if (largura >= 600) {
-                return 2;
-            }
-            // Mobile: 1 mês
-            else {
-                return 1;
-            }
+            // Mede a largura real do container do calendário, não do viewport.
+            // Isso garante que o número de meses renderizados corresponde ao espaço
+            // disponível de verdade, independente de padding ou layout aninhado.
+            const gridElement = document.getElementById('calendarioGrid');
+            const largura = (gridElement && gridElement.offsetWidth > 0)
+                ? gridElement.offsetWidth
+                : window.innerWidth - 100; // fallback: viewport − padding body − padding card
+
+            // Thresholds calibrados para o CSS: minmax(240px, 1fr) gap 16px
+            // 3 meses precisam de: 3×240 + 2×16 = 752px → threshold com margem de segurança
+            if (largura >= 775) return 3;
+            // 2 meses precisam de: 2×240 + 16 = 496px → threshold com margem de segurança
+            if (largura >= 516) return 2;
+
+            return 1;
         }
 
         function renderizarCalendarioMensal() {
