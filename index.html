@@ -267,15 +267,25 @@
             gap: 8px;
         }
 
+        /* Empilha input e segmented control verticalmente: ambos ocupam 100% da
+           largura automaticamente via align-items: stretch (padrão do flex column).
+           Evita o colapso de altura que acontecia quando o wrap jogava o segmented
+           control para sua própria linha sem garantia de min-height. */
         .dias-input-wrapper {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            align-items: stretch;
-            flex-wrap: wrap; /* segmented control desce para próxima linha se o espaço for insuficiente */
         }
 
         .dias-input-container {
-            flex: 1;
+            display: flex;
+        }
+
+        /* O input de número não tem width por padrão (usa tamanho do browser, ~200px).
+           Forçar 100% garante que ele preencha toda a coluna, sem espaço em branco. */
+        .dias-input-container input {
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .data-input-wrapper {
@@ -352,7 +362,8 @@
             border-radius: 8px;
             padding: 3px;
             gap: 2px;
-            flex-shrink: 0;
+            /* min-height alinhado à altura do input (padding 12px × 2 + font 1rem + 2px borda) */
+            min-height: 44px;
         }
 
         .seg-glider {
@@ -371,7 +382,7 @@
         .segmented-btn {
             position: relative;
             flex: 1;
-            padding: 0 14px;
+            padding: 8px 14px;
             border: none;
             border-radius: 6px;
             font-size: 0.8rem;
