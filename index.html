@@ -208,6 +208,53 @@
             font-weight: 600;
         }
 
+        /* Container relativo para o dropdown ancorado na badge */
+        .perfil-badge-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Dropdown inline abaixo da badge — mesma fonte visual do dropdown do rodapé */
+        .perfil-badge-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            min-width: 170px;
+            overflow: hidden;
+        }
+
+        .perfil-badge-dropdown.show {
+            display: block;
+        }
+
+        .perfil-badge-dropdown-item {
+            padding: 9px 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #374151;
+            transition: background 0.15s;
+        }
+
+        .perfil-badge-dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+        .perfil-badge-dropdown-item.selected {
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .perfil-badge-dropdown-item.none {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
         /* Estado sem perfil ativo: badge indicativa, clicável, guia o usuário */
         .perfil-badge.sem-perfil {
             border-style: dashed;
@@ -1565,6 +1612,13 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
+        /* Dentro do frame elegante, a barra não precisa do separador herdado */
+        .perfis-frame .perfis-bar {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
         .perfis-bar-left {
             display: flex;
             align-items: center;
@@ -1602,9 +1656,9 @@
         }
 
         .perfil-pill.active {
-            background: #dbeafe;
-            border-color: #93c5fd;
-            color: #1e40af;
+            background: white;
+            border-color: #16a34a;
+            color: #15803d;
         }
 
         .perfil-pill.unsaved {
@@ -4079,7 +4133,10 @@
                             </svg>
                             Calendário Interativo
                         </h3>
-                        <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
+                        <div class="perfil-badge-container">
+                            <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
+                            <div class="perfil-badge-dropdown" id="perfilBadgeDropdown"></div>
+                        </div>
                     </div>
                     <div class="section-divider"></div>
 
@@ -5300,30 +5357,62 @@
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     badge.className = 'perfil-badge';
-                    // Conteúdo com strong — nome é texto livre do usuário, sem risco XSS local
                     const nomeSeguro = perfil.nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
                     badge.innerHTML = 'Perfil Ativo: <strong>' + nomeSeguro + '</strong>';
-                    badge.title = 'Perfil Ativo: ' + perfil.nome;
-                    badge.style.cursor = 'default';
-                    badge.onclick = null;
+                    badge.title = 'Clique para trocar o perfil';
+                    badge.style.cursor = 'pointer';
                     badge.style.display = '';
+                    badge.onclick = toggleBadgeDropdown;
                     return;
                 }
             }
 
-            // Nenhum perfil ativo — badge indicativa e clicável para abrir o seletor
+            // Nenhum perfil ativo — badge indicativa e clicável para abrir o dropdown inline
             badge.className = 'perfil-badge sem-perfil';
             badge.textContent = 'Sem perfil selecionado';
             badge.title = 'Clique para selecionar um perfil de feriados';
             badge.style.cursor = 'pointer';
             badge.style.display = '';
-            badge.onclick = function() {
-                const pill = document.getElementById('perfilPill');
-                if (pill) {
-                    pill.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    setTimeout(function() { pill.click(); }, 350);
-                }
-            };
+            badge.onclick = toggleBadgeDropdown;
+        }
+
+        function atualizarBadgeDropdown() {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (!menu) return;
+            let html = '<div class="perfil-badge-dropdown-item none' + (!perfilAtivoId ? ' selected' : '') + '" onclick="selecionarPerfilDaBadge(null)">Nenhum</div>';
+            perfisData.forEach(perfil => {
+                const selected = perfil.id === perfilAtivoId ? ' selected' : '';
+                const nomeDisplay = perfil.nome.length > 22 ? perfil.nome.substring(0, 22) + '...' : perfil.nome;
+                html += '<div class="perfil-badge-dropdown-item' + selected + '" onclick="selecionarPerfilDaBadge(\'' + perfil.id + '\')" title="' + perfil.nome.replace(/"/g,'&quot;') + '">' + nomeDisplay + '</div>';
+            });
+            menu.innerHTML = html;
+        }
+
+        function toggleBadgeDropdown() {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (!menu) return;
+            const isOpen = menu.classList.contains('show');
+            if (isOpen) {
+                menu.classList.remove('show');
+            } else {
+                atualizarBadgeDropdown();
+                menu.classList.add('show');
+                setTimeout(() => {
+                    const fechar = (e) => {
+                        if (!e.target.closest('.perfil-badge-container')) {
+                            menu.classList.remove('show');
+                            document.removeEventListener('click', fechar);
+                        }
+                    };
+                    document.addEventListener('click', fechar);
+                }, 0);
+            }
+        }
+
+        function selecionarPerfilDaBadge(id) {
+            const menu = document.getElementById('perfilBadgeDropdown');
+            if (menu) menu.classList.remove('show');
+            selecionarPerfil(id);
         }
 
         function atualizarDropdownPerfis() {
