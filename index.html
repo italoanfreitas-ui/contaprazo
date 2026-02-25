@@ -342,55 +342,41 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* Toggle Switch Moderno */
-        .toggle-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 8px;
+        /* Segmented Control — Dias Úteis / Dias Corridos */
+        .segmented-control {
+            display: inline-flex;
+            background: #e5e7eb;
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 8px;
         }
 
-        .toggle-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 56px;
-            height: 28px;
-            background: #d1d5db;
-            border-radius: 14px;
+        .segmented-btn {
+            flex: 1;
+            padding: 8px 6px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
-            flex-shrink: 0;
+            background: transparent;
+            color: #6b7280;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+            line-height: 1.2;
         }
 
-        .toggle-switch.active {
-            background: #16a34a;
+        .segmented-btn.active {
+            background: #ffffff;
+            color: #16a34a;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
         }
 
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 12px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(28px);
-        }
-
-        .toggle-label {
-            font-size: 0.875rem;
+        .segmented-btn:not(.active):hover {
             color: #374151;
-            font-weight: 500;
         }
 
         .quick-buttons {
@@ -3901,13 +3887,9 @@
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
-                        <div class="toggle-container">
-                            <div class="toggle-wrapper" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
-                                <div class="toggle-switch active" id="toggleTipoDias" onclick="toggleTipoDias()">
-                                    <div class="toggle-slider"></div>
-                                </div>
-                                <span class="toggle-label" id="labelTipoDias">Dias Úteis</span>
-                            </div>
+                        <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
+                            <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
+                            <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
                         </div>
                     </div>
                     <div class="quick-buttons">
@@ -4337,7 +4319,7 @@
                 <ul>
                     <li><strong>Data de Início:</strong> Selecione a data inicial do prazo.</li>
                     <li><strong>Quantidade de Dias:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
-                    <li><strong>Tipo de Dias:</strong> Use o botão de alternância para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias).</li>
+                    <li><strong>Tipo de Dias:</strong> Use o controle segmentado para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias do calendário). No modo Dias Corridos, os feriados são ocultados do calendário e ignorados no cálculo.</li>
                     <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
                     <li><strong>Calcular:</strong> Clique no botão "Calcular Prazo" para ver o resultado.</li>
                 </ul>
@@ -5719,21 +5701,25 @@
             }
         };
 
-        function toggleTipoDias() {
-            usarDiasUteis = !usarDiasUteis;
-            const toggle = document.getElementById('toggleTipoDias');
-            const label = document.getElementById('labelTipoDias');
+        function selecionarTipoDias(uteis) {
+            usarDiasUteis = uteis;
 
-            if (usarDiasUteis) {
-                toggle.classList.add('active');
-                label.textContent = 'Dias Úteis';
-            } else {
-                toggle.classList.remove('active');
-                label.textContent = 'Dias Corridos';
-            }
+            document.getElementById('btnDiasUteis').classList.toggle('active', uteis);
+            document.getElementById('btnDiasCorridos').classList.toggle('active', !uteis);
+
+            atualizarVisibilidadeFeriados();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
+        }
+
+        function atualizarVisibilidadeFeriados() {
+            const secaoFeriados = document.querySelector('.tipos-feriado-calc-group');
+            if (secaoFeriados) {
+                secaoFeriados.style.opacity = usarDiasUteis ? '' : '0.35';
+                secaoFeriados.style.pointerEvents = usarDiasUteis ? '' : 'none';
+            }
+            renderizarCalendario();
         }
 
         function formatarData(data) {
@@ -5781,7 +5767,8 @@
         function obterClassesDia(data, baseClass, diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido) {
             const dataStr = formatarDataCompleta(data);
             const ehFds = ehFimDeSemana(data);
-            const tipoFeriado = getTipoFeriado(data);
+            // Em modo Dias Corridos, não exibe marcadores de feriado no calendário
+            const tipoFeriado = usarDiasUteis ? getTipoFeriado(data) : null;
             const ehInicio = dataInicio === dataStr;
             const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
             const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
@@ -6055,8 +6042,9 @@
 
             // Resetar para dias úteis (padrão)
             usarDiasUteis = true;
-            document.getElementById('toggleTipoDias').classList.add('active');
-            document.getElementById('labelTipoDias').textContent = 'Dias Úteis';
+            document.getElementById('btnDiasUteis').classList.add('active');
+            document.getElementById('btnDiasCorridos').classList.remove('active');
+            atualizarVisibilidadeFeriados();
 
             // Resetar tipos de feriado para padrão (todos ativos)
             feriadosFixosAtivos = true;
@@ -6313,7 +6301,7 @@
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
                     const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
-                    const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
+                    const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
                     htmlMes += `<div class="${className}" ${onclick}>${dia}</div>`;
                 }
 
@@ -6375,7 +6363,7 @@
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
                     const { className, ehFds } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
-                    const onclick = ehFds ? '' : `onclick="toggleDia('${dataStr}')"`;
+                    const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
                     html += `<div class="${className}" ${onclick}>${dia}</div>`;
                 }
 
