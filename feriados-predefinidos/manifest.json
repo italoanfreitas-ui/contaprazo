@@ -27,6 +27,15 @@
       "dataAtualizacao": "24-02-2026",
       "ano": "2025-2026",
       "link": "https://www.trt5.jus.br/sites/default/files/sistema/normas/2026-01/0037-2025_aprova_calendario_exercicio_de_2026_0.pdf"
+    },
+    {
+      "id": "trf1-2025-2026",
+      "arquivo": "TRF1-2025-2026.json",
+      "nome": "TRF1 - Tribunal Regional Federal da 1ª Região (2025-2026)",
+      "descricao": "Suspensões de acordo com a Portaria PRESI nº 5, de 12 de janeiro 2026, do TRF1",
+      "dataAtualizacao": "26-02-2026",
+      "ano": "2025-2026",
+      "link": "https://www.trf1.jus.br/sjap/conteudo/Portaria%20Presi%205%20-%20Divulga%20os%20dias%20de%20feriados%20nacionais%20e%20os%20dias%20de%20ponto%20facultativo%20na%20JF1.pdf"
     }
   ]
 }
