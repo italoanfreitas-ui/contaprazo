@@ -1565,6 +1565,55 @@
             background: #fef3c7;
         }
 
+        /* Tooltip de feriados no calendário */
+        .calendario-dia[data-tooltip],
+        .calendario-mini-dia[data-tooltip] {
+            position: relative;
+        }
+
+        .calendario-dia[data-tooltip]::after,
+        .calendario-mini-dia[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: #fff;
+            padding: 5px 9px;
+            border-radius: 7px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 200;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .calendario-dia[data-tooltip]::before,
+        .calendario-mini-dia[data-tooltip]::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 200;
+        }
+
+        .calendario-dia[data-tooltip]:hover::after,
+        .calendario-dia[data-tooltip]:hover::before,
+        .calendario-mini-dia[data-tooltip]:hover::after,
+        .calendario-mini-dia[data-tooltip]:hover::before {
+            opacity: 1;
+        }
+
         .legenda {
             background: #f9fafb;
             border-radius: 8px;
@@ -2259,6 +2308,124 @@
         .scroll-to-top svg {
             width: 20px;
             height: 20px;
+        }
+
+        /* ==================== TOASTS EMPILHÁVEIS ==================== */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+            pointer-events: none;
+            width: 90%;
+            max-width: 520px;
+        }
+
+        .toast-item {
+            pointer-events: all;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            border-left: 4px solid #e5e7eb;
+            animation: toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .toast-item.hiding {
+            animation: toastSlideOut 0.26s ease forwards;
+        }
+
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateY(-14px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)     scale(1);    }
+        }
+
+        @keyframes toastSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1);    max-height: 160px; padding-top: 14px; padding-bottom: 14px; }
+            to   { opacity: 0; transform: translateY(-6px) scale(0.97); max-height: 0;   padding-top: 0;    padding-bottom: 0;    }
+        }
+
+        .toast-item[data-tipo="sucesso"] { border-left-color: #16a34a; }
+        .toast-item[data-tipo="erro"]    { border-left-color: #ef4444; }
+        .toast-item[data-tipo="aviso"]   { border-left-color: #f59e0b; }
+        .toast-item[data-tipo="info"]    { border-left-color: #3b82f6; }
+
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .toast-titulo {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111827;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .toast-mensagem {
+            font-size: 0.83rem;
+            color: #6b7280;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .toast-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .toast-btn-acao {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #3b82f6;
+            color: white;
+            transition: background 0.15s;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .toast-btn-acao:hover { background: #2563eb; }
+
+        .toast-close {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 1px 5px;
+            font-size: 1rem;
+            line-height: 1;
+            border-radius: 4px;
+            transition: color 0.15s;
+            align-self: flex-start;
+        }
+
+        .toast-close:hover { color: #374151; }
+
+        @media (max-width: 640px) {
+            #toastContainer {
+                top: 10px;
+                width: calc(100% - 20px);
+            }
         }
 
         /* Responsividade mobile - densidade aumentada para evitar scroll horizontal */
@@ -6269,7 +6436,14 @@
                 className += ' dia-percorrido';
             }
 
-            return { className, ehFds };
+            // Determina tooltip para feriados visíveis no calendário
+            let tooltip = null;
+            if (tipoFeriado) {
+                const nome = obterNomeFeriado(data);
+                tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado/Ponto Facultativo' : 'Feriado');
+            }
+
+            return { className, ehFds, tooltip };
         }
 
         function setDias(dias) {
@@ -6780,9 +6954,10 @@
                 for (let dia = 1; dia <= diasNoMes; dia++) {
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
-                    const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
+                    const { className, ehFds, tooltip } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
-                    htmlMes += `<div class="${className}" ${onclick}>${dia}</div>`;
+                    const tooltipAttr = tooltip ? `data-tooltip="${escapeHtml(tooltip)}"` : '';
+                    htmlMes += `<div class="${className}" ${onclick} ${tooltipAttr}>${dia}</div>`;
                 }
 
                 htmlMes += '</div>';
@@ -6842,9 +7017,10 @@
                 for (let dia = 1; dia <= diasNoMes; dia++) {
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
-                    const { className, ehFds } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
+                    const { className, ehFds, tooltip } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
-                    html += `<div class="${className}" ${onclick}>${dia}</div>`;
+                    const tooltipAttr = tooltip ? `data-tooltip="${escapeHtml(tooltip)}"` : '';
+                    html += `<div class="${className}" ${onclick} ${tooltipAttr}>${dia}</div>`;
                 }
 
                 html += `</div></div>`;
@@ -8564,86 +8740,66 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Sistema de notificações genérico
-        let notificacaoTimeout;
+        // Sistema de notificações — toasts empilháveis
+        const TOAST_CONFIGS = {
+            sucesso: { titulo: 'Sucesso!',    icone: '✅' },
+            erro:    { titulo: 'Erro',        icone: '❌' },
+            aviso:   { titulo: 'Atenção',     icone: '⚠️' },
+            info:    { titulo: 'Informação',  icone: 'ℹ️' }
+        };
+
         function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
-            const banner = document.getElementById('bannerNotificacao');
-            const titulo = document.getElementById('notificacaoTitulo');
-            const descricao = document.getElementById('notificacaoDescricao');
-            const icone = document.getElementById('notificacaoIcone');
-            const btnPrimario = document.getElementById('notificacaoBtnPrimario');
-            const btnSecundario = document.getElementById('notificacaoBtnSecundario');
+            const container = document.getElementById('toastContainer');
+            const cfg = TOAST_CONFIGS[tipo] || TOAST_CONFIGS.sucesso;
 
-            // Configurar conteúdo
-            if (tipo === 'sucesso') {
-                titulo.textContent = 'Sucesso!';
-                icone.textContent = '✅';
-            } else if (tipo === 'erro') {
-                titulo.textContent = 'Erro';
-                icone.textContent = '❌';
-            } else if (tipo === 'aviso') {
-                titulo.textContent = 'Atenção';
-                icone.textContent = '⚠️';
-            } else if (tipo === 'info') {
-                titulo.textContent = 'Informação';
-                icone.textContent = 'ℹ️';
-            }
+            const toast = document.createElement('div');
+            toast.className = 'toast-item';
+            toast.dataset.tipo = tipo;
 
-            descricao.textContent = mensagem;
+            const acoesHTML = botaoTexto
+                ? `<div class="toast-actions"><button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button></div>`
+                : '';
 
-            // Configurar botões
+            toast.innerHTML = `
+                <span class="toast-icon">${cfg.icone}</span>
+                <div class="toast-body">
+                    <strong class="toast-titulo">${cfg.titulo}</strong>
+                    <p class="toast-mensagem">${escapeHtml(mensagem)}</p>
+                    ${acoesHTML}
+                </div>
+                <button class="toast-close" aria-label="Fechar">✕</button>`;
+
+            container.prepend(toast);
+
+            // Botão de ação opcional
             if (botaoTexto && botaoCallback) {
-                btnPrimario.textContent = botaoTexto;
-                btnPrimario.style.display = 'inline-flex';
-                btnPrimario.onclick = () => {
+                toast.querySelector('.toast-btn-acao').addEventListener('click', () => {
                     botaoCallback();
-                    fecharNotificacao();
-                };
-            } else {
-                btnPrimario.style.display = 'none';
+                    fecharToast(toast);
+                });
             }
 
-            // Mostrar banner
-            banner.classList.add('active');
+            // Botão de fechar
+            toast.querySelector('.toast-close').addEventListener('click', () => fecharToast(toast));
 
-            // Limpar timeout anterior
-            if (notificacaoTimeout) {
-                clearTimeout(notificacaoTimeout);
-            }
-
-            // Auto-fechar após 5 segundos (com pausa no hover)
-            notificacaoTimeout = setTimeout(() => {
-                fecharNotificacao();
-            }, 5000);
-
-            // Pausar countdown no hover
-            banner.addEventListener('mouseenter', pausarNotificacao);
-            banner.addEventListener('mouseleave', retomarNotificacao);
+            // Auto-fechar após 5 s, pausando no hover
+            let timer = setTimeout(() => fecharToast(toast), 5000);
+            toast.addEventListener('mouseenter', () => clearTimeout(timer));
+            toast.addEventListener('mouseleave', () => { timer = setTimeout(() => fecharToast(toast), 5000); });
         }
 
-        function pausarNotificacao() {
-            if (notificacaoTimeout) {
-                clearTimeout(notificacaoTimeout);
-            }
+        function fecharToast(toast) {
+            if (!toast || !toast.parentNode) return;
+            toast.classList.add('hiding');
+            setTimeout(() => toast.remove(), 280);
         }
 
-        function retomarNotificacao() {
-            notificacaoTimeout = setTimeout(() => {
-                fecharNotificacao();
-            }, 5000);
-        }
-
+        // Retrocompatibilidade — fecha o toast mais recente
         function fecharNotificacao() {
-            const banner = document.getElementById('bannerNotificacao');
-            banner.classList.add('hiding');
-
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-            }, 400);
-
-            // Remover event listeners
-            banner.removeEventListener('mouseenter', pausarNotificacao);
-            banner.removeEventListener('mouseleave', retomarNotificacao);
+            const container = document.getElementById('toastContainer');
+            if (container && container.firstElementChild) {
+                fecharToast(container.firstElementChild);
+            }
         }
 
         // Carregar e renderizar agenda
@@ -10710,7 +10866,11 @@
     </div>
 
     <!-- Banner de Notificação Genérico -->
-    <div id="bannerNotificacao" class="update-banner">
+    <!-- Container de toasts empilháveis (substitui o bannerNotificacao) -->
+    <div id="toastContainer"></div>
+
+    <!-- bannerNotificacao mantido para retrocompatibilidade de IDs, mas não é mais exibido -->
+    <div id="bannerNotificacao" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon" id="notificacaoIcone">✅</div>
             <div class="update-banner-text">
