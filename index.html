@@ -8652,6 +8652,61 @@
         }
 
         // Sistema de notificações — toasts empilháveis
+
+        // Sons sintetizados via Web Audio API (zero dependências externas)
+        function tocarSomToast(tipo) {
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (!Ctx) return;
+                const ctx = new Ctx();
+
+                // Notas: { freq em Hz, t = início relativo em s, dur = duração em s }
+                const sons = {
+                    sucesso: [
+                        { freq: 523.25, t: 0,    dur: 0.14 },  // C5
+                        { freq: 659.25, t: 0.09, dur: 0.20 },  // E5
+                    ],
+                    info: [
+                        { freq: 880,    t: 0,    dur: 0.18 },  // A5 — ping suave
+                    ],
+                    aviso: [
+                        { freq: 440,    t: 0,    dur: 0.11 },  // A4
+                        { freq: 440,    t: 0.15, dur: 0.11 },  // A4 (pulso duplo)
+                    ],
+                    erro: [
+                        { freq: 349.23, t: 0,    dur: 0.14 },  // F4
+                        { freq: 293.66, t: 0.10, dur: 0.20 },  // D4 — descende
+                    ],
+                };
+
+                const notas = sons[tipo] || sons.info;
+                const vol   = 0.10; // volume discreto
+
+                notas.forEach(({ freq, t, dur }) => {
+                    const osc  = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.type = tipo === 'erro' ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+
+                    gain.gain.setValueAtTime(0, ctx.currentTime + t);
+                    gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + t + 0.008); // attack rápido
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur); // decay suave
+
+                    osc.start(ctx.currentTime + t);
+                    osc.stop(ctx.currentTime + t + dur + 0.01);
+                });
+
+                // Libera o contexto após os sons terminarem
+                const totalDur = Math.max(...notas.map(n => n.t + n.dur));
+                setTimeout(() => ctx.close(), (totalDur + 0.2) * 1000);
+            } catch (_) {
+                // AudioContext bloqueado ou não suportado — silencioso
+            }
+        }
+
         const TOAST_CONFIGS = {
             sucesso: { titulo: 'Sucesso!',    icone: '✅' },
             erro:    { titulo: 'Erro',        icone: '❌' },
@@ -8706,6 +8761,7 @@
                 <button class="toast-close" aria-label="Fechar">✕</button>`;
 
             container.prepend(toast);
+            tocarSomToast(tipo);
 
             // Botão de ação: executa callback e fecha (sem disparar aoFechar)
             if (botaoTexto && botaoCallback) {
