@@ -47,6 +47,11 @@
             background: #f9fafb;
             padding: 16px;
             line-height: 1.6;
+            transition: padding-left 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.sidebar-mode {
+            padding-left: calc(220px + 16px);
         }
 
         .container {
@@ -533,6 +538,128 @@
 
         .segmented-btn:not(.active):hover {
             color: #374151;
+        }
+
+        /* ================================================
+           SIDEBAR DE NAVEGAÇÃO (desktop ≥ 1025px)
+           Desliza da esquerda quando o cabeçalho sai da tela
+           ================================================ */
+        #sidebarNav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 220px;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            z-index: 150;
+            transform: translateX(-100%);
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        body.sidebar-mode #sidebarNav {
+            transform: translateX(0);
+        }
+
+        .sidebar-brand-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-cp {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .sidebar-nav-items {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 8px;
+            gap: 2px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-tab {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #6b7280;
+            transition: all 0.15s;
+            text-align: left;
+            width: 100%;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .sidebar-tab:hover {
+            background: rgba(59, 130, 246, 0.08);
+            color: #3b82f6;
+        }
+
+        .sidebar-tab.active {
+            background: rgba(22, 163, 74, 0.09);
+            color: #16a34a;
+        }
+
+        .sidebar-tab svg {
+            flex-shrink: 0;
+        }
+
+        /* Fade out nav horizontal quando sidebar está ativa */
+        .nav-tabs {
+            transition: opacity 0.2s ease;
+        }
+
+        body.sidebar-mode .nav-tabs {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Sidebar só no desktop — mobile mantém nav horizontal */
+        @media (max-width: 1024px) {
+            #sidebarNav {
+                display: none !important;
+            }
+            body.sidebar-mode {
+                padding-left: 16px;
+            }
+            body.sidebar-mode .nav-tabs {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
 
         .quick-buttons {
@@ -1438,6 +1565,55 @@
             background: #fef3c7;
         }
 
+        /* Tooltip de feriados no calendário */
+        .calendario-dia[data-tooltip],
+        .calendario-mini-dia[data-tooltip] {
+            position: relative;
+        }
+
+        .calendario-dia[data-tooltip]::after,
+        .calendario-mini-dia[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: #fff;
+            padding: 5px 9px;
+            border-radius: 7px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 200;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .calendario-dia[data-tooltip]::before,
+        .calendario-mini-dia[data-tooltip]::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 200;
+        }
+
+        .calendario-dia[data-tooltip]:hover::after,
+        .calendario-dia[data-tooltip]:hover::before,
+        .calendario-mini-dia[data-tooltip]:hover::after,
+        .calendario-mini-dia[data-tooltip]:hover::before {
+            opacity: 1;
+        }
+
         .legenda {
             background: #f9fafb;
             border-radius: 8px;
@@ -2132,6 +2308,124 @@
         .scroll-to-top svg {
             width: 20px;
             height: 20px;
+        }
+
+        /* ==================== TOASTS EMPILHÁVEIS ==================== */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+            pointer-events: none;
+            width: 90%;
+            max-width: 520px;
+        }
+
+        .toast-item {
+            pointer-events: all;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            border-left: 4px solid #e5e7eb;
+            animation: toastSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .toast-item.hiding {
+            animation: toastSlideOut 0.26s ease forwards;
+        }
+
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateY(-14px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)     scale(1);    }
+        }
+
+        @keyframes toastSlideOut {
+            from { opacity: 1; transform: translateY(0) scale(1);    max-height: 160px; padding-top: 14px; padding-bottom: 14px; }
+            to   { opacity: 0; transform: translateY(-6px) scale(0.97); max-height: 0;   padding-top: 0;    padding-bottom: 0;    }
+        }
+
+        .toast-item[data-tipo="sucesso"] { border-left-color: #16a34a; }
+        .toast-item[data-tipo="erro"]    { border-left-color: #ef4444; }
+        .toast-item[data-tipo="aviso"]   { border-left-color: #f59e0b; }
+        .toast-item[data-tipo="info"]    { border-left-color: #3b82f6; }
+
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .toast-titulo {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #111827;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .toast-mensagem {
+            font-size: 0.83rem;
+            color: #6b7280;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .toast-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .toast-btn-acao {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #3b82f6;
+            color: white;
+            transition: background 0.15s;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .toast-btn-acao:hover { background: #2563eb; }
+
+        .toast-close {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 1px 5px;
+            font-size: 1rem;
+            line-height: 1;
+            border-radius: 4px;
+            transition: color 0.15s;
+            align-self: flex-start;
+        }
+
+        .toast-close:hover { color: #374151; }
+
+        @media (max-width: 640px) {
+            #toastContainer {
+                top: 10px;
+                width: calc(100% - 20px);
+            }
         }
 
         /* Responsividade mobile - densidade aumentada para evitar scroll horizontal */
@@ -3929,7 +4223,7 @@
     </div>
 
     <!-- Banner de Atualização de Feriados -->
-    <div id="updateBanner" class="update-banner">
+    <div id="updateBanner" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon">🔔</div>
             <div class="update-banner-text">
@@ -4021,6 +4315,57 @@
             Ajuda
         </button>
     </div>
+
+    <!-- Sidebar de navegação lateral (desktop, ativada ao rolar) -->
+    <nav id="sidebarNav" aria-label="Navegação lateral">
+        <div class="sidebar-brand-area">
+            <div class="sidebar-logo-cp">CP</div>
+            <div class="sidebar-brand-name">
+                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+            </div>
+        </div>
+        <div class="sidebar-nav-items">
+            <button class="sidebar-tab active" data-page="calculo" onclick="trocarPagina('calculo')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Calculadora</span>
+            </button>
+            <button class="sidebar-tab" data-page="gerenciamento" onclick="trocarPagina('gerenciamento')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06 a2 2 0 1 1-2.83 2.83l-.06-.06 a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21 a2 2 0 1 1-4 0v-.09 a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06 a2 2 0 1 1-2.83-2.83l.06-.06 a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3 a2 2 0 1 1 0-4h.09 a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06 a2 2 0 1 1 2.83-2.83l.06.06 a1.65 1.65 0 0 0 1.82.33H9 a1.65 1.65 0 0 0 1-1.51V3 a2 2 0 1 1 4 0v.09 a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06 a2 2 0 1 1 2.83 2.83l-.06.06 a1.65 1.65 0 0 0-.33 1.82V9 a1.65 1.65 0 0 0 1.51 1H21 a2 2 0 1 1 0 4h-.09 a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Editor de Feriados</span>
+            </button>
+            <button class="sidebar-tab" data-page="agenda" onclick="trocarPagina('agenda')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M8 14h.01"></path>
+                    <path d="M12 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                    <path d="M8 18h.01"></path>
+                    <path d="M12 18h.01"></path>
+                    <path d="M16 18h.01"></path>
+                </svg>
+                <span>Minha Agenda</span>
+            </button>
+            <button class="sidebar-tab" data-page="ajuda" onclick="trocarPagina('ajuda')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Ajuda</span>
+            </button>
+        </div>
+    </nav>
 
     <div class="container">
         <!-- Página de Cálculo -->
@@ -5965,7 +6310,7 @@
         function posicionarGlider() {
             const glider = document.getElementById('segGlider');
             const activeBtn = document.getElementById(usarDiasUteis ? 'btnDiasUteis' : 'btnDiasCorridos');
-            if (glider && activeBtn) {
+            if (glider && activeBtn && activeBtn.offsetWidth > 0) {
                 glider.style.left = activeBtn.offsetLeft + 'px';
                 glider.style.width = activeBtn.offsetWidth + 'px';
             }
@@ -5987,7 +6332,29 @@
         window.addEventListener('resize', () => {
             posicionarGlider();
             posicionarGliderVisualizacao();
+            atualizarVisibilidadeSidebar();
         });
+
+        // Controla visibilidade da sidebar com base na posição atual do header.
+        // Chamado no resize e também para sincronizar após carregamento.
+        function atualizarVisibilidadeSidebar() {
+            if (window.innerWidth <= 1024) {
+                document.body.classList.remove('sidebar-mode');
+                return;
+            }
+            const header = document.querySelector('.page-header');
+            if (header) {
+                document.body.classList.toggle('sidebar-mode', header.getBoundingClientRect().bottom <= 0);
+            }
+        }
+
+        // IntersectionObserver no cabeçalho — ativa/desativa a sidebar
+        // quando o cabeçalho entra ou sai da área visível.
+        const sidebarObserver = new IntersectionObserver((entries) => {
+            if (window.innerWidth <= 1024) return;
+            document.body.classList.toggle('sidebar-mode', !entries[0].isIntersecting);
+        }, { threshold: 0 });
+        sidebarObserver.observe(document.querySelector('.page-header'));
 
         function atualizarVisibilidadeFeriados() {
             const secaoFeriados = document.querySelector('.tipos-feriado-calc-group');
@@ -6069,7 +6436,14 @@
                 className += ' dia-percorrido';
             }
 
-            return { className, ehFds };
+            // Determina tooltip para feriados visíveis no calendário
+            let tooltip = null;
+            if (tipoFeriado) {
+                const nome = obterNomeFeriado(data);
+                tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado/Ponto Facultativo' : 'Feriado');
+            }
+
+            return { className, ehFds, tooltip };
         }
 
         function setDias(dias) {
@@ -6580,9 +6954,10 @@
                 for (let dia = 1; dia <= diasNoMes; dia++) {
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
-                    const { className, ehFds } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
+                    const { className, ehFds, tooltip } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
-                    htmlMes += `<div class="${className}" ${onclick}>${dia}</div>`;
+                    const tooltipAttr = tooltip ? `data-tooltip="${escapeHtml(tooltip)}"` : '';
+                    htmlMes += `<div class="${className}" ${onclick} ${tooltipAttr}>${dia}</div>`;
                 }
 
                 htmlMes += '</div>';
@@ -6642,9 +7017,10 @@
                 for (let dia = 1; dia <= diasNoMes; dia++) {
                     const data = new Date(ano, mes, dia);
                     const dataStr = formatarDataCompleta(data);
-                    const { className, ehFds } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
+                    const { className, ehFds, tooltip } = obterClassesDia(data, 'calendario-mini-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
-                    html += `<div class="${className}" ${onclick}>${dia}</div>`;
+                    const tooltipAttr = tooltip ? `data-tooltip="${escapeHtml(tooltip)}"` : '';
+                    html += `<div class="${className}" ${onclick} ${tooltipAttr}>${dia}</div>`;
                 }
 
                 html += `</div></div>`;
@@ -7150,101 +7526,50 @@
 
         // Função para mostrar o banner de atualização
         function mostrarBannerAtualizacao(conjuntosAtualizados) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
+            if (sessionStorage.getItem('updateBannerClosed') === 'true') return;
 
-            // Verifica se o banner já foi fechado nesta sessão
-            const bannerFechadoNaSessao = sessionStorage.getItem('updateBannerClosed');
-            if (bannerFechadoNaSessao === 'true') {
-                return; // Não mostra o banner se foi fechado nesta sessão
-            }
-
+            let titulo, mensagemHTML;
             if (conjuntosAtualizados.length === 1) {
-                const conjunto = conjuntosAtualizados[0];
-                title.textContent = `Nova atualização disponível`;
-                description.innerHTML = `
-                    O conjunto <strong>${escapeHtml(conjunto.nome)}</strong> foi atualizado em ${escapeHtml(conjunto.dataAtualizacaoNova)}.<br>
-                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
-                `;
+                const c = conjuntosAtualizados[0];
+                titulo = 'Nova atualização disponível';
+                mensagemHTML = `O conjunto <strong>${escapeHtml(c.nome)}</strong> foi atualizado em ${escapeHtml(c.dataAtualizacaoNova)}.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
             } else {
-                title.textContent = `${conjuntosAtualizados.length} atualizações disponíveis`;
                 const nomes = conjuntosAtualizados.map(c => escapeHtml(c.nome)).join(', ');
-                description.innerHTML = `
-                    Os seguintes conjuntos foram atualizados: <strong>${nomes}</strong>.<br>
-                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
-                `;
+                titulo = `${conjuntosAtualizados.length} atualizações disponíveis`;
+                mensagemHTML = `Os conjuntos <strong>${nomes}</strong> foram atualizados.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
             }
 
-            banner.classList.add('active');
+            criarToast({
+                tipo: 'info',
+                icone: '🔔',
+                titulo,
+                mensagemHTML,
+                botaoTexto: 'Atualizar',
+                botaoCallback: atualizarFeriadosAPartirDoBanner,
+                autoFechar: false,
+                aoFechar: () => sessionStorage.setItem('updateBannerClosed', 'true'),
+                toastId: 'updateBanner'
+            });
         }
 
-        // Função para mostrar mensagem informativa no banner (sem botão de atualizar)
         function mostrarBannerInformativo(titulo, mensagem, icone = '💡', autoFechar = true) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
-            const actions = banner.querySelector('.update-banner-actions');
-            const iconElement = banner.querySelector('.update-banner-icon');
-
-            // Atualiza conteúdo
-            title.textContent = titulo;
-            description.innerHTML = mensagem;
-            iconElement.textContent = icone;
-
-            // Esconde botões de ação
-            actions.style.display = 'none';
-
-            // Mostra o banner
-            banner.classList.add('active');
-
-            // Auto-fecha após 5 segundos se especificado
-            if (autoFechar) {
-                setTimeout(() => {
-                    fecharBannerInformativo();
-                }, 5000);
-            }
+            criarToast({
+                tipo: 'info',
+                icone,
+                titulo,
+                mensagemHTML: mensagem,
+                autoFechar: autoFechar ? 5000 : false
+            });
         }
 
-        // Função para fechar banner informativo e restaurar estado original
-        function fecharBannerInformativo() {
-            const banner = document.getElementById('updateBanner');
-            const actions = banner.querySelector('.update-banner-actions');
-            const iconElement = banner.querySelector('.update-banner-icon');
+        // Retrocompatibilidade — fecha o toast de atualização se ainda estiver visível
+        function fecharBannerInformativo() { fecharNotificacao(); }
 
-            // Adiciona classe de animação de saída
-            banner.classList.add('hiding');
-
-            // Remove o banner após a animação
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-                actions.style.display = 'flex';
-                iconElement.textContent = '🔔';
-            }, 400); // Duração da animação slideUpFade
-        }
-
-        // Função para fechar o banner
         function fecharBannerAtualizacao() {
-            const banner = document.getElementById('updateBanner');
-            const actions = banner.querySelector('.update-banner-actions');
-
-            // Verifica se é um banner informativo (botões escondidos)
-            const ehBannerInformativo = actions.style.display === 'none';
-
-            if (ehBannerInformativo) {
-                fecharBannerInformativo();
-            } else {
-                // Adiciona classe de animação de saída
-                banner.classList.add('hiding');
-
-                // Remove o banner após a animação
-                setTimeout(() => {
-                    banner.classList.remove('active', 'hiding');
-                }, 400); // Duração da animação slideUpFade
-
-                // Salva no sessionStorage para não mostrar novamente nesta sessão
+            document.querySelectorAll('[data-toast-id="updateBanner"]').forEach(t => {
                 sessionStorage.setItem('updateBannerClosed', 'true');
-            }
+                fecharToast(t);
+            });
         }
 
         // Função para atualizar feriados a partir do banner
@@ -7439,6 +7764,15 @@
          * @param {string} params.estilosAdicionais - CSS adicional (opcional)
          * @returns {string} HTML completo do documento
          */
+        function sanitizarTituloPDF(descricao) {
+            if (!descricao || descricao.trim() === '') return '';
+            return descricao
+                .replace(/[<>:"\/\\|?*\x00-\x1f]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .substring(0, 100);
+        }
+
         function gerarCabecalhoExportHTML(params) {
             const {
                 dataInicioFormatada,
@@ -7449,14 +7783,17 @@
                 conteudoEspecifico,
                 diasVisuaisHTML = '',
                 estilosAdicionais = '',
-                conjuntosHTML = ''
+                conjuntosHTML = '',
+                titulo = ''
             } = params;
+
+            const tituloDoc = titulo ? `ContaPrazo - ${titulo}` : 'Cálculo de Prazo - ContaPrazo';
 
             return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cálculo de Prazo - ContaPrazo</title>
+    <title>${tituloDoc}</title>
     <style>
         body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
         .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
@@ -7606,7 +7943,8 @@
                 descricaoHTML,
                 diasVisuaisHTML: diasVisuaisHTMLFormatado,
                 conteudoEspecifico: '',
-                conjuntosHTML: gerarHTMLConjuntosNota('print')
+                conjuntosHTML: gerarHTMLConjuntosNota('print'),
+                titulo: sanitizarTituloPDF(descricaoPrazo)
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7686,7 +8024,8 @@
                 descricaoHTML,
                 conteudoEspecifico,
                 estilosAdicionais,
-                conjuntosHTML: gerarHTMLConjuntosNota('print')
+                conjuntosHTML: gerarHTMLConjuntosNota('print'),
+                titulo: sanitizarTituloPDF(descricaoPrazo)
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -8038,13 +8377,18 @@
             cacheDom.paginas.agenda.classList.remove('active');
             cacheDom.paginas.ajuda.classList.remove('active');
 
-            // Remover active de todas as tabs
+            // Remover active de todas as tabs (top nav e sidebar)
             Object.values(cacheDom.navTabs).forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === pagina);
+            });
 
             // Mostrar página selecionada e ativar tab
             if (pagina === 'calculo') {
                 cacheDom.paginas.calculo.classList.add('active');
                 cacheDom.navTabs.calculo.classList.add('active');
+                posicionarGlider();
+                posicionarGliderVisualizacao();
             } else if (pagina === 'gerenciamento') {
                 cacheDom.paginas.gerenciamento.classList.add('active');
                 cacheDom.navTabs.gerenciamento.classList.add('active');
@@ -8289,142 +8633,173 @@
         }
 
         // Mostrar banner de prazo salvo
-        let bannerPrazoSalvoTimeout;
         function mostrarBannerPrazoSalvo() {
-            const banner = document.getElementById('bannerPrazoSalvo');
-            banner.classList.add('active');
-
-            // Limpar timeout anterior se existir
-            if (bannerPrazoSalvoTimeout) {
-                clearTimeout(bannerPrazoSalvoTimeout);
-            }
-
-            // Auto-fechar após 5 segundos (com pausa no hover)
-            bannerPrazoSalvoTimeout = setTimeout(() => {
-                fecharBannerPrazoSalvo();
-            }, 5000);
-
-            // Pausar countdown no hover
-            banner.addEventListener('mouseenter', pausarBannerPrazoSalvo);
-            banner.addEventListener('mouseleave', retomarBannerPrazoSalvo);
+            criarToast({
+                tipo: 'sucesso',
+                titulo: 'Prazo salvo com sucesso!',
+                mensagem: 'O prazo foi adicionado à sua agenda.',
+                botaoTexto: 'Ver Agenda',
+                botaoCallback: irParaAgenda
+            });
         }
 
-        // Pausar auto-fechamento do banner
-        function pausarBannerPrazoSalvo() {
-            if (bannerPrazoSalvoTimeout) {
-                clearTimeout(bannerPrazoSalvoTimeout);
-            }
-        }
+        // Retrocompatibilidade (não é mais necessário fechar manualmente)
+        function fecharBannerPrazoSalvo() {}
 
-        // Retomar auto-fechamento do banner
-        function retomarBannerPrazoSalvo() {
-            bannerPrazoSalvoTimeout = setTimeout(() => {
-                fecharBannerPrazoSalvo();
-            }, 5000);
-        }
-
-        // Fechar banner de prazo salvo
-        function fecharBannerPrazoSalvo() {
-            const banner = document.getElementById('bannerPrazoSalvo');
-            banner.classList.add('hiding');
-
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-            }, 400);
-
-            // Remover event listeners
-            banner.removeEventListener('mouseenter', pausarBannerPrazoSalvo);
-            banner.removeEventListener('mouseleave', retomarBannerPrazoSalvo);
-        }
-
-        // Ir para a agenda (ao clicar no botão "Ver Agenda")
         function irParaAgenda() {
-            fecharBannerPrazoSalvo();
             trocarPagina('agenda');
-            // Scroll para o topo da página
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Sistema de notificações genérico
-        let notificacaoTimeout;
-        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
-            const banner = document.getElementById('bannerNotificacao');
-            const titulo = document.getElementById('notificacaoTitulo');
-            const descricao = document.getElementById('notificacaoDescricao');
-            const icone = document.getElementById('notificacaoIcone');
-            const btnPrimario = document.getElementById('notificacaoBtnPrimario');
-            const btnSecundario = document.getElementById('notificacaoBtnSecundario');
+        // Sistema de notificações — toasts empilháveis
 
-            // Configurar conteúdo
-            if (tipo === 'sucesso') {
-                titulo.textContent = 'Sucesso!';
-                icone.textContent = '✅';
-            } else if (tipo === 'erro') {
-                titulo.textContent = 'Erro';
-                icone.textContent = '❌';
-            } else if (tipo === 'aviso') {
-                titulo.textContent = 'Atenção';
-                icone.textContent = '⚠️';
-            } else if (tipo === 'info') {
-                titulo.textContent = 'Informação';
-                icone.textContent = 'ℹ️';
-            }
+        // Sons sintetizados via Web Audio API (zero dependências externas)
+        function tocarSomToast(tipo) {
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (!Ctx) return;
+                const ctx = new Ctx();
 
-            descricao.textContent = mensagem;
-
-            // Configurar botões
-            if (botaoTexto && botaoCallback) {
-                btnPrimario.textContent = botaoTexto;
-                btnPrimario.style.display = 'inline-flex';
-                btnPrimario.onclick = () => {
-                    botaoCallback();
-                    fecharNotificacao();
+                // Notas: { freq em Hz, t = início relativo em s, dur = duração em s }
+                const sons = {
+                    sucesso: [
+                        { freq: 523.25, t: 0,    dur: 0.14 },  // C5
+                        { freq: 659.25, t: 0.09, dur: 0.20 },  // E5
+                    ],
+                    info: [
+                        { freq: 880,    t: 0,    dur: 0.18 },  // A5 — ping suave
+                    ],
+                    aviso: [
+                        { freq: 440,    t: 0,    dur: 0.11 },  // A4
+                        { freq: 440,    t: 0.15, dur: 0.11 },  // A4 (pulso duplo)
+                    ],
+                    erro: [
+                        { freq: 349.23, t: 0,    dur: 0.14 },  // F4
+                        { freq: 293.66, t: 0.10, dur: 0.20 },  // D4 — descende
+                    ],
                 };
-            } else {
-                btnPrimario.style.display = 'none';
+
+                const notas = sons[tipo] || sons.info;
+                const vol   = 0.10; // volume discreto
+
+                notas.forEach(({ freq, t, dur }) => {
+                    const osc  = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.type = tipo === 'erro' ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+
+                    gain.gain.setValueAtTime(0, ctx.currentTime + t);
+                    gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + t + 0.008); // attack rápido
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur); // decay suave
+
+                    osc.start(ctx.currentTime + t);
+                    osc.stop(ctx.currentTime + t + dur + 0.01);
+                });
+
+                // Libera o contexto após os sons terminarem
+                const totalDur = Math.max(...notas.map(n => n.t + n.dur));
+                setTimeout(() => ctx.close(), (totalDur + 0.2) * 1000);
+            } catch (_) {
+                // AudioContext bloqueado ou não suportado — silencioso
             }
-
-            // Mostrar banner
-            banner.classList.add('active');
-
-            // Limpar timeout anterior
-            if (notificacaoTimeout) {
-                clearTimeout(notificacaoTimeout);
-            }
-
-            // Auto-fechar após 5 segundos (com pausa no hover)
-            notificacaoTimeout = setTimeout(() => {
-                fecharNotificacao();
-            }, 5000);
-
-            // Pausar countdown no hover
-            banner.addEventListener('mouseenter', pausarNotificacao);
-            banner.addEventListener('mouseleave', retomarNotificacao);
         }
 
-        function pausarNotificacao() {
-            if (notificacaoTimeout) {
-                clearTimeout(notificacaoTimeout);
+        const TOAST_CONFIGS = {
+            sucesso: { titulo: 'Sucesso!',    icone: '✅' },
+            erro:    { titulo: 'Erro',        icone: '❌' },
+            aviso:   { titulo: 'Atenção',     icone: '⚠️' },
+            info:    { titulo: 'Informação',  icone: 'ℹ️' }
+        };
+
+        /**
+         * Função central de toasts — todas as notificações passam por aqui.
+         * opts:
+         *   tipo        – 'sucesso'|'erro'|'aviso'|'info'
+         *   icone       – override do ícone padrão do tipo
+         *   titulo      – override do título padrão do tipo
+         *   mensagem    – texto simples (escapado automaticamente)
+         *   mensagemHTML– HTML literal (para rich text)
+         *   botaoTexto  – rótulo do botão de ação principal
+         *   botaoCallback – callback do botão de ação
+         *   autoFechar  – ms até auto-fechar (default 5000; false = nunca)
+         *   aoFechar    – callback ao fechar sem ação (✕ ou timeout)
+         *   toastId     – data-toast-id para localizar o toast depois
+         */
+        function criarToast({
+            tipo = 'info', icone, titulo, mensagem, mensagemHTML,
+            botaoTexto, botaoCallback,
+            autoFechar = 5000, aoFechar = null, toastId = null
+        } = {}) {
+            const container = document.getElementById('toastContainer');
+            const cfg = TOAST_CONFIGS[tipo] || TOAST_CONFIGS.info;
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-item';
+            toast.dataset.tipo = tipo;
+            if (toastId) toast.dataset.toastId = toastId;
+
+            const iconeDisplay  = icone  !== undefined ? icone  : cfg.icone;
+            const tituloDisplay = titulo !== undefined ? titulo : cfg.titulo;
+            const bodyContent   = mensagemHTML !== undefined
+                ? mensagemHTML
+                : (mensagem ? escapeHtml(mensagem) : '');
+
+            const acoesHTML = botaoTexto
+                ? `<div class="toast-actions"><button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button></div>`
+                : '';
+
+            toast.innerHTML = `
+                <span class="toast-icon">${iconeDisplay}</span>
+                <div class="toast-body">
+                    <strong class="toast-titulo">${escapeHtml(tituloDisplay)}</strong>
+                    <p class="toast-mensagem">${bodyContent}</p>
+                    ${acoesHTML}
+                </div>
+                <button class="toast-close" aria-label="Fechar">✕</button>`;
+
+            container.prepend(toast);
+            tocarSomToast(tipo);
+
+            // Botão de ação: executa callback e fecha (sem disparar aoFechar)
+            if (botaoTexto && botaoCallback) {
+                toast.querySelector('.toast-btn-acao').addEventListener('click', () => {
+                    botaoCallback();
+                    fecharToast(toast);
+                });
             }
+
+            // Fechar sem ação (✕ ou timeout): dispara aoFechar
+            const dismiss = () => { if (aoFechar) aoFechar(); fecharToast(toast); };
+            toast.querySelector('.toast-close').addEventListener('click', dismiss);
+
+            // Auto-fechar com pausa no hover
+            if (autoFechar !== false) {
+                let timer = setTimeout(dismiss, autoFechar);
+                toast.addEventListener('mouseenter', () => clearTimeout(timer));
+                toast.addEventListener('mouseleave', () => { timer = setTimeout(dismiss, autoFechar); });
+            }
+
+            return toast;
         }
 
-        function retomarNotificacao() {
-            notificacaoTimeout = setTimeout(() => {
-                fecharNotificacao();
-            }, 5000);
+        function fecharToast(toast) {
+            if (!toast || !toast.parentNode) return;
+            toast.classList.add('hiding');
+            setTimeout(() => toast.remove(), 280);
         }
 
+        // Retrocompatibilidade — fecha o toast mais recente
         function fecharNotificacao() {
-            const banner = document.getElementById('bannerNotificacao');
-            banner.classList.add('hiding');
+            const container = document.getElementById('toastContainer');
+            if (container && container.firstElementChild) fecharToast(container.firstElementChild);
+        }
 
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-            }, 400);
-
-            // Remover event listeners
-            banner.removeEventListener('mouseenter', pausarNotificacao);
-            banner.removeEventListener('mouseleave', retomarNotificacao);
+        // API pública — interface simples para o caso mais comum
+        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
+            criarToast({ tipo, mensagem, botaoTexto, botaoCallback });
         }
 
         // Carregar e renderizar agenda
@@ -9918,29 +10293,16 @@
             }
         }
 
-        // Mostrar banner de prazos
+        // Mostrar toast de prazos urgentes/próximos
         function mostrarBannerPrazos(mensagem, tipo) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
-
-            if (tipo === 'urgente') {
-                title.textContent = '⚠️ Atenção: Prazos Urgentes!';
-            } else {
-                title.textContent = '📅 Prazos Próximos';
-            }
-
-            description.textContent = mensagem;
-
-            // Modificar botão para ir à agenda
-            const btnAtualizar = banner.querySelector('.update-banner-btn-primary');
-            btnAtualizar.textContent = 'Ver Agenda';
-            btnAtualizar.onclick = function() {
-                trocarPagina('agenda');
-                fecharBannerAtualizacao();
-            };
-
-            banner.classList.add('active');
+            criarToast({
+                tipo: tipo === 'urgente' ? 'aviso' : 'info',
+                titulo: tipo === 'urgente' ? 'Prazos Urgentes!' : 'Prazos Próximos',
+                mensagem,
+                botaoTexto: 'Ver Agenda',
+                botaoCallback: () => trocarPagina('agenda'),
+                autoFechar: 8000
+            });
         }
 
         // Carregar editores de feriados
@@ -10472,7 +10834,7 @@
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
     <!-- Banner de Notificação de Prazo Salvo -->
-    <div id="bannerPrazoSalvo" class="update-banner">
+    <div id="bannerPrazoSalvo" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon">✅</div>
             <div class="update-banner-text">
@@ -10491,7 +10853,11 @@
     </div>
 
     <!-- Banner de Notificação Genérico -->
-    <div id="bannerNotificacao" class="update-banner">
+    <!-- Container de toasts empilháveis (substitui o bannerNotificacao) -->
+    <div id="toastContainer"></div>
+
+    <!-- bannerNotificacao mantido para retrocompatibilidade de IDs, mas não é mais exibido -->
+    <div id="bannerNotificacao" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon" id="notificacaoIcone">✅</div>
             <div class="update-banner-text">
