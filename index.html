@@ -4223,7 +4223,7 @@
     </div>
 
     <!-- Banner de Atualização de Feriados -->
-    <div id="updateBanner" class="update-banner">
+    <div id="updateBanner" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon">🔔</div>
             <div class="update-banner-text">
@@ -7526,101 +7526,50 @@
 
         // Função para mostrar o banner de atualização
         function mostrarBannerAtualizacao(conjuntosAtualizados) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
+            if (sessionStorage.getItem('updateBannerClosed') === 'true') return;
 
-            // Verifica se o banner já foi fechado nesta sessão
-            const bannerFechadoNaSessao = sessionStorage.getItem('updateBannerClosed');
-            if (bannerFechadoNaSessao === 'true') {
-                return; // Não mostra o banner se foi fechado nesta sessão
-            }
-
+            let titulo, mensagemHTML;
             if (conjuntosAtualizados.length === 1) {
-                const conjunto = conjuntosAtualizados[0];
-                title.textContent = `Nova atualização disponível`;
-                description.innerHTML = `
-                    O conjunto <strong>${escapeHtml(conjunto.nome)}</strong> foi atualizado em ${escapeHtml(conjunto.dataAtualizacaoNova)}.<br>
-                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
-                `;
+                const c = conjuntosAtualizados[0];
+                titulo = 'Nova atualização disponível';
+                mensagemHTML = `O conjunto <strong>${escapeHtml(c.nome)}</strong> foi atualizado em ${escapeHtml(c.dataAtualizacaoNova)}.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
             } else {
-                title.textContent = `${conjuntosAtualizados.length} atualizações disponíveis`;
                 const nomes = conjuntosAtualizados.map(c => escapeHtml(c.nome)).join(', ');
-                description.innerHTML = `
-                    Os seguintes conjuntos foram atualizados: <strong>${nomes}</strong>.<br>
-                    <small style="color: #9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>
-                `;
+                titulo = `${conjuntosAtualizados.length} atualizações disponíveis`;
+                mensagemHTML = `Os conjuntos <strong>${nomes}</strong> foram atualizados.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
             }
 
-            banner.classList.add('active');
+            criarToast({
+                tipo: 'info',
+                icone: '🔔',
+                titulo,
+                mensagemHTML,
+                botaoTexto: 'Atualizar',
+                botaoCallback: atualizarFeriadosAPartirDoBanner,
+                autoFechar: false,
+                aoFechar: () => sessionStorage.setItem('updateBannerClosed', 'true'),
+                toastId: 'updateBanner'
+            });
         }
 
-        // Função para mostrar mensagem informativa no banner (sem botão de atualizar)
         function mostrarBannerInformativo(titulo, mensagem, icone = '💡', autoFechar = true) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
-            const actions = banner.querySelector('.update-banner-actions');
-            const iconElement = banner.querySelector('.update-banner-icon');
-
-            // Atualiza conteúdo
-            title.textContent = titulo;
-            description.innerHTML = mensagem;
-            iconElement.textContent = icone;
-
-            // Esconde botões de ação
-            actions.style.display = 'none';
-
-            // Mostra o banner
-            banner.classList.add('active');
-
-            // Auto-fecha após 5 segundos se especificado
-            if (autoFechar) {
-                setTimeout(() => {
-                    fecharBannerInformativo();
-                }, 5000);
-            }
+            criarToast({
+                tipo: 'info',
+                icone,
+                titulo,
+                mensagemHTML: mensagem,
+                autoFechar: autoFechar ? 5000 : false
+            });
         }
 
-        // Função para fechar banner informativo e restaurar estado original
-        function fecharBannerInformativo() {
-            const banner = document.getElementById('updateBanner');
-            const actions = banner.querySelector('.update-banner-actions');
-            const iconElement = banner.querySelector('.update-banner-icon');
+        // Retrocompatibilidade — fecha o toast de atualização se ainda estiver visível
+        function fecharBannerInformativo() { fecharNotificacao(); }
 
-            // Adiciona classe de animação de saída
-            banner.classList.add('hiding');
-
-            // Remove o banner após a animação
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-                actions.style.display = 'flex';
-                iconElement.textContent = '🔔';
-            }, 400); // Duração da animação slideUpFade
-        }
-
-        // Função para fechar o banner
         function fecharBannerAtualizacao() {
-            const banner = document.getElementById('updateBanner');
-            const actions = banner.querySelector('.update-banner-actions');
-
-            // Verifica se é um banner informativo (botões escondidos)
-            const ehBannerInformativo = actions.style.display === 'none';
-
-            if (ehBannerInformativo) {
-                fecharBannerInformativo();
-            } else {
-                // Adiciona classe de animação de saída
-                banner.classList.add('hiding');
-
-                // Remove o banner após a animação
-                setTimeout(() => {
-                    banner.classList.remove('active', 'hiding');
-                }, 400); // Duração da animação slideUpFade
-
-                // Salva no sessionStorage para não mostrar novamente nesta sessão
+            document.querySelectorAll('[data-toast-id="updateBanner"]').forEach(t => {
                 sessionStorage.setItem('updateBannerClosed', 'true');
-            }
+                fecharToast(t);
+            });
         }
 
         // Função para atualizar feriados a partir do banner
@@ -8684,59 +8633,21 @@
         }
 
         // Mostrar banner de prazo salvo
-        let bannerPrazoSalvoTimeout;
         function mostrarBannerPrazoSalvo() {
-            const banner = document.getElementById('bannerPrazoSalvo');
-            banner.classList.add('active');
-
-            // Limpar timeout anterior se existir
-            if (bannerPrazoSalvoTimeout) {
-                clearTimeout(bannerPrazoSalvoTimeout);
-            }
-
-            // Auto-fechar após 5 segundos (com pausa no hover)
-            bannerPrazoSalvoTimeout = setTimeout(() => {
-                fecharBannerPrazoSalvo();
-            }, 5000);
-
-            // Pausar countdown no hover
-            banner.addEventListener('mouseenter', pausarBannerPrazoSalvo);
-            banner.addEventListener('mouseleave', retomarBannerPrazoSalvo);
+            criarToast({
+                tipo: 'sucesso',
+                titulo: 'Prazo salvo com sucesso!',
+                mensagem: 'O prazo foi adicionado à sua agenda.',
+                botaoTexto: 'Ver Agenda',
+                botaoCallback: irParaAgenda
+            });
         }
 
-        // Pausar auto-fechamento do banner
-        function pausarBannerPrazoSalvo() {
-            if (bannerPrazoSalvoTimeout) {
-                clearTimeout(bannerPrazoSalvoTimeout);
-            }
-        }
+        // Retrocompatibilidade (não é mais necessário fechar manualmente)
+        function fecharBannerPrazoSalvo() {}
 
-        // Retomar auto-fechamento do banner
-        function retomarBannerPrazoSalvo() {
-            bannerPrazoSalvoTimeout = setTimeout(() => {
-                fecharBannerPrazoSalvo();
-            }, 5000);
-        }
-
-        // Fechar banner de prazo salvo
-        function fecharBannerPrazoSalvo() {
-            const banner = document.getElementById('bannerPrazoSalvo');
-            banner.classList.add('hiding');
-
-            setTimeout(() => {
-                banner.classList.remove('active', 'hiding');
-            }, 400);
-
-            // Remover event listeners
-            banner.removeEventListener('mouseenter', pausarBannerPrazoSalvo);
-            banner.removeEventListener('mouseleave', retomarBannerPrazoSalvo);
-        }
-
-        // Ir para a agenda (ao clicar no botão "Ver Agenda")
         function irParaAgenda() {
-            fecharBannerPrazoSalvo();
             trocarPagina('agenda');
-            // Scroll para o topo da página
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -8748,30 +8659,55 @@
             info:    { titulo: 'Informação',  icone: 'ℹ️' }
         };
 
-        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
+        /**
+         * Função central de toasts — todas as notificações passam por aqui.
+         * opts:
+         *   tipo        – 'sucesso'|'erro'|'aviso'|'info'
+         *   icone       – override do ícone padrão do tipo
+         *   titulo      – override do título padrão do tipo
+         *   mensagem    – texto simples (escapado automaticamente)
+         *   mensagemHTML– HTML literal (para rich text)
+         *   botaoTexto  – rótulo do botão de ação principal
+         *   botaoCallback – callback do botão de ação
+         *   autoFechar  – ms até auto-fechar (default 5000; false = nunca)
+         *   aoFechar    – callback ao fechar sem ação (✕ ou timeout)
+         *   toastId     – data-toast-id para localizar o toast depois
+         */
+        function criarToast({
+            tipo = 'info', icone, titulo, mensagem, mensagemHTML,
+            botaoTexto, botaoCallback,
+            autoFechar = 5000, aoFechar = null, toastId = null
+        } = {}) {
             const container = document.getElementById('toastContainer');
-            const cfg = TOAST_CONFIGS[tipo] || TOAST_CONFIGS.sucesso;
+            const cfg = TOAST_CONFIGS[tipo] || TOAST_CONFIGS.info;
 
             const toast = document.createElement('div');
             toast.className = 'toast-item';
             toast.dataset.tipo = tipo;
+            if (toastId) toast.dataset.toastId = toastId;
+
+            const iconeDisplay  = icone  !== undefined ? icone  : cfg.icone;
+            const tituloDisplay = titulo !== undefined ? titulo : cfg.titulo;
+            const bodyContent   = mensagemHTML !== undefined
+                ? mensagemHTML
+                : (mensagem ? escapeHtml(mensagem) : '');
 
             const acoesHTML = botaoTexto
                 ? `<div class="toast-actions"><button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button></div>`
                 : '';
 
             toast.innerHTML = `
-                <span class="toast-icon">${cfg.icone}</span>
+                <span class="toast-icon">${iconeDisplay}</span>
                 <div class="toast-body">
-                    <strong class="toast-titulo">${cfg.titulo}</strong>
-                    <p class="toast-mensagem">${escapeHtml(mensagem)}</p>
+                    <strong class="toast-titulo">${escapeHtml(tituloDisplay)}</strong>
+                    <p class="toast-mensagem">${bodyContent}</p>
                     ${acoesHTML}
                 </div>
                 <button class="toast-close" aria-label="Fechar">✕</button>`;
 
             container.prepend(toast);
 
-            // Botão de ação opcional
+            // Botão de ação: executa callback e fecha (sem disparar aoFechar)
             if (botaoTexto && botaoCallback) {
                 toast.querySelector('.toast-btn-acao').addEventListener('click', () => {
                     botaoCallback();
@@ -8779,13 +8715,18 @@
                 });
             }
 
-            // Botão de fechar
-            toast.querySelector('.toast-close').addEventListener('click', () => fecharToast(toast));
+            // Fechar sem ação (✕ ou timeout): dispara aoFechar
+            const dismiss = () => { if (aoFechar) aoFechar(); fecharToast(toast); };
+            toast.querySelector('.toast-close').addEventListener('click', dismiss);
 
-            // Auto-fechar após 5 s, pausando no hover
-            let timer = setTimeout(() => fecharToast(toast), 5000);
-            toast.addEventListener('mouseenter', () => clearTimeout(timer));
-            toast.addEventListener('mouseleave', () => { timer = setTimeout(() => fecharToast(toast), 5000); });
+            // Auto-fechar com pausa no hover
+            if (autoFechar !== false) {
+                let timer = setTimeout(dismiss, autoFechar);
+                toast.addEventListener('mouseenter', () => clearTimeout(timer));
+                toast.addEventListener('mouseleave', () => { timer = setTimeout(dismiss, autoFechar); });
+            }
+
+            return toast;
         }
 
         function fecharToast(toast) {
@@ -8797,9 +8738,12 @@
         // Retrocompatibilidade — fecha o toast mais recente
         function fecharNotificacao() {
             const container = document.getElementById('toastContainer');
-            if (container && container.firstElementChild) {
-                fecharToast(container.firstElementChild);
-            }
+            if (container && container.firstElementChild) fecharToast(container.firstElementChild);
+        }
+
+        // API pública — interface simples para o caso mais comum
+        function mostrarNotificacao(mensagem, tipo = 'sucesso', botaoTexto = null, botaoCallback = null) {
+            criarToast({ tipo, mensagem, botaoTexto, botaoCallback });
         }
 
         // Carregar e renderizar agenda
@@ -10293,29 +10237,16 @@
             }
         }
 
-        // Mostrar banner de prazos
+        // Mostrar toast de prazos urgentes/próximos
         function mostrarBannerPrazos(mensagem, tipo) {
-            const banner = document.getElementById('updateBanner');
-            const title = document.getElementById('updateBannerTitle');
-            const description = document.getElementById('updateBannerDescription');
-
-            if (tipo === 'urgente') {
-                title.textContent = '⚠️ Atenção: Prazos Urgentes!';
-            } else {
-                title.textContent = '📅 Prazos Próximos';
-            }
-
-            description.textContent = mensagem;
-
-            // Modificar botão para ir à agenda
-            const btnAtualizar = banner.querySelector('.update-banner-btn-primary');
-            btnAtualizar.textContent = 'Ver Agenda';
-            btnAtualizar.onclick = function() {
-                trocarPagina('agenda');
-                fecharBannerAtualizacao();
-            };
-
-            banner.classList.add('active');
+            criarToast({
+                tipo: tipo === 'urgente' ? 'aviso' : 'info',
+                titulo: tipo === 'urgente' ? 'Prazos Urgentes!' : 'Prazos Próximos',
+                mensagem,
+                botaoTexto: 'Ver Agenda',
+                botaoCallback: () => trocarPagina('agenda'),
+                autoFechar: 8000
+            });
         }
 
         // Carregar editores de feriados
@@ -10847,7 +10778,7 @@
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
     <!-- Banner de Notificação de Prazo Salvo -->
-    <div id="bannerPrazoSalvo" class="update-banner">
+    <div id="bannerPrazoSalvo" class="update-banner" style="display:none!important;">
         <div class="update-banner-content">
             <div class="update-banner-icon">✅</div>
             <div class="update-banner-text">
