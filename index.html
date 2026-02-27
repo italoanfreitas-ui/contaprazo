@@ -5965,7 +5965,7 @@
         function posicionarGlider() {
             const glider = document.getElementById('segGlider');
             const activeBtn = document.getElementById(usarDiasUteis ? 'btnDiasUteis' : 'btnDiasCorridos');
-            if (glider && activeBtn) {
+            if (glider && activeBtn && activeBtn.offsetWidth > 0) {
                 glider.style.left = activeBtn.offsetLeft + 'px';
                 glider.style.width = activeBtn.offsetWidth + 'px';
             }
@@ -7439,6 +7439,15 @@
          * @param {string} params.estilosAdicionais - CSS adicional (opcional)
          * @returns {string} HTML completo do documento
          */
+        function sanitizarTituloPDF(descricao) {
+            if (!descricao || descricao.trim() === '') return '';
+            return descricao
+                .replace(/[<>:"\/\\|?*\x00-\x1f]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .substring(0, 100);
+        }
+
         function gerarCabecalhoExportHTML(params) {
             const {
                 dataInicioFormatada,
@@ -7449,14 +7458,17 @@
                 conteudoEspecifico,
                 diasVisuaisHTML = '',
                 estilosAdicionais = '',
-                conjuntosHTML = ''
+                conjuntosHTML = '',
+                titulo = ''
             } = params;
+
+            const tituloDoc = titulo ? `${titulo} - ContaPrazo` : 'Cálculo de Prazo - ContaPrazo';
 
             return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cálculo de Prazo - ContaPrazo</title>
+    <title>${tituloDoc}</title>
     <style>
         body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
         .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
@@ -7606,7 +7618,8 @@
                 descricaoHTML,
                 diasVisuaisHTML: diasVisuaisHTMLFormatado,
                 conteudoEspecifico: '',
-                conjuntosHTML: gerarHTMLConjuntosNota('print')
+                conjuntosHTML: gerarHTMLConjuntosNota('print'),
+                titulo: sanitizarTituloPDF(descricaoPrazo)
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -7686,7 +7699,8 @@
                 descricaoHTML,
                 conteudoEspecifico,
                 estilosAdicionais,
-                conjuntosHTML: gerarHTMLConjuntosNota('print')
+                conjuntosHTML: gerarHTMLConjuntosNota('print'),
+                titulo: sanitizarTituloPDF(descricaoPrazo)
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -8045,6 +8059,8 @@
             if (pagina === 'calculo') {
                 cacheDom.paginas.calculo.classList.add('active');
                 cacheDom.navTabs.calculo.classList.add('active');
+                posicionarGlider();
+                posicionarGliderVisualizacao();
             } else if (pagina === 'gerenciamento') {
                 cacheDom.paginas.gerenciamento.classList.add('active');
                 cacheDom.navTabs.gerenciamento.classList.add('active');
