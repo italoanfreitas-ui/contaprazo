@@ -1776,12 +1776,7 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-            flex-wrap: wrap;
             align-items: center;
-        }
-
-        .modal-buttons > .btn {
-            flex: 0 0 auto;
         }
 
         /* Sistema de Perfis de Feriados Personalizados */
@@ -5423,7 +5418,7 @@
                 <div id="boasVindasBotaoFechar" style="display: none; margin-right: auto; flex-shrink: 0;">
                     <button class="btn btn-secondary" onclick="dispensarBoasVindas('fechar')">Fechar</button>
                 </div>
-                <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
+                <button class="btn btn-primary" style="flex: 0 0 auto;" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
             </div>
         </div>
     </div>
@@ -5528,7 +5523,7 @@
 
     <!-- Modal de confirmação para trocar perfil com alterações não salvas -->
     <div class="modal" id="modalConfirmarTrocaPerfil">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">Alterações Não Salvas</div>
             <div class="modal-body">
                 <p style="font-size: 0.9rem; color: #374151;">
@@ -5536,9 +5531,9 @@
                 </p>
             </div>
             <div class="modal-buttons">
-                <button class="btn btn-secondary" style="margin-right: auto;" onclick="descartarETrocarPerfil()">Descartar</button>
-                <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
-                <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
+                <button class="btn btn-secondary" style="flex: 0 0 auto; margin-right: auto;" onclick="descartarETrocarPerfil()">Descartar</button>
+                <button class="btn btn-secondary" style="flex: 0 0 auto;" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
+                <button class="btn btn-primary" style="flex: 0 0 auto;" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
             </div>
         </div>
     </div>
