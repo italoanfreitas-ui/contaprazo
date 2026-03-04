@@ -4555,6 +4555,13 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                         </button>
+                        <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="8 17 12 21 16 17"></polyline>
+                                <line x1="12" y1="12" x2="12" y2="21"></line>
+                                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                            </svg>
+                        </button>
                         <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="3"></circle>
@@ -5382,6 +5389,30 @@
         </div>
     </div>
 
+    <!-- Modal de Boas-vindas / Importar Perfis Online -->
+    <div class="modal" id="modalBoasVindas">
+        <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-header" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</div>
+            <div class="modal-body">
+                <div id="boasVindasTexto" style="margin-bottom: 16px; color: #374151; line-height: 1.6;">
+                    <p style="margin: 0 0 10px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
+                    <p style="margin: 0;">Identificamos conjuntos de feriados e suspensões disponíveis online. Você pode criar <strong>perfis automaticamente</strong> a partir deles — cada perfil ficará disponível para uso direto na calculadora.</p>
+                </div>
+                <p style="margin: 0 0 10px; font-weight: 600; color: #111827;">Selecione os conjuntos de interesse:</p>
+                <div id="listaConjuntosWelcome" style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
+                    <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
+                </div>
+            </div>
+            <div class="modal-buttons" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
+                    <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('snooze')">Adiar</button>
+                </div>
+                <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para importar feriados -->
     <div class="modal" id="modalImportar">
         <div class="modal-content">
@@ -5595,10 +5626,16 @@
                 } else {
                     feriadosSnapshotPerfil = obterSnapshotFeriados();
                 }
+                // Auto-desmarca fixos/móveis após importação (com ou sem perfil)
+                if (feriadosPersonalizados.size > 0) {
+                    aplicarAutoDesmarcarFixosMoveis();
+                }
             } else if (perfilAtivoId) {
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     carregarFeriadosDoPerfil(perfil);
+                    // Auto-desmarca fixos/móveis ao carregar perfil na inicialização
+                    aplicarAutoDesmarcarFixosMoveis();
                 } else {
                     perfilAtivoId = null;
                     localStorage.removeItem(PERFIL_ATIVO_KEY);
@@ -5827,6 +5864,11 @@
                 salvarFeriadosNoLocalStorage();
                 feriadosSnapshotPerfil = obterSnapshotFeriados();
                 perfilTemAlteracoes = false;
+                // Restaura fixos/móveis ao desativar perfil
+                feriadosFixosAtivos = true;
+                feriadosMoveisAtivos = true;
+                salvarTiposFeriadoAtivos();
+                atualizarPillsTiposFeriado();
             } else {
                 const perfil = perfisData.find(p => p.id === id);
                 if (perfil) {
@@ -5835,6 +5877,8 @@
                     localStorage.setItem(PERFIL_ATIVO_KEY, id);
                     feriadosSnapshotPerfil = obterSnapshotFeriados();
                     perfilTemAlteracoes = false;
+                    // Auto-desmarca fixos/móveis se não houver preferência salva
+                    aplicarAutoDesmarcarFixosMoveis();
                 }
             }
 
@@ -6708,6 +6752,48 @@
             renderizarCalendario();
         }
 
+        // Aplica auto-desmarque de fixos/móveis ao ativar perfil (se não houver preferência salva)
+        function aplicarAutoDesmarcarFixosMoveis() {
+            if (localStorage.getItem('contaprazo_fixos_moveis_com_perfil') === 'true') return;
+            feriadosFixosAtivos = false;
+            feriadosMoveisAtivos = false;
+            salvarTiposFeriadoAtivos();
+            atualizarPillsTiposFeriado();
+        }
+
+        // Verifica se há datas coincidentes entre feriados personalizados e fixos/móveis
+        function verificarConflitosFixosMoveis() {
+            if (!feriadosPersonalizadosAtivos || feriadosPersonalizados.size === 0) return;
+            if (!feriadosFixosAtivos && !feriadosMoveisAtivos) return;
+
+            for (const [dataCompleta] of feriadosPersonalizados) {
+                // Formato: "DD-MM-YYYY"
+                const partes = dataCompleta.split('-');
+                if (partes.length !== 3) continue;
+                const mmdd = `${partes[1]}-${partes[0]}`;
+                const ano = parseInt(partes[2], 10);
+
+                if (feriadosFixosAtivos && feriadosFixos[mmdd]) {
+                    criarToast({
+                        tipo: 'aviso',
+                        titulo: 'Atenção: feriados duplicados',
+                        mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
+                        autoFechar: 9000
+                    });
+                    return;
+                }
+                if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][mmdd]) {
+                    criarToast({
+                        tipo: 'aviso',
+                        titulo: 'Atenção: feriados duplicados',
+                        mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
+                        autoFechar: 9000
+                    });
+                    return;
+                }
+            }
+        }
+
         function toggleFeriados(tipo) {
             if (tipo === 'fixos') {
                 feriadosFixosAtivos = !feriadosFixosAtivos;
@@ -6717,9 +6803,19 @@
                 feriadosPersonalizadosAtivos = !feriadosPersonalizadosAtivos;
             }
 
+            // Se o usuário ativou fixos ou móveis com perfil/personalizados ativos, salva preferência
+            if (feriadosPersonalizados.size > 0 || perfilAtivoId) {
+                if ((tipo === 'fixos' && feriadosFixosAtivos) || (tipo === 'moveis' && feriadosMoveisAtivos)) {
+                    localStorage.setItem('contaprazo_fixos_moveis_com_perfil', 'true');
+                }
+            }
+
             salvarTiposFeriadoAtivos();
             atualizarPillsTiposFeriado();
             renderizarCalendario();
+
+            // Verifica conflitos após ativar fixos/móveis
+            verificarConflitosFixosMoveis();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
@@ -7286,7 +7382,10 @@
                 }
 
                 // Renderiza os itens usando map().join() (mais eficiente que +=)
-                const html = manifest.conjuntos.map(conjunto => {
+                // Ordenação alfabética por nome
+                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) =>
+                    a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+                const html = conjuntosOrdenados.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
                         <div class="item-predefinido"
@@ -7332,6 +7431,173 @@
         function fecharModalPredefinidos() {
             document.getElementById('modalPredefinidos').classList.remove('active');
             abrirModalSelecionarFonte();
+        }
+
+        // ==================== MODAL DE BOAS-VINDAS / IMPORTAR PERFIS ONLINE ====================
+
+        function verificarMostrarBoasVindas() {
+            if (perfisData.length > 0) return;
+            if (localStorage.getItem('contaprazo_welcome_dispensado') === 'true') return;
+            if (sessionStorage.getItem('contaprazo_welcome_snooze') === 'true') return;
+            setTimeout(() => abrirModalBoasVindas(true), 900);
+        }
+
+        function abrirModalBoasVindas(comBoasVindas) {
+            const textoEl = document.getElementById('boasVindasTexto');
+            const headerEl = document.getElementById('boasVindasHeader');
+            if (comBoasVindas) {
+                textoEl.style.display = '';
+                headerEl.textContent = 'Bem-vindo ao ContaPrazo!';
+            } else {
+                textoEl.style.display = 'none';
+                headerEl.textContent = 'Importar Perfis Online';
+            }
+            document.getElementById('btnCriarPerfisSelecionados').disabled = true;
+            document.getElementById('modalBoasVindas').classList.add('active');
+            carregarConjuntosBoasVindas();
+        }
+
+        function abrirModalImportarPerfisOnline() {
+            abrirModalBoasVindas(false);
+        }
+
+        function dispensarBoasVindas(tipo) {
+            document.getElementById('modalBoasVindas').classList.remove('active');
+            if (tipo === 'permanente') {
+                localStorage.setItem('contaprazo_welcome_dispensado', 'true');
+            } else if (tipo === 'snooze') {
+                sessionStorage.setItem('contaprazo_welcome_snooze', 'true');
+            }
+        }
+
+        async function carregarConjuntosBoasVindas() {
+            const container = document.getElementById('listaConjuntosWelcome');
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Carregando conjuntos disponíveis...</div>';
+            try {
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const response = await fetch(manifestUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const manifest = await response.json();
+
+                if (!manifest.conjuntos || manifest.conjuntos.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Nenhum conjunto disponível no momento.</div>';
+                    return;
+                }
+
+                const ordenados = [...manifest.conjuntos].sort((a, b) =>
+                    a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+
+                container.innerHTML = ordenados.map(c => {
+                    const urlArquivo = `${GITHUB_RAW_BASE_URL}/${c.arquivo}`;
+                    return `
+                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''">
+                            <input type="checkbox" class="welcome-conjunto-cb"
+                                data-id2="${escapeHtml(c.id2)}"
+                                data-url="${escapeHtml(urlArquivo)}"
+                                data-nome="${escapeHtml(c.nome)}"
+                                data-arquivo="${escapeHtml(c.arquivo)}"
+                                data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
+                                data-descricao="${escapeHtml(c.descricao || '')}"
+                                style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:#3b82f6;">
+                            <div>
+                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
+                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}</div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+
+                container.querySelectorAll('.welcome-conjunto-cb').forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        const anyChecked = container.querySelectorAll('.welcome-conjunto-cb:checked').length > 0;
+                        document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
+                    });
+                });
+            } catch (e) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;">Erro ao carregar conjuntos. Verifique sua conexão com a internet.</div>';
+            }
+        }
+
+        async function criarPerfisDosConjuntos() {
+            const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb:checked');
+            if (checkboxes.length === 0) return;
+
+            const btn = document.getElementById('btnCriarPerfisSelecionados');
+            btn.disabled = true;
+            const textoOriginal = btn.textContent;
+            btn.textContent = 'Criando perfis...';
+
+            let criados = 0;
+            let ignorados = 0;
+            let erros = 0;
+
+            for (const cb of checkboxes) {
+                if (perfisData.length >= MAX_PERFIS) {
+                    mostrarNotificacao('Limite de ' + MAX_PERFIS + ' perfis atingido. Alguns perfis não foram criados.', 'aviso');
+                    break;
+                }
+                const nomePerfil = cb.dataset.id2.substring(0, MAX_NOME_PERFIL);
+                if (perfisData.some(p => p.nome.toLowerCase() === nomePerfil.toLowerCase())) {
+                    ignorados++;
+                    continue;
+                }
+                try {
+                    const urlComCache = adicionarCacheBusting(cb.dataset.url);
+                    const response = await fetch(urlComCache);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const config = await response.json();
+                    if (!config.feriadosPersonalizados || !Array.isArray(config.feriadosPersonalizados)) throw new Error('Formato inválido');
+
+                    const feriadosDoConjunto = [];
+                    config.feriadosPersonalizados.forEach(item => {
+                        if (typeof item === 'string') {
+                            const idx = item.indexOf(' ');
+                            if (idx > 0) feriadosDoConjunto.push({ data: item.substring(0, idx), nome: item.substring(idx + 1) });
+                        } else if (item && item.data) {
+                            feriadosDoConjunto.push({ data: item.data, nome: item.nome || '' });
+                        }
+                    });
+
+                    const novoPerfil = {
+                        id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                        nome: nomePerfil,
+                        feriados: feriadosDoConjunto,
+                        conjuntosImportados: [{
+                            nome: cb.dataset.nome,
+                            arquivo: cb.dataset.arquivo,
+                            descricao: cb.dataset.descricao || '',
+                            dataAtualizacao: cb.dataset.dataAtualizacao
+                        }],
+                        criadoEm: new Date().toISOString()
+                    };
+                    perfisData.push(novoPerfil);
+                    criados++;
+                } catch (e) {
+                    console.error('Erro ao criar perfil:', e);
+                    erros++;
+                }
+            }
+
+            salvarPerfisNoLocalStorage();
+            atualizarDropdownPerfis();
+            document.getElementById('modalBoasVindas').classList.remove('active');
+            localStorage.setItem('contaprazo_welcome_dispensado', 'true');
+
+            if (criados > 0) {
+                mostrarNotificacao(
+                    criados === 1 ? '1 perfil criado com sucesso!' : `${criados} perfil(s) criado(s) com sucesso!`,
+                    'sucesso'
+                );
+            }
+            if (ignorados > 0 && criados === 0 && erros === 0) {
+                mostrarNotificacao('Os perfis selecionados já existem.', 'info');
+            }
+            if (erros > 0) {
+                mostrarNotificacao(`${erros} conjunto(s) não puderam ser baixados. Verifique sua conexão.`, 'erro');
+            }
+
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
         }
 
         async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', link = '') {
@@ -10624,6 +10890,7 @@
         inicializarPerfis();
         atualizarChipTiposFeriado();
         renderizarCalendario();
+        verificarMostrarBoasVindas();
         atualizarTextoBotaoVisualizacao();
         posicionarGlider();
         posicionarGliderVisualizacao();
