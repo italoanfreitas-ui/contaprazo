@@ -1775,7 +1775,11 @@
         .modal-buttons {
             display: flex;
             gap: 10px;
-            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .modal-buttons > .btn {
+            flex: 1 1 0;
+            min-width: fit-content;
         }
 
         /* Sistema de Perfis de Feriados Personalizados */
@@ -4555,6 +4559,13 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                         </button>
+                        <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="8 17 12 21 16 17"></polyline>
+                                <line x1="12" y1="12" x2="12" y2="21"></line>
+                                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                            </svg>
+                        </button>
                         <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="3"></circle>
@@ -5053,7 +5064,7 @@
                     <li><strong>Gerenciar:</strong> Clique no ícone de engrenagem <strong>"⚙"</strong> para renomear ou excluir perfis existentes.</li>
                 </ul>
                 <p style="margin-top: 12px; padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>Limite:</strong> Você pode criar até 10 perfis, com nomes de até 30 caracteres. Os perfis são salvos localmente no navegador.
+                    Os nomes de perfil podem ter até 30 caracteres. Os perfis são salvos localmente no navegador.
                 </p>
             </div>
 
@@ -5382,6 +5393,35 @@
         </div>
     </div>
 
+    <!-- Modal de Boas-vindas / Importar Perfis Online -->
+    <div class="modal" id="modalBoasVindas">
+        <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
+            <div class="modal-header" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</div>
+            <div class="modal-body" style="overflow-y: auto; flex: 1;">
+                <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.875rem; line-height: 1.5;">
+                    <p style="margin: 0 0 6px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
+                    <p style="margin: 0;">Identificamos conjuntos disponíveis online. Selecione os de interesse e crie <strong>perfis automaticamente</strong> — cada perfil ficará disponível para uso direto na calculadora.</p>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-weight: 600; font-size: 0.875rem; color: #111827;">Conjuntos disponíveis:</span>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(true)">Todos</button>
+                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(false)">Nenhum</button>
+                    </div>
+                </div>
+                <div id="listaConjuntosWelcome" style="max-height: 240px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
+                    <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="btnNaoMostrarNovamente" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
+                <button class="btn btn-secondary" id="btnAdiarBoasVindas" onclick="dispensarBoasVindas('snooze')">Adiar</button>
+                <button class="btn btn-secondary" id="btnFecharBoasVindas" style="display: none;" onclick="dispensarBoasVindas('fechar')">Fechar</button>
+                <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para importar feriados -->
     <div class="modal" id="modalImportar">
         <div class="modal-content">
@@ -5482,19 +5522,17 @@
 
     <!-- Modal de confirmação para trocar perfil com alterações não salvas -->
     <div class="modal" id="modalConfirmarTrocaPerfil">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">Alterações Não Salvas</div>
             <div class="modal-body">
                 <p style="font-size: 0.9rem; color: #374151;">
                     Existem alterações não salvas no perfil atual. Deseja salvar antes de trocar?
                 </p>
             </div>
-            <div class="modal-buttons" style="justify-content: space-between;">
+            <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="descartarETrocarPerfil()">Descartar</button>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
-                    <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
-                </div>
+                <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
             </div>
         </div>
     </div>
@@ -5563,7 +5601,6 @@
         // ========================================
         const PERFIS_STORAGE_KEY = 'contaprazo_perfis';
         const PERFIL_ATIVO_KEY = 'contaprazo_perfil_ativo';
-        const MAX_PERFIS = 10;
         const MAX_NOME_PERFIL = 30;
 
         let perfisData = JSON.parse(localStorage.getItem(PERFIS_STORAGE_KEY) || '[]');
@@ -5595,10 +5632,16 @@
                 } else {
                     feriadosSnapshotPerfil = obterSnapshotFeriados();
                 }
+                // Auto-desmarca fixos/móveis após importação (com ou sem perfil)
+                if (feriadosPersonalizados.size > 0) {
+                    aplicarAutoDesmarcarFixosMoveis();
+                }
             } else if (perfilAtivoId) {
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     carregarFeriadosDoPerfil(perfil);
+                    // Auto-desmarca fixos/móveis ao carregar perfil na inicialização
+                    aplicarAutoDesmarcarFixosMoveis();
                 } else {
                     perfilAtivoId = null;
                     localStorage.removeItem(PERFIL_ATIVO_KEY);
@@ -5827,6 +5870,11 @@
                 salvarFeriadosNoLocalStorage();
                 feriadosSnapshotPerfil = obterSnapshotFeriados();
                 perfilTemAlteracoes = false;
+                // Restaura fixos/móveis ao desativar perfil
+                feriadosFixosAtivos = true;
+                feriadosMoveisAtivos = true;
+                salvarTiposFeriadoAtivos();
+                atualizarPillsTiposFeriado();
             } else {
                 const perfil = perfisData.find(p => p.id === id);
                 if (perfil) {
@@ -5835,6 +5883,8 @@
                     localStorage.setItem(PERFIL_ATIVO_KEY, id);
                     feriadosSnapshotPerfil = obterSnapshotFeriados();
                     perfilTemAlteracoes = false;
+                    // Auto-desmarca fixos/móveis se não houver preferência salva
+                    aplicarAutoDesmarcarFixosMoveis();
                 }
             }
 
@@ -5875,10 +5925,6 @@
         // === Modais de Perfil ===
 
         function abrirModalCriarPerfil() {
-            if (perfisData.length >= MAX_PERFIS) {
-                mostrarNotificacao('Limite de ' + MAX_PERFIS + ' perfis atingido. Exclua um perfil existente antes de criar outro.', 'erro');
-                return;
-            }
             document.getElementById('qtdFeriadosAtuais').textContent = feriadosPersonalizados.size;
             document.getElementById('inputNomePerfil').value = '';
             document.getElementById('modalCriarPerfil').classList.add('active');
@@ -6248,6 +6294,12 @@
             // Remove preferência de tipos de feriado (volta a todos ativos)
             localStorage.removeItem('tiposFeriadoAtivos');
 
+            // Remove preferências das novas funcionalidades
+            localStorage.removeItem('contaprazo_welcome_dispensado');
+            localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
+            localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
+            localStorage.removeItem('conjuntosPredefinidosImportados');
+
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
             localStorage.removeItem(PERFIL_ATIVO_KEY);
@@ -6259,6 +6311,7 @@
 
             // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.removeItem('contaprazo_welcome_snooze');
             sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações restauradas com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações padrão
@@ -6708,6 +6761,24 @@
             renderizarCalendario();
         }
 
+        // Aplica auto-desmarque de fixos/móveis ao ativar perfil (se não houver preferência salva)
+        function aplicarAutoDesmarcarFixosMoveis() {
+            if (localStorage.getItem('contaprazo_fixos_moveis_com_perfil') === 'true') return;
+            const houveMudanca = feriadosFixosAtivos || feriadosMoveisAtivos;
+            feriadosFixosAtivos = false;
+            feriadosMoveisAtivos = false;
+            salvarTiposFeriadoAtivos();
+            atualizarPillsTiposFeriado();
+            if (houveMudanca) {
+                criarToast({
+                    tipo: 'info',
+                    titulo: 'Feriados fixos e móveis desativados',
+                    mensagem: 'Ao usar feriados personalizados ou um perfil, os feriados fixos e móveis são desativados automaticamente para evitar duplicações. Você pode reativá-los pelos controles de tipos de feriado (Fixos / Móveis / Personalizados), se necessário — e o app lembrará da sua escolha.',
+                    autoFechar: false
+                });
+            }
+        }
+
         function toggleFeriados(tipo) {
             if (tipo === 'fixos') {
                 feriadosFixosAtivos = !feriadosFixosAtivos;
@@ -6715,6 +6786,24 @@
                 feriadosMoveisAtivos = !feriadosMoveisAtivos;
             } else if (tipo === 'personalizados') {
                 feriadosPersonalizadosAtivos = !feriadosPersonalizadosAtivos;
+            }
+
+            // Se o usuário ativou fixos ou móveis com perfil/personalizados ativos, salva preferência
+            // e exibe aviso informativo sobre possível duplicidade (se não tiver dispensado)
+            if ((tipo === 'fixos' && feriadosFixosAtivos) || (tipo === 'moveis' && feriadosMoveisAtivos)) {
+                if (perfilAtivoId || feriadosPersonalizados.size > 0) {
+                    localStorage.setItem('contaprazo_fixos_moveis_com_perfil', 'true');
+                    if (localStorage.getItem('contaprazo_aviso_duplicidade_dispensado') !== 'true') {
+                        criarToast({
+                            tipo: 'aviso',
+                            titulo: 'Atenção: possível duplicidade de feriados',
+                            mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
+                            autoFechar: false,
+                            botaoTexto: 'Não mostrar novamente',
+                            botaoCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
+                        });
+                    }
+                }
             }
 
             salvarTiposFeriadoAtivos();
@@ -7285,8 +7374,13 @@
                     return;
                 }
 
-                // Renderiza os itens usando map().join() (mais eficiente que +=)
-                const html = manifest.conjuntos.map(conjunto => {
+                // Ordena alfabeticamente por nome (normaliza acentos)
+                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
+                const html = conjuntosOrdenados.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
                         <div class="item-predefinido"
@@ -7332,6 +7426,254 @@
         function fecharModalPredefinidos() {
             document.getElementById('modalPredefinidos').classList.remove('active');
             abrirModalSelecionarFonte();
+        }
+
+        // ==================== MODAL DE BOAS-VINDAS / IMPORTAR PERFIS ONLINE ====================
+
+        function verificarMostrarBoasVindas() {
+            if (perfisData.length > 0) return;
+            if (localStorage.getItem('contaprazo_welcome_dispensado') === 'true') return;
+            if (sessionStorage.getItem('contaprazo_welcome_snooze') === 'true') return;
+            setTimeout(() => abrirModalBoasVindas(true), 900);
+        }
+
+        function abrirModalBoasVindas(comBoasVindas) {
+            const textoEl = document.getElementById('boasVindasTexto');
+            const headerEl = document.getElementById('boasVindasHeader');
+            const btnNaoMostrar = document.getElementById('btnNaoMostrarNovamente');
+            const btnAdiar = document.getElementById('btnAdiarBoasVindas');
+            const btnFechar = document.getElementById('btnFecharBoasVindas');
+            if (comBoasVindas) {
+                textoEl.style.display = '';
+                headerEl.textContent = 'Bem-vindo ao ContaPrazo!';
+                btnNaoMostrar.style.display = '';
+                btnAdiar.style.display = '';
+                btnFechar.style.display = 'none';
+            } else {
+                textoEl.style.display = 'none';
+                headerEl.textContent = 'Importar Perfis Online';
+                btnNaoMostrar.style.display = 'none';
+                btnAdiar.style.display = 'none';
+                btnFechar.style.display = '';
+            }
+            document.getElementById('btnCriarPerfisSelecionados').disabled = true;
+            document.getElementById('modalBoasVindas').classList.add('active');
+            carregarConjuntosBoasVindas();
+        }
+
+        function abrirModalImportarPerfisOnline() {
+            abrirModalBoasVindas(false);
+        }
+
+        function dispensarBoasVindas(tipo) {
+            document.getElementById('modalBoasVindas').classList.remove('active');
+            if (tipo === 'permanente') {
+                localStorage.setItem('contaprazo_welcome_dispensado', 'true');
+            } else if (tipo === 'snooze') {
+                sessionStorage.setItem('contaprazo_welcome_snooze', 'true');
+            }
+            // tipo === 'fechar' apenas fecha o modal (usado na versão do botão de nuvem)
+        }
+
+        function selecionarTodosConjuntos(selecionar) {
+            const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb:not([disabled])');
+            checkboxes.forEach(cb => { cb.checked = selecionar; });
+            const anyChecked = selecionar && checkboxes.length > 0;
+            document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
+        }
+
+        // Cache de feriados pré-carregados: arquivo -> { feriados: [], conjunto: {} }
+        let _feriadosCarregados = {};
+
+        async function carregarConjuntosBoasVindas() {
+            _feriadosCarregados = {};
+            const container = document.getElementById('listaConjuntosWelcome');
+            document.getElementById('btnCriarPerfisSelecionados').disabled = true;
+
+            try {
+                // 1. Carrega o manifest
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Carregando lista de conjuntos...</div>';
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const manifestResp = await fetch(manifestUrl);
+                if (!manifestResp.ok) throw new Error(`HTTP ${manifestResp.status}`);
+                const manifest = await manifestResp.json();
+
+                if (!manifest.conjuntos || manifest.conjuntos.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Nenhum conjunto disponível no momento.</div>';
+                    return;
+                }
+
+                // 2. Ordena alfabeticamente por nome (normaliza acentos)
+                const conjuntos = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
+
+                // 3. Baixa todos os arquivos de feriados em paralelo e armazena em cache
+                container.innerHTML = `<div style="text-align:center;padding:20px;color:#6b7280;">Carregando conjuntos...</div>`;
+
+                await Promise.allSettled(conjuntos.map(async c => {
+                    try {
+                        const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${c.arquivo}`);
+                        const resp = await fetch(url);
+                        if (!resp.ok) return;
+                        const json = await resp.json();
+                        if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) return;
+
+                        // Converte datas do formato DD-MM-YYYY para YYYY-MM-DD (mesmo que finalizarImportacao)
+                        const feriados = [];
+                        json.feriadosPersonalizados.forEach(item => {
+                            if (typeof item === 'string') {
+                                const mNome = item.match(/^(\d{2})-(\d{2})-(\d{4})\s+(.+)$/);
+                                const mSemNome = item.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+                                if (mNome) {
+                                    const [, dia, mes, ano, nome] = mNome;
+                                    feriados.push({ data: `${ano}-${mes}-${dia}`, nome: nome.trim() });
+                                } else if (mSemNome) {
+                                    const [, dia, mes, ano] = mSemNome;
+                                    feriados.push({ data: `${ano}-${mes}-${dia}`, nome: '' });
+                                }
+                            } else if (item && item.data) {
+                                feriados.push({ data: item.data, nome: item.nome || '' });
+                            }
+                        });
+
+                        if (feriados.length > 0) _feriadosCarregados[c.arquivo] = { feriados, conjunto: c };
+                    } catch (e) {
+                        console.error('Falha ao baixar', c.arquivo, e);
+                    }
+                }));
+
+                // 4. Renderiza a lista
+                container.innerHTML = conjuntos.map(c => {
+                    const ok = !!_feriadosCarregados[c.arquivo];
+                    return `
+                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
+                            ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
+                            <input type="checkbox" class="welcome-conjunto-cb"
+                                data-id2="${escapeHtml(c.id2)}"
+                                data-arquivo="${escapeHtml(c.arquivo)}"
+                                data-nome="${escapeHtml(c.nome)}"
+                                data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
+                                data-descricao="${escapeHtml(c.descricao || '')}"
+                                data-link="${escapeHtml(c.link || '')}"
+                                style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
+                                ${ok ? '' : 'disabled'}>
+                            <div>
+                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
+                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+
+                container.querySelectorAll('.welcome-conjunto-cb:not([disabled])').forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        const anyChecked = container.querySelectorAll('.welcome-conjunto-cb:checked').length > 0;
+                        document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
+                    });
+                });
+
+            } catch (e) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;">Erro ao carregar conjuntos. Verifique sua conexão com a internet.</div>';
+            }
+        }
+
+        // forceOverwrite=true: sobrescreve perfis existentes com dados do cache (buscado online ao abrir o modal)
+        function criarPerfisDosConjuntos(forceOverwrite = false) {
+            const checkboxes = [...document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb:checked')];
+            if (checkboxes.length === 0) return;
+
+            // Categoriza: novos vs existentes
+            const novos = checkboxes.filter(cb => {
+                const nome = cb.dataset.id2.substring(0, MAX_NOME_PERFIL);
+                return !perfisData.some(p => p.nome.toLowerCase() === nome.toLowerCase());
+            });
+            const existentes = checkboxes.filter(cb => {
+                const nome = cb.dataset.id2.substring(0, MAX_NOME_PERFIL);
+                return perfisData.some(p => p.nome.toLowerCase() === nome.toLowerCase());
+            });
+
+            if (existentes.length > 0 && !forceOverwrite) {
+                // Cria os novos imediatamente
+                if (novos.length > 0) _executarCriacaoPerfis(novos, false);
+
+                // Pergunta sobre os existentes
+                const nomes = existentes.map(cb => `<strong>${escapeHtml(cb.dataset.id2.substring(0, MAX_NOME_PERFIL))}</strong>`).join(', ');
+                criarToast({
+                    tipo: 'aviso',
+                    titulo: existentes.length === 1 ? 'Perfil já existe' : `${existentes.length} perfis já existem`,
+                    mensagemHTML: `${nomes} já ${existentes.length === 1 ? 'existe' : 'existem'}. Deseja sobrescrever com os dados online mais recentes?`,
+                    autoFechar: false,
+                    botaoTexto: 'Sim, sobrescrever',
+                    botaoCallback: () => criarPerfisDosConjuntos(true)
+                });
+                return;
+            }
+
+            // forceOverwrite=true: processa todos (sobrescreve existentes)
+            _executarCriacaoPerfis(forceOverwrite ? checkboxes : novos, forceOverwrite);
+        }
+
+        function _executarCriacaoPerfis(checkboxes, sobrescrever) {
+            if (checkboxes.length === 0) return;
+
+            const btn = document.getElementById('btnCriarPerfisSelecionados');
+            btn.disabled = true;
+            const textoOriginal = btn.textContent;
+            btn.textContent = 'Criando perfis...';
+
+            let criados = 0, sobrescritos = 0, semDados = 0;
+
+            for (const cb of checkboxes) {
+                const nomePerfil = cb.dataset.id2.substring(0, MAX_NOME_PERFIL);
+                const dados = _feriadosCarregados[cb.dataset.arquivo];
+                if (!dados || dados.feriados.length === 0) { semDados++; continue; }
+
+                const existingIdx = perfisData.findIndex(p => p.nome.toLowerCase() === nomePerfil.toLowerCase());
+                if (existingIdx >= 0) {
+                    perfisData.splice(existingIdx, 1);
+                    sobrescritos++;
+                } else {
+                    criados++;
+                }
+
+                perfisData.push({
+                    id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                    nome: nomePerfil,
+                    feriados: dados.feriados,
+                    conjuntosImportados: [{
+                        nome: cb.dataset.nome,
+                        arquivo: cb.dataset.arquivo,
+                        descricao: cb.dataset.descricao || '',
+                        link: cb.dataset.link || '',
+                        dataAtualizacao: cb.dataset.dataAtualizacao,
+                        dataImportacao: new Date().toISOString()
+                    }],
+                    criadoEm: new Date().toISOString()
+                });
+            }
+
+            salvarPerfisNoLocalStorage();
+            atualizarDropdownPerfis();
+
+            const total = criados + sobrescritos;
+            if (total > 0) {
+                document.getElementById('modalBoasVindas').classList.remove('active');
+                localStorage.setItem('contaprazo_welcome_dispensado', 'true');
+                let msg;
+                if (criados > 0 && sobrescritos > 0) msg = `${criados} criado(s) e ${sobrescritos} atualizado(s) com sucesso!`;
+                else if (criados > 0) msg = criados === 1 ? '1 perfil criado com sucesso!' : `${criados} perfis criados com sucesso!`;
+                else msg = sobrescritos === 1 ? '1 perfil atualizado com sucesso!' : `${sobrescritos} perfis atualizados com sucesso!`;
+                mostrarNotificacao(msg, 'sucesso');
+            }
+            if (semDados > 0) {
+                mostrarNotificacao(`${semDados} conjunto(s) sem dados. Feche e reabra o modal para tentar novamente.`, 'erro');
+            }
+
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
         }
 
         async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', link = '') {
@@ -7454,19 +7796,29 @@
                     return;
                 }
 
-                // Obtém metadata dos conjuntos importados localmente
-                const metadataLocal = obterMetadataConjuntos();
+                // Coleta metadata de TODOS os perfis + global (sem duplicatas por arquivo)
+                const todosMetadata = [];
+                perfisData.forEach(perfil => {
+                    if (perfil.conjuntosImportados && perfil.conjuntosImportados.length > 0) {
+                        perfil.conjuntosImportados.forEach(m => {
+                            todosMetadata.push({ ...m, _perfilId: perfil.id, _perfilNome: perfil.nome });
+                        });
+                    }
+                });
+                // Adiciona importações globais que não estejam cobertas por algum perfil
+                obterMetadataConjuntos().forEach(m => {
+                    if (!todosMetadata.some(t => t.arquivo === m.arquivo)) {
+                        todosMetadata.push({ ...m, _perfilId: null, _perfilNome: null });
+                    }
+                });
 
-                // Se não há conjuntos importados, verifica se há atualizações gerais
-                if (metadataLocal.length === 0) {
-                    // Usuário não importou nenhum conjunto ainda
-                    // Mostra notificação genérica apenas se há conjuntos disponíveis
+                if (todosMetadata.length === 0) {
                     if (mostrarFeedback) {
                         const totalConjuntos = manifestOnline.conjuntos.length;
                         mostrarBannerInformativo(
                             'Conjuntos disponíveis',
                             `Há <strong>${totalConjuntos} conjunto(s)</strong> de feriados disponível(is) para importação.<br>
-                            <small style="color: #9ca3af;">Acesse "Gerenciamento" → "Importar/Exportar" → "Importar de Fonte" para ver os conjuntos disponíveis.</small>`,
+                            <small style="color: #9ca3af;">Use o botão de nuvem na barra de perfis para criar perfis automaticamente.</small>`,
                             'ℹ️'
                         );
                     }
@@ -7475,25 +7827,19 @@
 
                 // Compara versões
                 const conjuntosAtualizados = [];
-
-                metadataLocal.forEach(metadataItem => {
-                    // Procura o conjunto correspondente no manifest online
-                    const conjuntoOnline = manifestOnline.conjuntos.find(
-                        c => c.arquivo === metadataItem.arquivo
-                    );
-
-                    if (conjuntoOnline) {
-                        // Compara as datas de atualização
-                        if (conjuntoOnline.dataAtualizacao !== metadataItem.dataAtualizacao) {
-                            conjuntosAtualizados.push({
-                                nome: conjuntoOnline.nome,
-                                arquivo: conjuntoOnline.arquivo,
-                                descricao: conjuntoOnline.descricao,
-                                dataAtualizacaoNova: conjuntoOnline.dataAtualizacao,
-                                dataAtualizacaoAntiga: metadataItem.dataAtualizacao,
-                                url: `${GITHUB_RAW_BASE_URL}/${conjuntoOnline.arquivo}`
-                            });
-                        }
+                todosMetadata.forEach(metadataItem => {
+                    const conjuntoOnline = manifestOnline.conjuntos.find(c => c.arquivo === metadataItem.arquivo);
+                    if (conjuntoOnline && conjuntoOnline.dataAtualizacao !== metadataItem.dataAtualizacao) {
+                        conjuntosAtualizados.push({
+                            nome: conjuntoOnline.nome,
+                            arquivo: conjuntoOnline.arquivo,
+                            descricao: conjuntoOnline.descricao,
+                            dataAtualizacaoNova: conjuntoOnline.dataAtualizacao,
+                            dataAtualizacaoAntiga: metadataItem.dataAtualizacao,
+                            url: `${GITHUB_RAW_BASE_URL}/${conjuntoOnline.arquivo}`,
+                            perfilId: metadataItem._perfilId,
+                            perfilNome: metadataItem._perfilNome
+                        });
                     }
                 });
 
@@ -7532,11 +7878,15 @@
             if (conjuntosAtualizados.length === 1) {
                 const c = conjuntosAtualizados[0];
                 titulo = 'Nova atualização disponível';
-                mensagemHTML = `O conjunto <strong>${escapeHtml(c.nome)}</strong> foi atualizado em ${escapeHtml(c.dataAtualizacaoNova)}.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
+                const perfilInfo = c.perfilNome ? ` — Perfil: <strong>${escapeHtml(c.perfilNome)}</strong>` : '';
+                mensagemHTML = `<strong>${escapeHtml(c.nome)}</strong>${perfilInfo} foi atualizado em ${escapeHtml(c.dataAtualizacaoNova)}.<br><small style="color:#9ca3af;">Clique em Atualizar para aplicar as novas datas ao perfil correspondente.</small>`;
             } else {
-                const nomes = conjuntosAtualizados.map(c => escapeHtml(c.nome)).join(', ');
+                const itens = conjuntosAtualizados.map(c => {
+                    const perfilInfo = c.perfilNome ? ` (${escapeHtml(c.perfilNome)})` : '';
+                    return `<strong>${escapeHtml(c.nome)}</strong>${perfilInfo}`;
+                }).join(', ');
                 titulo = `${conjuntosAtualizados.length} atualizações disponíveis`;
-                mensagemHTML = `Os conjuntos <strong>${nomes}</strong> foram atualizados.<br><small style="color:#9ca3af;">Atualizar seus feriados evita erros nos cálculos de prazos.</small>`;
+                mensagemHTML = `${itens}.<br><small style="color:#9ca3af;">Clique em Atualizar para aplicar as novas datas.</small>`;
             }
 
             criarToast({
@@ -7573,22 +7923,97 @@
         }
 
         // Função para atualizar feriados a partir do banner
-        function atualizarFeriadosAPartirDoBanner() {
+        async function atualizarFeriadosAPartirDoBanner() {
             if (atualizacoesDisponiveis.length === 0) {
                 mostrarNotificacao('Nenhuma atualização disponível.', 'info');
                 return;
             }
 
-            // Fecha o banner
             fecharBannerAtualizacao();
 
-            // Se há apenas uma atualização, importa diretamente
-            if (atualizacoesDisponiveis.length === 1) {
-                const conjunto = atualizacoesDisponiveis[0];
-                importarFeriadoPredefinido(conjunto.url, conjunto.nome, conjunto.arquivo, conjunto.dataAtualizacaoNova);
-            } else {
-                // Se há múltiplas atualizações, abre o modal de seleção
+            // Separa: perfis (atualiza diretamente) vs global (usa fluxo antigo)
+            const perfilUpdates = atualizacoesDisponiveis.filter(a => a.perfilId !== null);
+            const globalUpdates = atualizacoesDisponiveis.filter(a => a.perfilId === null);
+
+            // Atualiza perfis diretamente — sem substituir/mesclar, sem reload de página
+            let perfisAtualizados = 0, perfisErros = 0;
+            for (const update of perfilUpdates) {
+                const ok = await atualizarPerfilComConjunto(update.perfilId, update.arquivo, update.dataAtualizacaoNova);
+                if (ok) perfisAtualizados++; else perfisErros++;
+            }
+            if (perfisAtualizados > 0) {
+                mostrarNotificacao(
+                    perfisAtualizados === 1 ? '1 perfil atualizado com sucesso!' : `${perfisAtualizados} perfis atualizados com sucesso!`,
+                    'sucesso'
+                );
+            }
+            if (perfisErros > 0) {
+                mostrarNotificacao(`${perfisErros} perfil(s) não puderam ser atualizados. Verifique sua conexão.`, 'erro');
+            }
+
+            // Para importações globais mantém o fluxo original (substituir/mesclar)
+            if (globalUpdates.length === 1) {
+                const c = globalUpdates[0];
+                importarFeriadoPredefinido(c.url, c.nome, c.arquivo, c.dataAtualizacaoNova);
+            } else if (globalUpdates.length > 1) {
+                atualizacoesDisponiveis = globalUpdates;
                 abrirModalPredefinidosComAtualizacoes();
+            }
+        }
+
+        // Atualiza o perfil buscando o JSON online e substituindo os feriados diretamente
+        async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova) {
+            try {
+                const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${arquivo}`);
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const json = await resp.json();
+                if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) throw new Error('Formato inválido');
+
+                // Converte datas DD-MM-YYYY → YYYY-MM-DD
+                const feriados = [];
+                json.feriadosPersonalizados.forEach(item => {
+                    if (typeof item === 'string') {
+                        const mNome = item.match(/^(\d{2})-(\d{2})-(\d{4})\s+(.+)$/);
+                        const mSemNome = item.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+                        if (mNome) {
+                            const [, dia, mes, ano, nome] = mNome;
+                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: nome.trim() });
+                        } else if (mSemNome) {
+                            const [, dia, mes, ano] = mSemNome;
+                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: '' });
+                        }
+                    } else if (item && item.data) {
+                        feriados.push({ data: item.data, nome: item.nome || '' });
+                    }
+                });
+
+                const perfil = perfisData.find(p => p.id === perfilId);
+                if (!perfil) throw new Error('Perfil não encontrado');
+
+                perfil.feriados = feriados;
+                // Atualiza dataAtualizacao e dataImportacao no conjuntosImportados
+                if (perfil.conjuntosImportados) {
+                    const ci = perfil.conjuntosImportados.find(c => c.arquivo === arquivo);
+                    if (ci) {
+                        ci.dataAtualizacao = dataAtualizacaoNova;
+                        ci.dataImportacao = new Date().toISOString();
+                    }
+                }
+
+                salvarPerfisNoLocalStorage();
+
+                // Se é o perfil ativo, recarrega o calendário sem reload de página
+                if (perfilAtivoId === perfilId) {
+                    carregarFeriadosDoPerfil(perfil);
+                    renderizarCalendario();
+                    mostrarAvisoRecalculo();
+                }
+
+                return true;
+            } catch (e) {
+                console.error('Erro ao atualizar perfil', perfilId, arquivo, e);
+                return false;
             }
         }
 
@@ -8370,6 +8795,9 @@
         function trocarPagina(pagina) {
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
+
+            // Scroll ao topo ao trocar de página
+            window.scrollTo({ top: 0, behavior: 'instant' });
 
             // Esconder todas as páginas
             cacheDom.paginas.calculo.classList.remove('active');
@@ -10624,6 +11052,7 @@
         inicializarPerfis();
         atualizarChipTiposFeriado();
         renderizarCalendario();
+        verificarMostrarBoasVindas();
         atualizarTextoBotaoVisualizacao();
         posicionarGlider();
         posicionarGliderVisualizacao();
