@@ -5410,12 +5410,12 @@
                     <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
                 </div>
             </div>
-            <div class="modal-buttons" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
-                    <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('snooze')">Adiar</button>
+            <div class="modal-buttons">
+                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 8px; flex-wrap: wrap; margin-right: auto;">
+                    <button class="btn btn-secondary" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
+                    <button class="btn btn-secondary" onclick="dispensarBoasVindas('snooze')">Adiar</button>
                 </div>
-                <div id="boasVindasBotaoFechar" style="display: none;">
+                <div id="boasVindasBotaoFechar" style="display: none; margin-right: auto;">
                     <button class="btn btn-secondary" onclick="dispensarBoasVindas('fechar')">Fechar</button>
                 </div>
                 <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
@@ -5530,12 +5530,10 @@
                     Existem alterações não salvas no perfil atual. Deseja salvar antes de trocar?
                 </p>
             </div>
-            <div class="modal-buttons" style="justify-content: space-between;">
-                <button class="btn btn-secondary" onclick="descartarETrocarPerfil()">Descartar</button>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
-                    <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
-                </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="margin-right: auto;" onclick="descartarETrocarPerfil()">Descartar</button>
+                <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
             </div>
         </div>
     </div>
@@ -7376,14 +7374,8 @@
                     return;
                 }
 
-                // Renderiza os itens usando map().join() (mais eficiente que +=)
-                // Ordenação alfabética por nome (normaliza acentos e caixa para comparação segura)
-                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) => {
-                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    return nA < nB ? -1 : nA > nB ? 1 : 0;
-                });
-                const html = conjuntosOrdenados.map(conjunto => {
+                // Renderiza os itens na ordem do manifest
+                const html = manifest.conjuntos.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
                         <div class="item-predefinido"
@@ -7503,18 +7495,13 @@
                     return;
                 }
 
-                // 2. Ordena alfabeticamente (robusto: normaliza acentos)
-                const ordenados = [...manifest.conjuntos].sort((a, b) => {
-                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    return nA < nB ? -1 : nA > nB ? 1 : 0;
-                });
+                // 2. Usa ordem do manifest (sem reordenar)
+                const conjuntos = manifest.conjuntos;
 
                 // 3. Baixa todos os arquivos de feriados em paralelo e armazena em cache
-                container.innerHTML = `<div style="text-align:center;padding:20px;color:#6b7280;">Baixando conjuntos… <span id="_wProgressoBaixar">0</span>/${ordenados.length}</div>`;
-                let progresso = 0;
+                container.innerHTML = `<div style="text-align:center;padding:20px;color:#6b7280;">Carregando conjuntos...</div>`;
 
-                await Promise.allSettled(ordenados.map(async c => {
+                await Promise.allSettled(conjuntos.map(async c => {
                     try {
                         const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${c.arquivo}`);
                         const resp = await fetch(url);
@@ -7522,11 +7509,19 @@
                         const json = await resp.json();
                         if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) return;
 
+                        // Converte datas do formato DD-MM-YYYY para YYYY-MM-DD (mesmo que finalizarImportacao)
                         const feriados = [];
                         json.feriadosPersonalizados.forEach(item => {
                             if (typeof item === 'string') {
-                                const idx = item.indexOf(' ');
-                                if (idx > 0) feriados.push({ data: item.substring(0, idx), nome: item.substring(idx + 1) });
+                                const mNome = item.match(/^(\d{2})-(\d{2})-(\d{4})\s+(.+)$/);
+                                const mSemNome = item.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+                                if (mNome) {
+                                    const [, dia, mes, ano, nome] = mNome;
+                                    feriados.push({ data: `${ano}-${mes}-${dia}`, nome: nome.trim() });
+                                } else if (mSemNome) {
+                                    const [, dia, mes, ano] = mSemNome;
+                                    feriados.push({ data: `${ano}-${mes}-${dia}`, nome: '' });
+                                }
                             } else if (item && item.data) {
                                 feriados.push({ data: item.data, nome: item.nome || '' });
                             }
@@ -7536,18 +7531,11 @@
                     } catch (e) {
                         console.error('Falha ao baixar', c.arquivo, e);
                     }
-                    progresso++;
-                    const el = document.getElementById('_wProgressoBaixar');
-                    if (el) el.textContent = progresso;
                 }));
 
-                // 4. Renderiza a lista com estado de disponibilidade
-                container.innerHTML = ordenados.map(c => {
-                    const dados = _feriadosCarregados[c.arquivo];
-                    const ok = !!dados;
-                    const qtdInfo = ok
-                        ? `<span style="color:#059669;font-weight:500;">· ${dados.feriados.length} datas carregadas</span>`
-                        : `<span style="color:#dc2626;">· indisponível (falha ao baixar)</span>`;
+                // 4. Renderiza a lista
+                container.innerHTML = conjuntos.map(c => {
+                    const ok = !!_feriadosCarregados[c.arquivo];
                     return `
                         <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
                             ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
@@ -7561,7 +7549,7 @@
                                 ${ok ? '' : 'disabled'}>
                             <div>
                                 <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
-                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')} ${qtdInfo}</div>
+                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
                             </div>
                         </label>
                     `;
