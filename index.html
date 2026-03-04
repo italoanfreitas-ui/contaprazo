@@ -1775,8 +1775,11 @@
         .modal-buttons {
             display: flex;
             gap: 10px;
-            justify-content: flex-end;
-            align-items: center;
+            flex-wrap: wrap;
+        }
+        .modal-buttons > .btn {
+            flex: 1 1 0;
+            min-width: fit-content;
         }
 
         /* Sistema de Perfis de Feriados Personalizados */
@@ -5410,15 +5413,11 @@
                     <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
                 </div>
             </div>
-            <div class="modal-buttons" style="flex-wrap: nowrap;">
-                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 6px; margin-right: auto; flex-shrink: 0;">
-                    <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.875rem;" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
-                    <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.875rem;" onclick="dispensarBoasVindas('snooze')">Adiar</button>
-                </div>
-                <div id="boasVindasBotaoFechar" style="display: none; margin-right: auto; flex-shrink: 0;">
-                    <button class="btn btn-secondary" onclick="dispensarBoasVindas('fechar')">Fechar</button>
-                </div>
-                <button class="btn btn-primary" style="flex: 0 0 auto;" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="btnNaoMostrarNovamente" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
+                <button class="btn btn-secondary" id="btnAdiarBoasVindas" onclick="dispensarBoasVindas('snooze')">Adiar</button>
+                <button class="btn btn-secondary" id="btnFecharBoasVindas" style="display: none;" onclick="dispensarBoasVindas('fechar')">Fechar</button>
+                <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
             </div>
         </div>
     </div>
@@ -5531,9 +5530,9 @@
                 </p>
             </div>
             <div class="modal-buttons">
-                <button class="btn btn-secondary" style="flex: 0 0 auto; margin-right: auto;" onclick="descartarETrocarPerfil()">Descartar</button>
-                <button class="btn btn-secondary" style="flex: 0 0 auto;" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
-                <button class="btn btn-primary" style="flex: 0 0 auto;" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
+                <button class="btn btn-secondary" onclick="descartarETrocarPerfil()">Descartar</button>
+                <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
             </div>
         </div>
     </div>
@@ -6299,6 +6298,7 @@
             localStorage.removeItem('contaprazo_welcome_dispensado');
             localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
             localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
+            localStorage.removeItem('conjuntosPredefinidosImportados');
 
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
@@ -7440,18 +7440,21 @@
         function abrirModalBoasVindas(comBoasVindas) {
             const textoEl = document.getElementById('boasVindasTexto');
             const headerEl = document.getElementById('boasVindasHeader');
-            const botoesContextuais = document.getElementById('boasVindasBotoesContextuais');
-            const botaoFechar = document.getElementById('boasVindasBotaoFechar');
+            const btnNaoMostrar = document.getElementById('btnNaoMostrarNovamente');
+            const btnAdiar = document.getElementById('btnAdiarBoasVindas');
+            const btnFechar = document.getElementById('btnFecharBoasVindas');
             if (comBoasVindas) {
                 textoEl.style.display = '';
                 headerEl.textContent = 'Bem-vindo ao ContaPrazo!';
-                botoesContextuais.style.display = 'flex';
-                botaoFechar.style.display = 'none';
+                btnNaoMostrar.style.display = '';
+                btnAdiar.style.display = '';
+                btnFechar.style.display = 'none';
             } else {
                 textoEl.style.display = 'none';
                 headerEl.textContent = 'Importar Perfis Online';
-                botoesContextuais.style.display = 'none';
-                botaoFechar.style.display = '';
+                btnNaoMostrar.style.display = 'none';
+                btnAdiar.style.display = 'none';
+                btnFechar.style.display = '';
             }
             document.getElementById('btnCriarPerfisSelecionados').disabled = true;
             document.getElementById('modalBoasVindas').classList.add('active');
