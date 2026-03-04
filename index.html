@@ -5398,15 +5398,24 @@
                     <p style="margin: 0 0 10px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
                     <p style="margin: 0;">Identificamos conjuntos de feriados e suspensões disponíveis online. Você pode criar <strong>perfis automaticamente</strong> a partir deles — cada perfil ficará disponível para uso direto na calculadora.</p>
                 </div>
-                <p style="margin: 0 0 10px; font-weight: 600; color: #111827;">Selecione os conjuntos de interesse:</p>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <p style="margin: 0; font-weight: 600; color: #111827;">Selecione os conjuntos de interesse:</p>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(true)">Todos</button>
+                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(false)">Nenhum</button>
+                    </div>
+                </div>
                 <div id="listaConjuntosWelcome" style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
                     <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
                 </div>
             </div>
             <div class="modal-buttons" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
                     <button class="btn btn-secondary" style="font-size: 13px; padding: 7px 12px;" onclick="dispensarBoasVindas('snooze')">Adiar</button>
+                </div>
+                <div id="boasVindasBotaoFechar" style="display: none;">
+                    <button class="btn btn-secondary" onclick="dispensarBoasVindas('fechar')">Fechar</button>
                 </div>
                 <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
             </div>
@@ -6292,6 +6301,10 @@
             // Remove preferência de tipos de feriado (volta a todos ativos)
             localStorage.removeItem('tiposFeriadoAtivos');
 
+            // Remove preferências das novas funcionalidades
+            localStorage.removeItem('contaprazo_welcome_dispensado');
+            localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
+
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
             localStorage.removeItem(PERFIL_ATIVO_KEY);
@@ -6303,6 +6316,7 @@
 
             // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
+            sessionStorage.removeItem('contaprazo_welcome_snooze');
             sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações restauradas com sucesso!', tipo: 'sucesso' }));
 
             // Recarrega a página para aplicar as configurações padrão
@@ -6755,10 +6769,19 @@
         // Aplica auto-desmarque de fixos/móveis ao ativar perfil (se não houver preferência salva)
         function aplicarAutoDesmarcarFixosMoveis() {
             if (localStorage.getItem('contaprazo_fixos_moveis_com_perfil') === 'true') return;
+            const houveMudanca = feriadosFixosAtivos || feriadosMoveisAtivos;
             feriadosFixosAtivos = false;
             feriadosMoveisAtivos = false;
             salvarTiposFeriadoAtivos();
             atualizarPillsTiposFeriado();
+            if (houveMudanca) {
+                criarToast({
+                    tipo: 'info',
+                    titulo: 'Feriados fixos e móveis desativados',
+                    mensagem: 'Ao usar feriados personalizados ou um perfil, os feriados fixos e móveis são desativados automaticamente para evitar que um mesmo feriado seja contado duas vezes. Você pode reativá-los pelos filtros acima, se necessário — e o app lembrará da sua escolha.',
+                    autoFechar: false
+                });
+            }
         }
 
         // Verifica se há datas coincidentes entre feriados personalizados e fixos/móveis
@@ -6778,7 +6801,7 @@
                         tipo: 'aviso',
                         titulo: 'Atenção: feriados duplicados',
                         mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
-                        autoFechar: 9000
+                        autoFechar: false
                     });
                     return;
                 }
@@ -6787,7 +6810,7 @@
                         tipo: 'aviso',
                         titulo: 'Atenção: feriados duplicados',
                         mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
-                        autoFechar: 9000
+                        autoFechar: false
                     });
                     return;
                 }
@@ -7445,12 +7468,18 @@
         function abrirModalBoasVindas(comBoasVindas) {
             const textoEl = document.getElementById('boasVindasTexto');
             const headerEl = document.getElementById('boasVindasHeader');
+            const botoesContextuais = document.getElementById('boasVindasBotoesContextuais');
+            const botaoFechar = document.getElementById('boasVindasBotaoFechar');
             if (comBoasVindas) {
                 textoEl.style.display = '';
                 headerEl.textContent = 'Bem-vindo ao ContaPrazo!';
+                botoesContextuais.style.display = 'flex';
+                botaoFechar.style.display = 'none';
             } else {
                 textoEl.style.display = 'none';
                 headerEl.textContent = 'Importar Perfis Online';
+                botoesContextuais.style.display = 'none';
+                botaoFechar.style.display = '';
             }
             document.getElementById('btnCriarPerfisSelecionados').disabled = true;
             document.getElementById('modalBoasVindas').classList.add('active');
@@ -7468,6 +7497,14 @@
             } else if (tipo === 'snooze') {
                 sessionStorage.setItem('contaprazo_welcome_snooze', 'true');
             }
+            // tipo === 'fechar' apenas fecha o modal (usado na versão do botão de nuvem)
+        }
+
+        function selecionarTodosConjuntos(selecionar) {
+            const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb');
+            checkboxes.forEach(cb => { cb.checked = selecionar; });
+            document.getElementById('btnCriarPerfisSelecionados').disabled =
+                selecionar ? checkboxes.length === 0 : true;
         }
 
         async function carregarConjuntosBoasVindas() {
@@ -7557,6 +7594,8 @@
                             feriadosDoConjunto.push({ data: item.data, nome: item.nome || '' });
                         }
                     });
+
+                    if (feriadosDoConjunto.length === 0) throw new Error('Nenhum feriado encontrado no arquivo');
 
                     const novoPerfil = {
                         id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -8636,6 +8675,9 @@
         function trocarPagina(pagina) {
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
+
+            // Scroll ao topo ao trocar de página
+            window.scrollTo({ top: 0, behavior: 'instant' });
 
             // Esconder todas as páginas
             cacheDom.paginas.calculo.classList.remove('active');
