@@ -3,6 +3,7 @@
   "conjuntos": [
     {
       "id": "pmvc-2026",
+      "id2": "PMVC 2026",
       "arquivo": "PMVC-2026.json",
       "nome": "Prefeitura Municipal de Vitória da Conquista (2026)",
       "descricao": "Suspensões conforme Decreto Municipal nº 24.007, de 26 de novembro de 2025 - Calendário oficial de feriados",
@@ -12,6 +13,7 @@
     },
     {
       "id": "tjba-2025-2026",
+      "id2": "TJBA 2025-2026",
       "arquivo": "TJBA-2025-2026.json",
       "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
       "descricao": "Suspensões de acordo com os Decretos Judiciários nº 949, 950 e 951, de 12 de dezembro de 2024, e Decreto Judiciário nº 1050, de 04 de dezembro de 2025",
@@ -21,6 +23,7 @@
     },
     {
       "id": "trt5-2025-2026",
+      "id2": "TRT5 2025-2026",
       "arquivo": "TRT5-2025-2026.json",
       "nome": "TRT5 - Tribunal Regional do Trabalho da 5ª Região (2025-2026)",
       "descricao": "Suspensões de acordo com a Resolução administrativa TRT5 nº 037, de 10 de junho 2025",
@@ -30,6 +33,7 @@
     },
     {
       "id": "trf1-2025-2026",
+      "id2": "TRF1 2025-2026",
       "arquivo": "TRF1-2025-2026.json",
       "nome": "TRF1 - Tribunal Regional Federal da 1ª Região (2025-2026)",
       "descricao": "Suspensões de acordo com a Portaria PRESI nº 5, de 12 de janeiro 2026, do TRF1",
