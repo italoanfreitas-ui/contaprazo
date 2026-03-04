@@ -1777,6 +1777,11 @@
             gap: 10px;
             justify-content: flex-end;
             flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .modal-buttons > .btn {
+            flex: 0 0 auto;
         }
 
         /* Sistema de Perfis de Feriados Personalizados */
@@ -5392,26 +5397,25 @@
 
     <!-- Modal de Boas-vindas / Importar Perfis Online -->
     <div class="modal" id="modalBoasVindas">
-        <div class="modal-content" style="max-width: 580px;">
+        <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
             <div class="modal-header" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</div>
-            <div class="modal-body">
-                <div id="boasVindasTexto" style="margin-bottom: 16px; color: #374151; line-height: 1.6;">
-                    <p style="margin: 0 0 10px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
-                    <p style="margin: 0;">Identificamos conjuntos de feriados e suspensões disponíveis online. Você pode criar <strong>perfis automaticamente</strong> a partir deles — cada perfil ficará disponível para uso direto na calculadora.</p>
+            <div class="modal-body" style="overflow-y: auto; flex: 1;">
+                <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.9rem; line-height: 1.5;">
+                    <p style="margin: 0;">Identificamos conjuntos de feriados e suspensões disponíveis online. Selecione os de interesse e crie <strong>perfis automaticamente</strong> para uso na calculadora.</p>
                 </div>
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <p style="margin: 0; font-weight: 600; color: #111827;">Selecione os conjuntos de interesse:</p>
-                    <div style="display: flex; gap: 8px;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #111827;">Conjuntos disponíveis:</span>
+                    <div style="display: flex; gap: 6px;">
                         <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(true)">Todos</button>
                         <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(false)">Nenhum</button>
                     </div>
                 </div>
-                <div id="listaConjuntosWelcome" style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
+                <div id="listaConjuntosWelcome" style="max-height: 260px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
                     <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
                 </div>
             </div>
             <div class="modal-buttons">
-                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 8px; flex-wrap: wrap; margin-right: auto;">
+                <div id="boasVindasBotoesContextuais" style="display: flex; gap: 8px; margin-right: auto;">
                     <button class="btn btn-secondary" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
                     <button class="btn btn-secondary" onclick="dispensarBoasVindas('snooze')">Adiar</button>
                 </div>
@@ -6303,6 +6307,7 @@
             // Remove preferências das novas funcionalidades
             localStorage.removeItem('contaprazo_welcome_dispensado');
             localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
+            localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
 
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
@@ -6793,16 +6798,20 @@
             }
 
             // Se o usuário ativou fixos ou móveis com perfil/personalizados ativos, salva preferência
-            // e exibe aviso informativo sobre possível duplicidade
+            // e exibe aviso informativo sobre possível duplicidade (se não tiver dispensado)
             if ((tipo === 'fixos' && feriadosFixosAtivos) || (tipo === 'moveis' && feriadosMoveisAtivos)) {
                 if (perfilAtivoId || feriadosPersonalizados.size > 0) {
                     localStorage.setItem('contaprazo_fixos_moveis_com_perfil', 'true');
-                    criarToast({
-                        tipo: 'aviso',
-                        titulo: 'Atenção: possível duplicidade de feriados',
-                        mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
-                        autoFechar: false
-                    });
+                    if (localStorage.getItem('contaprazo_aviso_duplicidade_dispensado') !== 'true') {
+                        criarToast({
+                            tipo: 'aviso',
+                            titulo: 'Atenção: possível duplicidade de feriados',
+                            mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
+                            autoFechar: false,
+                            botaoTexto: 'Não mostrar novamente',
+                            botaoCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
+                        });
+                    }
                 }
             }
 
@@ -7374,8 +7383,13 @@
                     return;
                 }
 
-                // Renderiza os itens na ordem do manifest
-                const html = manifest.conjuntos.map(conjunto => {
+                // Ordena alfabeticamente por nome (normaliza acentos)
+                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
+                const html = conjuntosOrdenados.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
                         <div class="item-predefinido"
@@ -7495,8 +7509,12 @@
                     return;
                 }
 
-                // 2. Usa ordem do manifest (sem reordenar)
-                const conjuntos = manifest.conjuntos;
+                // 2. Ordena alfabeticamente por nome (normaliza acentos)
+                const conjuntos = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
 
                 // 3. Baixa todos os arquivos de feriados em paralelo e armazena em cache
                 container.innerHTML = `<div style="text-align:center;padding:20px;color:#6b7280;">Carregando conjuntos...</div>`;
@@ -7545,6 +7563,7 @@
                                 data-nome="${escapeHtml(c.nome)}"
                                 data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
                                 data-descricao="${escapeHtml(c.descricao || '')}"
+                                data-link="${escapeHtml(c.link || '')}"
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
@@ -7603,7 +7622,9 @@
                         nome: cb.dataset.nome,
                         arquivo: cb.dataset.arquivo,
                         descricao: cb.dataset.descricao || '',
-                        dataAtualizacao: cb.dataset.dataAtualizacao
+                        link: cb.dataset.link || '',
+                        dataAtualizacao: cb.dataset.dataAtualizacao,
+                        dataImportacao: new Date().toISOString()
                     }],
                     criadoEm: new Date().toISOString()
                 };
