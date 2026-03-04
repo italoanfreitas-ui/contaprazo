@@ -1776,6 +1776,7 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         /* Sistema de Perfis de Feriados Personalizados */
@@ -6778,42 +6779,9 @@
                 criarToast({
                     tipo: 'info',
                     titulo: 'Feriados fixos e móveis desativados',
-                    mensagem: 'Ao usar feriados personalizados ou um perfil, os feriados fixos e móveis são desativados automaticamente para evitar que um mesmo feriado seja contado duas vezes. Você pode reativá-los pelos filtros acima, se necessário — e o app lembrará da sua escolha.',
+                    mensagem: 'Ao usar feriados personalizados ou um perfil, os feriados fixos e móveis são desativados automaticamente para evitar duplicações. Você pode reativá-los pelos controles de tipos de feriado (Fixos / Móveis / Personalizados), se necessário — e o app lembrará da sua escolha.',
                     autoFechar: false
                 });
-            }
-        }
-
-        // Verifica se há datas coincidentes entre feriados personalizados e fixos/móveis
-        function verificarConflitosFixosMoveis() {
-            if (!feriadosPersonalizadosAtivos || feriadosPersonalizados.size === 0) return;
-            if (!feriadosFixosAtivos && !feriadosMoveisAtivos) return;
-
-            for (const [dataCompleta] of feriadosPersonalizados) {
-                // Formato: "DD-MM-YYYY"
-                const partes = dataCompleta.split('-');
-                if (partes.length !== 3) continue;
-                const mmdd = `${partes[1]}-${partes[0]}`;
-                const ano = parseInt(partes[2], 10);
-
-                if (feriadosFixosAtivos && feriadosFixos[mmdd]) {
-                    criarToast({
-                        tipo: 'aviso',
-                        titulo: 'Atenção: feriados duplicados',
-                        mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
-                        autoFechar: false
-                    });
-                    return;
-                }
-                if (feriadosMoveisAtivos && feriadosMoveis[ano] && feriadosMoveis[ano][mmdd]) {
-                    criarToast({
-                        tipo: 'aviso',
-                        titulo: 'Atenção: feriados duplicados',
-                        mensagem: 'Alguns feriados do perfil coincidem com feriados fixos ou móveis e podem estar sendo contados duas vezes.',
-                        autoFechar: false
-                    });
-                    return;
-                }
             }
         }
 
@@ -6827,18 +6795,22 @@
             }
 
             // Se o usuário ativou fixos ou móveis com perfil/personalizados ativos, salva preferência
-            if (feriadosPersonalizados.size > 0 || perfilAtivoId) {
-                if ((tipo === 'fixos' && feriadosFixosAtivos) || (tipo === 'moveis' && feriadosMoveisAtivos)) {
+            // e exibe aviso informativo sobre possível duplicidade
+            if ((tipo === 'fixos' && feriadosFixosAtivos) || (tipo === 'moveis' && feriadosMoveisAtivos)) {
+                if (perfilAtivoId || feriadosPersonalizados.size > 0) {
                     localStorage.setItem('contaprazo_fixos_moveis_com_perfil', 'true');
+                    criarToast({
+                        tipo: 'aviso',
+                        titulo: 'Atenção: possível duplicidade de feriados',
+                        mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
+                        autoFechar: false
+                    });
                 }
             }
 
             salvarTiposFeriadoAtivos();
             atualizarPillsTiposFeriado();
             renderizarCalendario();
-
-            // Verifica conflitos após ativar fixos/móveis
-            verificarConflitosFixosMoveis();
 
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
@@ -7405,9 +7377,12 @@
                 }
 
                 // Renderiza os itens usando map().join() (mais eficiente que +=)
-                // Ordenação alfabética por nome
-                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) =>
-                    a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+                // Ordenação alfabética por nome (normaliza acentos e caixa para comparação segura)
+                const conjuntosOrdenados = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
                 const html = conjuntosOrdenados.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     return `
@@ -7501,61 +7476,110 @@
         }
 
         function selecionarTodosConjuntos(selecionar) {
-            const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb');
+            const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb:not([disabled])');
             checkboxes.forEach(cb => { cb.checked = selecionar; });
-            document.getElementById('btnCriarPerfisSelecionados').disabled =
-                selecionar ? checkboxes.length === 0 : true;
+            const anyChecked = selecionar && checkboxes.length > 0;
+            document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
         }
 
+        // Cache de feriados pré-carregados: arquivo -> { feriados: [], conjunto: {} }
+        let _feriadosCarregados = {};
+
         async function carregarConjuntosBoasVindas() {
+            _feriadosCarregados = {};
             const container = document.getElementById('listaConjuntosWelcome');
-            container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Carregando conjuntos disponíveis...</div>';
+            document.getElementById('btnCriarPerfisSelecionados').disabled = true;
+
             try {
+                // 1. Carrega o manifest
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Carregando lista de conjuntos...</div>';
                 const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
-                const response = await fetch(manifestUrl);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const manifest = await response.json();
+                const manifestResp = await fetch(manifestUrl);
+                if (!manifestResp.ok) throw new Error(`HTTP ${manifestResp.status}`);
+                const manifest = await manifestResp.json();
 
                 if (!manifest.conjuntos || manifest.conjuntos.length === 0) {
                     container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Nenhum conjunto disponível no momento.</div>';
                     return;
                 }
 
-                const ordenados = [...manifest.conjuntos].sort((a, b) =>
-                    a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+                // 2. Ordena alfabeticamente (robusto: normaliza acentos)
+                const ordenados = [...manifest.conjuntos].sort((a, b) => {
+                    const nA = a.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const nB = b.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return nA < nB ? -1 : nA > nB ? 1 : 0;
+                });
 
+                // 3. Baixa todos os arquivos de feriados em paralelo e armazena em cache
+                container.innerHTML = `<div style="text-align:center;padding:20px;color:#6b7280;">Baixando conjuntos… <span id="_wProgressoBaixar">0</span>/${ordenados.length}</div>`;
+                let progresso = 0;
+
+                await Promise.allSettled(ordenados.map(async c => {
+                    try {
+                        const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${c.arquivo}`);
+                        const resp = await fetch(url);
+                        if (!resp.ok) return;
+                        const json = await resp.json();
+                        if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) return;
+
+                        const feriados = [];
+                        json.feriadosPersonalizados.forEach(item => {
+                            if (typeof item === 'string') {
+                                const idx = item.indexOf(' ');
+                                if (idx > 0) feriados.push({ data: item.substring(0, idx), nome: item.substring(idx + 1) });
+                            } else if (item && item.data) {
+                                feriados.push({ data: item.data, nome: item.nome || '' });
+                            }
+                        });
+
+                        if (feriados.length > 0) _feriadosCarregados[c.arquivo] = { feriados, conjunto: c };
+                    } catch (e) {
+                        console.error('Falha ao baixar', c.arquivo, e);
+                    }
+                    progresso++;
+                    const el = document.getElementById('_wProgressoBaixar');
+                    if (el) el.textContent = progresso;
+                }));
+
+                // 4. Renderiza a lista com estado de disponibilidade
                 container.innerHTML = ordenados.map(c => {
-                    const urlArquivo = `${GITHUB_RAW_BASE_URL}/${c.arquivo}`;
+                    const dados = _feriadosCarregados[c.arquivo];
+                    const ok = !!dados;
+                    const qtdInfo = ok
+                        ? `<span style="color:#059669;font-weight:500;">· ${dados.feriados.length} datas carregadas</span>`
+                        : `<span style="color:#dc2626;">· indisponível (falha ao baixar)</span>`;
                     return `
-                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''">
+                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
+                            ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
                             <input type="checkbox" class="welcome-conjunto-cb"
                                 data-id2="${escapeHtml(c.id2)}"
-                                data-url="${escapeHtml(urlArquivo)}"
-                                data-nome="${escapeHtml(c.nome)}"
                                 data-arquivo="${escapeHtml(c.arquivo)}"
+                                data-nome="${escapeHtml(c.nome)}"
                                 data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
                                 data-descricao="${escapeHtml(c.descricao || '')}"
-                                style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:#3b82f6;">
+                                style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
+                                ${ok ? '' : 'disabled'}>
                             <div>
                                 <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
-                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}</div>
+                                <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')} ${qtdInfo}</div>
                             </div>
                         </label>
                     `;
                 }).join('');
 
-                container.querySelectorAll('.welcome-conjunto-cb').forEach(cb => {
+                container.querySelectorAll('.welcome-conjunto-cb:not([disabled])').forEach(cb => {
                     cb.addEventListener('change', () => {
                         const anyChecked = container.querySelectorAll('.welcome-conjunto-cb:checked').length > 0;
                         document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
                     });
                 });
+
             } catch (e) {
                 container.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;">Erro ao carregar conjuntos. Verifique sua conexão com a internet.</div>';
             }
         }
 
-        async function criarPerfisDosConjuntos() {
+        function criarPerfisDosConjuntos() {
             const checkboxes = document.querySelectorAll('#listaConjuntosWelcome .welcome-conjunto-cb:checked');
             if (checkboxes.length === 0) return;
 
@@ -7566,7 +7590,7 @@
 
             let criados = 0;
             let ignorados = 0;
-            let erros = 0;
+            let semDados = 0;
 
             for (const cb of checkboxes) {
                 if (perfisData.length >= MAX_PERFIS) {
@@ -7578,43 +7602,25 @@
                     ignorados++;
                     continue;
                 }
-                try {
-                    const urlComCache = adicionarCacheBusting(cb.dataset.url);
-                    const response = await fetch(urlComCache);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const config = await response.json();
-                    if (!config.feriadosPersonalizados || !Array.isArray(config.feriadosPersonalizados)) throw new Error('Formato inválido');
-
-                    const feriadosDoConjunto = [];
-                    config.feriadosPersonalizados.forEach(item => {
-                        if (typeof item === 'string') {
-                            const idx = item.indexOf(' ');
-                            if (idx > 0) feriadosDoConjunto.push({ data: item.substring(0, idx), nome: item.substring(idx + 1) });
-                        } else if (item && item.data) {
-                            feriadosDoConjunto.push({ data: item.data, nome: item.nome || '' });
-                        }
-                    });
-
-                    if (feriadosDoConjunto.length === 0) throw new Error('Nenhum feriado encontrado no arquivo');
-
-                    const novoPerfil = {
-                        id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                        nome: nomePerfil,
-                        feriados: feriadosDoConjunto,
-                        conjuntosImportados: [{
-                            nome: cb.dataset.nome,
-                            arquivo: cb.dataset.arquivo,
-                            descricao: cb.dataset.descricao || '',
-                            dataAtualizacao: cb.dataset.dataAtualizacao
-                        }],
-                        criadoEm: new Date().toISOString()
-                    };
-                    perfisData.push(novoPerfil);
-                    criados++;
-                } catch (e) {
-                    console.error('Erro ao criar perfil:', e);
-                    erros++;
+                const dados = _feriadosCarregados[cb.dataset.arquivo];
+                if (!dados || dados.feriados.length === 0) {
+                    semDados++;
+                    continue;
                 }
+                const novoPerfil = {
+                    id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                    nome: nomePerfil,
+                    feriados: dados.feriados,
+                    conjuntosImportados: [{
+                        nome: cb.dataset.nome,
+                        arquivo: cb.dataset.arquivo,
+                        descricao: cb.dataset.descricao || '',
+                        dataAtualizacao: cb.dataset.dataAtualizacao
+                    }],
+                    criadoEm: new Date().toISOString()
+                };
+                perfisData.push(novoPerfil);
+                criados++;
             }
 
             salvarPerfisNoLocalStorage();
@@ -7628,11 +7634,11 @@
                     'sucesso'
                 );
             }
-            if (ignorados > 0 && criados === 0 && erros === 0) {
+            if (ignorados > 0 && criados === 0 && semDados === 0) {
                 mostrarNotificacao('Os perfis selecionados já existem.', 'info');
             }
-            if (erros > 0) {
-                mostrarNotificacao(`${erros} conjunto(s) não puderam ser baixados. Verifique sua conexão.`, 'erro');
+            if (semDados > 0) {
+                mostrarNotificacao(`${semDados} conjunto(s) não puderam ser carregados. Feche e reabra o modal para tentar novamente.`, 'erro');
             }
 
             btn.disabled = false;
