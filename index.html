@@ -152,6 +152,13 @@
             align-items: start;
         }
 
+        /* min-width:0 nos itens do grid impede que colunas 1fr expandam para
+           acomodar o min-content dos filhos (ex: texto longo sem quebra de linha).
+           Sem isso, o flex-shrink interno nunca é acionado. */
+        .main-layout > div {
+            min-width: 0;
+        }
+
         @media (max-width: 1024px) {
             .main-layout {
                 grid-template-columns: 1fr;
