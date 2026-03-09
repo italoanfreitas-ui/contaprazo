@@ -63,8 +63,8 @@
             background: var(--gradient-header);
             border-bottom: 3px solid;
             border-image: var(--gradient-border) 1;
-            padding: 16px 30px;
-            margin-bottom: 16px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
             box-shadow: var(--shadow-md);
         }
 
@@ -11156,6 +11156,13 @@
         atualizarTextoBotaoVisualizacao();
         posicionarGlider();
         posicionarGliderVisualizacao();
+
+        // Scroll inicial: posiciona logo abaixo do cabeçalho para que o
+        // conteúdo efetivo apareça direto no topo da viewport ao carregar.
+        (function() {
+            const header = document.querySelector('.page-header');
+            if (header) window.scrollTo({ top: header.offsetTop + header.offsetHeight, behavior: 'instant' });
+        })();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
