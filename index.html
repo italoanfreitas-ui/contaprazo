@@ -187,17 +187,21 @@
         }
 
         .card-cal-header .section-title {
-            margin-bottom: 0; /* margin gerenciada pelo container pai */
+            margin-bottom: 0;  /* margin gerenciada pelo container pai */
+            flex-shrink: 0;    /* título nunca cede espaço */
+            white-space: nowrap; /* texto do título nunca quebra linha */
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           display:inline-block + box-sizing:border-box garantem que max-width
-           inclui o padding — sem isso, o badge renderiza 20px mais largo. */
+           A pílula é um flex-item dentro de .perfil-badge-container.
+           flex-shrink:1 + min-width:0 permitem que encolha dinamicamente;
+           overflow+text-overflow truncam com ellipsis no tamanho exato. */
         .perfil-badge {
             display: inline-block;
             box-sizing: border-box;
-            flex-shrink: 0;
-            max-width: 150px;
+            flex-shrink: 1;
+            min-width: 0;
+            max-width: 100%; /* ocupa no máximo o espaço que o container recebeu */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -216,11 +220,14 @@
             font-weight: 600;
         }
 
-        /* Container relativo para o dropdown ancorado na badge.
+        /* Container da badge: cede espaço dinamicamente para o título.
+           flex:0 1 auto + min-width:0 → encolhe quanto for necessário para
+           que o título nunca precise quebrar linha.
            display:flex elimina o gap de baseline do inline-block interno. */
         .perfil-badge-container {
             position: relative;
-            flex-shrink: 0;
+            flex: 0 1 auto;
+            min-width: 0;
             display: flex;
             align-items: center;
         }
