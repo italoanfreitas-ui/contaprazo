@@ -185,27 +185,29 @@
         }
 
         /* Linha de cabeçalho do card do calendário: título à esquerda, badge à direita */
+        /* Grid de 2 colunas: título (max-content fixo) | pílula (1fr restante).
+           O gap aqui é verdadeiramente fixo — diferente do flex+space-between,
+           onde gap age só como mínimo e o space-between já distribui tudo. */
         .card-cal-header {
-            display: flex;
+            display: grid;
+            grid-template-columns: max-content 1fr;
             align-items: center;
-            justify-content: space-between;
             gap: 32px;
             margin-bottom: 8px; /* espaço acima do section-divider */
         }
 
         .card-cal-header .section-title {
             margin-bottom: 0;  /* margin gerenciada pelo container pai */
-            flex-shrink: 0;    /* título nunca cede espaço */
-            white-space: nowrap; /* texto do título nunca quebra linha */
+            white-space: nowrap; /* garante que o texto do título não quebra */
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           display:block faz a pílula preencher a largura do container (que é
-           determinada dinamicamente pelo flex externo). O texto transborda o
-           próprio box e é cortado com ellipsis por overflow+text-overflow. */
+           inline-block + max-width:100% funciona sem dependência circular
+           porque o container tem largura explícita (1fr do grid). */
         .perfil-badge {
-            display: block;
+            display: inline-block;
             box-sizing: border-box;
+            max-width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -224,14 +226,14 @@
             font-weight: 600;
         }
 
-        /* Container da badge: cede espaço dinamicamente para o título.
-           flex:0 1 auto + min-width:0 → encolhe quanto for necessário.
-           A pílula (display:block) preenche a largura alocada pelo flex e
-           trunca com ellipsis automaticamente. Sem display:flex aqui para
-           evitar dependência circular de tamanho com max-width:100%. */
+        /* Container da badge: coluna 1fr do grid.
+           display:flex + justify-content:flex-end alinha a pílula à direita
+           dentro da coluna. A pílula (inline-block) nunca ultrapassa max-width:100%. */
         .perfil-badge-container {
             position: relative;
-            flex: 0 1 auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
             min-width: 0;
         }
 
