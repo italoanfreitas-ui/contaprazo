@@ -4426,7 +4426,7 @@
                     </div>
                 </div>
                 <div class="form-group-with-toggle">
-                    <label for="diasUteis">Quantidade de Dias</label>
+                    <label for="diasUteis">Quantidade de dias a serem contados</label>
                     <div class="dias-input-wrapper">
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
@@ -4453,8 +4453,9 @@
 
             <div class="tipos-feriado-calc-group">
                 <div class="tipos-feriado-calc-header">
-                    <span class="tipos-feriado-calc-label">Feriados a serem considerados no cálculo</span>
-                    <span class="tipos-feriado-calc-hint">Afeta o calendário e o resultado</span>
+                    <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Feriados a serem considerados no cálculo
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Selecione quais tipos de feriado devem ser ignorados na contagem.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.<br><br>Afeta tanto o calendário quanto o resultado do cálculo.</span></span>
+                    </span>
                 </div>
                 <div class="tipos-feriado-pills">
                     <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
@@ -4882,7 +4883,7 @@
                 </h3>
                 <ul>
                     <li><strong>Data de Início:</strong> Em <em>Dias Úteis</em>, esta data não é computada — a contagem começa no próximo dia útil. Em <em>Dias Corridos</em>, é o primeiro dia contado.</li>
-                    <li><strong>Quantidade de Dias:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
+                    <li><strong>Quantidade de dias a serem contados:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
                     <li><strong>Tipo de Dias:</strong> Use o controle segmentado para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias do calendário). No modo Dias Corridos, os feriados são ocultados do calendário e ignorados no cálculo.</li>
                     <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
                     <li><strong>Calcular:</strong> Clique no botão "Calcular Prazo" para ver o resultado.</li>
@@ -6663,7 +6664,6 @@
                     <div class="resultado-info">
                         <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
                     </div>
-                    ${usarDiasUteis ? '<p style="font-size:0.78em; color:#9ca3af; margin:4px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
 
                     <div class="btn-group" style="margin-top: 20px;">
                         <button class="btn btn-red" onclick="abrirModalExportPDF()">
@@ -6727,6 +6727,8 @@
                             }
                         }).join('')}
                     </div>
+
+                    ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
 
                     ${(() => {
                         if (!usarDiasUteis) return '';
@@ -8391,7 +8393,7 @@
             });
 
             // Formatar visualização dos dias com legenda para incluir dentro do header
-            const labelInicioChip = usarDiasUteis ? 'Data do Ato' : 'Início';
+            const labelInicioChip = 'Início';
             const diasVisuaisHTMLFormatado = `
                 <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
                     <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
@@ -8623,7 +8625,7 @@
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
 
-            const labelInicioChipPNG = usarDiasUteis ? 'Data do Ato' : 'Início';
+            const labelInicioChipPNG = 'Início';
 
             // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
