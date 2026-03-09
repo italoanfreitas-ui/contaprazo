@@ -193,15 +193,12 @@
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           A pílula é um flex-item dentro de .perfil-badge-container.
-           flex-shrink:1 + min-width:0 permitem que encolha dinamicamente;
-           overflow+text-overflow truncam com ellipsis no tamanho exato. */
+           display:block faz a pílula preencher a largura do container (que é
+           determinada dinamicamente pelo flex externo). O texto transborda o
+           próprio box e é cortado com ellipsis por overflow+text-overflow. */
         .perfil-badge {
-            display: inline-block;
+            display: block;
             box-sizing: border-box;
-            flex-shrink: 1;
-            min-width: 0;
-            max-width: 100%; /* ocupa no máximo o espaço que o container recebeu */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -221,15 +218,14 @@
         }
 
         /* Container da badge: cede espaço dinamicamente para o título.
-           flex:0 1 auto + min-width:0 → encolhe quanto for necessário para
-           que o título nunca precise quebrar linha.
-           display:flex elimina o gap de baseline do inline-block interno. */
+           flex:0 1 auto + min-width:0 → encolhe quanto for necessário.
+           A pílula (display:block) preenche a largura alocada pelo flex e
+           trunca com ellipsis automaticamente. Sem display:flex aqui para
+           evitar dependência circular de tamanho com max-width:100%. */
         .perfil-badge-container {
             position: relative;
             flex: 0 1 auto;
             min-width: 0;
-            display: flex;
-            align-items: center;
         }
 
         /* Dropdown inline abaixo da badge — mesma fonte visual do dropdown do rodapé */
