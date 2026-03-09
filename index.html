@@ -6420,7 +6420,7 @@
             const activeBtn = document.getElementById(
                 visualizacaoCalendario === 'mensal' ? 'btnMensal' : 'btnAnual'
             );
-            if (glider && activeBtn) {
+            if (glider && activeBtn && activeBtn.offsetWidth > 0) {
                 glider.style.left = activeBtn.offsetLeft + 'px';
                 glider.style.width = activeBtn.offsetWidth + 'px';
             }
@@ -6942,12 +6942,13 @@
 
             document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
             document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
-            posicionarGliderVisualizacao();
 
-            // Atualizar texto do botão se for mensal
+            // Atualizar texto primeiro — o botão muda de largura ao trocar de modo,
+            // então o glider só pode ser posicionado corretamente depois do texto final.
             if (tipo === 'mensal') {
                 atualizarTextoBotaoVisualizacao();
             }
+            posicionarGliderVisualizacao();
 
             renderizarCalendario();
         }
@@ -11201,6 +11202,9 @@
                     renderizarCalendario();
                     atualizarTextoBotaoVisualizacao();
                 }
+                // Sempre reposiciona após o debounce: o texto do botão pode ter
+                // mudado (Mensal ↔ Bimestral ↔ Trimestral), alterando sua largura.
+                posicionarGliderVisualizacao();
             }, 250); // Debounce de 250ms
         });
     </script>
