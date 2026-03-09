@@ -4417,9 +4417,10 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="dataInicio" style="display:inline-flex; align-items:center; gap:6px;">Data de Início
-                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Data de Início" title="">?<span class="tooltip-box">Em <strong>Dias Úteis</strong>: a data de início não é computada — a contagem começa no próximo dia útil.<br>Em <strong>Dias Corridos</strong>: a data de início é o primeiro dia contado.</span></span>
-                    </label>
+                    <div style="display:inline-flex; align-items:center; gap:6px;">
+                        <label for="dataInicio">Data de Início</label>
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Data de Início">?<span class="tooltip-box">Em <strong>Dias Úteis</strong>: a data de início não é computada — a contagem começa no próximo dia útil.<br>Em <strong>Dias Corridos</strong>: a data de início é o primeiro dia contado.</span></span>
+                    </div>
                     <div class="data-input-wrapper">
                         <input type="date" id="dataInicio">
                         <button class="btn-data-hoje" onclick="setDataHoje()" title="Definir data de hoje">Hoje</button>
@@ -4454,7 +4455,7 @@
             <div class="tipos-feriado-calc-group">
                 <div class="tipos-feriado-calc-header">
                     <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Feriados a serem considerados no cálculo
-                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Selecione quais tipos de feriado devem ser ignorados na contagem.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.<br><br>Afeta tanto o calendário quanto o resultado do cálculo.</span></span>
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Defina quais tipos de feriado devem ser considerados no cálculo e no calendário.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.</span></span>
                     </span>
                 </div>
                 <div class="tipos-feriado-pills">
