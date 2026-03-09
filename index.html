@@ -4417,17 +4417,16 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <div style="display:inline-flex; align-items:center; gap:6px;">
-                        <label for="dataInicio">Data de Início</label>
+                    <label style="display:inline-flex; align-items:center; gap:6px;">Data de Início
                         <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Data de Início">?<span class="tooltip-box">Em <strong>Dias Úteis</strong>: a data de início não é computada — a contagem começa no próximo dia útil.<br>Em <strong>Dias Corridos</strong>: a data de início é o primeiro dia contado.</span></span>
-                    </div>
+                    </label>
                     <div class="data-input-wrapper">
                         <input type="date" id="dataInicio">
                         <button class="btn-data-hoje" onclick="setDataHoje()" title="Definir data de hoje">Hoje</button>
                     </div>
                 </div>
                 <div class="form-group-with-toggle">
-                    <label for="diasUteis">Quantidade de dias a serem contados</label>
+                    <label>Quantidade de dias a serem contados</label>
                     <div class="dias-input-wrapper">
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
@@ -4448,7 +4447,7 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
-                <label for="descricaoPrazo">Descrição (Opcional)</label>
+                <label>Descrição (Opcional)</label>
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
             </div>
 
