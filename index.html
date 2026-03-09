@@ -191,10 +191,11 @@
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           max-width evita que nomes longos (até 30 chars) empurrem o título. */
+           display:inline-block é necessário para max-width ter efeito em spans. */
         .perfil-badge {
+            display: inline-block;
             flex-shrink: 0;
-            max-width: 200px;
+            max-width: 150px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
