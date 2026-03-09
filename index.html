@@ -4392,7 +4392,7 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="dataInicio">Data de Início do Prazo</label>
+                    <label for="dataInicio" id="labelDataInicio">Data do Ato/Publicação</label>
                     <div class="data-input-wrapper">
                         <input type="date" id="dataInicio">
                         <button class="btn-data-hoje" onclick="setDataHoje()" title="Definir data de hoje">Hoje</button>
@@ -4643,7 +4643,7 @@
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #3b82f6"></div>
-                        <span>Data de início</span>
+                        <span id="legendaDataInicio">Data do Ato/Publicação</span>
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #16a34a"></div>
@@ -4854,7 +4854,7 @@
                     Como Usar a Calculadora
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> Selecione a data inicial do prazo.</li>
+                    <li><strong>Data do Ato/Publicação (Dias Úteis) / Data de Início (Dias Corridos):</strong> Selecione a data de referência. Em <em>Dias Úteis</em>, esta é a data do ato ou publicação — a contagem começa no próximo dia útil. Em <em>Dias Corridos</em>, esta é o primeiro dia contado.</li>
                     <li><strong>Quantidade de Dias:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
                     <li><strong>Tipo de Dias:</strong> Use o controle segmentado para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias do calendário). No modo Dias Corridos, os feriados são ocultados do calendário e ignorados no cálculo.</li>
                     <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
@@ -4871,7 +4871,7 @@
                     Entendendo os Resultados
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> A data inicial informada, exibida por extenso.</li>
+                    <li><strong>Data do Ato/Publicação (Dias Úteis):</strong> A data de referência informada. Em modo Dias Úteis, esta data não é contada — a contagem inicia no próximo dia útil. Em modo Dias Corridos, aparece como <strong>Data de Início</strong> e é o primeiro dia contado.</li>
                     <li><strong>Dias Contados:</strong> Quantidade de dias úteis ou corridos que foram contados.</li>
                     <li><strong>Data Final do Prazo:</strong> A data final calculada, destacada em verde.</li>
                     <li><strong>Detalhamento:</strong> Lista completa de todos os dias percorridos, mostrando quais foram contados (em verde) e quais foram pulados (em vermelho) com o motivo.</li>
@@ -6354,6 +6354,15 @@
             document.getElementById('btnDiasCorridos').classList.toggle('active', !uteis);
             posicionarGlider();
 
+            const labelDataInicio = document.getElementById('labelDataInicio');
+            if (labelDataInicio) {
+                labelDataInicio.textContent = uteis ? 'Data do Ato/Publicação' : 'Data de Início';
+            }
+            const legendaDataInicio = document.getElementById('legendaDataInicio');
+            if (legendaDataInicio) {
+                legendaDataInicio.textContent = uteis ? 'Data do Ato/Publicação' : 'Data de início';
+            }
+
             atualizarVisibilidadeFeriados();
 
             // Mostra aviso se já houver cálculo realizado
@@ -6628,7 +6637,8 @@
                     </h2>
                     ${descricaoHTML}
                     <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                        <strong>${usarDiasUteis ? 'Data do Ato/Publicação:' : 'Data de Início:'}</strong> ${dataInicioFormatada}
+                        ${usarDiasUteis ? '<span style="font-size:0.82em; color:#6b7280; margin-left:6px;">(contagem inicia no próximo dia útil)</span>' : ''}
                     </div>
                     <div class="resultado-info">
                         <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
@@ -8255,7 +8265,7 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>${usarDiasUteis ? 'Data do Ato/Publicação:' : 'Data de Início:'}</strong> ${dataInicioFormatada}${usarDiasUteis ? ' <span style="font-size:0.8em; color:#6b7280;">(contagem inicia no próximo dia útil)</span>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
         ${diasVisuaisHTML}
@@ -8296,9 +8306,20 @@
 
             // Gerar visualização dos dias
             let diasVisuaisHTML = '';
+
+            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
+            if (usarDiasUteis) {
+                const inicioData = new Date(dataInicio + 'T00:00:00');
+                const diaNum = inicioData.getDate();
+                const nomeMes = inicioData.toLocaleDateString('pt-BR', { month: 'short' });
+                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+            }
+
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
-                const isInicio = index === 0;
+                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
+                const isInicio = !usarDiasUteis && index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
                 const ehFds = ehFimDeSemana(dia.data);
@@ -8344,12 +8365,13 @@
             });
 
             // Formatar visualização dos dias com legenda para incluir dentro do header
+            const labelInicioChip = usarDiasUteis ? 'Data do Ato' : 'Início';
             const diasVisuaisHTMLFormatado = `
                 <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
                     <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
                     <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChip}</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
@@ -8510,9 +8532,20 @@
 
             // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
             let diasVisuaisHTML = '';
+
+            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
+            if (usarDiasUteis) {
+                const inicioData = new Date(dataInicio + 'T00:00:00');
+                const diaNum = inicioData.getDate();
+                const nomeMes = inicioData.toLocaleDateString('pt-BR', { month: 'short' });
+                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+            }
+
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
-                const isInicio = index === 0;
+                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
+                const isInicio = !usarDiasUteis && index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
                 const ehFds = ehFimDeSemana(dia.data);
@@ -8557,6 +8590,8 @@
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
 
+            const labelInicioChipPNG = usarDiasUteis ? 'Data do Ato' : 'Início';
+
             // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
 <style>
@@ -8589,14 +8624,14 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>${usarDiasUteis ? 'Data do Ato/Publicação:' : 'Data de Início:'}</strong> ${dataInicioFormatada}${usarDiasUteis ? ' <span style="font-size:0.8em; color:#6b7280;">(contagem inicia no próximo dia útil)</span>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
         <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
             <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
             <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChipPNG}</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
@@ -8715,7 +8750,7 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>${usarDiasUteis ? 'Data do Ato/Publicação:' : 'Data de Início:'}</strong> ${dataInicioFormatada}${usarDiasUteis ? ' <span style="font-size:0.8em; color:#6b7280;">(contagem inicia no próximo dia útil)</span>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
     </div>
@@ -9804,7 +9839,8 @@
                 <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
                     ${descricaoHTML}
                     <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                        <strong>${prazo.tipoDias === 'uteis' ? 'Data do Ato/Publicação:' : 'Data de Início:'}</strong> ${dataInicioFormatada}
+                        ${prazo.tipoDias === 'uteis' ? '<span style="font-size:0.82em; color:#6b7280; margin-left:6px;">(contagem inicia no próximo dia útil)</span>' : ''}
                     </div>
                     <div class="resultado-info">
                         <strong>Dias ${tipoDias} Contados:</strong> ${prazo.diasSolicitados}
