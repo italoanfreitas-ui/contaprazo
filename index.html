@@ -8893,8 +8893,9 @@
             // sidebar. Em vez disso, scrollamos para logo após o cabeçalho
             // para manter a sidebar ativa e dar sensação de continuidade.
             const _header = document.querySelector('.page-header');
+            const _navTabs = document.querySelector('.nav-tabs');
             const _scrollTarget = (document.body.classList.contains('sidebar-mode') && _header)
-                ? _header.offsetTop + _header.offsetHeight + 1
+                ? (_navTabs ? _navTabs.offsetTop + _navTabs.offsetHeight : _header.offsetTop + _header.offsetHeight + 1)
                 : 0;
             window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
 
@@ -11156,13 +11157,6 @@
         atualizarTextoBotaoVisualizacao();
         posicionarGlider();
         posicionarGliderVisualizacao();
-
-        // Scroll inicial: posiciona logo abaixo do cabeçalho para que o
-        // conteúdo efetivo apareça direto no topo da viewport ao carregar.
-        (function() {
-            const header = document.querySelector('.page-header');
-            if (header) window.scrollTo({ top: header.offsetTop + header.offsetHeight, behavior: 'instant' });
-        })();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
