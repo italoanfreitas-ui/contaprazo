@@ -152,6 +152,13 @@
             align-items: start;
         }
 
+        /* min-width:0 nos itens do grid impede que colunas 1fr expandam para
+           acomodar o min-content dos filhos (ex: texto longo sem quebra de linha).
+           Sem isso, o flex-shrink interno nunca é acionado. */
+        .main-layout > div {
+            min-width: 0;
+        }
+
         @media (max-width: 1024px) {
             .main-layout {
                 grid-template-columns: 1fr;
@@ -178,23 +185,29 @@
         }
 
         /* Linha de cabeçalho do card do calendário: título à esquerda, badge à direita */
+        /* Grid de 2 colunas: título (max-content fixo) | pílula (1fr restante).
+           O gap aqui é verdadeiramente fixo — diferente do flex+space-between,
+           onde gap age só como mínimo e o space-between já distribui tudo. */
         .card-cal-header {
-            display: flex;
+            display: grid;
+            grid-template-columns: max-content 1fr;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
+            gap: 32px;
             margin-bottom: 8px; /* espaço acima do section-divider */
         }
 
         .card-cal-header .section-title {
-            margin-bottom: 0; /* margin gerenciada pelo container pai */
+            margin-bottom: 0;  /* margin gerenciada pelo container pai */
+            white-space: nowrap; /* garante que o texto do título não quebra */
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           max-width evita que nomes longos (até 30 chars) empurrem o título. */
+           inline-block + max-width:100% funciona sem dependência circular
+           porque o container tem largura explícita (1fr do grid). */
         .perfil-badge {
-            flex-shrink: 0;
-            max-width: 200px;
+            display: inline-block;
+            box-sizing: border-box;
+            max-width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -213,10 +226,15 @@
             font-weight: 600;
         }
 
-        /* Container relativo para o dropdown ancorado na badge */
+        /* Container da badge: coluna 1fr do grid.
+           display:flex + justify-content:flex-end alinha a pílula à direita
+           dentro da coluna. A pílula (inline-block) nunca ultrapassa max-width:100%. */
         .perfil-badge-container {
             position: relative;
-            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            min-width: 0;
         }
 
         /* Dropdown inline abaixo da badge — mesma fonte visual do dropdown do rodapé */
@@ -296,7 +314,9 @@
         }
 
         .perfis-frame-label {
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             font-size: 0.65rem;
             font-weight: 700;
             color: #9ca3af;
@@ -455,6 +475,32 @@
 
         .btn-data-hoje:active {
             transform: translateY(0);
+        }
+
+        .tooltip-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: #9ca3af; color: #fff; font-size: 10px; font-weight: 700;
+            cursor: pointer; position: relative; user-select: none;
+            font-style: normal; line-height: 1;
+        }
+        .tooltip-icon .tooltip-box {
+            display: none; position: absolute; bottom: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%); background: #1f2937; color: #f9fafb;
+            font-size: 0.78rem; font-weight: 400; font-style: normal;
+            text-transform: none; letter-spacing: normal;
+            padding: 8px 10px; border-radius: 6px; width: 240px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.25); z-index: 100; text-align: left;
+            pointer-events: none; white-space: normal; line-height: 1.4;
+        }
+        .tooltip-icon .tooltip-box::after {
+            content: ''; position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%); border: 5px solid transparent;
+            border-top-color: #1f2937;
+        }
+        .tooltip-icon:hover .tooltip-box,
+        .tooltip-icon:focus .tooltip-box {
+            display: block;
         }
 
         label {
@@ -2167,7 +2213,8 @@
             margin-bottom: 12px;
         }
 
-        .help-section ul {
+        .help-section ul,
+        .help-section ol {
             margin-left: 20px;
             color: #4b5563;
             line-height: 1.8;
@@ -4392,14 +4439,16 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="dataInicio">Data de Início do Prazo</label>
+                    <label style="display:inline-flex; align-items:center; gap:6px;">Data de Início
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Data de Início">?<span class="tooltip-box">Em <strong>Dias Úteis</strong>: a data de início não é computada — a contagem começa no próximo dia útil.<br>Em <strong>Dias Corridos</strong>: a data de início é o primeiro dia contado.</span></span>
+                    </label>
                     <div class="data-input-wrapper">
                         <input type="date" id="dataInicio">
                         <button class="btn-data-hoje" onclick="setDataHoje()" title="Definir data de hoje">Hoje</button>
                     </div>
                 </div>
                 <div class="form-group-with-toggle">
-                    <label for="diasUteis">Quantidade de Dias</label>
+                    <label>Quantidade de dias a serem contados</label>
                     <div class="dias-input-wrapper">
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
@@ -4420,14 +4469,15 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
-                <label for="descricaoPrazo">Descrição (Opcional)</label>
+                <label>Descrição (Opcional)</label>
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
             </div>
 
             <div class="tipos-feriado-calc-group">
                 <div class="tipos-feriado-calc-header">
-                    <span class="tipos-feriado-calc-label">Feriados a serem considerados no cálculo</span>
-                    <span class="tipos-feriado-calc-hint">Afeta o calendário e o resultado</span>
+                    <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Feriados a serem considerados no cálculo
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Defina quais tipos de feriado devem ser considerados no cálculo e no calendário.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.</span></span>
+                    </span>
                 </div>
                 <div class="tipos-feriado-pills">
                     <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
@@ -4520,7 +4570,9 @@
             <!-- Rodapé do card: seleção de perfil + configuração de feriados juntos -->
             <div class="card-cal-footer">
                 <div class="perfis-frame">
-                    <span class="perfis-frame-label">Perfil de Feriados</span>
+                    <span class="perfis-frame-label">Perfil de Feriados
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Perfil de Feriados">?<span class="tooltip-box">Salve e alterne entre diferentes conjuntos de feriados personalizados.<br><br>Útil para quem atua em múltiplas jurisdições (ex: TJBA, TJSP, TRF). Cada perfil armazena seus feriados importados e clicados no calendário.</span></span>
+                    </span>
                     <div class="perfis-bar">
                     <div class="perfis-bar-left">
                         <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
@@ -4643,7 +4695,7 @@
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #3b82f6"></div>
-                        <span>Data de início</span>
+                        <span id="legendaDataInicio">Data de início</span>
                     </div>
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: #16a34a"></div>
@@ -4854,8 +4906,8 @@
                     Como Usar a Calculadora
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> Selecione a data inicial do prazo.</li>
-                    <li><strong>Quantidade de Dias:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
+                    <li><strong>Data de Início:</strong> Em <em>Dias Úteis</em>, esta data não é computada — a contagem começa no próximo dia útil. Em <em>Dias Corridos</em>, é o primeiro dia contado.</li>
+                    <li><strong>Quantidade de dias a serem contados:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
                     <li><strong>Tipo de Dias:</strong> Use o controle segmentado para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias do calendário). No modo Dias Corridos, os feriados são ocultados do calendário e ignorados no cálculo.</li>
                     <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
                     <li><strong>Calcular:</strong> Clique no botão "Calcular Prazo" para ver o resultado.</li>
@@ -4871,7 +4923,7 @@
                     Entendendo os Resultados
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> A data inicial informada, exibida por extenso.</li>
+                    <li><strong>Data de Início:</strong> A data informada. Em <em>Dias Úteis</em>, ela não é computada — a contagem inicia no próximo dia útil (indicado pelo asterisco no resultado). Em <em>Dias Corridos</em>, é o primeiro dia contado.</li>
                     <li><strong>Dias Contados:</strong> Quantidade de dias úteis ou corridos que foram contados.</li>
                     <li><strong>Data Final do Prazo:</strong> A data final calculada, destacada em verde.</li>
                     <li><strong>Detalhamento:</strong> Lista completa de todos os dias percorridos, mostrando quais foram contados (em verde) e quais foram pulados (em vermelho) com o motivo.</li>
@@ -5018,7 +5070,7 @@
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
-                    ☁️ Conjuntos Pré-definidos Online (NOVO!)
+                    ☁️ Conjuntos Pré-definidos Online
                 </h4>
                 <p style="margin-top: 12px;">
                     Agora você pode importar conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos! Ao clicar em <strong>"Importar Feriados"</strong>, escolha a opção <strong>"Conjuntos Pré-definidos Online"</strong> para acessar:
@@ -6374,7 +6426,7 @@
             const activeBtn = document.getElementById(
                 visualizacaoCalendario === 'mensal' ? 'btnMensal' : 'btnAnual'
             );
-            if (glider && activeBtn) {
+            if (glider && activeBtn && activeBtn.offsetWidth > 0) {
                 glider.style.left = activeBtn.offsetLeft + 'px';
                 glider.style.width = activeBtn.offsetWidth + 'px';
             }
@@ -6628,7 +6680,7 @@
                     </h2>
                     ${descricaoHTML}
                     <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                        <strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#6b7280;font-size:0.75em;">*</sup>' : ''}
                     </div>
                     <div class="resultado-info">
                         <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
@@ -6699,6 +6751,8 @@
                             }
                         }).join('')}
                     </div>
+
+                    ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
 
                     ${(() => {
                         if (!usarDiasUteis) return '';
@@ -6894,12 +6948,13 @@
 
             document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
             document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
-            posicionarGliderVisualizacao();
 
-            // Atualizar texto do botão se for mensal
+            // Atualizar texto primeiro — o botão muda de largura ao trocar de modo,
+            // então o glider só pode ser posicionado corretamente depois do texto final.
             if (tipo === 'mensal') {
                 atualizarTextoBotaoVisualizacao();
             }
+            posicionarGliderVisualizacao();
 
             renderizarCalendario();
         }
@@ -8255,9 +8310,10 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        ${usarDiasUteis ? '<p style="font-size:0.72em; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
         ${diasVisuaisHTML}
     </div>
     ${conteudoEspecifico}
@@ -8296,9 +8352,20 @@
 
             // Gerar visualização dos dias
             let diasVisuaisHTML = '';
+            const inicioDataPDF = new Date(dataInicio + 'T00:00:00');
+
+            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
+            if (usarDiasUteis) {
+                const diaNum = inicioDataPDF.getDate();
+                const nomeMes = inicioDataPDF.toLocaleDateString('pt-BR', { month: 'short' });
+                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+            }
+
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
-                const isInicio = index === 0;
+                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
+                const isInicio = !usarDiasUteis && index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
                 const ehFds = ehFimDeSemana(dia.data);
@@ -8335,7 +8402,14 @@
                 }
 
                 let mesIndicador = '';
-                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                let mostrarMes;
+                if (usarDiasUteis && index === 0) {
+                    // Chip da data do ato já mostrou o mês; só repete se for mês diferente
+                    mostrarMes = dia.data.getMonth() !== inicioDataPDF.getMonth() || dia.data.getFullYear() !== inicioDataPDF.getFullYear();
+                } else {
+                    mostrarMes = index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth();
+                }
+                if (mostrarMes) {
                     const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
                     mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
                 }
@@ -8344,12 +8418,13 @@
             });
 
             // Formatar visualização dos dias com legenda para incluir dentro do header
+            const labelInicioChip = 'Início';
             const diasVisuaisHTMLFormatado = `
                 <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
                     <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
                     <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                        <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChip}</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                         <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
@@ -8510,9 +8585,20 @@
 
             // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
             let diasVisuaisHTML = '';
+            const inicioDataPNG = new Date(dataInicio + 'T00:00:00');
+
+            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
+            if (usarDiasUteis) {
+                const diaNum = inicioDataPNG.getDate();
+                const nomeMes = inicioDataPNG.toLocaleDateString('pt-BR', { month: 'short' });
+                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+            }
+
             todosOsDias.forEach((dia, index) => {
                 const diaNum = dia.data.getDate();
-                const isInicio = index === 0;
+                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
+                const isInicio = !usarDiasUteis && index === 0;
                 const isFinal = index === todosOsDias.length - 1;
 
                 const ehFds = ehFimDeSemana(dia.data);
@@ -8549,13 +8635,22 @@
                 }
 
                 let mesIndicador = '';
-                if (index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth()) {
+                let mostrarMes;
+                if (usarDiasUteis && index === 0) {
+                    // Chip da data de início já mostrou o mês; só repete se for mês diferente
+                    mostrarMes = dia.data.getMonth() !== inicioDataPNG.getMonth() || dia.data.getFullYear() !== inicioDataPNG.getFullYear();
+                } else {
+                    mostrarMes = index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth();
+                }
+                if (mostrarMes) {
                     const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
                     mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
                 }
 
                 diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
             });
+
+            const labelInicioChipPNG = 'Início';
 
             // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
@@ -8589,14 +8684,15 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
         <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
             <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
             <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Início</span>
+                <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChipPNG}</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
@@ -8715,9 +8811,10 @@
     <div class="header">
         <h1>Resultado do Cálculo de Prazo</h1>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}</div>
+        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
         <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
         <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
+        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
     </div>
     <div class="secao">
         <h3>Detalhamento</h3>
@@ -8796,9 +8893,6 @@
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
 
-            // Scroll ao topo ao trocar de página
-            window.scrollTo({ top: 0, behavior: 'instant' });
-
             // Esconder todas as páginas
             cacheDom.paginas.calculo.classList.remove('active');
             cacheDom.paginas.gerenciamento.classList.remove('active');
@@ -8829,6 +8923,16 @@
                 cacheDom.paginas.ajuda.classList.add('active');
                 cacheDom.navTabs.ajuda.classList.add('active');
             }
+
+            // Scroll APÓS trocar o conteúdo, para que a nova altura da página
+            // já esteja definida e o scrollTarget não ultrapasse o máximo scrollável.
+            // Em sidebar-mode posiciona logo abaixo das nav-tabs; caso contrário vai ao topo.
+            const _header = document.querySelector('.page-header');
+            const _navTabs = document.querySelector('.nav-tabs');
+            const _scrollTarget = (document.body.classList.contains('sidebar-mode') && _header)
+                ? (_navTabs ? _navTabs.offsetTop + _navTabs.offsetHeight : _header.offsetTop + _header.offsetHeight + 1)
+                : 0;
+            window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
         }
 
         // ========================================
@@ -9804,7 +9908,7 @@
                 <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
                     ${descricaoHTML}
                     <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}
+                        <strong>Data de Início:</strong> ${dataInicioFormatada}${prazo.tipoDias === 'uteis' ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}
                     </div>
                     <div class="resultado-info">
                         <strong>Dias ${tipoDias} Contados:</strong> ${prazo.diasSolicitados}
@@ -9812,6 +9916,7 @@
                     <div class="resultado-info">
                         <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
                     </div>
+                    ${prazo.tipoDias === 'uteis' ? '<p style="font-size:0.78em; color:#9ca3af; margin:4px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
                     ${statusHTML}
 
                     <div class="detalhamento" style="margin-top: 12px;">
@@ -11110,6 +11215,9 @@
                     renderizarCalendario();
                     atualizarTextoBotaoVisualizacao();
                 }
+                // Sempre reposiciona após o debounce: o texto do botão pode ter
+                // mudado (Mensal ↔ Bimestral ↔ Trimestral), alterando sua largura.
+                posicionarGliderVisualizacao();
             }, 250); // Debounce de 250ms
         });
     </script>
