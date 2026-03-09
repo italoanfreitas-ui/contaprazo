@@ -314,7 +314,9 @@
         }
 
         .perfis-frame-label {
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             font-size: 0.65rem;
             font-weight: 700;
             color: #9ca3af;
@@ -4567,7 +4569,9 @@
             <!-- Rodapé do card: seleção de perfil + configuração de feriados juntos -->
             <div class="card-cal-footer">
                 <div class="perfis-frame">
-                    <span class="perfis-frame-label">Perfil de Feriados</span>
+                    <span class="perfis-frame-label">Perfil de Feriados
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Perfil de Feriados">?<span class="tooltip-box">Salve e alterne entre diferentes conjuntos de feriados personalizados.<br><br>Útil para quem atua em múltiplas jurisdições (ex: TJBA, TJSP, TRF). Cada perfil armazena seus feriados importados e clicados no calendário.</span></span>
+                    </span>
                     <div class="perfis-bar">
                     <div class="perfis-bar-left">
                         <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
