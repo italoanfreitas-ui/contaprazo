@@ -8887,18 +8887,6 @@
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
 
-            // Scroll ao trocar de página.
-            // Em sidebar-mode o usuário está navegando pelo menu lateral;
-            // posicionar no topo faria o cabeçalho reaparecer e sumir a
-            // sidebar. Em vez disso, scrollamos para logo após o cabeçalho
-            // para manter a sidebar ativa e dar sensação de continuidade.
-            const _header = document.querySelector('.page-header');
-            const _navTabs = document.querySelector('.nav-tabs');
-            const _scrollTarget = (document.body.classList.contains('sidebar-mode') && _header)
-                ? (_navTabs ? _navTabs.offsetTop + _navTabs.offsetHeight : _header.offsetTop + _header.offsetHeight + 1)
-                : 0;
-            window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
-
             // Esconder todas as páginas
             cacheDom.paginas.calculo.classList.remove('active');
             cacheDom.paginas.gerenciamento.classList.remove('active');
@@ -8929,6 +8917,16 @@
                 cacheDom.paginas.ajuda.classList.add('active');
                 cacheDom.navTabs.ajuda.classList.add('active');
             }
+
+            // Scroll APÓS trocar o conteúdo, para que a nova altura da página
+            // já esteja definida e o scrollTarget não ultrapasse o máximo scrollável.
+            // Em sidebar-mode posiciona logo abaixo das nav-tabs; caso contrário vai ao topo.
+            const _header = document.querySelector('.page-header');
+            const _navTabs = document.querySelector('.nav-tabs');
+            const _scrollTarget = (document.body.classList.contains('sidebar-mode') && _header)
+                ? (_navTabs ? _navTabs.offsetTop + _navTabs.offsetHeight : _header.offsetTop + _header.offsetHeight + 1)
+                : 0;
+            window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
         }
 
         // ========================================
