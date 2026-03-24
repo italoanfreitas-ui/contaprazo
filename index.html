@@ -147,8 +147,8 @@
 
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 3fr 2fr;
+            gap: 24px;
             align-items: start;
         }
 
@@ -819,6 +819,83 @@
             box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
+        /* Botão principal de calcular — destaque máximo no fluxo */
+        .btn-calcular {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 24px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-calcular:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+        }
+
+        /* Seção colapsável de configurações no formulário */
+        .form-config-section {
+            margin-top: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .form-config-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 16px;
+            background: #f9fafb;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: background 0.15s;
+        }
+
+        .form-config-header:hover {
+            background: #f3f4f6;
+        }
+
+        .form-config-header.aberto {
+            border-bottom-color: #e5e7eb;
+        }
+
+        .form-config-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .form-config-toggle {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            transition: transform 0.2s;
+        }
+
+        .form-config-toggle.aberto {
+            transform: rotate(180deg);
+        }
+
+        .form-config-body {
+            display: none;
+            padding: 16px;
+            background: white;
+        }
+
+        .form-config-body.aberto {
+            display: block;
+        }
+
         .btn-secondary {
             background: #6b7280;
             color: white;
@@ -931,27 +1008,38 @@
             }
         }
 
+        @keyframes resultSlideIn {
+            from { opacity: 0; transform: translateY(-18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         .resultado {
-            background: linear-gradient(to right, #f0fdf4, #dbeafe);
-            border: 2px solid #86efac;
-            border-radius: 12px;
-            padding: 30px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            border: 2px solid #4ade80;
+            border-radius: 16px;
+            padding: 36px 40px;
             margin-bottom: 30px;
+            animation: resultSlideIn 0.4s ease-out;
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.12);
         }
 
         .resultado h2 {
             color: #1f2937;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .resultado-info {
-            margin: 8px 0;
+            margin: 10px 0;
             font-size: 1rem;
+            color: #374151;
         }
 
         .resultado-info strong {
-            color: #374151;
+            color: #111827;
         }
 
         .resultado-descricao {
@@ -971,9 +1059,15 @@
         }
 
         .data-final {
+            display: inline-block;
             color: #15803d;
-            font-size: 1.25rem;
-            font-weight: bold;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: rgba(22, 163, 74, 0.08);
+            padding: 6px 16px;
+            border-radius: 10px;
+            margin-top: 4px;
         }
 
         .detalhamento {
@@ -1105,7 +1199,13 @@
             content: ' — ';
         }
 
-        /* Removido margin-top para alinhar com o formulário no layout de duas colunas */
+        /* Calendário: peso visual reduzido — é suporte ao cálculo, não ação primária */
+        .calendario {
+            background: #fafafa;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #ebebeb;
+        }
+
         @media (max-width: 1024px) {
             .calendario {
                 margin-top: 0;
@@ -4453,17 +4553,17 @@
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
+                        <div class="quick-buttons">
+                            <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
+                        </div>
                         <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                             <span class="seg-glider" id="segGlider"></span>
                             <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
                             <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
                         </div>
-                    </div>
-                    <div class="quick-buttons">
-                        <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
                     </div>
                 </div>
             </div>
@@ -4473,30 +4573,104 @@
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
             </div>
 
-            <div class="tipos-feriado-calc-group">
-                <div class="tipos-feriado-calc-header">
-                    <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Feriados a serem considerados no cálculo
-                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Defina quais tipos de feriado devem ser considerados no cálculo e no calendário.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.</span></span>
+            <!-- Configurações colapsáveis: tipos de feriado + perfil de feriados -->
+            <div class="form-config-section" style="margin-bottom: 20px;">
+                <div class="form-config-header" id="formConfigHeader" onclick="toggleFormConfig()">
+                    <span class="form-config-title">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        Configurações de Feriados
                     </span>
+                    <span class="form-config-toggle" id="formConfigToggle">▼</span>
                 </div>
-                <div class="tipos-feriado-pills">
-                    <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
-                        <span class="tipos-feriado-checkbox active" id="switchFixos"></span>
-                        <span class="tipos-feriado-toggle-label">Fixos</span>
+                <div class="form-config-body" id="formConfigBody">
+                    <div class="tipos-feriado-calc-group" style="margin-bottom: 16px;">
+                        <div class="tipos-feriado-calc-header">
+                            <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Feriados considerados no cálculo
+                                <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre feriados">?<span class="tooltip-box">Defina quais tipos de feriado devem ser considerados no cálculo e no calendário.<br><br><strong>Fixos:</strong> feriados nacionais de data fixa (Natal, Independência etc.).<br><strong>Móveis:</strong> Carnaval, Páscoa, Corpus Christi.<br><strong>Personalizados:</strong> feriados locais e conjuntos importados.</span></span>
+                            </span>
+                        </div>
+                        <div class="tipos-feriado-pills">
+                            <div class="tipos-feriado-toggle-row" id="rowFixos" onclick="toggleFeriados('fixos')" title="Feriados nacionais fixos (Natal, Independência, etc.)">
+                                <span class="tipos-feriado-checkbox active" id="switchFixos"></span>
+                                <span class="tipos-feriado-toggle-label">Fixos</span>
+                            </div>
+                            <div class="tipos-feriado-toggle-row" id="rowMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
+                                <span class="tipos-feriado-checkbox active" id="switchMoveis"></span>
+                                <span class="tipos-feriado-toggle-label">Móveis</span>
+                            </div>
+                            <div class="tipos-feriado-toggle-row" id="rowPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
+                                <span class="tipos-feriado-checkbox active" id="switchPersonalizados"></span>
+                                <span class="tipos-feriado-toggle-label">Personalizados</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tipos-feriado-toggle-row" id="rowMoveis" onclick="toggleFeriados('moveis')" title="Feriados móveis (Carnaval, Páscoa, Corpus Christi)">
-                        <span class="tipos-feriado-checkbox active" id="switchMoveis"></span>
-                        <span class="tipos-feriado-toggle-label">Móveis</span>
+                    <!-- Perfil de Feriados (movido do rodapé do calendário) -->
+                    <div class="perfis-frame">
+                        <span class="perfis-frame-label">Perfil de Feriados
+                            <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Perfil de Feriados">?<span class="tooltip-box">Salve e alterne entre diferentes conjuntos de feriados personalizados.<br><br>Útil para quem atua em múltiplas jurisdições (ex: TJBA, TJSP, TRF). Cada perfil armazena seus feriados importados e clicados no calendário.</span></span>
+                        </span>
+                        <div class="perfis-bar">
+                        <div class="perfis-bar-left">
+                            <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
+                            <div class="perfil-dropdown">
+                                <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
+                                    <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
+                                    <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="perfil-dropdown-menu" id="perfilDropdownMenu">
+                                    <div class="perfil-dropdown-item none" onclick="selecionarPerfil(null)">Nenhum</div>
+                                </div>
+                            </div>
+                            <span class="perfil-unsaved-indicator" id="perfilUnsavedIndicator">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Alterações
+                            </span>
+                        </div>
+                        <div class="perfis-bar-right">
+                            <button class="perfil-btn perfil-btn-save" id="btnSalvarPerfil" onclick="salvarAlteracoesPerfil()" style="display: none;" title="Salvar alterações no perfil">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Salvar
+                            </button>
+                            <button class="perfil-btn" onclick="abrirModalCriarPerfil()" title="Criar novo perfil">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="8 17 12 21 16 17"></polyline>
+                                    <line x1="12" y1="12" x2="12" y2="21"></line>
+                                    <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                                </svg>
+                            </button>
+                            <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="tipos-feriado-toggle-row" id="rowPersonalizados" onclick="toggleFeriados('personalizados')" title="Feriados personalizados e conjuntos importados">
-                        <span class="tipos-feriado-checkbox active" id="switchPersonalizados"></span>
-                        <span class="tipos-feriado-toggle-label">Personalizados</span>
-                    </div>
+                    </div><!-- /perfis-frame -->
                 </div>
-            </div>
+            </div><!-- /form-config-section -->
 
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="calcularPrazo()">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom: 20px;">
+                <button class="btn btn-primary btn-calcular" onclick="calcularPrazo()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -4505,7 +4679,7 @@
                     </svg>
                     Calcular Prazo
                 </button>
-                <button class="btn btn-secondary" onclick="limparResultado()" id="btnLimpar" style="display:none">
+                <button class="btn btn-secondary" onclick="limparResultado()" id="btnLimpar" style="display:none; white-space:nowrap; flex-shrink:0;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -4514,8 +4688,6 @@
                 </button>
             </div>
             <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
-
-            <div id="resultado" style="display:none"></div>
                 </div>
             </div>
 
@@ -4567,67 +4739,8 @@
 
             <div class="calendario-grid" id="calendarioGrid"></div>
 
-            <!-- Rodapé do card: seleção de perfil + configuração de feriados juntos -->
+            <!-- Rodapé do card: apenas configuração de feriados (perfil movido para o formulário) -->
             <div class="card-cal-footer">
-                <div class="perfis-frame">
-                    <span class="perfis-frame-label">Perfil de Feriados
-                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Perfil de Feriados">?<span class="tooltip-box">Salve e alterne entre diferentes conjuntos de feriados personalizados.<br><br>Útil para quem atua em múltiplas jurisdições (ex: TJBA, TJSP, TRF). Cada perfil armazena seus feriados importados e clicados no calendário.</span></span>
-                    </span>
-                    <div class="perfis-bar">
-                    <div class="perfis-bar-left">
-                        <span class="perfis-bar-label" title="Salve e alterne entre diferentes conjuntos de feriados personalizados (ex: TJSP, TJRJ, TRF3)">Perfil:</span>
-                        <div class="perfil-dropdown">
-                            <div class="perfil-pill" id="perfilPill" onclick="togglePerfilDropdown()" title="Clique para alternar entre perfis de feriados">
-                                <span class="perfil-pill-text" id="perfilPillText">Nenhum</span>
-                                <svg class="perfil-pill-arrow" id="perfilPillArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </div>
-                            <div class="perfil-dropdown-menu" id="perfilDropdownMenu">
-                                <div class="perfil-dropdown-item none" onclick="selecionarPerfil(null)">Nenhum</div>
-                            </div>
-                        </div>
-                        <span class="perfil-unsaved-indicator" id="perfilUnsavedIndicator">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12" y2="12"></line>
-                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                            </svg>
-                            Alterações
-                        </span>
-                    </div>
-                    <div class="perfis-bar-right">
-                        <button class="perfil-btn perfil-btn-save" id="btnSalvarPerfil" onclick="salvarAlteracoesPerfil()" style="display: none;" title="Salvar alterações no perfil">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                <polyline points="7 3 7 8 15 8"></polyline>
-                            </svg>
-                            Salvar
-                        </button>
-                        <button class="perfil-btn" onclick="abrirModalCriarPerfil()" title="Criar novo perfil">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </button>
-                        <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="8 17 12 21 16 17"></polyline>
-                                <line x1="12" y1="12" x2="12" y2="21"></line>
-                                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
-                            </svg>
-                        </button>
-                        <button class="perfil-btn" onclick="abrirModalGerenciarPerfis()" title="Gerenciar perfis">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                </div><!-- /perfis-frame -->
-
             <div class="config-feriados">
                 <div class="config-feriados-header">
                     <div class="config-feriados-header-btn" onclick="toggleConfigFeriados()">
@@ -4713,6 +4826,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- Resultado: fora do main-layout para ter destaque máximo -->
+        <div id="resultado" style="display:none"></div>
 
         </div>
         <!-- Fim Página de Cálculo -->
@@ -6981,6 +7097,16 @@
 
             content.classList.toggle('aberto');
             icon.classList.toggle('aberto');
+        }
+
+        function toggleFormConfig() {
+            const body = document.getElementById('formConfigBody');
+            const header = document.getElementById('formConfigHeader');
+            const toggle = document.getElementById('formConfigToggle');
+
+            body.classList.toggle('aberto');
+            header.classList.toggle('aberto');
+            toggle.classList.toggle('aberto');
         }
 
         function limparFeriadosPersonalizados() {
