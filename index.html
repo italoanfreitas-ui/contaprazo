@@ -738,6 +738,36 @@
             color: #9ca3af;
         }
 
+        .perfil-calculo-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #374151;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .perfil-calculo-select:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+        }
+        .perfil-calculo-hint {
+            margin: 6px 0 0;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.4;
+        }
+        .perfil-calculo-hint a {
+            color: #16a34a;
+        }
+
         .tipos-feriado-pills {
             display: flex;
             gap: 20px;
@@ -931,48 +961,114 @@
             }
         }
 
+        /* ── Resultado: container wrapper ── */
         .resultado {
-            background: linear-gradient(to right, #f0fdf4, #dbeafe);
-            border: 2px solid #86efac;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 14px;
             margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.10);
         }
 
-        .resultado h2 {
-            color: #1f2937;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+        /* ── Hero block ── */
+        .resultado-hero {
+            background: linear-gradient(135deg, #14532d 0%, #166534 60%, #15803d 100%);
+            color: white;
+            padding: 28px 28px 26px;
+            position: relative;
+            overflow: hidden;
+        }
+        .resultado-hero-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 10px;
+        }
+        .resultado-hero-data {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+        }
+        .resultado-hero-ano {
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 18px;
+            text-transform: capitalize;
+        }
+        .resultado-hero-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .resultado-hero-badge {
+            padding: 4px 13px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+        .badge-restantes-verde  { background: #16a34a; color: #fff; }
+        .badge-restantes-amarelo{ background: #d97706; color: #fff; }
+        .badge-restantes-vermelho{ background: #dc2626; color: #fff; }
+        .badge-restantes-passado{ background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+        .badge-tipo-dias {
+            background: rgba(255,255,255,0.14);
+            color: rgba(255,255,255,0.88);
+            border: 1px solid rgba(255,255,255,0.28);
+        }
+        .resultado-hero-watermark {
+            position: absolute;
+            bottom: -14px;
+            right: -14px;
+            opacity: 0.07;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ── Body section (below hero) ── */
+        .resultado-body {
+            background: white;
+            border: 2px solid #86efac;
+            border-top: none;
+            border-radius: 0 0 14px 14px;
+            padding: 24px 28px 28px;
         }
 
         .resultado-info {
             margin: 8px 0;
-            font-size: 1rem;
-        }
-
-        .resultado-info strong {
+            font-size: 0.95rem;
             color: #374151;
         }
 
+        .resultado-info strong {
+            color: #1f2937;
+        }
+
         .resultado-descricao {
-            background: white;
-            border-left: 4px solid #3b82f6;
-            padding: 10px;
-            margin: 10px 0;
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 10px 12px;
+            margin: 0 0 16px;
             border-radius: 6px;
             font-style: italic;
             color: #1f2937;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
         }
 
         .resultado-descricao strong {
             font-style: normal;
-            color: #3b82f6;
+            color: #15803d;
         }
 
         .data-final {
             color: #15803d;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: bold;
         }
 
@@ -2539,12 +2635,19 @@
             }
 
             .resultado {
-                padding: 15px;
                 margin-bottom: 15px;
             }
 
-            .resultado h2 {
-                font-size: 1.15rem;
+            .resultado-hero {
+                padding: 20px 18px 18px;
+            }
+
+            .resultado-hero-data {
+                font-size: 2.2rem;
+            }
+
+            .resultado-body {
+                padding: 18px;
             }
 
             .resultado-info {
@@ -2716,8 +2819,16 @@
                 padding: 12px;
             }
 
-            .resultado {
-                padding: 12px;
+            .resultado-hero {
+                padding: 16px 14px 14px;
+            }
+
+            .resultado-hero-data {
+                font-size: 1.9rem;
+            }
+
+            .resultado-body {
+                padding: 14px;
             }
 
             .btn-group {
@@ -4453,17 +4564,17 @@
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
+                        <div class="quick-buttons">
+                            <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
+                        </div>
                         <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                             <span class="seg-glider" id="segGlider"></span>
                             <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
                             <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
                         </div>
-                    </div>
-                    <div class="quick-buttons">
-                        <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
                     </div>
                 </div>
             </div>
@@ -4471,6 +4582,21 @@
             <div class="form-group" style="margin-bottom: 20px;">
                 <label>Descrição (Opcional)</label>
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
+            </div>
+
+            <div class="tipos-feriado-calc-group">
+                <div class="tipos-feriado-calc-header">
+                    <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Perfil de feriados personalizados
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre perfil de feriados">?<span class="tooltip-box">Selecione o perfil de feriados personalizados a ser utilizado neste cálculo. O perfil define quais feriados locais e conjuntos importados serão considerados ao contar os dias.</span></span>
+                    </span>
+                </div>
+                <select id="perfilCalculo" class="perfil-calculo-select" onchange="selecionarPerfilCalculo(this.value)">
+                    <option value="">Nenhum (sem feriados personalizados)</option>
+                </select>
+                <p class="perfil-calculo-hint">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Gerencie seus perfis no Calendário Interativo (coluna da direita)
+                </p>
             </div>
 
             <div class="tipos-feriado-calc-group">
@@ -5787,6 +5913,25 @@
             }
             atualizarIndicadorAlteracoes();
             atualizarBadgePerfil();
+            renderizarDropdownPerfilCalculo();
+        }
+
+        function renderizarDropdownPerfilCalculo() {
+            const sel = document.getElementById('perfilCalculo');
+            if (!sel) return;
+            while (sel.options.length > 1) sel.remove(1);
+            perfisData.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.nome;
+                if (p.id === perfilAtivoId) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            if (!perfilAtivoId) sel.value = '';
+        }
+
+        function selecionarPerfilCalculo(id) {
+            selecionarPerfil(id || null);
         }
 
         function atualizarBadgePerfil() {
@@ -6654,126 +6799,164 @@
 
         function mostrarResultado() {
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
+            // ── Hero: data formatada em partes ──
+            const diaNumero = dataFinal.getDate();
+            const mesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const anoNum  = dataFinal.getFullYear();
+            const diaSemana = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+            // ── Badge de dias restantes ──
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            const diasRestantes = Math.ceil((dataFinal - hoje) / 86400000);
+            let badgeRestClasse, badgeRestTexto;
+            if (diasRestantes > 30) {
+                badgeRestClasse = 'badge-restantes-verde';
+                badgeRestTexto = diasRestantes + ' dias restantes';
+            } else if (diasRestantes > 7) {
+                badgeRestClasse = 'badge-restantes-amarelo';
+                badgeRestTexto = diasRestantes + ' dias restantes';
+            } else if (diasRestantes === 1) {
+                badgeRestClasse = 'badge-restantes-vermelho';
+                badgeRestTexto = '1 dia restante';
+            } else if (diasRestantes === 0) {
+                badgeRestClasse = 'badge-restantes-vermelho';
+                badgeRestTexto = 'Vence hoje';
+            } else if (diasRestantes > 0) {
+                badgeRestClasse = 'badge-restantes-vermelho';
+                badgeRestTexto = diasRestantes + ' dias restantes';
+            } else {
+                badgeRestClasse = 'badge-restantes-passado';
+                badgeRestTexto = 'Prazo encerrado';
+            }
+
+            // ── Descrição (opcional) ──
             let descricaoHTML = '';
             if (descricaoPrazo) {
                 descricaoHTML = `
                     <div class="resultado-descricao">
-                        <strong>Descrição:</strong> ${descricaoPrazo}
+                        <strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}
                     </div>
                 `;
             }
 
+            // ── Conjuntos importados ──
+            const conjuntosHTML = (() => {
+                if (!usarDiasUteis) return '';
+                const conjuntos = obterMetadataConjuntos();
+                if (!conjuntos || conjuntos.length === 0) return '';
+                const itens = conjuntos.map(c => `
+                    <div class="conjunto-obs-item">
+                        ${c.link
+                            ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
+                            : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
+                        }
+                        ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
+                    </div>
+                `).join('');
+                return `
+                    <div class="conjuntos-obs">
+                        <span class="conjuntos-obs-label">Feriados online utilizados:</span>
+                        ${itens}
+                    </div>
+                `;
+            })();
+
             let html = `
                 <div class="resultado">
-                    <h2>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
+                    <!-- ── HERO BLOCK ── -->
+                    <div class="resultado-hero">
+                        <div class="resultado-hero-label">Prazo Calculado</div>
+                        <div class="resultado-hero-data">${diaNumero} de ${mesNome}</div>
+                        <div class="resultado-hero-ano">${anoNum} &mdash; ${diaSemana}</div>
+                        <div class="resultado-hero-badges">
+                            <span class="resultado-hero-badge ${badgeRestClasse}">${badgeRestTexto}</span>
+                            <span class="resultado-hero-badge badge-tipo-dias">Dias ${tipoDias}</span>
+                        </div>
+                        <!-- watermark decorativo -->
+                        <svg class="resultado-hero-watermark" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        Resultado do Cálculo
-                    </h2>
-                    ${descricaoHTML}
-                    <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#6b7280;font-size:0.75em;">*</sup>' : ''}
-                    </div>
-                    <div class="resultado-info">
-                        <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
-                    </div>
-                    <div class="resultado-info">
-                        <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
                     </div>
 
-                    <div class="btn-group" style="margin-top: 20px;">
-                        <button class="btn btn-red" onclick="abrirModalExportPDF()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
+                    <!-- ── CORPO ── -->
+                    <div class="resultado-body">
+                        ${descricaoHTML}
+                        <div class="resultado-info">
+                            <strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#6b7280;font-size:0.75em;">*</sup>' : ''}
+                        </div>
+                        <div class="resultado-info">
+                            <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
+                        </div>
+
+                        <div class="btn-group" style="margin-top: 18px;">
+                            <button class="btn btn-red" onclick="abrirModalExportPDF()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                Exportar PDF
+                            </button>
+                            <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                Exportar PNG
+                            </button>
+                        </div>
+
+                        <!-- Separador e Botão Salvar na Agenda -->
+                        <div class="resultado-separador">
+                            <span class="resultado-separador-texto">GERENCIAR PRAZO</span>
+                        </div>
+                        <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
                             </svg>
-                            Exportar PDF
+                            Salvar na Minha Agenda
                         </button>
-                        <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            Exportar PNG
-                        </button>
-                    </div>
 
-                    <!-- Separador e Botão Salvar na Agenda -->
-                    <div class="resultado-separador">
-                        <span class="resultado-separador-texto">GERENCIAR PRAZO</span>
-                    </div>
-                    <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                            <polyline points="17 21 17 13 7 13 7 21"/>
-                            <polyline points="7 3 7 8 15 8"/>
-                        </svg>
-                        Salvar na Minha Agenda
-                    </button>
+                        <div class="detalhamento">
+                            <h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Detalhamento
+                            </h3>
+                            ${todosOsDias.map(dia => {
+                                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                                    weekday: 'short',
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
 
-                    <div class="detalhamento">
-                        <h3>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Detalhamento
-                        </h3>
-                        ${todosOsDias.map(dia => {
-                            const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                                weekday: 'short',
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            });
-
-                            if (dia.contado) {
-                                return `<div class="dia-item dia-contado">
-                                    <span class="dia-numero">${dia.numero}</span>
-                                    <span>${dataFormatada}</span>
-                                </div>`;
-                            } else {
-                                return `<div class="dia-item dia-nao-contado">
-                                    <span class="dia-numero">X</span>
-                                    <span>${dataFormatada} - ${dia.motivo}</span>
-                                </div>`;
-                            }
-                        }).join('')}
-                    </div>
-
-                    ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
-
-                    ${(() => {
-                        if (!usarDiasUteis) return '';
-                        const conjuntos = obterMetadataConjuntos();
-                        if (!conjuntos || conjuntos.length === 0) return '';
-                        const itens = conjuntos.map(c => `
-                            <div class="conjunto-obs-item">
-                                ${c.link
-                                    ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
-                                    : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
+                                if (dia.contado) {
+                                    return `<div class="dia-item dia-contado">
+                                        <span class="dia-numero">${dia.numero}</span>
+                                        <span>${dataFormatada}</span>
+                                    </div>`;
+                                } else {
+                                    return `<div class="dia-item dia-nao-contado">
+                                        <span class="dia-numero">X</span>
+                                        <span>${dataFormatada} - ${dia.motivo}</span>
+                                    </div>`;
                                 }
-                                ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
-                            </div>
-                        `).join('');
-                        return `
-                            <div class="conjuntos-obs">
-                                <span class="conjuntos-obs-label">Feriados online utilizados:</span>
-                                ${itens}
-                            </div>
-                        `;
-                    })()}
+                            }).join('')}
+                        </div>
+
+                        ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
+                        ${conjuntosHTML}
+                    </div>
                 </div>
             `;
 
