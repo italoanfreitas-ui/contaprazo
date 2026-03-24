@@ -966,38 +966,77 @@
             border-radius: 14px;
             margin-bottom: 30px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+        }
+
+        /* Barra de acento superior com gradiente da marca */
+        .resultado-top-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #16a34a);
         }
 
         /* ── Hero block ── */
         .resultado-hero {
-            background: linear-gradient(135deg, #14532d 0%, #166534 60%, #15803d 100%);
-            color: white;
-            padding: 28px 28px 26px;
+            background: linear-gradient(160deg, #f0fdf4 0%, #ecfdf5 100%);
+            padding: 24px 28px 22px;
             position: relative;
             overflow: hidden;
+            border-bottom: 1px solid #d1fae5;
         }
         .resultado-hero-label {
-            font-size: 0.68rem;
+            font-size: 0.64rem;
             font-weight: 700;
-            letter-spacing: 1.8px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 10px;
+            color: #9ca3af;
+            margin-bottom: 8px;
         }
         .resultado-hero-data {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            line-height: 1.05;
+            line-height: 1.0;
             margin-bottom: 4px;
-            letter-spacing: -1px;
+            letter-spacing: -1.5px;
+            color: #14532d;
         }
         .resultado-hero-ano {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 400;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 18px;
+            color: #4b5563;
+            margin-bottom: 20px;
             text-transform: capitalize;
+        }
+        /* Chips: data início, dias contados, tipo */
+        .resultado-hero-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .resultado-hero-chip {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: white;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 8px 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            min-width: 0;
+        }
+        .resultado-hero-chip-label {
+            font-size: 0.59rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+        .resultado-hero-chip-value {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1f2937;
+            white-space: nowrap;
         }
         .resultado-hero-badges {
             display: flex;
@@ -1008,25 +1047,25 @@
         .resultado-hero-badge {
             padding: 4px 13px;
             border-radius: 20px;
-            font-size: 0.72rem;
+            font-size: 0.71rem;
             font-weight: 700;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
-        .badge-restantes-verde  { background: #16a34a; color: #fff; }
-        .badge-restantes-amarelo{ background: #d97706; color: #fff; }
+        .badge-restantes-verde   { background: #16a34a; color: #fff; }
+        .badge-restantes-amarelo { background: #d97706; color: #fff; }
         .badge-restantes-vermelho{ background: #dc2626; color: #fff; }
-        .badge-restantes-passado{ background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.75); }
+        .badge-restantes-passado { background: #e5e7eb; color: #6b7280; }
         .badge-tipo-dias {
-            background: rgba(255,255,255,0.14);
-            color: rgba(255,255,255,0.88);
-            border: 1px solid rgba(255,255,255,0.28);
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
         }
         .resultado-hero-watermark {
             position: absolute;
-            bottom: -14px;
-            right: -14px;
-            opacity: 0.07;
+            bottom: -12px;
+            right: -12px;
+            opacity: 0.06;
             pointer-events: none;
             user-select: none;
         }
@@ -1034,16 +1073,13 @@
         /* ── Body section (below hero) ── */
         .resultado-body {
             background: white;
-            border: 2px solid #86efac;
-            border-top: none;
-            border-radius: 0 0 14px 14px;
-            padding: 24px 28px 28px;
+            padding: 22px 28px 28px;
         }
 
         .resultado-info {
             margin: 8px 0;
-            font-size: 0.95rem;
-            color: #374151;
+            font-size: 0.93rem;
+            color: #4b5563;
         }
 
         .resultado-info strong {
@@ -1052,13 +1088,13 @@
 
         .resultado-descricao {
             background: #f0fdf4;
-            border-left: 4px solid #16a34a;
-            padding: 10px 12px;
-            margin: 0 0 16px;
+            border-left: 3px solid #16a34a;
+            padding: 9px 12px;
+            margin: 0 0 18px;
             border-radius: 6px;
             font-style: italic;
-            color: #1f2937;
-            font-size: 0.93rem;
+            color: #374151;
+            font-size: 0.91rem;
         }
 
         .resultado-descricao strong {
@@ -1068,7 +1104,7 @@
 
         .data-final {
             color: #15803d;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: bold;
         }
 
@@ -6863,19 +6899,40 @@
                 `;
             })();
 
+            // Formata data de início de forma compacta para o chip
+            const dataInicioCompacta = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+
             let html = `
                 <div class="resultado">
+                    <!-- Barra de acento com gradiente da marca -->
+                    <div class="resultado-top-bar"></div>
+
                     <!-- ── HERO BLOCK ── -->
                     <div class="resultado-hero">
                         <div class="resultado-hero-label">Prazo Calculado</div>
                         <div class="resultado-hero-data">${diaNumero} de ${mesNome}</div>
                         <div class="resultado-hero-ano">${anoNum} &mdash; ${diaSemana}</div>
+
+                        <!-- Chips: data início + qtd dias + tipo -->
+                        <div class="resultado-hero-chips">
+                            <div class="resultado-hero-chip">
+                                <span class="resultado-hero-chip-label">Data de início${usarDiasUteis ? ' *' : ''}</span>
+                                <span class="resultado-hero-chip-value">${dataInicioCompacta}</span>
+                            </div>
+                            <div class="resultado-hero-chip">
+                                <span class="resultado-hero-chip-label">Dias contados</span>
+                                <span class="resultado-hero-chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</span>
+                            </div>
+                        </div>
+
                         <div class="resultado-hero-badges">
                             <span class="resultado-hero-badge ${badgeRestClasse}">${badgeRestTexto}</span>
-                            <span class="resultado-hero-badge badge-tipo-dias">Dias ${tipoDias}</span>
                         </div>
+
                         <!-- watermark decorativo -->
-                        <svg class="resultado-hero-watermark" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                        <svg class="resultado-hero-watermark" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="1.2">
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
@@ -6884,14 +6941,9 @@
                     <!-- ── CORPO ── -->
                     <div class="resultado-body">
                         ${descricaoHTML}
-                        <div class="resultado-info">
-                            <strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#6b7280;font-size:0.75em;">*</sup>' : ''}
-                        </div>
-                        <div class="resultado-info">
-                            <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
-                        </div>
+                        ${usarDiasUteis ? '<p style="font-size:0.75em; color:#9ca3af; margin:0 0 16px; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
 
-                        <div class="btn-group" style="margin-top: 18px;">
+                        <div class="btn-group" style="margin-top: 4px;">
                             <button class="btn btn-red" onclick="abrirModalExportPDF()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -6954,7 +7006,6 @@
                             }).join('')}
                         </div>
 
-                        ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
                         ${conjuntosHTML}
                     </div>
                 </div>
