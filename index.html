@@ -159,9 +159,41 @@
             min-width: 0;
         }
 
+        /* Coluna do calendário: sticky no topo em telas grandes, com scroll interno */
+        .col-calendario {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            /* Scrollbar discreta */
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db transparent;
+        }
+
+        .col-calendario::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .col-calendario::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .col-calendario::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 4px;
+        }
+
         @media (max-width: 1024px) {
             .main-layout {
                 grid-template-columns: 1fr;
+            }
+
+            /* Remove sticky em telas pequenas (layout de coluna única) */
+            .col-calendario {
+                position: static;
+                max-height: none;
+                overflow-y: visible;
             }
         }
 
@@ -4780,7 +4812,7 @@
             </div>
 
             <!-- Coluna direita: Calendário -->
-            <div>
+            <div class="col-calendario">
                 <div class="card calendario">
                     <div class="card-cal-header">
                         <h3 class="section-title">
