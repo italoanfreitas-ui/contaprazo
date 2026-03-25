@@ -1375,32 +1375,37 @@
         }
 
         .calendario-header {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid;
-            border-image: linear-gradient(90deg, #e5e7eb, #d1d5db, #e5e7eb) 1;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .calendario-nav-row {
-            display: grid;
-            grid-template-columns: 32px 1fr 32px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+        }
+
+        .calendario-nav-btns {
+            display: flex;
+            gap: 6px;
         }
 
         .calendario-actions-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
         }
 
         .calendario-header h2 {
-            font-size: 1.5rem;
-            color: #1f2937;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #111827;
             margin: 0;
-            text-align: center;
+            text-align: left;
+            letter-spacing: -0.01em;
         }
 
         .btn-nav {
@@ -1412,18 +1417,18 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border-radius: 6px !important;
-            background: #f3f4f6 !important;
-            border: 1px solid #d1d5db !important;
-            color: #374151 !important;
-            transition: all 0.2s;
+            border-radius: 8px !important;
+            background: transparent !important;
+            border: 1px solid #e5e7eb !important;
+            color: #6b7280 !important;
+            transition: all 0.15s ease;
         }
 
         .btn-nav:hover {
-            border-color: #3b82f6 !important;
-            background: #dbeafe !important;
-            color: #1e40af !important;
-            transform: translateY(-1px);
+            background: #f9fafb !important;
+            border-color: #d1d5db !important;
+            color: #374151 !important;
+            transform: none;
         }
 
         .btn-nav svg {
@@ -1431,24 +1436,25 @@
         }
 
         .btn-hoje {
-            padding: 8px 14px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.875rem;
+            padding: 6px 12px;
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 500;
-            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
-            transition: all 0.2s;
+            transition: all 0.15s ease;
             flex: 0 0 auto;
             white-space: nowrap;
             cursor: pointer;
         }
 
         .btn-hoje:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+            background: #f9fafb;
+            border-color: #d1d5db;
+            color: #374151;
+            transform: none;
+            box-shadow: none;
         }
 
         .visualizacao-toggle {
@@ -1803,74 +1809,97 @@
         .calendario-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 6px;
         }
 
         .calendario-dia-semana {
             text-align: center;
-            font-weight: bold;
-            color: #4b5563;
-            padding: 10px;
+            font-weight: 600;
+            color: #9ca3af;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 6px 0 10px;
         }
 
         .calendario-dia {
             aspect-ratio: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+            gap: 2px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-            min-height: 40px;
+            transition: background 0.12s ease, transform 0.12s ease;
+            font-size: 0.9rem;
+            min-height: 42px;
+            background: #f9fafb;
+            border: none;
         }
 
-        .calendario-dia:hover:not(.fim-semana) {
-            background: #f3f4f6;
-            transform: scale(1.05);
+        .dia-numero {
+            font-size: inherit;
+            line-height: 1;
+            font-weight: 500;
+        }
+
+        .dia-label {
+            font-size: 0.52rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1;
+            opacity: 0.85;
+        }
+
+        .calendario-dia:hover:not(.fim-semana):not(.dia-inicio):not(.dia-final) {
+            background: #f0f0f0;
+            transform: scale(1.06);
         }
 
         .fim-semana {
-            background: #e5e7eb;
-            color: #6b7280;
+            background: #f3f4f6;
+            color: #c4c9d2;
             cursor: default;
         }
 
         .feriado {
-            background: #fecaca;
-            color: #991b1b;
+            background: #fff1f2;
+            color: #dc2626;
             font-weight: 600;
         }
 
         .feriado-personalizado {
-            background: #e9d5ff;
-            color: #6b21a8;
+            background: #faf5ff;
+            color: #7c3aed;
             font-weight: 600;
         }
 
         .feriado-em-fds {
             /* Mantém o fundo cinza do fim-semana, mas texto vermelho negrito como feriado */
-            color: #991b1b !important;
+            color: #dc2626 !important;
             font-weight: 700 !important;
         }
 
         .dia-inicio {
-            background: #3b82f6;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 0 0 2px #2563eb;
+            background: #f0fdf8;
+            color: #134e4a;
+            font-weight: 700;
+            border: 2px solid #0f766e !important;
+            box-shadow: none;
         }
 
         .dia-final {
             background: #16a34a;
             color: white;
-            font-weight: bold;
-            box-shadow: 0 0 0 2px #15803d;
+            font-weight: 700;
+            box-shadow: none;
         }
 
         .dia-percorrido {
-            background: #fef3c7;
+            background: #f0fdf4;
+            color: #166534;
         }
 
         /* Tooltip de feriados no calendário */
@@ -1923,35 +1952,51 @@
         }
 
         .legenda {
-            background: #f9fafb;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
+            background: transparent;
+            border-top: 1px solid #f3f4f6;
+            border-radius: 0;
+            padding: 16px 0 0;
+            margin-top: 16px;
         }
 
         .legenda h3 {
-            margin-bottom: 15px;
-            color: #1f2937;
+            margin-bottom: 10px;
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
         .legenda-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
         }
 
         .legenda-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.875rem;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #6b7280;
         }
 
         .legenda-cor {
-            width: 24px;
-            height: 24px;
+            width: 14px;
+            height: 14px;
             border-radius: 4px;
-            border: 1px solid #d1d5db;
+            flex-shrink: 0;
+        }
+
+        /* Swatch especial para dia-inicio (borda, sem fundo sólido) */
+        .legenda-cor-inicio {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            background: #f0fdf8;
+            border: 2px solid #0f766e;
         }
 
         .rodape {
@@ -2836,7 +2881,6 @@
 
             .calendario-header h2 {
                 font-size: 1.15rem;
-                min-width: 140px;
             }
 
             .calendario-actions-row {
@@ -4833,17 +4877,19 @@
 
             <div class="calendario-header">
                 <div class="calendario-nav-row">
-                    <button class="btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
-                    </button>
                     <h2 id="mesAtual"></h2>
-                    <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+                    <div class="calendario-nav-btns">
+                        <button class="btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="calendario-actions-row">
                     <div class="visualizacao-toggle">
@@ -4851,9 +4897,7 @@
                         <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
                         <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
                     </div>
-                    <button class="btn-hoje" onclick="irParaHoje()">
-                        📅 Hoje
-                    </button>
+                    <button class="btn-hoje" onclick="irParaHoje()">Hoje</button>
                 </div>
             </div>
 
@@ -4971,22 +5015,22 @@
             </div><!-- /card-cal-footer -->
 
             <div class="legenda">
-                <h3>Legenda:</h3>
+                <h3>Legenda</h3>
                 <div class="legenda-grid">
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #e5e7eb"></div>
+                        <div class="legenda-cor" style="background: #f3f4f6"></div>
                         <span>Fim de semana</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #fecaca"></div>
+                        <div class="legenda-cor" style="background: #fff1f2; border: 1px solid #fecdd3"></div>
                         <span>Feriados Fixos/Móveis</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #e9d5ff"></div>
+                        <div class="legenda-cor" style="background: #faf5ff; border: 1px solid #e9d5ff"></div>
                         <span>Feriados Personalizados</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #3b82f6"></div>
+                        <div class="legenda-cor-inicio"></div>
                         <span id="legendaDataInicio">Data de início</span>
                     </div>
                     <div class="legenda-item">
@@ -4994,12 +5038,12 @@
                         <span>Data final</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #fef3c7"></div>
+                        <div class="legenda-cor" style="background: #f0fdf4; border: 1px solid #bbf7d0"></div>
                         <span>Dias contados</span>
                     </div>
                 </div>
-                <p style="margin-top: 15px; font-size: 0.875rem; color: #6b7280;">
-                    <strong>Dica:</strong> Clique em qualquer dia útil para marcá-lo como feriado personalizado.
+                <p style="margin-top: 12px; font-size: 0.78rem; color: #9ca3af;">
+                    Clique em qualquer dia útil para marcá-lo como feriado personalizado.
                 </p>
             </div>
                 </div>
@@ -6862,6 +6906,15 @@
             return { className, ehFds, tooltip };
         }
 
+        function getLabelDia(className) {
+            if (className.includes('dia-inicio')) return 'INÍCIO';
+            if (className.includes('dia-final')) return 'FIM';
+            if (className.includes('feriado-personalizado')) return 'FERIADO';
+            if (className.includes('feriado-em-fds')) return 'FERIADO';
+            if (className.includes('feriado')) return 'FERIADO';
+            return '';
+        }
+
         function setDias(dias) {
             document.getElementById('diasUteis').value = dias;
             mostrarAvisoRecalculo();
@@ -7399,23 +7452,25 @@
             const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
 
             // Atualizar display do mês/ano
+            const capitalizarMes = (str) => str.charAt(0).toUpperCase() + str.slice(1);
             if (mesesVisiveis === 1) {
+                const nomeMes = mesAtual.toLocaleDateString('pt-BR', { month: 'long' });
                 document.getElementById('mesAtual').textContent =
-                    mesAtual.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+                    `${capitalizarMes(nomeMes)} ${mesAtual.getFullYear()}`;
             } else {
                 const mesInicio = mesAtual;
                 const mesFim = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + mesesVisiveis - 1, 1);
 
                 if (mesInicio.getFullYear() === mesFim.getFullYear()) {
-                    const mesInicioNome = mesInicio.toLocaleDateString('pt-BR', { month: 'short' });
-                    const mesFimNome = mesFim.toLocaleDateString('pt-BR', { month: 'short' });
+                    const mesInicioNome = capitalizarMes(mesInicio.toLocaleDateString('pt-BR', { month: 'short' }));
+                    const mesFimNome = capitalizarMes(mesFim.toLocaleDateString('pt-BR', { month: 'short' }));
                     document.getElementById('mesAtual').textContent =
-                        `${mesInicioNome.toUpperCase()} - ${mesFimNome.toUpperCase()} ${mesInicio.getFullYear()}`;
+                        `${mesInicioNome} – ${mesFimNome} ${mesInicio.getFullYear()}`;
                 } else {
-                    const mesInicioCompleto = mesInicio.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
-                    const mesFimCompleto = mesFim.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+                    const mesInicioNome = capitalizarMes(mesInicio.toLocaleDateString('pt-BR', { month: 'short' }));
+                    const mesFimNome = capitalizarMes(mesFim.toLocaleDateString('pt-BR', { month: 'short' }));
                     document.getElementById('mesAtual').textContent =
-                        `${mesInicioCompleto.toUpperCase()} - ${mesFimCompleto.toUpperCase()}`;
+                        `${mesInicioNome} ${mesInicio.getFullYear()} – ${mesFimNome} ${mesFim.getFullYear()}`;
                 }
             }
 
@@ -7458,7 +7513,11 @@
                     const { className, ehFds, tooltip } = obterClassesDia(data, 'calendario-dia', diasPercorridos, primeiroDiaPercorrido, ultimoDiaPercorrido);
                     const onclick = (ehFds || !usarDiasUteis) ? '' : `onclick="toggleDia('${dataStr}')"`;
                     const tooltipAttr = tooltip ? `data-tooltip="${escapeHtml(tooltip)}"` : '';
-                    htmlMes += `<div class="${className}" ${onclick} ${tooltipAttr}>${dia}</div>`;
+                    const label = getLabelDia(className);
+                    const inner = label
+                        ? `<span class="dia-numero">${dia}</span><span class="dia-label">${label}</span>`
+                        : `<span class="dia-numero">${dia}</span>`;
+                    htmlMes += `<div class="${className}" ${onclick} ${tooltipAttr}>${inner}</div>`;
                 }
 
                 htmlMes += '</div>';
