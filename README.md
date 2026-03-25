@@ -16,10 +16,11 @@ ContaPrazo é uma aplicação web standalone (HTML + CSS + JavaScript puro) dese
 
 ### Calculadora de Prazos
 - Cálculo de prazos em dias úteis ou corridos
-- Detalhamento dia a dia do período
+- Detalhamento do cálculo dia a dia do período
 - Identificação visual de feriados e finais de semana
 - Campo opcional para descrição do prazo
-- Visualização de calendário interativo
+- Visualização de calendário interativo (Mensal, Bimestral, Trimestral ou Anual)
+- **Salvar no Google Agenda**: gera link dinâmico com data final, início, perfil de feriados e links dos atos normativos consultados
 
 ### Sistema de Feriados
 - Feriados nacionais fixos pré-configurados
@@ -50,6 +51,7 @@ ContaPrazo é uma aplicação web standalone (HTML + CSS + JavaScript puro) dese
 ### Exportação e Compartilhamento
 - **Imprimir PDF** via nova aba (Ctrl+P / Cmd+P)
 - **Exportar como imagem PNG** (resumido ou completo)
+- **Salvar no Google Agenda**: botão dedicado com logo oficial, abre evento pré-preenchido com data final, período, perfil ativo e atos normativos consultados
 - **Copiar para área de transferência** (texto formatado ou puro)
 - **Abrir em nova aba** para impressão
 - **Baixar calculadora completa** em arquivo HTML único para uso offline
@@ -135,6 +137,7 @@ Configure feriados estaduais, municipais, pontos facultativos ou datas especiais
 - Ícones SVG inline (funciona offline)
 - Animações suaves
 - Menu dropdown inteligente (adapta posição ao scroll)
+- Sistema de tooltips unificado com renderização em posição fixa (funciona em seções desativadas e em dispositivos touch)
 
 ## ⚙️ Tecnologias
 
@@ -148,9 +151,9 @@ Configure feriados estaduais, municipais, pontos facultativos ou datas especiais
 
 ```
 contaprazo/
-├── conta-prazo-html.html    # Aplicação completa (standalone)
-├── README.md                 # Este arquivo
-└── .git/                     # Controle de versão Git
+├── index.html    # Aplicação completa (standalone)
+├── README.md     # Este arquivo
+└── .git/         # Controle de versão Git
 ```
 
 ## 🔒 Privacidade
@@ -167,7 +170,26 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 
 ## 📝 Changelog
 
-### Versão 1.5 (Atual)
+### Versão 1.7 (Atual)
+- **Botão "Salvar no Google Agenda"**: gera link dinâmico (sem API) com data final do prazo como evento de dia inteiro; inclui início, dias contados, tipo (úteis/corridos), perfil de feriados ativo, links dos atos normativos consultados (conjuntos online com link) e URL do app
+  - Logo oficial do Google Agenda (SVG multicolor) no botão
+  - Evento enriquecido com atribuição "Calculado com ContaPrazo"
+- **Sistema de tooltips unificado** (`#calTooltipEl`): renderização em `position: fixed` no `<body>`, substituindo os tooltips CSS que quebravam em seções com `opacity` reduzida
+  - Intercepta `[data-tooltip]`, `[data-tooltip-html]`, `[title]` e `[data-tiptitle]`
+  - Funciona em seções desativadas (dias corridos) e em dispositivos touch (long-press 500ms, oculta ao scroll/arrastar)
+- **Padronização do formulário de cálculo**: espaçamentos e tipografia uniformes entre todos os campos
+  - Correção do duplo espaço em "Quantidade de dias" (gap do flex + margin do label somavam incorretamente)
+  - Rótulos de seção (feriados, perfis) alinhados ao estilo dos demais campos do formulário
+  - Badge de perfil desativado visualmente com tooltip explicativo no modo dias corridos
+- **Calendário**: visualização Mensal adapta-se automaticamente a Bimestral ou Trimestral conforme espaço disponível; tooltip do botão atualiza dinamicamente com o modo ativo; nomes dos meses exibidos em azul
+- **"Detalhamento do cálculo"**: seção de detalhamento renomeada (era "Detalhamento")
+- **Consistência visual dos botões de resultado**: fonte, peso e efeitos hover padronizados entre "Salvar no Google Agenda" e "Salvar na Minha Agenda"
+- **Dropdown de perfis**: atualiza automaticamente após importação de conjuntos online
+
+### Versão 1.6
+- **Versão intermediária** (melhorias internas de perfis e exportações)
+
+### Versão 1.5
 - **Rastreabilidade de conjuntos de feriados online**: título e descrição de cada conjunto importado agora são salvos e exibidos em locais estratégicos
   - Exibidos discretamente após o detalhamento do cálculo na tela
   - Incluídos nos exports PDF e PNG (seção "Feriados online utilizados")
