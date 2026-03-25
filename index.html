@@ -6861,7 +6861,11 @@
             const secoesFeridados = document.querySelectorAll('.tipos-feriado-calc-group');
             secoesFeridados.forEach(sec => {
                 sec.style.opacity = usarDiasUteis ? '' : '0.35';
-                sec.style.pointerEvents = usarDiasUteis ? '' : 'none';
+                // Disable only interactive children so the section itself keeps pointer
+                // events — this allows CSS hover tooltips (.tooltip-icon) to still work
+                sec.querySelectorAll('input, select, button, .perfil-pill, .tipos-feriado-pill').forEach(el => {
+                    el.style.pointerEvents = usarDiasUteis ? '' : 'none';
+                });
             });
             atualizarBadgePerfilDiasCorridos();
             renderizarCalendario();
@@ -6869,15 +6873,18 @@
 
         function atualizarBadgePerfilDiasCorridos() {
             const container = document.querySelector('.perfil-badge-container');
+            const badge = document.getElementById('perfilBadge');
             if (!container) return;
             if (!usarDiasUteis) {
                 container.style.opacity = '0.35';
-                container.style.pointerEvents = 'none';
                 container.title = 'Perfis de feriados não se aplicam no modo de dias corridos';
+                // Disable clicks on the badge itself, but keep the container interactive
+                // so its title tooltip remains visible on hover
+                if (badge) badge.style.pointerEvents = 'none';
             } else {
                 container.style.opacity = '';
-                container.style.pointerEvents = '';
                 container.title = '';
+                if (badge) badge.style.pointerEvents = '';
             }
         }
 
@@ -8228,6 +8235,7 @@
 
             salvarPerfisNoLocalStorage();
             atualizarDropdownPerfis();
+            renderizarDropdownPerfilCalculo();
 
             const total = criados + sobrescritos;
             if (total > 0) {
@@ -11806,16 +11814,13 @@
             document.body.appendChild(tip);
 
             let hideTimer = null;
+            let touchTimer = null;
 
-            document.addEventListener('mouseover', function(e) {
-                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
-                if (!el) return;
-                clearTimeout(hideTimer);
+            function posicionarTip(el) {
                 tip.textContent = el.getAttribute('data-tooltip');
                 tip.classList.add('visible');
-                // Posição: centrado acima da célula, com fallback abaixo
                 const r = el.getBoundingClientRect();
-                tip.style.left = '0'; tip.style.top = '0'; // reset para medir
+                tip.style.left = '0'; tip.style.top = '0';
                 const tw = tip.offsetWidth;
                 const th = tip.offsetHeight;
                 let x = r.left + r.width / 2 - tw / 2;
@@ -11825,6 +11830,20 @@
                 if (x + tw > window.innerWidth - 4) x = window.innerWidth - 4 - tw;
                 tip.style.left = x + 'px';
                 tip.style.top = y + 'px';
+            }
+
+            function esconder() {
+                clearTimeout(hideTimer);
+                clearTimeout(touchTimer);
+                tip.classList.remove('visible');
+            }
+
+            // Mouse
+            document.addEventListener('mouseover', function(e) {
+                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
+                if (!el) return;
+                clearTimeout(hideTimer);
+                posicionarTip(el);
             });
 
             document.addEventListener('mouseout', function(e) {
@@ -11832,6 +11851,32 @@
                 if (!el) return;
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
             });
+
+            // Touch: long-press para mostrar, esconde ao mover/rolar/soltar
+            document.addEventListener('touchstart', function(e) {
+                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
+                if (!el) return;
+                clearTimeout(touchTimer);
+                touchTimer = setTimeout(() => posicionarTip(el), 500);
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function() {
+                esconder();
+            }, { passive: true });
+
+            document.addEventListener('touchend', function() {
+                clearTimeout(touchTimer);
+                hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
+            }, { passive: true });
+
+            document.addEventListener('touchcancel', function() {
+                esconder();
+            }, { passive: true });
+
+            // Esconde ao rolar a página (scroll em qualquer elemento)
+            document.addEventListener('scroll', function() {
+                esconder();
+            }, { passive: true, capture: true });
         })();
     </script>
 
