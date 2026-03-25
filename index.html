@@ -1088,23 +1088,13 @@
             line-height: 1.4;
         }
 
-        /* Descrição — extensão do hero, visualmente vinculada */
-        .resultado-hero-desc {
-            border-top: 1px solid rgba(21,128,61,0.12);
-            margin: 16px -28px -20px;
-            padding: 12px 28px 20px;
-            background: rgba(255,255,255,0.55);
-            font-size: 0.875rem;
-            color: #374151;
-            font-style: italic;
-            line-height: 1.55;
-            position: relative;
-            z-index: 1;
-        }
-        .resultado-hero-desc strong {
-            font-style: normal;
+        /* Título do cálculo — entre o label e a data */
+        .resultado-hero-titulo {
+            font-size: 1.05rem;
             font-weight: 600;
-            color: #15803d;
+            color: #374151;
+            line-height: 1.3;
+            margin-bottom: 10px;
         }
 
         /* ── Body section ── */
@@ -7014,6 +7004,7 @@
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                             Prazo Calculado
                         </div>
+                        ${descricaoPrazo ? `<div class="resultado-hero-titulo">${escapeHtml(descricaoPrazo)}</div>` : ''}
                         <div class="resultado-hero-data">${diaNumero} de ${mesNome} de ${anoNum}</div>
                         <div class="resultado-hero-ano">${diaSemana}</div>
 
@@ -7035,8 +7026,6 @@
                             ${statusRestTexto}
                         </div>
                         ${usarDiasUteis ? '<p class="resultado-hero-footnote"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-
-                        ${descricaoPrazo ? `<div class="resultado-hero-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>` : ''}
 
                         <!-- watermark decorativo -->
                         <svg class="resultado-hero-watermark" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="1.2">
@@ -8639,8 +8628,7 @@
         .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
         .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
         .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-        .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 28px 18px; font-size: 14px; color: #374151; font-style: italic; line-height: 1.55; }
-        .header-desc strong { font-style: normal; font-weight: 600; color: #15803d; }
+        .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
         /* Info legada — usada apenas pelo conteúdo específico abaixo do hero */
         .info { margin: 15px 0; font-size: 16px; }
         .destaque { color: #15803d; font-size: 18px; font-weight: bold; }
@@ -8667,6 +8655,7 @@
         <div class="header-accent"></div>
         <div class="header-body">
             <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
             <div class="header-date">${exportDiaNum} de ${exportMesNome} de ${exportAno}</div>
             <div class="header-weekday">${exportDiaSem}</div>
             <div class="header-chips">
@@ -8682,7 +8671,6 @@
             ${diasVisuaisHTML}
             ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
-        ${descricaoHTML}
     </div>
     ${conteudoEspecifico}
     ${conjuntosHTML}
@@ -8711,7 +8699,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias
@@ -8835,7 +8823,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar lista detalhada dos dias
@@ -8936,7 +8924,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
@@ -9035,7 +9023,7 @@
     .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
     .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
     .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-    .export-wrapper .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 30px 20px; background: rgba(255,255,255,0.55); font-style: italic; font-size: 14px; color: #374151; }
+    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
 </style>
 <div class="export-wrapper">
     <div class="brand-header">
@@ -9053,6 +9041,7 @@
         <div class="header-accent"></div>
         <div class="header-body">
             <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
             <div class="header-date">${pngDiaNum} de ${pngMesNome} de ${pngAno}</div>
             <div class="header-weekday">${pngDiaSem}</div>
             <div class="header-chips">
@@ -9076,7 +9065,6 @@
             </div>
             ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
-        ${descricaoHTML}
     </div>
     ${gerarHTMLConjuntosNota('image')}
 </div>`;
@@ -9126,7 +9114,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             let listaHTML = '';
@@ -9178,7 +9166,7 @@
     .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
     .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
     .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-    .export-wrapper .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 30px 20px; background: rgba(255,255,255,0.55); font-style: italic; font-size: 14px; color: #374151; }
+    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
     .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
     .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 15px 0; }
 </style>
@@ -9198,6 +9186,7 @@
         <div class="header-accent"></div>
         <div class="header-body">
             <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
             <div class="header-date">${cmpDiaNum} de ${cmpMesNome} de ${cmpAno}</div>
             <div class="header-weekday">${cmpDiaSem}</div>
             <div class="header-chips">
@@ -9212,7 +9201,6 @@
             </div>
             ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
-        ${descricaoHTML}
     </div>
     <div class="secao">
         <h3>Detalhamento</h3>
