@@ -224,11 +224,12 @@
             margin-bottom: 0;
         }
 
-        /* Badge de perfil ativo — linha abaixo dos controles de navegação */
+        /* Badge de perfil ativo — linha abaixo dos controles de navegação, alinhada à direita */
         .cal-badge-row {
             margin-top: 10px;
             display: flex;
             align-items: center;
+            justify-content: flex-end;
         }
 
         /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
@@ -1388,7 +1389,7 @@
         }
 
         .cal-mes {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -1397,7 +1398,7 @@
         }
 
         .cal-ano {
-            font-size: 2.2rem;
+            font-size: 2.6rem;
             font-weight: 800;
             color: #1e293b;   /* dark slate — alto contraste */
             line-height: 1;
@@ -8840,7 +8841,7 @@
                 const diaNum = inicioDataPDF.getDate();
                 const nomeMes = inicioDataPDF.toLocaleDateString('pt-BR', { month: 'short' });
                 const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #18181b; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
             }
 
             todosOsDias.forEach((dia, index) => {
@@ -8854,31 +8855,31 @@
                 const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
                 const ehPersonalizado = feriadosPersonalizados.has(dataStr);
 
-                let cor = '#fef3c7';
-                let borda = '1px solid #fbbf24';
-                let textoCor = '#92400e';
+                let cor = '#bfdbfe';
+                let borda = 'none';
+                let textoCor = '#1e40af';
 
                 if (isInicio) {
-                    cor = '#3b82f6';
-                    borda = '2px solid #2563eb';
+                    cor = '#18181b';
+                    borda = 'none';
                     textoCor = '#ffffff';
                 } else if (isFinal) {
-                    cor = '#16a34a';
-                    borda = '2px solid #15803d';
+                    cor = '#6366f1';
+                    borda = 'none';
                     textoCor = '#ffffff';
                 } else if (usarDiasUteis) {
                     if (ehPersonalizado) {
                         cor = '#e9d5ff';
-                        borda = '1px solid #c084fc';
+                        borda = 'none';
                         textoCor = '#6b21a8';
                     } else if (ehFer) {
-                        cor = '#fecaca';
-                        borda = '1px solid #f87171';
-                        textoCor = '#991b1b';
+                        cor = '#fecdd3';
+                        borda = 'none';
+                        textoCor = '#9f1239';
                     } else if (ehFds) {
-                        cor = '#e5e7eb';
-                        borda = '1px solid #d1d5db';
-                        textoCor = '#6b7280';
+                        cor = '#d4d4d8';
+                        borda = 'none';
+                        textoCor = '#52525b';
                     }
                 }
 
@@ -9065,7 +9066,7 @@
                 const diaNum = inicioDataPNG.getDate();
                 const nomeMes = inicioDataPNG.toLocaleDateString('pt-BR', { month: 'short' });
                 const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #3b82f6; border: 2px solid #2563eb; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
+                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #18181b; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
             }
 
             todosOsDias.forEach((dia, index) => {
@@ -9079,31 +9080,31 @@
                 const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
                 const ehPersonalizado = feriadosPersonalizados.has(dataStr);
 
-                let cor = '#fef3c7';
-                let borda = '1px solid #fbbf24';
-                let textoCor = '#92400e';
+                let cor = '#bfdbfe';
+                let borda = 'none';
+                let textoCor = '#1e40af';
 
                 if (isInicio) {
-                    cor = '#3b82f6';
-                    borda = '2px solid #2563eb';
+                    cor = '#18181b';
+                    borda = 'none';
                     textoCor = '#ffffff';
                 } else if (isFinal) {
-                    cor = '#16a34a';
-                    borda = '2px solid #15803d';
+                    cor = '#6366f1';
+                    borda = 'none';
                     textoCor = '#ffffff';
                 } else if (usarDiasUteis) {
                     if (ehPersonalizado) {
                         cor = '#e9d5ff';
-                        borda = '1px solid #c084fc';
+                        borda = 'none';
                         textoCor = '#6b21a8';
                     } else if (ehFer) {
-                        cor = '#fecaca';
-                        borda = '1px solid #f87171';
-                        textoCor = '#991b1b';
+                        cor = '#fecdd3';
+                        borda = 'none';
+                        textoCor = '#9f1239';
                     } else if (ehFds) {
-                        cor = '#e5e7eb';
-                        borda = '1px solid #d1d5db';
-                        textoCor = '#6b7280';
+                        cor = '#d4d4d8';
+                        borda = 'none';
+                        textoCor = '#52525b';
                     }
                 }
 
