@@ -309,21 +309,22 @@
             font-style: italic;
         }
 
-        /* Estado sem perfil ativo: badge indicativa, clicável, guia o usuário */
+        /* Estado sem perfil ativo: dot cinza, sem borda */
         .perfil-badge.sem-perfil {
-            border-style: dashed;
-            border-color: #d1d5db;
+            border: none;
             color: #9ca3af;
             background: transparent;
             font-style: italic;
             cursor: pointer;
-            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            transition: color 0.2s;
+        }
+
+        .perfil-badge.sem-perfil::before {
+            background: #9ca3af; /* dot cinza quando sem perfil */
         }
 
         .perfil-badge.sem-perfil:hover {
-            border-color: #9ca3af;
             color: #6b7280;
-            background: #f9fafb;
         }
 
         /* Rodapé do card do calendário: perfis + config-feriados ficam juntos */
@@ -1515,7 +1516,8 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 10px;
-            padding: 12px 12px;
+            padding: 14px;
+            overflow: hidden;
         }
 
         .mes-mini h4 {
@@ -6272,7 +6274,20 @@
             efetuarTrocaPerfil(id);
         }
 
+        function salvarTogglesDoPerfil() {
+            const estado = { fixos: feriadosFixosAtivos, moveis: feriadosMoveisAtivos, personalizados: feriadosPersonalizadosAtivos };
+            if (perfilAtivoId) {
+                const perfil = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfil) { perfil.tiposFeriado = estado; salvarPerfisNoLocalStorage(); }
+            } else {
+                localStorage.setItem('contaprazo_toggles_nenhum', JSON.stringify(estado));
+            }
+        }
+
         function efetuarTrocaPerfil(id) {
+            // Persiste o estado atual dos toggles antes de trocar
+            salvarTogglesDoPerfil();
+
             if (id === null) {
                 // Selecionou "Nenhum" - limpa feriados personalizados
                 perfilAtivoId = null;
@@ -6281,9 +6296,18 @@
                 salvarFeriadosNoLocalStorage();
                 feriadosSnapshotPerfil = obterSnapshotFeriados();
                 perfilTemAlteracoes = false;
-                // Restaura fixos/móveis ao desativar perfil
-                feriadosFixosAtivos = true;
-                feriadosMoveisAtivos = true;
+                // Restaura o último estado salvo para "Nenhum", ou padrão
+                const salvo = localStorage.getItem('contaprazo_toggles_nenhum');
+                if (salvo) {
+                    const s = JSON.parse(salvo);
+                    feriadosFixosAtivos = s.fixos !== undefined ? s.fixos : true;
+                    feriadosMoveisAtivos = s.moveis !== undefined ? s.moveis : true;
+                    feriadosPersonalizadosAtivos = s.personalizados !== undefined ? s.personalizados : true;
+                } else {
+                    feriadosFixosAtivos = true;
+                    feriadosMoveisAtivos = true;
+                    feriadosPersonalizadosAtivos = true;
+                }
                 salvarTiposFeriadoAtivos();
                 atualizarPillsTiposFeriado();
             } else {
@@ -6294,8 +6318,17 @@
                     localStorage.setItem(PERFIL_ATIVO_KEY, id);
                     feriadosSnapshotPerfil = obterSnapshotFeriados();
                     perfilTemAlteracoes = false;
-                    // Auto-desmarca fixos/móveis se não houver preferência salva
-                    aplicarAutoDesmarcarFixosMoveis();
+                    // Restaura os toggles salvos deste perfil, ou aplica padrões na 1ª vez
+                    if (perfil.tiposFeriado) {
+                        feriadosFixosAtivos = perfil.tiposFeriado.fixos !== undefined ? perfil.tiposFeriado.fixos : false;
+                        feriadosMoveisAtivos = perfil.tiposFeriado.moveis !== undefined ? perfil.tiposFeriado.moveis : false;
+                        feriadosPersonalizadosAtivos = perfil.tiposFeriado.personalizados !== undefined ? perfil.tiposFeriado.personalizados : true;
+                        salvarTiposFeriadoAtivos();
+                        atualizarPillsTiposFeriado();
+                    } else {
+                        // 1ª vez neste perfil: desmarcar fixos/móveis automaticamente
+                        aplicarAutoDesmarcarFixosMoveis();
+                    }
                 }
             }
 
@@ -7295,6 +7328,8 @@
 
             salvarTiposFeriadoAtivos();
             atualizarPillsTiposFeriado();
+            // Persiste o novo estado no perfil ativo (ou no contexto "Nenhum")
+            salvarTogglesDoPerfil();
             renderizarCalendario();
 
             // Mostra aviso se já houver cálculo realizado
