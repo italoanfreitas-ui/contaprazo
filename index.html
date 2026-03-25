@@ -1425,7 +1425,7 @@
         }
 
         .btn-nav:hover {
-            color: #111827 !important;
+            color: #374151 !important;
             background: #f3f4f6 !important;
             border: none !important;
             transform: none;
@@ -1435,26 +1435,16 @@
             stroke: currentColor;
         }
 
-        .btn-hoje {
-            padding: 6px 12px;
-            background: transparent;
-            color: #6b7280;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.15s ease;
-            flex: 0 0 auto;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .btn-hoje:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-            color: #374151;
-            transform: none;
-            box-shadow: none;
+        /* Botão "Hoje" reutiliza o estilo ghost do btn-nav mas com texto */
+        .btn-nav-hoje {
+            width: auto !important;
+            min-width: unset !important;
+            border-radius: 20px !important;
+            padding: 0 10px !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.01em;
+            height: 26px !important;
         }
 
         .visualizacao-toggle {
@@ -1826,6 +1816,7 @@
             min-height: 42px;
             background: #f9fafb;
             border: none;
+            position: relative; /* necessário para ::before do dia-hoje */
         }
 
         .dia-numero {
@@ -1850,7 +1841,7 @@
 
         .fim-semana {
             background: #f4f4f5;
-            color: #d1d5db;
+            color: #a1a1aa; /* mais legível que d1d5db, mas ainda discreto */
             cursor: default;
         }
 
@@ -1861,10 +1852,10 @@
             font-weight: 600;
         }
 
-        /* Feriado personalizado: violeta suave */
+        /* Feriado personalizado: âmbar/laranja — totalmente distinto do azul dos dias contados */
         .feriado-personalizado {
-            background: #f5f3ff;
-            color: #7c3aed;
+            background: #fffbeb;
+            color: #b45309;
             font-weight: 600;
         }
 
@@ -1878,6 +1869,18 @@
         .dia-percorrido {
             background: #eff6ff;
             color: #2563eb;
+        }
+
+        /* Indicador de "hoje": anel interno sutil via box-shadow inset
+           (não usa ::before para não conflitar com a seta do tooltip) */
+        .dia-hoje {
+            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.45);
+        }
+
+        /* Em células escuras/coloridas, o anel fica branco/translúcido */
+        .dia-inicio.dia-hoje,
+        .dia-final.dia-hoje {
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);
         }
 
         /* Data de início: âncora escura, contraste máximo */
@@ -4870,6 +4873,7 @@
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>
                         </button>
+                        <button class="btn-nav btn-nav-hoje" onclick="irParaHoje()">Hoje</button>
                         <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -4883,7 +4887,6 @@
                         <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
                         <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
                     </div>
-                    <button class="btn-hoje" onclick="irParaHoje()">Hoje</button>
                 </div>
             </div>
 
@@ -5012,7 +5015,7 @@
                         <span>Feriados Fixos/Móveis</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background:#f5f3ff; border:1px solid #ddd6fe"></div>
+                        <div class="legenda-cor" style="background:#fffbeb; border:1px solid #fde68a"></div>
                         <span>Feriados Personalizados</span>
                     </div>
                     <div class="legenda-item">
@@ -6861,6 +6864,7 @@
             const ehInicio = dataInicio === dataStr;
             const ehFim = dataFinal && formatarDataCompleta(dataFinal) === dataStr;
             const ehPercorrido = todosOsDias.some(d => d.contado && formatarDataCompleta(d.data) === dataStr);
+            const ehHoje = dataStr === formatarDataCompleta(new Date());
 
             let className = baseClass;
 
@@ -6882,11 +6886,25 @@
                 className += ' dia-percorrido';
             }
 
-            // Determina tooltip para feriados visíveis no calendário
+            // Marcador de hoje (anel interno via box-shadow)
+            if (ehHoje) className += ' dia-hoje';
+
+            // Determina tooltip para todos os estados especiais
             let tooltip = null;
             if (tipoFeriado) {
                 const nome = obterNomeFeriado(data);
-                tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado/Ponto Facultativo' : 'Feriado');
+                tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado personalizado' : 'Feriado');
+            } else if (ehInicio) {
+                tooltip = 'Data de início';
+            } else if (ehFim) {
+                tooltip = 'Data final';
+            } else if (ehPercorrido) {
+                tooltip = 'Dia útil contado';
+            }
+
+            // Acrescenta "Hoje" ao tooltip se for o dia atual
+            if (ehHoje) {
+                tooltip = tooltip ? tooltip + ' · Hoje' : 'Hoje';
             }
 
             return { className, ehFds, tooltip };
