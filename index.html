@@ -165,7 +165,6 @@
             top: 20px;
             max-height: calc(100vh - 40px);
             overflow-y: auto;
-            overflow-x: hidden;
             /* Scrollbar discreta */
             scrollbar-width: thin;
             scrollbar-color: #d1d5db transparent;
@@ -1409,25 +1408,26 @@
         }
 
         .btn-nav {
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px !important;
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
             padding: 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border-radius: 8px !important;
-            background: transparent !important;
-            border: 1px solid #e5e7eb !important;
-            color: #6b7280 !important;
-            transition: all 0.15s ease;
+            border-radius: 50% !important;
+            background: none !important;
+            border: none !important;
+            color: #9ca3af !important;
+            cursor: pointer;
+            transition: color 0.15s ease, background 0.15s ease;
         }
 
         .btn-nav:hover {
-            background: #f9fafb !important;
-            border-color: #d1d5db !important;
-            color: #374151 !important;
+            color: #111827 !important;
+            background: #f3f4f6 !important;
+            border: none !important;
             transform: none;
         }
 
@@ -1498,22 +1498,12 @@
             color: #1f2937;
         }
 
+        /* auto-fit responde à largura real do container (não do viewport),
+           então funciona corretamente dentro da coluna sticky de ~50% de largura */
         .calendario-anual {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .calendario-anual {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .calendario-anual {
-                grid-template-columns: 1fr;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(min(175px, 100%), 1fr));
+            gap: 16px;
         }
 
         .mes-mini {
@@ -1854,52 +1844,57 @@
         }
 
         .calendario-dia:hover:not(.fim-semana):not(.dia-inicio):not(.dia-final) {
-            background: #f0f0f0;
+            background: #ebebeb;
             transform: scale(1.06);
         }
 
         .fim-semana {
-            background: #f3f4f6;
-            color: #c4c9d2;
+            background: #f4f4f5;
+            color: #d1d5db;
             cursor: default;
         }
 
+        /* Feriado nacional/móvel: vermelho suave */
         .feriado {
             background: #fff1f2;
-            color: #dc2626;
+            color: #e11d48;
             font-weight: 600;
         }
 
+        /* Feriado personalizado: violeta suave */
         .feriado-personalizado {
-            background: #faf5ff;
+            background: #f5f3ff;
             color: #7c3aed;
             font-weight: 600;
         }
 
+        /* Feriado em fim de semana: mantém cinza, texto vermelho */
         .feriado-em-fds {
-            /* Mantém o fundo cinza do fim-semana, mas texto vermelho negrito como feriado */
-            color: #dc2626 !important;
+            color: #e11d48 !important;
             font-weight: 700 !important;
         }
 
-        .dia-inicio {
-            background: #f0fdf8;
-            color: #134e4a;
-            font-weight: 700;
-            border: 2px solid #0f766e !important;
-            box-shadow: none;
-        }
-
-        .dia-final {
-            background: #16a34a;
-            color: white;
-            font-weight: 700;
-            box-shadow: none;
-        }
-
+        /* Dias percorridos (contados): azul-aço muito suave — claramente distinto dos especiais */
         .dia-percorrido {
-            background: #f0fdf4;
-            color: #166534;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        /* Data de início: âncora escura, contraste máximo */
+        .dia-inicio {
+            background: #18181b !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border: none !important;
+            box-shadow: none;
+        }
+
+        /* Data final: índigo vibrante, claramente diferente do início */
+        .dia-final {
+            background: #6366f1 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            box-shadow: none;
         }
 
         /* Tooltip de feriados no calendário */
@@ -1989,15 +1984,6 @@
             flex-shrink: 0;
         }
 
-        /* Swatch especial para dia-inicio (borda, sem fundo sólido) */
-        .legenda-cor-inicio {
-            width: 14px;
-            height: 14px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            background: #f0fdf8;
-            border: 2px solid #0f766e;
-        }
 
         .rodape {
             text-align: center;
@@ -5018,27 +5004,27 @@
                 <h3>Legenda</h3>
                 <div class="legenda-grid">
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #f3f4f6"></div>
+                        <div class="legenda-cor" style="background:#f4f4f5"></div>
                         <span>Fim de semana</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #fff1f2; border: 1px solid #fecdd3"></div>
+                        <div class="legenda-cor" style="background:#fff1f2; border:1px solid #fecdd3"></div>
                         <span>Feriados Fixos/Móveis</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #faf5ff; border: 1px solid #e9d5ff"></div>
+                        <div class="legenda-cor" style="background:#f5f3ff; border:1px solid #ddd6fe"></div>
                         <span>Feriados Personalizados</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor-inicio"></div>
+                        <div class="legenda-cor" style="background:#18181b; border-radius:4px"></div>
                         <span id="legendaDataInicio">Data de início</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #16a34a"></div>
+                        <div class="legenda-cor" style="background:#6366f1"></div>
                         <span>Data final</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #f0fdf4; border: 1px solid #bbf7d0"></div>
+                        <div class="legenda-cor" style="background:#eff6ff; border:1px solid #bfdbfe"></div>
                         <span>Dias contados</span>
                     </div>
                 </div>
