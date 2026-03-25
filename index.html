@@ -989,9 +989,9 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.72rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            letter-spacing: 1.6px;
+            letter-spacing: 1.4px;
             text-transform: uppercase;
             color: #16a34a;
             margin-bottom: 10px;
@@ -1080,6 +1080,31 @@
             user-select: none;
         }
 
+        /* Nota do asterisco — dentro do hero, abaixo do status */
+        .resultado-hero-footnote {
+            margin-top: 8px;
+            font-size: 0.68rem;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        /* Descrição — extensão do hero, visualmente vinculada */
+        .resultado-hero-desc {
+            border-top: 1px solid rgba(21,128,61,0.12);
+            margin: 16px -28px -20px;
+            padding: 12px 28px 20px;
+            background: rgba(255,255,255,0.55);
+            font-size: 0.875rem;
+            color: #374151;
+            font-style: italic;
+            line-height: 1.55;
+        }
+        .resultado-hero-desc strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #15803d;
+        }
+
         /* ── Body section ── */
         .resultado-body {
             background: white;
@@ -1130,15 +1155,14 @@
             gap: 8px;
             margin-bottom: 10px;
         }
+        /* Base compartilhada dos botões de exportação */
         .btn-export {
             flex: 1;
-            background: white;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            border: none;
             border-radius: 8px;
-            padding: 9px 14px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 10px 14px;
+            font-size: 0.875rem;
+            font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -1147,23 +1171,43 @@
             transition: all 0.2s;
             font-family: inherit;
         }
-        .btn-export:hover {
-            background: #f9fafb;
-            border-color: #9ca3af;
-            color: #111827;
+        .btn-export svg { flex-shrink: 0; }
+        .btn-export:active { transform: translateY(0) !important; }
+
+        /* PDF — tintado vermelho, fica sólido no hover */
+        .btn-export-pdf {
+            background: #fef2f2;
+            color: #dc2626;
+            box-shadow: 0 1px 3px rgba(220,38,38,0.08);
         }
-        .btn-export svg {
-            flex-shrink: 0;
+        .btn-export-pdf:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220,38,38,0.28);
         }
 
-        /* Nota de rodapé do card */
-        .resultado-footnote {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px dashed #e5e7eb;
-            font-size: 0.72rem;
-            color: #b0b7c3;
-            line-height: 1.5;
+        /* PNG — tintado índigo, fica sólido no hover */
+        .btn-export-png {
+            background: #eef2ff;
+            color: #6366f1;
+            box-shadow: 0 1px 3px rgba(99,102,241,0.08);
+        }
+        .btn-export-png:hover {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(99,102,241,0.28);
+        }
+
+        /* Salvar na Agenda dentro do bloco de ações — proporcional aos botões acima */
+        .resultado-acoes .btn-salvar-agenda {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            box-shadow: 0 3px 8px rgba(249,115,22,0.22);
+        }
+        .resultado-acoes .btn-salvar-agenda:hover {
+            box-shadow: 0 5px 14px rgba(249,115,22,0.34);
         }
 
         .detalhamento {
@@ -6882,11 +6926,12 @@
             renderizarCalendario();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
 
-            // Scroll suave até os resultados
+            // Scroll suave até os resultados (com 10px de espaço acima)
             setTimeout(() => {
                 const resultadoElement = document.getElementById('resultado');
                 if (resultadoElement) {
-                    resultadoElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const y = resultadoElement.getBoundingClientRect().top + window.pageYOffset - 10;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
                 }
             }, 100);
         }
@@ -6923,16 +6968,6 @@
             } else {
                 statusRestClasse = 'prazo-status-passado';
                 statusRestTexto = 'Prazo encerrado';
-            }
-
-            // ── Descrição (opcional) ──
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div class="resultado-descricao">
-                        <strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}
-                    </div>
-                `;
             }
 
             // ── Conjuntos importados ──
@@ -6993,6 +7028,9 @@
                             <span class="resultado-prazo-status-dot"></span>
                             ${statusRestTexto}
                         </div>
+                        ${usarDiasUteis ? '<p class="resultado-hero-footnote"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+
+                        ${descricaoPrazo ? `<div class="resultado-hero-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>` : ''}
 
                         <!-- watermark decorativo -->
                         <svg class="resultado-hero-watermark" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="1.2">
@@ -7003,19 +7041,18 @@
 
                     <!-- ── CORPO ── -->
                     <div class="resultado-body">
-                        ${descricaoHTML}
 
                         <!-- Bloco de ações: exportar + salvar -->
                         <div class="resultado-acoes">
                             <div class="resultado-acoes-export">
-                                <button class="btn-export" onclick="abrirModalExportPDF()">
+                                <button class="btn-export btn-export-pdf" onclick="abrirModalExportPDF()">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                         <polyline points="14 2 14 8 20 8"></polyline>
                                     </svg>
                                     Exportar PDF
                                 </button>
-                                <button class="btn-export" onclick="abrirModalExportPNG()">
+                                <button class="btn-export btn-export-png" onclick="abrirModalExportPNG()">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -7066,7 +7103,6 @@
                         </div>
 
                         ${conjuntosHTML}
-                        ${usarDiasUteis ? '<div class="resultado-footnote"><sup>*</sup> Data de início não computada; a contagem começa no próximo dia útil.</div>' : ''}
                     </div>
                 </div>
             `;
