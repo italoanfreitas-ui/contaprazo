@@ -6858,12 +6858,27 @@
         sidebarObserver.observe(document.querySelector('.page-header'));
 
         function atualizarVisibilidadeFeriados() {
-            const secaoFeriados = document.querySelector('.tipos-feriado-calc-group');
-            if (secaoFeriados) {
-                secaoFeriados.style.opacity = usarDiasUteis ? '' : '0.35';
-                secaoFeriados.style.pointerEvents = usarDiasUteis ? '' : 'none';
-            }
+            const secoesFeridados = document.querySelectorAll('.tipos-feriado-calc-group');
+            secoesFeridados.forEach(sec => {
+                sec.style.opacity = usarDiasUteis ? '' : '0.35';
+                sec.style.pointerEvents = usarDiasUteis ? '' : 'none';
+            });
+            atualizarBadgePerfilDiasCorridos();
             renderizarCalendario();
+        }
+
+        function atualizarBadgePerfilDiasCorridos() {
+            const container = document.querySelector('.perfil-badge-container');
+            if (!container) return;
+            if (!usarDiasUteis) {
+                container.style.opacity = '0.35';
+                container.style.pointerEvents = 'none';
+                container.title = 'Perfis de feriados não se aplicam no modo de dias corridos';
+            } else {
+                container.style.opacity = '';
+                container.style.pointerEvents = '';
+                container.title = '';
+            }
         }
 
         function formatarData(data) {
