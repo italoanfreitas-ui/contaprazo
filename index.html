@@ -727,30 +727,33 @@
         .quick-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
             flex-wrap: wrap;
         }
 
         /* Pills de tipos de feriado no formulário de cálculo */
         .tipos-feriado-calc-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f3f4f6;
         }
 
         .tipos-feriado-calc-header {
             display: flex;
-            align-items: baseline;
-            gap: 8px;
-            margin-bottom: 8px;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
         .tipos-feriado-calc-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #374151;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
         }
 
         .tipos-feriado-calc-hint {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: #9ca3af;
         }
 
@@ -773,7 +776,7 @@
         }
         .perfil-calculo-hint {
             margin: 6px 0 0;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: #9ca3af;
             display: flex;
             align-items: center;
@@ -7429,13 +7432,16 @@
                 switch(mesesVisiveis) {
                     case 3:
                         btnMensal.textContent = 'Trimestral';
+                        btnMensal.setAttribute('data-tiptitle', 'Exibir 3 meses simultâneos no calendário');
                         break;
                     case 2:
                         btnMensal.textContent = 'Bimestral';
+                        btnMensal.setAttribute('data-tiptitle', 'Exibir 2 meses simultâneos no calendário');
                         break;
                     case 1:
                     default:
                         btnMensal.textContent = 'Mensal';
+                        btnMensal.setAttribute('data-tiptitle', 'Exibir 1 mês no calendário');
                         break;
                 }
             }
