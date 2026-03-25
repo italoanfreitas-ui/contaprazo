@@ -1355,7 +1355,7 @@
         }
 
         .timeline-date-text {
-            font-weight: 600;
+            font-weight: 650;
             font-size: 0.88rem;
             color: #1f2937;
         }
@@ -1400,6 +1400,7 @@
 
         .timeline-desc {
             font-size: 0.79rem;
+            font-weight: 500;
             color: #4b5563;
             line-height: 1.4;
         }
@@ -1415,7 +1416,7 @@
             background: linear-gradient(135deg, #d1d5db, #9ca3af);
             color: white;
             box-shadow: 0 1px 3px rgba(107, 114, 128, 0.25);
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 900;
         }
 
@@ -1423,7 +1424,7 @@
             background: linear-gradient(135deg, #f87171, #b91c1c);
             color: white;
             box-shadow: 0 1px 3px rgba(185, 28, 28, 0.35);
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 900;
         }
 
@@ -7179,11 +7180,11 @@
                     }
                 } else if (dia.motivo === 'Final de Semana') {
                     tipo = 'fds';
-                    badge = '×';
+                    badge = '✖';
                     desc = 'Fim de semana — não contabilizado.';
                 } else {
                     tipo = 'feriado';
-                    badge = '×';
+                    badge = '✖';
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
                     desc = `${nomeFer} — suspensão de prazo.`;
@@ -9235,14 +9236,14 @@
                 .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
                 .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
                 .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-                .timeline-date-text { font-weight: 600; font-size: 0.88rem; color: #1f2937; }
+                .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
                 .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
                 .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
                 .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
-                .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
+                .timeline-desc { font-size: 0.79rem; font-weight: 500; color: #4b5563; line-height: 1.4; }
                 .timeline-item-contado .timeline-badge, .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-                .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 1rem; font-weight: 900; }
-                .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 1rem; font-weight: 900; }
+                .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
+                .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
                 .timeline-item-feriado .timeline-desc { color: #b91c1c; font-style: italic; }
                 .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
             `;
@@ -9539,14 +9540,14 @@
     .export-wrapper .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
     .export-wrapper .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
     .export-wrapper .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-    .export-wrapper .timeline-date-text { font-weight: 600; font-size: 0.88rem; color: #1f2937; }
+    .export-wrapper .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
     .export-wrapper .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
     .export-wrapper .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
     .export-wrapper .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
-    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
+    .export-wrapper .timeline-desc { font-size: 0.79rem; font-weight: 500; color: #4b5563; line-height: 1.4; }
     .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 1rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 1rem; font-weight: 900; }
+    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
+    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
     .export-wrapper .timeline-item-feriado .timeline-desc { color: #b91c1c; font-style: italic; }
     .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
 </style>
