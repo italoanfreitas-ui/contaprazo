@@ -1098,6 +1098,8 @@
             color: #374151;
             font-style: italic;
             line-height: 1.55;
+            position: relative;
+            z-index: 1;
         }
         .resultado-hero-desc strong {
             font-style: normal;
@@ -1144,16 +1146,12 @@
 
         /* ── Bloco de ações (exportar + salvar) ── */
         .resultado-acoes {
-            background: #f8fffe;
-            border: 1px solid #e0f2ea;
-            border-radius: 10px;
-            padding: 16px;
             margin-bottom: 18px;
         }
         .resultado-acoes-export {
             display: flex;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         /* Base compartilhada dos botões de exportação */
         .btn-export {
@@ -1200,14 +1198,22 @@
             box-shadow: 0 4px 10px rgba(99,102,241,0.28);
         }
 
-        /* Salvar na Agenda dentro do bloco de ações — proporcional aos botões acima */
+        /* Salvar na Agenda — mesmo padrão tintado dos botões PDF/PNG */
         .resultado-acoes .btn-salvar-agenda {
+            background: #fff7ed;
+            color: #ea580c;
+            box-shadow: 0 1px 3px rgba(234,88,12,0.08);
             padding: 10px 20px;
             font-size: 0.875rem;
-            box-shadow: 0 3px 8px rgba(249,115,22,0.22);
         }
         .resultado-acoes .btn-salvar-agenda:hover {
-            box-shadow: 0 5px 14px rgba(249,115,22,0.34);
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(249,115,22,0.28);
+        }
+        .resultado-acoes .btn-salvar-agenda:active {
+            transform: translateY(0);
         }
 
         .detalhamento {
@@ -8599,25 +8605,45 @@
 
             const tituloDoc = titulo ? `ContaPrazo - ${titulo}` : 'Cálculo de Prazo - ContaPrazo';
 
+            // Partes da data final para o novo layout (hero)
+            const dfObj = dataFinal;
+            const exportDiaNum   = dfObj.getDate();
+            const exportMesNome  = dfObj.toLocaleDateString('pt-BR', { month: 'long' });
+            const exportAno      = dfObj.getFullYear();
+            const exportDiaSem   = dfObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const exportDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
             return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>${tituloDoc}</title>
     <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: #fff; }
+        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
         .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
+        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; }
         .brand-name { display: flex; align-items: center; line-height: 1; }
         .brand-conta { color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
         .brand-prazo { color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
+        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0 0 0 2px; line-height: 1; display: inline-flex; align-items: center; }
         .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
+        /* ── Hero card ── */
+        .header { background: #f0fdf4; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
+        .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+        .header-body { padding: 24px 28px 20px; }
+        .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+        .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+        .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+        .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+        .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
+        .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 28px 18px; font-size: 14px; color: #374151; font-style: italic; line-height: 1.55; }
+        .header-desc strong { font-style: normal; font-weight: 600; color: #15803d; }
+        /* Info legada — usada apenas pelo conteúdo específico abaixo do hero */
         .info { margin: 15px 0; font-size: 16px; }
-        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+        .destaque { color: #15803d; font-size: 18px; font-weight: bold; }
         @media print {
             body { padding: 15px; }
             .no-print { display: none; }
@@ -8638,26 +8664,37 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            <div class="header-date">${exportDiaNum} de ${exportMesNome} de ${exportAno}</div>
+            <div class="header-weekday">${exportDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${exportDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasContados} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            ${diasVisuaisHTML}
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:0.72em; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
-        ${diasVisuaisHTML}
     </div>
     ${conteudoEspecifico}
     ${conjuntosHTML}
-    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
-        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
+    <div class="no-print" style="text-align:center; margin-top:28px; padding:18px; background:#fef3c7; border-radius:8px;">
+        <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
         <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        <button onclick="window.print()" style="margin-top:14px; padding:10px 20px; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
             🖨️ Imprimir / Salvar como PDF
         </button>
     </div>
 </body>
 </html>`;
-        }
 
         // ==================== FUNÇÕES DE EXPORTAÇÃO ====================
 
@@ -8673,11 +8710,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias
@@ -8801,11 +8834,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar lista detalhada dos dias
@@ -8906,11 +8935,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
@@ -8981,6 +9006,11 @@
             });
 
             const labelInicioChipPNG = 'Início';
+            const pngDiaNum = dataFinal.getDate();
+            const pngMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const pngAno = dataFinal.getFullYear();
+            const pngDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const pngDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
             // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
@@ -8994,10 +9024,17 @@
     .export-wrapper .brand-prazo { color: #16a34a !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: transparent !important; background-color: transparent !important; }
     .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
     .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-    .export-wrapper h1 { color: #1f2937; font-size: 28px; margin: 0 0 25px 0; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-    .export-wrapper .info { margin: 15px 0; font-size: 16px; }
-    .export-wrapper .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+    .export-wrapper .header-body { padding: 26px 30px 22px; }
+    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
+    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+    .export-wrapper .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 30px 20px; background: rgba(255,255,255,0.55); font-style: italic; font-size: 14px; color: #374151; }
 </style>
 <div class="export-wrapper">
     <div class="brand-header">
@@ -9012,16 +9049,23 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
-        <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
-            <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
-            <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            <div class="header-date">${pngDiaNum} de ${pngMesNome} de ${pngAno}</div>
+            <div class="header-weekday">${pngDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${pngDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            <div style="line-height: 36px; text-align: left; margin-bottom: 10px;">${diasVisuaisHTML}</div>
+            <div style="padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
                 <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChipPNG}</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
@@ -9029,7 +9073,9 @@
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
             </div>
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
+        ${descricaoHTML}
     </div>
     ${gerarHTMLConjuntosNota('image')}
 </div>`;
@@ -9079,11 +9125,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-desc"><strong>Descrição:</strong> ${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             let listaHTML = '';
@@ -9108,6 +9150,12 @@
                 }
             });
 
+            const cmpDiaNum = dataFinal.getDate();
+            const cmpMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const cmpAno = dataFinal.getFullYear();
+            const cmpDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const cmpDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
             const htmlContent = `
 <style>
     .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
@@ -9119,10 +9167,17 @@
     .export-wrapper .brand-prazo { color: #16a34a !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: transparent !important; background-color: transparent !important; }
     .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
     .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-    .export-wrapper h1 { color: #1f2937; font-size: 28px; margin: 0 0 25px 0; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-    .export-wrapper .info { margin: 15px 0; font-size: 16px; }
-    .export-wrapper .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+    .export-wrapper .header-body { padding: 26px 30px 22px; }
+    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
+    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+    .export-wrapper .header-desc { border-top: 1px solid rgba(21,128,61,0.14); padding: 12px 30px 20px; background: rgba(255,255,255,0.55); font-style: italic; font-size: 14px; color: #374151; }
     .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
     .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 15px 0; }
 </style>
@@ -9139,12 +9194,24 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            <div class="header-date">${cmpDiaNum} de ${cmpMesNome} de ${cmpAno}</div>
+            <div class="header-weekday">${cmpDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${cmpDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
         ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
     </div>
     <div class="secao">
         <h3>Detalhamento</h3>
