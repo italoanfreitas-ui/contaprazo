@@ -1375,36 +1375,45 @@
 
         .calendario-header {
             margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .calendario-nav-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .cal-titulo {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+        }
+
+        .cal-mes {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            line-height: 1.2;
+        }
+
+        .cal-ano {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+            letter-spacing: -0.03em;
         }
 
         .calendario-nav-btns {
             display: flex;
-            gap: 6px;
-        }
-
-        .calendario-actions-row {
-            display: flex;
-            gap: 8px;
+            gap: 2px;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .calendario-header h2 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #111827;
-            margin: 0;
-            text-align: left;
-            letter-spacing: -0.01em;
         }
 
         .btn-nav {
@@ -1435,17 +1444,6 @@
             stroke: currentColor;
         }
 
-        /* Botão "Hoje" reutiliza o estilo ghost do btn-nav mas com texto */
-        .btn-nav-hoje {
-            width: auto !important;
-            min-width: unset !important;
-            border-radius: 20px !important;
-            padding: 0 10px !important;
-            font-size: 0.75rem !important;
-            font-weight: 500 !important;
-            letter-spacing: 0.01em;
-            height: 26px !important;
-        }
 
         .visualizacao-toggle {
             display: flex;
@@ -1488,12 +1486,13 @@
             color: #1f2937;
         }
 
-        /* auto-fit responde à largura real do container (não do viewport),
-           então funciona corretamente dentro da coluna sticky de ~50% de largura */
+        /* auto-fit responde à largura real do container (não do viewport).
+           min(155px, 100%) garante que em telas de ~1200px+ (coluna ~520px disponíveis)
+           caibam 3 meses por linha: 3×155 + 2×12 = 489px < 520px ✓ */
         .calendario-anual {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(175px, 100%), 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(min(155px, 100%), 1fr));
+            gap: 12px;
         }
 
         .mes-mini {
@@ -1820,12 +1819,18 @@
         }
 
         .dia-numero {
+            display: block;
+            width: 100%;
+            text-align: center;
             font-size: inherit;
             line-height: 1;
             font-weight: 500;
         }
 
         .dia-label {
+            display: block;
+            width: 100%;
+            text-align: center;
             font-size: 0.52rem;
             font-weight: 700;
             letter-spacing: 0.04em;
@@ -1852,10 +1857,11 @@
             font-weight: 600;
         }
 
-        /* Feriado personalizado: âmbar/laranja — totalmente distinto do azul dos dias contados */
+        /* Feriado personalizado: fúcsia/rosa-arroxeado — distinto do azul dos dias contados
+           e da paleta amarela, harmoniza com a linguagem de design */
         .feriado-personalizado {
-            background: #fffbeb;
-            color: #b45309;
+            background: #fdf4ff;
+            color: #a21caf;
             font-weight: 600;
         }
 
@@ -2868,17 +2874,8 @@
                 padding-bottom: 12px;
             }
 
-            .calendario-header h2 {
-                font-size: 1.15rem;
-            }
-
-            .calendario-actions-row {
-                gap: 5px;
-            }
-
-            .btn-hoje {
-                padding: 5px 8px;
-                font-size: 0.75rem;
+            .cal-ano {
+                font-size: 1.5rem;
             }
 
             .visualizacao-toggle button {
@@ -3047,12 +3044,8 @@
                 padding: 8px;
             }
 
-            .calendario-nav-row {
-                gap: 8px;
-            }
-
-            .calendario-header h2 {
-                font-size: 1rem;
+            .cal-ano {
+                font-size: 1.25rem;
             }
 
             .legenda-item {
@@ -4866,26 +4859,39 @@
 
             <div class="calendario-header">
                 <div class="calendario-nav-row">
-                    <h2 id="mesAtual"></h2>
-                    <div class="calendario-nav-btns">
-                        <button class="btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                        </button>
-                        <button class="btn-nav btn-nav-hoje" onclick="irParaHoje()">Hoje</button>
-                        <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
+                    <!-- Esquerda: mês (pequeno) + ano (grande) empilhados -->
+                    <div class="cal-titulo">
+                        <span class="cal-mes" id="calMes"></span>
+                        <span class="cal-ano" id="calAno"></span>
                     </div>
-                </div>
-                <div class="calendario-actions-row">
+
+                    <!-- Centro: toggle Mensal / Anual -->
                     <div class="visualizacao-toggle">
                         <span class="viz-glider" id="vizGlider"></span>
                         <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active">Mensal</button>
                         <button onclick="alternarVisualizacao('anual')" id="btnAnual">Anual</button>
+                    </div>
+
+                    <!-- Direita: ← [ícone de hoje] → -->
+                    <div class="calendario-nav-btns">
+                        <button class="btn-nav" onclick="mudarMes(-1)" id="btnNavAnterior" title="Mês anterior">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="btn-nav" onclick="irParaHoje()" title="Ir para hoje">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </button>
+                        <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo" title="Próximo mês">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -5015,7 +5021,7 @@
                         <span>Feriados Fixos/Móveis</span>
                     </div>
                     <div class="legenda-item">
-                        <div class="legenda-cor" style="background:#fffbeb; border:1px solid #fde68a"></div>
+                        <div class="legenda-cor" style="background:#fdf4ff; border:1px solid #e9d5ff"></div>
                         <span>Feriados Personalizados</span>
                     </div>
                     <div class="legenda-item">
@@ -6868,8 +6874,13 @@
 
             let className = baseClass;
 
-            // Adiciona classes de cor - permitindo combinação de fim de semana com feriado
-            if (ehFds && tipoFeriado) {
+            // início e fim sempre têm prioridade visual, mesmo em fins de semana
+            // (relevante em modo Dias Corridos onde prazos podem cair no FDS)
+            if (ehInicio) {
+                className += ' dia-inicio';
+            } else if (ehFim) {
+                className += ' dia-final';
+            } else if (ehFds && tipoFeriado) {
                 // Fim de semana + feriado: mantém fundo cinza, mas texto vermelho
                 className += ' fim-semana feriado-em-fds';
             } else if (ehFds) {
@@ -6878,10 +6889,6 @@
                 className += ' feriado-personalizado';
             } else if (tipoFeriado) {
                 className += ' feriado';
-            } else if (ehInicio) {
-                className += ' dia-inicio';
-            } else if (ehFim) {
-                className += ' dia-final';
             } else if (ehPercorrido) {
                 className += ' dia-percorrido';
             }
@@ -7455,26 +7462,26 @@
             const primeiroDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[0] : null;
             const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
 
-            // Atualizar display do mês/ano
-            const capitalizarMes = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+            // Atualizar display do mês/ano (novo layout: calMes + calAno separados)
+            const ucFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+            const elMes = document.getElementById('calMes');
+            const elAno = document.getElementById('calAno');
+
             if (mesesVisiveis === 1) {
-                const nomeMes = mesAtual.toLocaleDateString('pt-BR', { month: 'long' });
-                document.getElementById('mesAtual').textContent =
-                    `${capitalizarMes(nomeMes)} ${mesAtual.getFullYear()}`;
+                elMes.textContent = mesAtual.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
+                elAno.textContent = mesAtual.getFullYear();
             } else {
                 const mesInicio = mesAtual;
                 const mesFim = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + mesesVisiveis - 1, 1);
+                const abrevInicio = ucFirst(mesInicio.toLocaleDateString('pt-BR', { month: 'short' })).replace('.', '');
+                const abrevFim   = ucFirst(mesFim.toLocaleDateString('pt-BR', { month: 'short' })).replace('.', '');
 
                 if (mesInicio.getFullYear() === mesFim.getFullYear()) {
-                    const mesInicioNome = capitalizarMes(mesInicio.toLocaleDateString('pt-BR', { month: 'short' }));
-                    const mesFimNome = capitalizarMes(mesFim.toLocaleDateString('pt-BR', { month: 'short' }));
-                    document.getElementById('mesAtual').textContent =
-                        `${mesInicioNome} – ${mesFimNome} ${mesInicio.getFullYear()}`;
+                    elMes.textContent = `${abrevInicio} – ${abrevFim}`.toUpperCase();
+                    elAno.textContent = mesInicio.getFullYear();
                 } else {
-                    const mesInicioNome = capitalizarMes(mesInicio.toLocaleDateString('pt-BR', { month: 'short' }));
-                    const mesFimNome = capitalizarMes(mesFim.toLocaleDateString('pt-BR', { month: 'short' }));
-                    document.getElementById('mesAtual').textContent =
-                        `${mesInicioNome} ${mesInicio.getFullYear()} – ${mesFimNome} ${mesFim.getFullYear()}`;
+                    elMes.textContent = `${abrevInicio} ${mesInicio.getFullYear()} – ${abrevFim}`.toUpperCase();
+                    elAno.textContent = mesFim.getFullYear();
                 }
             }
 
@@ -7551,7 +7558,8 @@
             const primeiroDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[0] : null;
             const ultimoDiaPercorrido = diasPercorridos.length > 0 ? diasPercorridos[diasPercorridos.length - 1] : null;
 
-            document.getElementById('mesAtual').textContent = ano.toString();
+            document.getElementById('calMes').textContent = 'ANUAL';
+            document.getElementById('calAno').textContent = ano;
 
             let html = '';
 
