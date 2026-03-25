@@ -1265,9 +1265,9 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            padding: 12px;
+            padding: 16px 16px 4px 16px;
             margin-top: 12px;
-            max-height: 300px;
+            max-height: 360px;
             overflow-y: auto;
         }
 
@@ -1303,38 +1303,138 @@
             font-size: 1rem;
         }
 
-        .dia-item {
+        /* === Timeline do Detalhamento === */
+        .timeline-item {
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .timeline-track {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            width: 32px;
+        }
+
+        .timeline-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px;
-            margin: 3px 0;
-            border-radius: 6px;
-            border-left: 4px solid;
-            font-size: 0.9rem;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.76rem;
+            flex-shrink: 0;
+            letter-spacing: -0.01em;
         }
 
-        .dia-contado {
-            background: #dcfce7;
-            border-color: #22c55e;
+        .timeline-connector {
+            width: 2px;
+            flex: 1;
+            background: #e5e7eb;
+            min-height: 6px;
+            margin-top: 1px;
         }
 
-        .dia-nao-contado {
-            background: #fef2f2;
-            border-color: #ef4444;
+        .timeline-content {
+            flex: 1;
+            padding-bottom: 14px;
+            padding-top: 4px;
+            min-width: 0;
         }
 
-        .dia-numero {
-            font-weight: bold;
-            min-width: 30px;
+        .timeline-date-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 3px;
         }
 
-        .dia-contado .dia-numero {
-            color: #166534;
+        .timeline-date-text {
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #1f2937;
         }
 
-        .dia-nao-contado .dia-numero {
-            color: #991b1b;
+        .timeline-weekday-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 7px;
+            border-radius: 4px;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 0.67rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .timeline-prazo-final-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 9px;
+            border-radius: 4px;
+            background: #16a34a;
+            color: white;
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .timeline-feriado-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 7px;
+            border-radius: 4px;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 0.67rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .timeline-desc {
+            font-size: 0.79rem;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        .timeline-item-contado .timeline-badge,
+        .timeline-item-final .timeline-badge {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);
+        }
+
+        .timeline-item-fds .timeline-badge {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border: 1.5px solid #e5e7eb;
+        }
+
+        .timeline-item-feriado .timeline-badge {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1.5px solid #fca5a5;
+        }
+
+        .timeline-item-fds .timeline-date-text {
+            color: #9ca3af;
+        }
+
+        .timeline-item-feriado .timeline-desc {
+            color: #ef4444;
+            font-style: italic;
+        }
+
+        .timeline-item-final .timeline-date-text {
+            color: #15803d;
+            font-weight: 700;
         }
 
         /* Nota de conjuntos de feriados online utilizados */
@@ -2898,9 +2998,18 @@
                 font-size: 1rem;
             }
 
-            .dia-item {
-                padding: 8px;
-                font-size: 0.85rem;
+            .timeline-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+
+            .timeline-track {
+                width: 28px;
+            }
+
+            .timeline-date-text {
+                font-size: 0.84rem;
             }
 
             .calendario-header {
@@ -7039,6 +7148,70 @@
             mostrarAvisoRecalculo();
         }
 
+        function renderTimelineDetalhamento(diasArray) {
+            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+            const formatDate = (d) => {
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = months[d.getMonth()];
+                const year = d.getFullYear();
+                return `${day} ${month}, ${year}`;
+            };
+
+            const items = diasArray.map((dia, index) => {
+                const isLast = index === diasArray.length - 1;
+                const isFinalDay = isLast && dia.contado;
+                const dateStr = formatDate(dia.data);
+                const weekday = weekdays[dia.data.getDay()];
+
+                let tipo, badge, desc = '', extraPill = '';
+
+                if (dia.contado) {
+                    const numStr = dia.numero.toString().padStart(2, '0');
+                    tipo = isFinalDay ? 'final' : 'contado';
+                    badge = numStr;
+                    if (isFinalDay) {
+                        desc = 'Data fatal para protocolo.';
+                        extraPill = '<span class="timeline-prazo-final-pill">Prazo Final</span>';
+                    } else if (dia.numero === 1) {
+                        desc = 'Início da contagem do prazo.';
+                    }
+                } else if (dia.motivo === 'Final de Semana') {
+                    tipo = 'fds';
+                    badge = '×';
+                    desc = 'Fim de semana — não contabilizado.';
+                } else {
+                    tipo = 'feriado';
+                    badge = '×';
+                    const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
+                    const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
+                    desc = ehTambemFds ? `${nomeFer} — suspensão de prazo.` : `${nomeFer} — suspensão de prazo.`;
+                    extraPill = '<span class="timeline-feriado-pill">Feriado</span>';
+                }
+
+                const connector = !isLast ? '<div class="timeline-connector"></div>' : '';
+                const descHTML = desc ? `<div class="timeline-desc">${desc}</div>` : '';
+
+                return `<div class="timeline-item timeline-item-${tipo}">
+                    <div class="timeline-track">
+                        <div class="timeline-badge">${badge}</div>
+                        ${connector}
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-date-row">
+                            <span class="timeline-date-text">${dateStr}</span>
+                            <span class="timeline-weekday-pill">${weekday}</span>
+                            ${extraPill}
+                        </div>
+                        ${descHTML}
+                    </div>
+                </div>`;
+            });
+
+            return items.join('');
+        }
+
         function calcularPrazo() {
             dataInicio = document.getElementById('dataInicio').value;
             diasUteis = document.getElementById('diasUteis').value;
@@ -7277,25 +7450,7 @@
                                 </svg>
                                 Detalhamento do cálculo
                             </h3>
-                            ${todosOsDias.map(dia => {
-                                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                                    weekday: 'short',
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric'
-                                });
-                                if (dia.contado) {
-                                    return `<div class="dia-item dia-contado">
-                                        <span class="dia-numero">${dia.numero}</span>
-                                        <span>${dataFormatada}</span>
-                                    </div>`;
-                                } else {
-                                    return `<div class="dia-item dia-nao-contado">
-                                        <span class="dia-numero">X</span>
-                                        <span>${dataFormatada} - ${dia.motivo}</span>
-                                    </div>`;
-                                }
-                            }).join('')}
+                            ${renderTimelineDetalhamento(todosOsDias)}
                         </div>
 
                         ${conjuntosHTML}
@@ -10600,26 +10755,7 @@
                             </svg>
                             Detalhamento (Auditoria)
                         </h3>
-                        ${prazo.detalhamentoDias.map(dia => {
-                            const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                                weekday: 'short',
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            });
-
-                            if (dia.contado) {
-                                return `<div class="dia-item dia-contado">
-                                    <span class="dia-numero">${dia.numero}</span>
-                                    <span>${dataFormatada}</span>
-                                </div>`;
-                            } else {
-                                return `<div class="dia-item dia-nao-contado">
-                                    <span class="dia-numero">X</span>
-                                    <span>${dataFormatada} - ${dia.motivo}</span>
-                                </div>`;
-                            }
-                        }).join('')}
+                        ${renderTimelineDetalhamento(prazo.detalhamentoDias)}
                     </div>
                 </div>
             `;
