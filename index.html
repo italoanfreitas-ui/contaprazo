@@ -450,7 +450,8 @@
         .form-group-with-toggle {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            /* sem gap — label { margin-bottom: 8px } já provê o espaçamento,
+               igual ao .form-group; gap aqui dobrava o espaço visível */
         }
 
         /* Empilha input e segmented control verticalmente: ambos ocupam 100% da
@@ -745,11 +746,9 @@
         }
 
         .tipos-feriado-calc-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
         }
 
         .tipos-feriado-calc-hint {
