@@ -978,40 +978,49 @@
         /* ── Hero block ── */
         .resultado-hero {
             background: linear-gradient(160deg, #f0fdf4 0%, #ecfdf5 100%);
-            padding: 24px 28px 22px;
+            padding: 22px 28px 20px;
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid #d1fae5;
         }
+
+        /* Label "Prazo Calculado" — destaque com cor da marca */
         .resultado-hero-label {
-            font-size: 0.64rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 1.6px;
             text-transform: uppercase;
-            color: #9ca3af;
-            margin-bottom: 8px;
+            color: #16a34a;
+            margin-bottom: 10px;
         }
+
+        /* Data final principal — ano na mesma linha */
         .resultado-hero-data {
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 800;
             line-height: 1.0;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             letter-spacing: -1.5px;
             color: #14532d;
         }
+        /* Dia da semana (linha secundária) */
         .resultado-hero-ano {
-            font-size: 1rem;
+            font-size: 0.92rem;
             font-weight: 400;
-            color: #4b5563;
+            color: #6b7280;
             margin-bottom: 20px;
             text-transform: capitalize;
         }
-        /* Chips: data início, dias contados, tipo */
+
+        /* Chips: data início, dias contados */
         .resultado-hero-chips {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
         .resultado-hero-chip {
             display: flex;
@@ -1025,7 +1034,7 @@
             min-width: 0;
         }
         .resultado-hero-chip-label {
-            font-size: 0.59rem;
+            font-size: 0.58rem;
             font-weight: 700;
             letter-spacing: 1.2px;
             text-transform: uppercase;
@@ -1033,34 +1042,35 @@
             white-space: nowrap;
         }
         .resultado-hero-chip-value {
-            font-size: 0.88rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: #1f2937;
             white-space: nowrap;
         }
-        .resultado-hero-badges {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+
+        /* Status de dias restantes — ponto + texto, sem pílula */
+        .resultado-prazo-status {
+            display: inline-flex;
             align-items: center;
+            gap: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
-        .resultado-hero-badge {
-            padding: 4px 13px;
-            border-radius: 20px;
-            font-size: 0.71rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+        .resultado-prazo-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
-        .badge-restantes-verde   { background: #16a34a; color: #fff; }
-        .badge-restantes-amarelo { background: #d97706; color: #fff; }
-        .badge-restantes-vermelho{ background: #dc2626; color: #fff; }
-        .badge-restantes-passado { background: #e5e7eb; color: #6b7280; }
-        .badge-tipo-dias {
-            background: white;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
+        .prazo-status-verde   { color: #16a34a; }
+        .prazo-status-verde   .resultado-prazo-status-dot { background: #16a34a; }
+        .prazo-status-amarelo { color: #b45309; }
+        .prazo-status-amarelo .resultado-prazo-status-dot { background: #d97706; }
+        .prazo-status-vermelho{ color: #dc2626; }
+        .prazo-status-vermelho .resultado-prazo-status-dot { background: #dc2626; }
+        .prazo-status-passado { color: #9ca3af; }
+        .prazo-status-passado .resultado-prazo-status-dot { background: #d1d5db; }
+
         .resultado-hero-watermark {
             position: absolute;
             bottom: -12px;
@@ -1070,10 +1080,10 @@
             user-select: none;
         }
 
-        /* ── Body section (below hero) ── */
+        /* ── Body section ── */
         .resultado-body {
             background: white;
-            padding: 22px 28px 28px;
+            padding: 20px 28px 28px;
         }
 
         .resultado-info {
@@ -1081,7 +1091,6 @@
             font-size: 0.93rem;
             color: #4b5563;
         }
-
         .resultado-info strong {
             color: #1f2937;
         }
@@ -1106,6 +1115,55 @@
             color: #15803d;
             font-size: 1.1rem;
             font-weight: bold;
+        }
+
+        /* ── Bloco de ações (exportar + salvar) ── */
+        .resultado-acoes {
+            background: #f8fffe;
+            border: 1px solid #e0f2ea;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+        .resultado-acoes-export {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .btn-export {
+            flex: 1;
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-export:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+            color: #111827;
+        }
+        .btn-export svg {
+            flex-shrink: 0;
+        }
+
+        /* Nota de rodapé do card */
+        .resultado-footnote {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+            font-size: 0.72rem;
+            color: #b0b7c3;
+            line-height: 1.5;
         }
 
         .detalhamento {
@@ -6843,28 +6901,28 @@
             const anoNum  = dataFinal.getFullYear();
             const diaSemana = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
 
-            // ── Badge de dias restantes ──
+            // ── Indicador de dias restantes ──
             const hoje = new Date(); hoje.setHours(0,0,0,0);
             const diasRestantes = Math.ceil((dataFinal - hoje) / 86400000);
-            let badgeRestClasse, badgeRestTexto;
+            let statusRestClasse, statusRestTexto;
             if (diasRestantes > 30) {
-                badgeRestClasse = 'badge-restantes-verde';
-                badgeRestTexto = diasRestantes + ' dias restantes';
+                statusRestClasse = 'prazo-status-verde';
+                statusRestTexto = diasRestantes + ' dias restantes';
             } else if (diasRestantes > 7) {
-                badgeRestClasse = 'badge-restantes-amarelo';
-                badgeRestTexto = diasRestantes + ' dias restantes';
+                statusRestClasse = 'prazo-status-amarelo';
+                statusRestTexto = diasRestantes + ' dias restantes';
             } else if (diasRestantes === 1) {
-                badgeRestClasse = 'badge-restantes-vermelho';
-                badgeRestTexto = '1 dia restante';
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = '1 dia restante';
             } else if (diasRestantes === 0) {
-                badgeRestClasse = 'badge-restantes-vermelho';
-                badgeRestTexto = 'Vence hoje';
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = 'Vence hoje';
             } else if (diasRestantes > 0) {
-                badgeRestClasse = 'badge-restantes-vermelho';
-                badgeRestTexto = diasRestantes + ' dias restantes';
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = diasRestantes + ' dias restantes';
             } else {
-                badgeRestClasse = 'badge-restantes-passado';
-                badgeRestTexto = 'Prazo encerrado';
+                statusRestClasse = 'prazo-status-passado';
+                statusRestTexto = 'Prazo encerrado';
             }
 
             // ── Descrição (opcional) ──
@@ -6911,11 +6969,14 @@
 
                     <!-- ── HERO BLOCK ── -->
                     <div class="resultado-hero">
-                        <div class="resultado-hero-label">Prazo Calculado</div>
-                        <div class="resultado-hero-data">${diaNumero} de ${mesNome}</div>
-                        <div class="resultado-hero-ano">${anoNum} &mdash; ${diaSemana}</div>
+                        <div class="resultado-hero-label">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Prazo Calculado
+                        </div>
+                        <div class="resultado-hero-data">${diaNumero} de ${mesNome} de ${anoNum}</div>
+                        <div class="resultado-hero-ano">${diaSemana}</div>
 
-                        <!-- Chips: data início + qtd dias + tipo -->
+                        <!-- Chips: data início + qtd dias contados -->
                         <div class="resultado-hero-chips">
                             <div class="resultado-hero-chip">
                                 <span class="resultado-hero-chip-label">Data de início${usarDiasUteis ? ' *' : ''}</span>
@@ -6927,8 +6988,10 @@
                             </div>
                         </div>
 
-                        <div class="resultado-hero-badges">
-                            <span class="resultado-hero-badge ${badgeRestClasse}">${badgeRestTexto}</span>
+                        <!-- Indicador de dias restantes (ponto + texto) -->
+                        <div class="resultado-prazo-status ${statusRestClasse}">
+                            <span class="resultado-prazo-status-dot"></span>
+                            ${statusRestTexto}
                         </div>
 
                         <!-- watermark decorativo -->
@@ -6941,42 +7004,39 @@
                     <!-- ── CORPO ── -->
                     <div class="resultado-body">
                         ${descricaoHTML}
-                        ${usarDiasUteis ? '<p style="font-size:0.75em; color:#9ca3af; margin:0 0 16px; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
 
-                        <div class="btn-group" style="margin-top: 4px;">
-                            <button class="btn btn-red" onclick="abrirModalExportPDF()">
+                        <!-- Bloco de ações: exportar + salvar -->
+                        <div class="resultado-acoes">
+                            <div class="resultado-acoes-export">
+                                <button class="btn-export" onclick="abrirModalExportPDF()">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    Exportar PDF
+                                </button>
+                                <button class="btn-export" onclick="abrirModalExportPNG()">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    Exportar PNG
+                                </button>
+                            </div>
+                            <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
                                 </svg>
-                                Exportar PDF
-                            </button>
-                            <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                    <polyline points="21 15 16 10 5 21"></polyline>
-                                </svg>
-                                Exportar PNG
+                                Salvar na Minha Agenda
                             </button>
                         </div>
-
-                        <!-- Separador e Botão Salvar na Agenda -->
-                        <div class="resultado-separador">
-                            <span class="resultado-separador-texto">GERENCIAR PRAZO</span>
-                        </div>
-                        <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                                <polyline points="17 21 17 13 7 13 7 21"/>
-                                <polyline points="7 3 7 8 15 8"/>
-                            </svg>
-                            Salvar na Minha Agenda
-                        </button>
 
                         <div class="detalhamento">
                             <h3>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                     <line x1="16" y1="2" x2="16" y2="6"></line>
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -6991,7 +7051,6 @@
                                     month: '2-digit',
                                     year: 'numeric'
                                 });
-
                                 if (dia.contado) {
                                     return `<div class="dia-item dia-contado">
                                         <span class="dia-numero">${dia.numero}</span>
@@ -7007,6 +7066,7 @@
                         </div>
 
                         ${conjuntosHTML}
+                        ${usarDiasUteis ? '<div class="resultado-footnote"><sup>*</sup> Data de início não computada; a contagem começa no próximo dia útil.</div>' : ''}
                     </div>
                 </div>
             `;
