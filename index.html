@@ -1214,6 +1214,7 @@
             padding: 10px 14px;
             font-size: 0.875rem;
             font-weight: 600;
+            font-family: inherit;
             transition: all 0.2s;
             flex: 1;
             width: auto;
@@ -9738,7 +9739,18 @@
             let detalhes = `Prazo: ${dataFinalFmt}\nInício: ${dataInicioFmt} · ${diasUteis} ${tipoDiasStr}`;
             const perfil = perfilAtivoId ? perfisData.find(p => p.id === perfilAtivoId)?.nome : null;
             if (perfil) detalhes += `\nPerfil de feriados: ${perfil}`;
-            detalhes += '\n\nCalculado com ContaPrazo';
+
+            // Conjuntos importados com link de ato normativo
+            if (usarDiasUteis) {
+                const conjuntos = obterMetadataConjuntos();
+                const comLink = conjuntos.filter(c => c.link);
+                if (comLink.length > 0) {
+                    detalhes += '\n\nAtos normativos consultados:';
+                    comLink.forEach(c => { detalhes += `\n· ${c.nome}: ${c.link}`; });
+                }
+            }
+
+            detalhes += '\n\nCalculado com ContaPrazo — https://contaprazo.netlify.app';
 
             const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
                 + '&text='    + encodeURIComponent(titulo)
