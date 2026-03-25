@@ -1540,8 +1540,9 @@
             text-align: center;
             font-size: 0.7rem;
             font-weight: 600;
-            color: #6b7280;
+            color: #d1d5db;
             padding: 4px 2px;
+            background: transparent;
         }
 
         .calendario-mini-dia {
@@ -1778,6 +1779,8 @@
         .calendario-multi-meses .calendario-dia-semana {
             padding: 6px 2px;
             font-size: 0.65rem;
+            color: #d1d5db;
+            background: transparent;
         }
 
         .calendario-multi-meses .calendario-dia {
@@ -1819,11 +1822,12 @@
         .calendario-dia-semana {
             text-align: center;
             font-weight: 600;
-            color: #9ca3af;
+            color: #d1d5db;
             font-size: 0.7rem;
             letter-spacing: 0.06em;
             text-transform: uppercase;
             padding: 6px 0 10px;
+            background: transparent;
         }
 
         .calendario-dia {
@@ -7388,6 +7392,23 @@
             }
         }
 
+        function atualizarTitlesBotoesNav() {
+            const ant = document.getElementById('btnNavAnterior');
+            const prox = document.getElementById('btnNavProximo');
+            if (!ant || !prox) return;
+            let lAnt, lProx;
+            if (visualizacaoCalendario === 'anual') {
+                lAnt = 'Ano anterior'; lProx = 'Próximo ano';
+            } else {
+                const m = calcularMesesVisiveis();
+                if (m >= 3)      { lAnt = 'Trimestre anterior'; lProx = 'Próximo trimestre'; }
+                else if (m === 2){ lAnt = 'Bimestre anterior';  lProx = 'Próximo bimestre'; }
+                else             { lAnt = 'Mês anterior';       lProx = 'Próximo mês'; }
+            }
+            ant.title = lAnt;
+            prox.title = lProx;
+        }
+
         function atualizarTextoBotaoVisualizacao() {
             const btnMensal = document.getElementById('btnMensal');
             if (!btnMensal) return;
@@ -7409,6 +7430,7 @@
                         break;
                 }
             }
+            atualizarTitlesBotoesNav();
         }
 
         function alternarVisualizacao(tipo) {
@@ -7421,6 +7443,8 @@
             // então o glider só pode ser posicionado corretamente depois do texto final.
             if (tipo === 'mensal') {
                 atualizarTextoBotaoVisualizacao();
+            } else {
+                atualizarTitlesBotoesNav();
             }
             posicionarGliderVisualizacao();
 
@@ -11697,6 +11721,7 @@
         renderizarCalendario();
         verificarMostrarBoasVindas();
         atualizarTextoBotaoVisualizacao();
+        atualizarTitlesBotoesNav();
         posicionarGlider();
         posicionarGliderVisualizacao();
 
