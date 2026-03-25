@@ -516,24 +516,8 @@
             cursor: pointer; position: relative; user-select: none;
             font-style: normal; line-height: 1;
         }
-        .tooltip-icon .tooltip-box {
-            display: none; position: absolute; bottom: calc(100% + 6px); left: 50%;
-            transform: translateX(-50%); background: #1f2937; color: #f9fafb;
-            font-size: 0.78rem; font-weight: 400; font-style: normal;
-            text-transform: none; letter-spacing: normal;
-            padding: 8px 10px; border-radius: 6px; width: 240px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.25); z-index: 100; text-align: left;
-            pointer-events: none; white-space: normal; line-height: 1.4;
-        }
-        .tooltip-icon .tooltip-box::after {
-            content: ''; position: absolute; top: 100%; left: 50%;
-            transform: translateX(-50%); border: 5px solid transparent;
-            border-top-color: #1f2937;
-        }
-        .tooltip-icon:hover .tooltip-box,
-        .tooltip-icon:focus .tooltip-box {
-            display: block;
-        }
+        /* .tooltip-box convertido para JS (#calTooltipEl) — regras CSS removidas */
+        .tooltip-icon .tooltip-box { display: none !important; }
 
         label {
             font-weight: 600;
@@ -1523,7 +1507,7 @@
 
         .mes-mini h4 {
             text-align: center;
-            color: #1f2937;
+            color: #3b82f6;
             margin-bottom: 10px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -1806,7 +1790,7 @@
 
         .mes-container h4 {
             font-size: 0.9rem;
-            color: #1f2937;
+            color: #3b82f6;
             margin: 0 0 10px 0;
             text-align: center;
             font-weight: 600;
@@ -1936,18 +1920,21 @@
             box-shadow: none;
         }
 
-        /* Tooltip de feriados no calendário — renderizado via JS com position:fixed
-           para escapar de containers overflow:hidden/auto */
+        /* Tooltip unificado — renderizado via JS com position:fixed
+           para escapar de containers overflow:hidden/auto e herança de opacity */
         #calTooltipEl {
             position: fixed;
             z-index: 9999;
             background: #1f2937;
             color: #fff;
-            padding: 5px 9px;
+            padding: 8px 10px;
             border-radius: 7px;
-            font-size: 0.72rem;
-            font-weight: 500;
-            white-space: nowrap;
+            font-size: 0.78rem;
+            font-weight: 400;
+            line-height: 1.4;
+            white-space: normal;
+            max-width: 260px;
+            text-align: left;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.12s ease;
@@ -6164,7 +6151,7 @@
                     badge.className = 'perfil-badge';
                     const nomeSeguro = perfil.nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
                     badge.innerHTML = 'Perfil Ativo: <strong>' + nomeSeguro + '</strong>';
-                    badge.title = 'Clique para trocar o perfil';
+                    badge.setAttribute('data-tiptitle', 'Clique para trocar o perfil');
                     badge.style.cursor = 'pointer';
                     badge.style.display = '';
                     badge.onclick = toggleBadgeDropdown;
@@ -6175,7 +6162,7 @@
             // Nenhum perfil ativo — badge indicativa e clicável para abrir o dropdown inline
             badge.className = 'perfil-badge sem-perfil';
             badge.textContent = 'Sem perfil selecionado';
-            badge.title = 'Clique para selecionar um perfil de feriados';
+            badge.setAttribute('data-tiptitle', 'Clique para selecionar um perfil de feriados');
             badge.style.cursor = 'pointer';
             badge.style.display = '';
             badge.onclick = toggleBadgeDropdown;
@@ -6877,13 +6864,13 @@
             if (!container) return;
             if (!usarDiasUteis) {
                 container.style.opacity = '0.35';
-                container.title = 'Perfis de feriados não se aplicam no modo de dias corridos';
+                container.setAttribute('data-tiptitle', 'Perfis de feriados não se aplicam no modo de dias corridos');
                 // Disable clicks on the badge itself, but keep the container interactive
-                // so its title tooltip remains visible on hover
+                // so its tooltip remains accessible on hover
                 if (badge) badge.style.pointerEvents = 'none';
             } else {
                 container.style.opacity = '';
-                container.title = '';
+                container.removeAttribute('data-tiptitle');
                 if (badge) badge.style.pointerEvents = '';
             }
         }
@@ -11807,7 +11794,9 @@
             }, 250); // Debounce de 250ms
         });
 
-        // ── Tooltip flutuante para dias do calendário (position:fixed, escapa de overflow) ──
+        // ── Sistema de tooltip unificado (position:fixed, escapa de overflow e herança de opacity) ──
+        // Suporta: [data-tooltip] texto simples · [data-tooltip-html] HTML rico · [title] nativo (interceptado)
+        // Também converte .tooltip-icon .tooltip-box para data-tooltip-html na inicialização.
         (function() {
             const tip = document.createElement('div');
             tip.id = 'calTooltipEl';
@@ -11816,10 +11805,22 @@
             let hideTimer = null;
             let touchTimer = null;
 
-            function posicionarTip(el) {
-                tip.textContent = el.getAttribute('data-tooltip');
+            // Converte todos os .tooltip-icon existentes para usar data-tooltip-html
+            // (elimina herança de opacity e overflow:hidden dos containers)
+            document.querySelectorAll('.tooltip-icon').forEach(function(icon) {
+                const box = icon.querySelector('.tooltip-box');
+                if (box && !icon.hasAttribute('data-tooltip-html')) {
+                    icon.setAttribute('data-tooltip-html', box.innerHTML);
+                    box.remove();
+                }
+            });
+
+            function posicionarTip(refEl, content, isHtml) {
+                clearTimeout(hideTimer);
+                if (isHtml) { tip.innerHTML = content; }
+                else { tip.textContent = content; }
                 tip.classList.add('visible');
-                const r = el.getBoundingClientRect();
+                const r = refEl.getBoundingClientRect();
                 tip.style.left = '0'; tip.style.top = '0';
                 const tw = tip.offsetWidth;
                 const th = tip.offsetHeight;
@@ -11838,45 +11839,68 @@
                 tip.classList.remove('visible');
             }
 
+            // Encontra o tooltip relevante percorrendo ancestrais a partir do alvo.
+            // Prioridade: data-tooltip-html > data-tooltip > [title] (interceptado → data-tiptitle) > data-tiptitle
+            function obterTooltip(target) {
+                const htmlEl = target.closest('[data-tooltip-html]');
+                if (htmlEl) return { el: htmlEl, content: htmlEl.getAttribute('data-tooltip-html'), isHtml: true };
+
+                const textEl = target.closest('[data-tooltip]');
+                if (textEl) {
+                    const c = textEl.getAttribute('data-tooltip');
+                    if (c) return { el: textEl, content: c, isHtml: false };
+                }
+
+                // Intercept native title on-the-fly (works for dynamic .title = '...' too)
+                const natEl = target.closest('[title]');
+                if (natEl && natEl.id !== 'calTooltipEl') {
+                    const t = natEl.getAttribute('title');
+                    natEl.removeAttribute('title');
+                    if (t) { natEl.setAttribute('data-tiptitle', t); }
+                    if (t) return { el: natEl, content: t, isHtml: false };
+                }
+
+                const titEl = target.closest('[data-tiptitle]');
+                if (titEl) {
+                    const c = titEl.getAttribute('data-tiptitle');
+                    if (c) return { el: titEl, content: c, isHtml: false };
+                }
+
+                return null;
+            }
+
             // Mouse
             document.addEventListener('mouseover', function(e) {
-                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
-                if (!el) return;
-                clearTimeout(hideTimer);
-                posicionarTip(el);
+                const result = obterTooltip(e.target);
+                if (!result) return;
+                posicionarTip(result.el, result.content, result.isHtml);
             });
 
             document.addEventListener('mouseout', function(e) {
-                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
-                if (!el) return;
+                const result = obterTooltip(e.target);
+                if (!result) return;
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
             });
 
             // Touch: long-press para mostrar, esconde ao mover/rolar/soltar
             document.addEventListener('touchstart', function(e) {
-                const el = e.target.closest('.calendario-dia[data-tooltip], .calendario-mini-dia[data-tooltip]');
-                if (!el) return;
+                const result = obterTooltip(e.target);
+                if (!result) return;
                 clearTimeout(touchTimer);
-                touchTimer = setTimeout(() => posicionarTip(el), 500);
+                touchTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 500);
             }, { passive: true });
 
-            document.addEventListener('touchmove', function() {
-                esconder();
-            }, { passive: true });
+            document.addEventListener('touchmove', function() { esconder(); }, { passive: true });
 
             document.addEventListener('touchend', function() {
                 clearTimeout(touchTimer);
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
             }, { passive: true });
 
-            document.addEventListener('touchcancel', function() {
-                esconder();
-            }, { passive: true });
+            document.addEventListener('touchcancel', function() { esconder(); }, { passive: true });
 
-            // Esconde ao rolar a página (scroll em qualquer elemento)
-            document.addEventListener('scroll', function() {
-                esconder();
-            }, { passive: true, capture: true });
+            // Esconde ao rolar a página
+            document.addEventListener('scroll', function() { esconder(); }, { passive: true, capture: true });
         })();
     </script>
 
