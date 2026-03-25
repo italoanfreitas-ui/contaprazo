@@ -738,6 +738,36 @@
             color: #9ca3af;
         }
 
+        .perfil-calculo-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #374151;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .perfil-calculo-select:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+        }
+        .perfil-calculo-hint {
+            margin: 6px 0 0;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.4;
+        }
+        .perfil-calculo-hint a {
+            color: #16a34a;
+        }
+
         .tipos-feriado-pills {
             display: flex;
             gap: 20px;
@@ -931,49 +961,249 @@
             }
         }
 
+        /* ── Resultado: container wrapper ── */
         .resultado {
-            background: linear-gradient(to right, #f0fdf4, #dbeafe);
-            border: 2px solid #86efac;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 14px;
             margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
         }
 
-        .resultado h2 {
-            color: #1f2937;
+        /* Barra de acento superior com gradiente da marca */
+        .resultado-top-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #16a34a);
+        }
+
+        /* ── Hero block ── */
+        .resultado-hero {
+            background: linear-gradient(160deg, #f0fdf4 0%, #ecfdf5 100%);
+            padding: 22px 28px 20px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        /* Label "Prazo Calculado" — destaque com cor da marca */
+        .resultado-hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: #16a34a;
+            margin-bottom: 10px;
+        }
+
+        /* Data final principal — ano na mesma linha */
+        .resultado-hero-data {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.0;
+            margin-bottom: 2px;
+            letter-spacing: -1.5px;
+            color: #14532d;
+        }
+        /* Dia da semana (linha secundária) */
+        .resultado-hero-ano {
+            font-size: 0.92rem;
+            font-weight: 400;
+            color: #6b7280;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            text-transform: capitalize;
+        }
+
+        /* Chips: data início, dias contados */
+        .resultado-hero-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .resultado-hero-chip {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: white;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 8px 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            min-width: 0;
+        }
+        .resultado-hero-chip-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+        .resultado-hero-chip-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            white-space: nowrap;
+        }
+
+        /* Status de dias restantes — ponto + texto, sem pílula */
+        .resultado-prazo-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .resultado-prazo-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .prazo-status-verde   { color: #16a34a; }
+        .prazo-status-verde   .resultado-prazo-status-dot { background: #16a34a; }
+        .prazo-status-amarelo { color: #b45309; }
+        .prazo-status-amarelo .resultado-prazo-status-dot { background: #d97706; }
+        .prazo-status-vermelho{ color: #dc2626; }
+        .prazo-status-vermelho .resultado-prazo-status-dot { background: #dc2626; }
+        .prazo-status-passado { color: #9ca3af; }
+        .prazo-status-passado .resultado-prazo-status-dot { background: #d1d5db; }
+
+        .resultado-hero-watermark {
+            position: absolute;
+            bottom: -12px;
+            right: -12px;
+            opacity: 0.06;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Nota do asterisco — dentro do hero, abaixo do status */
+        .resultado-hero-footnote {
+            margin-top: 8px;
+            font-size: 0.68rem;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        /* Título do cálculo — entre o label e a data */
+        .resultado-hero-titulo {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #374151;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        /* ── Body section ── */
+        .resultado-body {
+            background: white;
+            padding: 20px 28px 28px;
         }
 
         .resultado-info {
             margin: 8px 0;
-            font-size: 1rem;
+            font-size: 0.93rem;
+            color: #4b5563;
         }
-
         .resultado-info strong {
-            color: #374151;
+            color: #1f2937;
         }
 
         .resultado-descricao {
-            background: white;
-            border-left: 4px solid #3b82f6;
-            padding: 10px;
-            margin: 10px 0;
+            background: #f0fdf4;
+            border-left: 3px solid #16a34a;
+            padding: 9px 12px;
+            margin: 0 0 18px;
             border-radius: 6px;
             font-style: italic;
-            color: #1f2937;
-            font-size: 0.95rem;
+            color: #374151;
+            font-size: 0.91rem;
         }
 
         .resultado-descricao strong {
             font-style: normal;
-            color: #3b82f6;
+            color: #15803d;
         }
 
         .data-final {
             color: #15803d;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: bold;
+        }
+
+        /* ── Bloco de ações (exportar + salvar) ── */
+        .resultado-acoes {
+            margin-bottom: 18px;
+        }
+        .resultado-acoes-export {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        /* Base compartilhada dos botões de exportação */
+        .btn-export {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-export svg { flex-shrink: 0; }
+        .btn-export:active { transform: translateY(0) !important; }
+
+        /* PDF — tintado vermelho, fica sólido no hover */
+        .btn-export-pdf {
+            background: #fef2f2;
+            color: #dc2626;
+            box-shadow: 0 1px 3px rgba(220,38,38,0.08);
+        }
+        .btn-export-pdf:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220,38,38,0.28);
+        }
+
+        /* PNG — tintado índigo, fica sólido no hover */
+        .btn-export-png {
+            background: #eef2ff;
+            color: #6366f1;
+            box-shadow: 0 1px 3px rgba(99,102,241,0.08);
+        }
+        .btn-export-png:hover {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(99,102,241,0.28);
+        }
+
+        /* Salvar na Agenda — mesmo padrão tintado dos botões PDF/PNG */
+        .resultado-acoes .btn-salvar-agenda {
+            background: #fff7ed;
+            color: #ea580c;
+            box-shadow: 0 1px 3px rgba(234,88,12,0.08);
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+        .resultado-acoes .btn-salvar-agenda:hover {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(249,115,22,0.28);
+        }
+        .resultado-acoes .btn-salvar-agenda:active {
+            transform: translateY(0);
         }
 
         .detalhamento {
@@ -2539,12 +2769,19 @@
             }
 
             .resultado {
-                padding: 15px;
                 margin-bottom: 15px;
             }
 
-            .resultado h2 {
-                font-size: 1.15rem;
+            .resultado-hero {
+                padding: 20px 18px 18px;
+            }
+
+            .resultado-hero-data {
+                font-size: 2.2rem;
+            }
+
+            .resultado-body {
+                padding: 18px;
             }
 
             .resultado-info {
@@ -2716,8 +2953,16 @@
                 padding: 12px;
             }
 
-            .resultado {
-                padding: 12px;
+            .resultado-hero {
+                padding: 16px 14px 14px;
+            }
+
+            .resultado-hero-data {
+                font-size: 1.9rem;
+            }
+
+            .resultado-body {
+                padding: 14px;
             }
 
             .btn-group {
@@ -4453,17 +4698,17 @@
                         <div class="dias-input-container">
                             <input type="number" id="diasUteis" min="1" placeholder="Ex: 15">
                         </div>
+                        <div class="quick-buttons">
+                            <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
+                            <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
+                        </div>
                         <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                             <span class="seg-glider" id="segGlider"></span>
                             <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
                             <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
                         </div>
-                    </div>
-                    <div class="quick-buttons">
-                        <button class="btn btn-quick" onclick="setDias(5)">5 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(10)">10 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
-                        <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
                     </div>
                 </div>
             </div>
@@ -4471,6 +4716,21 @@
             <div class="form-group" style="margin-bottom: 20px;">
                 <label>Descrição (Opcional)</label>
                 <textarea id="descricaoPrazo" placeholder="Ex: Prazo para recurso administrativo, contestação, etc."></textarea>
+            </div>
+
+            <div class="tipos-feriado-calc-group">
+                <div class="tipos-feriado-calc-header">
+                    <span class="tipos-feriado-calc-label" style="display:inline-flex; align-items:center; gap:6px;">Perfil de feriados personalizados
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre perfil de feriados">?<span class="tooltip-box">Selecione o perfil de feriados personalizados a ser utilizado neste cálculo. O perfil define quais feriados locais e conjuntos importados serão considerados ao contar os dias.</span></span>
+                    </span>
+                </div>
+                <select id="perfilCalculo" class="perfil-calculo-select" onchange="selecionarPerfilCalculo(this.value)">
+                    <option value="">Nenhum (sem feriados personalizados)</option>
+                </select>
+                <p class="perfil-calculo-hint">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Gerencie seus perfis no Calendário Interativo (coluna da direita)
+                </p>
             </div>
 
             <div class="tipos-feriado-calc-group">
@@ -5787,6 +6047,25 @@
             }
             atualizarIndicadorAlteracoes();
             atualizarBadgePerfil();
+            renderizarDropdownPerfilCalculo();
+        }
+
+        function renderizarDropdownPerfilCalculo() {
+            const sel = document.getElementById('perfilCalculo');
+            if (!sel) return;
+            while (sel.options.length > 1) sel.remove(1);
+            perfisData.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.nome;
+                if (p.id === perfilAtivoId) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            if (!perfilAtivoId) sel.value = '';
+        }
+
+        function selecionarPerfilCalculo(id) {
+            selecionarPerfil(id || null);
         }
 
         function atualizarBadgePerfil() {
@@ -6643,137 +6922,183 @@
             renderizarCalendario();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
 
-            // Scroll suave até os resultados
+            // Scroll suave até os resultados (com 10px de espaço acima)
             setTimeout(() => {
                 const resultadoElement = document.getElementById('resultado');
                 if (resultadoElement) {
-                    resultadoElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const y = resultadoElement.getBoundingClientRect().top + window.pageYOffset - 10;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
                 }
             }, 100);
         }
 
         function mostrarResultado() {
             const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
             const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
 
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div class="resultado-descricao">
-                        <strong>Descrição:</strong> ${descricaoPrazo}
+            // ── Hero: data formatada em partes ──
+            const diaNumero = dataFinal.getDate();
+            const mesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const anoNum  = dataFinal.getFullYear();
+            const diaSemana = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+            // ── Indicador de dias restantes ──
+            const hoje = new Date(); hoje.setHours(0,0,0,0);
+            const diasRestantes = Math.ceil((dataFinal - hoje) / 86400000);
+            let statusRestClasse, statusRestTexto;
+            if (diasRestantes > 30) {
+                statusRestClasse = 'prazo-status-verde';
+                statusRestTexto = diasRestantes + ' dias restantes';
+            } else if (diasRestantes > 7) {
+                statusRestClasse = 'prazo-status-amarelo';
+                statusRestTexto = diasRestantes + ' dias restantes';
+            } else if (diasRestantes === 1) {
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = '1 dia restante';
+            } else if (diasRestantes === 0) {
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = 'Vence hoje';
+            } else if (diasRestantes > 0) {
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = diasRestantes + ' dias restantes';
+            } else {
+                statusRestClasse = 'prazo-status-passado';
+                statusRestTexto = 'Prazo encerrado';
+            }
+
+            // ── Conjuntos importados ──
+            const conjuntosHTML = (() => {
+                if (!usarDiasUteis) return '';
+                const conjuntos = obterMetadataConjuntos();
+                if (!conjuntos || conjuntos.length === 0) return '';
+                const itens = conjuntos.map(c => `
+                    <div class="conjunto-obs-item">
+                        ${c.link
+                            ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
+                            : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
+                        }
+                        ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
+                    </div>
+                `).join('');
+                return `
+                    <div class="conjuntos-obs">
+                        <span class="conjuntos-obs-label">Feriados online utilizados:</span>
+                        ${itens}
                     </div>
                 `;
-            }
+            })();
+
+            // Formata data de início de forma compacta para o chip
+            const dataInicioCompacta = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
 
             let html = `
                 <div class="resultado">
-                    <h2>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
+                    <!-- Barra de acento com gradiente da marca -->
+                    <div class="resultado-top-bar"></div>
+
+                    <!-- ── HERO BLOCK ── -->
+                    <div class="resultado-hero">
+                        <div class="resultado-hero-label">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Prazo Calculado
+                        </div>
+                        ${descricaoPrazo ? `<div class="resultado-hero-titulo">${escapeHtml(descricaoPrazo)}</div>` : ''}
+                        <div class="resultado-hero-data">${diaNumero} de ${mesNome} de ${anoNum}</div>
+                        <div class="resultado-hero-ano">${diaSemana}</div>
+
+                        <!-- Chips: data início + qtd dias contados -->
+                        <div class="resultado-hero-chips">
+                            <div class="resultado-hero-chip">
+                                <span class="resultado-hero-chip-label">Data de início${usarDiasUteis ? ' *' : ''}</span>
+                                <span class="resultado-hero-chip-value">${dataInicioCompacta}</span>
+                            </div>
+                            <div class="resultado-hero-chip">
+                                <span class="resultado-hero-chip-label">Dias contados</span>
+                                <span class="resultado-hero-chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</span>
+                            </div>
+                        </div>
+
+                        <!-- Indicador de dias restantes (ponto + texto) -->
+                        <div class="resultado-prazo-status ${statusRestClasse}">
+                            <span class="resultado-prazo-status-dot"></span>
+                            ${statusRestTexto}
+                        </div>
+                        ${usarDiasUteis ? '<p class="resultado-hero-footnote"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+
+                        <!-- watermark decorativo -->
+                        <svg class="resultado-hero-watermark" width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="1.2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        Resultado do Cálculo
-                    </h2>
-                    ${descricaoHTML}
-                    <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#6b7280;font-size:0.75em;">*</sup>' : ''}
-                    </div>
-                    <div class="resultado-info">
-                        <strong>Dias ${tipoDias} Contados:</strong> ${diasUteis}
-                    </div>
-                    <div class="resultado-info">
-                        <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
                     </div>
 
-                    <div class="btn-group" style="margin-top: 20px;">
-                        <button class="btn btn-red" onclick="abrirModalExportPDF()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                            </svg>
-                            Exportar PDF
-                        </button>
-                        <button class="btn btn-indigo" onclick="abrirModalExportPNG()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            Exportar PNG
-                        </button>
-                    </div>
+                    <!-- ── CORPO ── -->
+                    <div class="resultado-body">
 
-                    <!-- Separador e Botão Salvar na Agenda -->
-                    <div class="resultado-separador">
-                        <span class="resultado-separador-texto">GERENCIAR PRAZO</span>
-                    </div>
-                    <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                            <polyline points="17 21 17 13 7 13 7 21"/>
-                            <polyline points="7 3 7 8 15 8"/>
-                        </svg>
-                        Salvar na Minha Agenda
-                    </button>
+                        <!-- Bloco de ações: exportar + salvar -->
+                        <div class="resultado-acoes">
+                            <div class="resultado-acoes-export">
+                                <button class="btn-export btn-export-pdf" onclick="abrirModalExportPDF()">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    Exportar PDF
+                                </button>
+                                <button class="btn-export btn-export-png" onclick="abrirModalExportPNG()">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    Exportar PNG
+                                </button>
+                            </div>
+                            <button class="btn-salvar-agenda" onclick="salvarNaAgenda()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                Salvar na Minha Agenda
+                            </button>
+                        </div>
 
-                    <div class="detalhamento">
-                        <h3>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Detalhamento
-                        </h3>
-                        ${todosOsDias.map(dia => {
-                            const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
-                                weekday: 'short',
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            });
-
-                            if (dia.contado) {
-                                return `<div class="dia-item dia-contado">
-                                    <span class="dia-numero">${dia.numero}</span>
-                                    <span>${dataFormatada}</span>
-                                </div>`;
-                            } else {
-                                return `<div class="dia-item dia-nao-contado">
-                                    <span class="dia-numero">X</span>
-                                    <span>${dataFormatada} - ${dia.motivo}</span>
-                                </div>`;
-                            }
-                        }).join('')}
-                    </div>
-
-                    ${usarDiasUteis ? '<p style="font-size:0.75em; color:#b0b7c3; margin:6px 0 2px 0; line-height:1.4;"><sup>*</sup> Data de início não computada; contagem inicia no próximo dia útil.</p>' : ''}
-
-                    ${(() => {
-                        if (!usarDiasUteis) return '';
-                        const conjuntos = obterMetadataConjuntos();
-                        if (!conjuntos || conjuntos.length === 0) return '';
-                        const itens = conjuntos.map(c => `
-                            <div class="conjunto-obs-item">
-                                ${c.link
-                                    ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
-                                    : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
+                        <div class="detalhamento">
+                            <h3>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Detalhamento
+                            </h3>
+                            ${todosOsDias.map(dia => {
+                                const dataFormatada = dia.data.toLocaleDateString('pt-BR', {
+                                    weekday: 'short',
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+                                if (dia.contado) {
+                                    return `<div class="dia-item dia-contado">
+                                        <span class="dia-numero">${dia.numero}</span>
+                                        <span>${dataFormatada}</span>
+                                    </div>`;
+                                } else {
+                                    return `<div class="dia-item dia-nao-contado">
+                                        <span class="dia-numero">X</span>
+                                        <span>${dataFormatada} - ${dia.motivo}</span>
+                                    </div>`;
                                 }
-                                ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
-                            </div>
-                        `).join('');
-                        return `
-                            <div class="conjuntos-obs">
-                                <span class="conjuntos-obs-label">Feriados online utilizados:</span>
-                                ${itens}
-                            </div>
-                        `;
-                    })()}
+                            }).join('')}
+                        </div>
+
+                        ${conjuntosHTML}
+                    </div>
                 </div>
             `;
 
@@ -8269,25 +8594,44 @@
 
             const tituloDoc = titulo ? `ContaPrazo - ${titulo}` : 'Cálculo de Prazo - ContaPrazo';
 
+            // Partes da data final para o novo layout (hero)
+            const dfObj = dataFinal;
+            const exportDiaNum   = dfObj.getDate();
+            const exportMesNome  = dfObj.toLocaleDateString('pt-BR', { month: 'long' });
+            const exportAno      = dfObj.getFullYear();
+            const exportDiaSem   = dfObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const exportDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
             return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>${tituloDoc}</title>
     <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: #fff; }
+        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
         .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
+        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; }
         .brand-name { display: flex; align-items: center; line-height: 1; }
         .brand-conta { color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
         .brand-prazo { color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
+        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0 0 0 2px; line-height: 1; display: inline-flex; align-items: center; }
         .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-        .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-        h1 { color: #1f2937; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
+        /* ── Hero card ── */
+        .header { background: #f0fdf4; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
+        .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+        .header-body { padding: 24px 28px 20px; }
+        .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+        .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+        .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+        .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+        .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
+        .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
+        /* Info legada — usada apenas pelo conteúdo específico abaixo do hero */
         .info { margin: 15px 0; font-size: 16px; }
-        .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+        .destaque { color: #15803d; font-size: 18px; font-weight: bold; }
         @media print {
             body { padding: 15px; }
             .no-print { display: none; }
@@ -8308,20 +8652,32 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasContados} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:0.72em; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
-        ${diasVisuaisHTML}
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
+            <div class="header-date">${exportDiaNum} de ${exportMesNome} de ${exportAno}</div>
+            <div class="header-weekday">${exportDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${exportDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasContados} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            ${diasVisuaisHTML}
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
     </div>
     ${conteudoEspecifico}
     ${conjuntosHTML}
-    <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px;">
-        <p style="margin-bottom: 15px;"><strong>📌 Para salvar como PDF:</strong></p>
+    <div class="no-print" style="text-align:center; margin-top:28px; padding:18px; background:#fef3c7; border-radius:8px;">
+        <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
         <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        <button onclick="window.print()" style="margin-top:14px; padding:10px 20px; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
             🖨️ Imprimir / Salvar como PDF
         </button>
     </div>
@@ -8343,11 +8699,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias
@@ -8471,11 +8823,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar lista detalhada dos dias
@@ -8576,11 +8924,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
@@ -8651,6 +8995,11 @@
             });
 
             const labelInicioChipPNG = 'Início';
+            const pngDiaNum = dataFinal.getDate();
+            const pngMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const pngAno = dataFinal.getFullYear();
+            const pngDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const pngDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
             // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
             const htmlContent = `
@@ -8664,10 +9013,17 @@
     .export-wrapper .brand-prazo { color: #16a34a !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: transparent !important; background-color: transparent !important; }
     .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
     .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-    .export-wrapper h1 { color: #1f2937; font-size: 28px; margin: 0 0 25px 0; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-    .export-wrapper .info { margin: 15px 0; font-size: 16px; }
-    .export-wrapper .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+    .export-wrapper .header-body { padding: 26px 30px 22px; }
+    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
+    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
 </style>
 <div class="export-wrapper">
     <div class="brand-header">
@@ -8682,16 +9038,24 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
-        <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
-            <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
-            <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
+            <div class="header-date">${pngDiaNum} de ${pngMesNome} de ${pngAno}</div>
+            <div class="header-weekday">${pngDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${pngDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            <div style="line-height: 36px; text-align: left; margin-bottom: 10px;">${diasVisuaisHTML}</div>
+            <div style="padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
                 <span style="display: inline-block; width: 14px; height: 14px; background: #3b82f6; border: 1px solid #2563eb; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChipPNG}</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border: 1px solid #15803d; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
@@ -8699,6 +9063,7 @@
                 <span style="display: inline-block; width: 14px; height: 14px; background: #fecaca; border: 1px solid #f87171; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
                 <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border: 1px solid #c084fc; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
             </div>
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
     </div>
     ${gerarHTMLConjuntosNota('image')}
@@ -8749,11 +9114,7 @@
 
             let descricaoHTML = '';
             if (descricaoPrazo) {
-                descricaoHTML = `
-                    <div style="margin: 20px 0 30px 0; padding: 15px; background: white; border-left: 4px solid #3b82f6; border-radius: 6px;">
-                        <p style="color: #1f2937; font-size: 18px; font-weight: bold; font-style: italic; line-height: 1.6; margin: 0; text-align: left;">${descricaoPrazo}</p>
-                    </div>
-                `;
+                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
             }
 
             let listaHTML = '';
@@ -8778,6 +9139,12 @@
                 }
             });
 
+            const cmpDiaNum = dataFinal.getDate();
+            const cmpMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
+            const cmpAno = dataFinal.getFullYear();
+            const cmpDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const cmpDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
             const htmlContent = `
 <style>
     .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
@@ -8789,10 +9156,17 @@
     .export-wrapper .brand-prazo { color: #16a34a !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: transparent !important; background-color: transparent !important; }
     .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
     .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: linear-gradient(to right, #f0fdf4, #dbeafe); padding: 30px; border: 4px solid #86efac; border-radius: 12px; margin-bottom: 30px; }
-    .export-wrapper h1 { color: #1f2937; font-size: 28px; margin: 0 0 25px 0; border-bottom: 2px solid #d1d5db; padding-bottom: 15px; }
-    .export-wrapper .info { margin: 15px 0; font-size: 16px; }
-    .export-wrapper .destaque { color: #15803d; font-size: 20px; font-weight: bold; }
+    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+    .export-wrapper .header-body { padding: 26px 30px 22px; }
+    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
+    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
     .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
     .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 15px 0; }
 </style>
@@ -8809,12 +9183,24 @@
         <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
     </div>
     <div class="header">
-        <h1>Resultado do Cálculo de Prazo</h1>
-        ${descricaoHTML}
-        <div class="info"><strong>Data de Início:</strong> ${dataInicioFormatada}${usarDiasUteis ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}</div>
-        <div class="info"><strong>Dias ${tipoDias} Contados:</strong> ${diasUteis} dias</div>
-        <div class="info"><strong>Data Final do Prazo:</strong> <span class="destaque">${dataFinalFormatada}</span></div>
-        ${usarDiasUteis ? '<p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Calculado</div>
+            ${descricaoHTML}
+            <div class="header-date">${cmpDiaNum} de ${cmpMesNome} de ${cmpAno}</div>
+            <div class="header-weekday">${cmpDiaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${cmpDtInicio}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
+                </div>
+            </div>
+            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
     </div>
     <div class="secao">
         <h3>Detalhamento</h3>
