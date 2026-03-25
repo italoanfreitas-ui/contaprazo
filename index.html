@@ -1518,6 +1518,7 @@
             border-radius: 10px;
             padding: 14px;
             overflow: hidden;
+            min-width: 0;
         }
 
         .mes-mini h4 {
@@ -1530,8 +1531,9 @@
 
         .calendario-mini-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 3px;
+            min-width: 0;
         }
 
         .calendario-mini-dia-semana {
@@ -1760,14 +1762,12 @@
             color: #4b5563;
         }
 
-        /* Layout fluido para múltiplos meses: auto-fit decide o número de colunas
-           com base no espaço real disponível, sem depender de breakpoints fixos.
-           minmax(240px, 1fr) garante que cada mês tenha ao menos 240px —
-           espaço suficiente para as 7 colunas de dias sem overflow. */
+        /* Solução C — minmax(0, 1fr) deixa meses encolherem livremente sem overflow.
+           O JS controla quantos meses renderizar com base na largura real do container. */
         .calendario-multi-meses {
             display: grid;
             gap: 16px;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
         }
 
         /* Células menores em modo multi-mês (sempre, não só em certos breakpoints) */
@@ -1781,7 +1781,6 @@
         }
 
         .calendario-multi-meses .calendario-dia {
-            min-height: 30px;
             font-size: 0.75rem;
         }
 
@@ -1790,8 +1789,8 @@
             margin-bottom: 8px;
         }
 
-        /* Cada mês no modo multi-mês tem card próprio para separação visual clara.
-           Sem overflow:hidden para não clipar a coluna SAB (rightmost) por rounding */
+        /* Cada mês no modo multi-mês tem card próprio.
+           min-width:0 impede que o item de grid expanda pelo min-content dos filhos. */
         .mes-container {
             display: flex;
             flex-direction: column;
@@ -1799,6 +1798,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 10px;
             padding: 12px;
+            min-width: 0;
         }
 
         .mes-container h4 {
@@ -1811,8 +1811,9 @@
 
         .calendario-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 6px;
+            min-width: 0;
         }
 
         .calendario-dia-semana {
@@ -1836,7 +1837,6 @@
             cursor: pointer;
             transition: background 0.12s ease, transform 0.12s ease;
             font-size: 0.9rem;
-            min-height: 42px;
             background: #f9fafb;
             border: none;
             position: relative; /* necessário para ::before do dia-hoje */
