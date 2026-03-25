@@ -224,32 +224,37 @@
             margin-bottom: 0;
         }
 
-        /* Badge de perfil ativo — linha abaixo dos controles de navegação, alinhada à direita */
+        /* Badge de perfil ativo — integrada no cal-titulo como 3ª linha */
         .cal-badge-row {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            margin-top: 6px;
         }
 
-        /* Badge discreta "Perfil Ativo: X" no cabeçalho do calendário.
-           inline-block + max-width:100% funciona sem dependência circular
-           porque o container tem largura explícita (1fr do grid). */
+        /* Badge de perfil ativo — integrada no cal-titulo como 3ª linha */
         .perfil-badge {
-            display: inline-block;
-            box-sizing: border-box;
-            max-width: 100%;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             font-size: 0.72rem;
             color: #6b7280;
-            background: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 3px 10px;
+            cursor: pointer;
+            padding: 2px 0;
             line-height: 1.4;
-            cursor: default;
+            transition: color 0.15s;
+        }
+
+        .perfil-badge::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            flex-shrink: 0;
+        }
+
+        .perfil-badge:hover {
+            color: #374151;
         }
 
         .perfil-badge strong {
@@ -259,22 +264,22 @@
 
         .perfil-badge-container {
             position: relative;
-            display: flex;
+            display: inline-flex;
             align-items: center;
         }
 
-        /* Dropdown inline abaixo da badge — mesma fonte visual do dropdown do rodapé */
+        /* Dropdown — z-index alto para aparecer sobre qualquer container */
         .perfil-badge-dropdown {
             display: none;
             position: absolute;
-            right: 0;
+            left: 0;
             top: calc(100% + 6px);
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            z-index: 200;
-            min-width: 170px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 9999;
+            min-width: 180px;
             overflow: hidden;
         }
 
@@ -2342,8 +2347,9 @@
 
         /* Modal de Gerenciar Perfis */
         .modal-perfis-list {
-            max-height: 300px;
+            max-height: 320px;
             overflow-y: auto;
+            overflow-x: hidden;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
         }
@@ -2352,6 +2358,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
             padding: 12px 16px;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -2364,12 +2371,17 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
+            min-width: 0;
+            flex: 1;
         }
 
         .modal-perfil-name {
             font-weight: 600;
             color: #1f2937;
             font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .modal-perfil-count {
@@ -2379,7 +2391,8 @@
 
         .modal-perfil-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .modal-perfil-btn {
@@ -4802,9 +4815,15 @@
                         <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre perfil de feriados">?<span class="tooltip-box">Selecione o perfil de feriados personalizados a ser utilizado neste cálculo. O perfil define quais feriados locais e conjuntos importados serão considerados ao contar os dias.</span></span>
                     </span>
                 </div>
-                <select id="perfilCalculo" class="perfil-calculo-select" onchange="selecionarPerfilCalculo(this.value)">
-                    <option value="">Nenhum (sem feriados personalizados)</option>
-                </select>
+                <div style="display:flex; gap:8px; align-items:stretch;">
+                    <select id="perfilCalculo" class="perfil-calculo-select" style="flex:1; width:auto;" onchange="selecionarPerfilCalculo(this.value)">
+                        <option value="">Nenhum (sem feriados personalizados)</option>
+                    </select>
+                    <button onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos online" style="flex-shrink:0; padding:0 12px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; gap:5px; font-size:0.8rem; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></svg>
+                        Online
+                    </button>
+                </div>
                 <p class="perfil-calculo-hint">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     Gerencie seus perfis no Calendário Interativo (coluna da direita)
@@ -4875,10 +4894,16 @@
 
             <div class="calendario-header">
                 <div class="calendario-nav-row">
-                    <!-- Esquerda: mês (pequeno) + ano (grande) empilhados -->
+                    <!-- Esquerda: mês (pequeno) + ano (grande) + perfil ativo empilhados -->
                     <div class="cal-titulo">
                         <span class="cal-mes" id="calMes"></span>
                         <span class="cal-ano" id="calAno"></span>
+                        <div class="cal-badge-row">
+                            <div class="perfil-badge-container">
+                                <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
+                                <div class="perfil-badge-dropdown" id="perfilBadgeDropdown"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Direita: toggle + ← [ícone de hoje] → agrupados -->
@@ -4908,12 +4933,6 @@
                                 </svg>
                             </button>
                         </div>
-                    </div>
-                </div>
-                <div class="cal-badge-row">
-                    <div class="perfil-badge-container">
-                        <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
-                        <div class="perfil-badge-dropdown" id="perfilBadgeDropdown"></div>
                     </div>
                 </div>
             </div>
@@ -5895,7 +5914,7 @@
 
     <!-- Modal para gerenciar perfis -->
     <div class="modal" id="modalGerenciarPerfis">
-        <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-content" style="max-width: 540px;">
             <div class="modal-header">Gerenciar Perfis</div>
             <div class="modal-body">
                 <div class="modal-perfis-list" id="listaPerfisModal">
