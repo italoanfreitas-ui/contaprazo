@@ -1392,7 +1392,7 @@
             padding: 1px 7px;
             border-radius: 4px;
             background: #fee2e2;
-            color: #dc2626;
+            color: #b91c1c;
             font-size: 0.67rem;
             font-weight: 600;
             letter-spacing: 0.03em;
@@ -1400,7 +1400,7 @@
 
         .timeline-desc {
             font-size: 0.79rem;
-            color: #9ca3af;
+            color: #4b5563;
             line-height: 1.4;
         }
 
@@ -1412,23 +1412,23 @@
         }
 
         .timeline-item-fds .timeline-badge {
-            background: #f3f4f6;
-            color: #9ca3af;
-            border: 1.5px solid #e5e7eb;
+            background: linear-gradient(135deg, #d1d5db, #9ca3af);
+            color: white;
+            box-shadow: 0 1px 3px rgba(107, 114, 128, 0.25);
+            font-size: 1rem;
+            font-weight: 900;
         }
 
         .timeline-item-feriado .timeline-badge {
-            background: #fee2e2;
-            color: #dc2626;
-            border: 1.5px solid #fca5a5;
-        }
-
-        .timeline-item-fds .timeline-date-text {
-            color: #9ca3af;
+            background: linear-gradient(135deg, #f87171, #b91c1c);
+            color: white;
+            box-shadow: 0 1px 3px rgba(185, 28, 28, 0.35);
+            font-size: 1rem;
+            font-weight: 900;
         }
 
         .timeline-item-feriado .timeline-desc {
-            color: #ef4444;
+            color: #b91c1c;
             font-style: italic;
         }
 
@@ -7149,14 +7149,14 @@
         }
 
         function renderTimelineDetalhamento(diasArray) {
-            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const weekdays = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
             const formatDate = (d) => {
                 const day = d.getDate().toString().padStart(2, '0');
                 const month = months[d.getMonth()];
                 const year = d.getFullYear();
-                return `${day} ${month}, ${year}`;
+                return `${day} de ${month} de ${year}`;
             };
 
             const items = diasArray.map((dia, index) => {
@@ -7172,7 +7172,7 @@
                     tipo = isFinalDay ? 'final' : 'contado';
                     badge = numStr;
                     if (isFinalDay) {
-                        desc = 'Data fatal para protocolo.';
+                        desc = 'Data final do prazo.';
                         extraPill = '<span class="timeline-prazo-final-pill">Prazo Final</span>';
                     } else if (dia.numero === 1) {
                         desc = 'Início da contagem do prazo.';
@@ -7186,7 +7186,7 @@
                     badge = '×';
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
-                    desc = ehTambemFds ? `${nomeFer} — suspensão de prazo.` : `${nomeFer} — suspensão de prazo.`;
+                    desc = `${nomeFer} — suspensão de prazo.`;
                     extraPill = '<span class="timeline-feriado-pill">Feriado</span>';
                 }
 
