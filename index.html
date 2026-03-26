@@ -51,14 +51,17 @@
         }
 
         /* Normalização cross-browser: garante que elementos de formulário
-           herdem a fonte do documento em todos os browsers (Firefox no Windows
-           aplica fonte nativa do sistema para botões por padrão, divergindo
-           de Chrome/Edge que normalizam automaticamente). */
+           herdem fonte e tamanho do documento em todos os browsers. Firefox no
+           Windows aplica `font: -moz-button` (shorthand que redefine family E
+           size) via UA stylesheet, divergindo de Chrome/Edge que normalizam
+           automaticamente. Sem font-size:inherit, o tamanho diferente já basta
+           para o texto parecer uma fonte completamente diferente. */
         button,
         input,
         select,
         textarea {
             font-family: inherit;
+            font-size: inherit;
         }
 
         body.sidebar-mode {
@@ -3183,10 +3186,6 @@
 
             .btn-group {
                 gap: 6px;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
             }
 
             label {
