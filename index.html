@@ -50,6 +50,17 @@
             transition: padding-left 0.32s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Normalização cross-browser: garante que elementos de formulário
+           herdem a fonte do documento em todos os browsers (Firefox no Windows
+           aplica fonte nativa do sistema para botões por padrão, divergindo
+           de Chrome/Edge que normalizam automaticamente). */
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
         body.sidebar-mode {
             padding-left: calc(220px + 16px);
         }
