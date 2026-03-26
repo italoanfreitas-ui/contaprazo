@@ -9468,21 +9468,20 @@
     ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
+            const portal = document.createElement('div');
+            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
             const container = document.createElement('div');
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
-            container.style.top = '0';
             container.style.width = '900px';
             container.innerHTML = htmlContent;
-            document.body.appendChild(container);
+            portal.appendChild(container);
+            document.body.appendChild(portal);
 
             htmlToImage.toBlob(container, {
                 pixelRatio: 2,
                 backgroundColor: '#ffffff',
-                width: 900,
-                style: { position: 'relative', left: '0', top: '0' }
+                width: 900
             }).then(blob => {
-                document.body.removeChild(container);
+                document.body.removeChild(portal);
 
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -9492,7 +9491,7 @@
                 link.click();
                 URL.revokeObjectURL(url);
             }).catch(error => {
-                document.body.removeChild(container);
+                document.body.removeChild(portal);
                 console.error('Erro ao gerar imagem:', error);
                 mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
@@ -9606,25 +9605,23 @@
             exportStyleEl.textContent = exportCSS;
             document.head.appendChild(exportStyleEl);
 
-            // Criar elemento temporário invisível
+            const portal = document.createElement('div');
+            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
             const container = document.createElement('div');
-            container.style.position = 'absolute';
-            container.style.left = '-9999px';
-            container.style.top = '0';
             container.style.width = '900px';
             container.innerHTML = htmlContent;
-            document.body.appendChild(container);
+            portal.appendChild(container);
+            document.body.appendChild(portal);
 
             const cleanupExport = () => {
                 if (document.head.contains(exportStyleEl)) document.head.removeChild(exportStyleEl);
-                if (document.body.contains(container)) document.body.removeChild(container);
+                if (document.body.contains(portal)) document.body.removeChild(portal);
             };
 
             htmlToImage.toBlob(container, {
                 pixelRatio: 2,
                 backgroundColor: '#ffffff',
-                width: 900,
-                style: { position: 'relative', left: '0', top: '0' }
+                width: 900
             }).then(blob => {
                 cleanupExport();
 
