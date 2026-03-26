@@ -8852,6 +8852,15 @@
                 mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
                 return;
             }
+            if (!navigator.onLine && !sessionStorage.getItem('_aviso_offline_png')) {
+                sessionStorage.setItem('_aviso_offline_png', '1');
+                criarToast({
+                    tipo: 'aviso',
+                    titulo: 'Sem conexão com a internet',
+                    mensagem: 'A exportação como imagem depende de uma biblioteca carregada online. A funcionalidade pode não funcionar neste momento.',
+                    autoFechar: false
+                });
+            }
             document.getElementById('modalExportPNG').classList.add('active');
         }
 
