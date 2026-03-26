@@ -9623,6 +9623,18 @@
                 if (document.body.contains(container)) document.body.removeChild(container);
             };
 
+            // html2canvas não computa corretamente flex: 1 no connector vertical.
+            // Lemos a altura real calculada pelo browser e fixamos como px antes de renderizar.
+            container.querySelectorAll('.timeline-item').forEach(item => {
+                const content = item.querySelector('.timeline-content');
+                const connector = item.querySelector('.timeline-connector');
+                if (content && connector) {
+                    const h = content.offsetHeight;
+                    connector.style.height = Math.max(6, h - 32) + 'px';
+                    connector.style.flex = 'none';
+                }
+            });
+
             // Usar html2canvas para renderizar
             html2canvas(container, {
                 backgroundColor: '#ffffff',
