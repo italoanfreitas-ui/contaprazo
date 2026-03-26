@@ -9479,7 +9479,8 @@
             htmlToImage.toBlob(container, {
                 pixelRatio: 2,
                 backgroundColor: '#ffffff',
-                width: 900
+                width: 900,
+                style: { position: 'relative', left: '0', top: '0' }
             }).then(blob => {
                 document.body.removeChild(container);
 
@@ -9622,7 +9623,8 @@
             htmlToImage.toBlob(container, {
                 pixelRatio: 2,
                 backgroundColor: '#ffffff',
-                width: 900
+                width: 900,
+                style: { position: 'relative', left: '0', top: '0' }
             }).then(blob => {
                 cleanupExport();
 
