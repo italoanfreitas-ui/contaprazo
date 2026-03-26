@@ -9524,9 +9524,8 @@
             const cmpDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
             const cmpDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
-            const htmlContent = `
-<style>
-    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
+            const exportCSS = `
+    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; line-height: normal; }
     .export-wrapper .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
     .export-wrapper .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
     .export-wrapper .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
@@ -9564,8 +9563,8 @@
     .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
     .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
     .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-</style>
-<div class="export-wrapper">
+`;
+            const htmlContent = `<div class="export-wrapper">
     <div class="brand-header">
         <div class="logo-cp">CP</div>
         <div class="brand-title">
@@ -9604,6 +9603,12 @@
     ${gerarHTMLConjuntosNota('image')}
 </div>`;
 
+            // Injetar CSS diretamente no <head> para garantir que seja aplicado antes da renderização
+            const exportStyleEl = document.createElement('style');
+            exportStyleEl.id = 'export-completo-style';
+            exportStyleEl.textContent = exportCSS;
+            document.head.appendChild(exportStyleEl);
+
             // Criar elemento temporário invisível
             const container = document.createElement('div');
             container.style.position = 'absolute';
@@ -9613,6 +9618,11 @@
             container.innerHTML = htmlContent;
             document.body.appendChild(container);
 
+            const cleanupExport = () => {
+                if (document.head.contains(exportStyleEl)) document.head.removeChild(exportStyleEl);
+                if (document.body.contains(container)) document.body.removeChild(container);
+            };
+
             // Usar html2canvas para renderizar
             html2canvas(container, {
                 backgroundColor: '#ffffff',
@@ -9620,8 +9630,7 @@
                 logging: false,
                 width: 900
             }).then(canvas => {
-                // Remover elemento temporário
-                document.body.removeChild(container);
+                cleanupExport();
 
                 // Fazer download da imagem
                 canvas.toBlob(blob => {
@@ -9634,7 +9643,7 @@
                     URL.revokeObjectURL(url);
                 });
             }).catch(error => {
-                document.body.removeChild(container);
+                cleanupExport();
                 console.error('Erro ao gerar imagem:', error);
                 mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
