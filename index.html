@@ -9547,20 +9547,20 @@
     .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
     .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
     .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 20px 0; }
-    .export-wrapper .timeline-item { display: flex; align-items: stretch; gap: 12px; }
-    .export-wrapper .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
-    .export-wrapper .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; }
-    .export-wrapper .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
-    .export-wrapper .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
-    .export-wrapper .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-    .export-wrapper .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
-    .export-wrapper .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-    .export-wrapper .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-    .export-wrapper .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
-    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
-    .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
+    .export-wrapper .timeline-item { display: table; width: 100%; table-layout: fixed; }
+    .export-wrapper .timeline-track { display: table-cell; vertical-align: top; width: 32px; }
+    .export-wrapper .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: block; text-align: center; line-height: 32px; font-weight: 700; font-size: 0.76rem; letter-spacing: -0.01em; color: white; }
+    .export-wrapper .timeline-connector { width: 2px; background: #e5e7eb; min-height: 6px; margin: 1px auto 0; display: block; }
+    .export-wrapper .timeline-content { display: table-cell; vertical-align: top; padding-bottom: 14px; padding-top: 4px; padding-left: 12px; }
+    .export-wrapper .timeline-date-row { display: block; margin-bottom: 3px; line-height: 1.4; }
+    .export-wrapper .timeline-date-text { font-weight: 700; font-size: 0.88rem; color: #1f2937; display: inline; vertical-align: middle; }
+    .export-wrapper .timeline-weekday-pill { display: inline-block; vertical-align: middle; padding: 2px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-left: 5px; }
+    .export-wrapper .timeline-prazo-final-pill { display: inline-block; vertical-align: middle; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 5px; }
+    .export-wrapper .timeline-feriado-pill { display: inline-block; vertical-align: middle; padding: 2px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; margin-left: 5px; }
+    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; display: block; margin-top: 2px; }
+    .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
+    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
+    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
     .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
     .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
 `;
@@ -9623,15 +9623,14 @@
                 if (document.body.contains(container)) document.body.removeChild(container);
             };
 
-            // html2canvas não computa corretamente flex: 1 no connector vertical.
-            // Lemos a altura real calculada pelo browser e fixamos como px antes de renderizar.
+            // Fixar altura do connector com base na altura real do content (lida do layout do browser).
+            // Necessário pois html2canvas não computa dinamicamente a altura de células de tabela.
             container.querySelectorAll('.timeline-item').forEach(item => {
                 const content = item.querySelector('.timeline-content');
                 const connector = item.querySelector('.timeline-connector');
                 if (content && connector) {
                     const h = content.offsetHeight;
                     connector.style.height = Math.max(6, h - 32) + 'px';
-                    connector.style.flex = 'none';
                 }
             });
 
