@@ -763,6 +763,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             color: #374151;
+            margin-bottom: 8px;
         }
 
         .tipos-feriado-calc-hint {
@@ -3050,7 +3051,8 @@
             }
 
             /* Ajustar inputs e labels */
-            label {
+            label,
+            .tipos-feriado-calc-label {
                 font-size: 0.85rem;
                 margin-bottom: 6px;
             }
@@ -7084,7 +7086,7 @@
                 const nome = obterNomeFeriado(data);
                 tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado personalizado' : 'Feriado');
             } else if (ehInicio) {
-                tooltip = 'Data de início';
+                tooltip = usarDiasUteis ? 'Data de início · não contabilizada' : 'Data de início';
             } else if (ehFim) {
                 tooltip = 'Data final';
             } else if (ehPercorrido) {
@@ -12050,6 +12052,7 @@
             document.body.appendChild(tip);
 
             let hideTimer = null;
+            let showTimer = null;
             let touchTimer = null;
 
             // Converte todos os .tooltip-icon existentes para usar data-tooltip-html
@@ -12081,6 +12084,7 @@
             }
 
             function esconder() {
+                clearTimeout(showTimer);
                 clearTimeout(hideTimer);
                 clearTimeout(touchTimer);
                 tip.classList.remove('visible');
@@ -12120,12 +12124,23 @@
             document.addEventListener('mouseover', function(e) {
                 const result = obterTooltip(e.target);
                 if (!result) return;
-                posicionarTip(result.el, result.content, result.isHtml);
+                clearTimeout(showTimer);
+                // Instantâneo: ícones "?" (.tooltip-icon → data-tooltip-html)
+                //              e células do calendário (data-tooltip)
+                // Com delay:   tudo o mais (data-tiptitle / title)
+                const isInstant = result.el.classList.contains('tooltip-icon') ||
+                                  result.el.hasAttribute('data-tooltip');
+                if (isInstant) {
+                    posicionarTip(result.el, result.content, result.isHtml);
+                } else {
+                    showTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 900);
+                }
             });
 
             document.addEventListener('mouseout', function(e) {
                 const result = obterTooltip(e.target);
                 if (!result) return;
+                clearTimeout(showTimer);
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
             });
 
