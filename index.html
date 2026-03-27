@@ -7086,7 +7086,7 @@
                 const nome = obterNomeFeriado(data);
                 tooltip = nome || (tipoFeriado === 'personalizado' ? 'Feriado personalizado' : 'Feriado');
             } else if (ehInicio) {
-                tooltip = 'Data de início';
+                tooltip = usarDiasUteis ? 'Data de início · não contabilizada' : 'Data de início';
             } else if (ehFim) {
                 tooltip = 'Data final';
             } else if (ehPercorrido) {
@@ -12133,7 +12133,7 @@
                 if (isInstant) {
                     posicionarTip(result.el, result.content, result.isHtml);
                 } else {
-                    showTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 500);
+                    showTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 700);
                 }
             });
 
