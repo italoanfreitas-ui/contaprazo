@@ -2992,10 +2992,20 @@
         .toast-item[data-tipo="aviso"]   { border-left-color: #f59e0b; }
         .toast-item[data-tipo="info"]    { border-left-color: #3b82f6; }
 
-        .toast-icon {
-            font-size: 1.25rem;
+        .toast-icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
-            margin-top: 1px;
+        }
+
+        .toast-icon-circle svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.5;
         }
 
         .toast-body {
@@ -3045,15 +3055,27 @@
             border: none;
             color: #9ca3af;
             cursor: pointer;
-            padding: 1px 5px;
-            font-size: 1rem;
-            line-height: 1;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 4px;
-            transition: color 0.15s;
+            transition: color 0.15s, background 0.15s;
             align-self: flex-start;
+            margin-top: -1px;
         }
 
-        .toast-close:hover { color: #374151; }
+        .toast-close svg {
+            width: 12px;
+            height: 12px;
+            stroke-width: 2;
+            display: block;
+        }
+
+        .toast-close:hover {
+            color: #374151;
+            background: #f3f4f6;
+        }
 
         @media (max-width: 640px) {
             #toastContainer {
@@ -4586,18 +4608,19 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1f2937;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(-50%) translateY(120px);
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 12px 16px 12px 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.10);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             z-index: 3000;
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
         .toast-undo.active {
@@ -4606,24 +4629,25 @@
         }
 
         .toast-undo-texto {
-            font-size: 0.95rem;
+            font-size: 0.88rem;
+            font-weight: 500;
         }
 
         .toast-undo-btn {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
             color: white;
             border: none;
             padding: 6px 16px;
-            border-radius: 6px;
+            border-radius: 2rem;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            font-size: 0.82rem;
+            transition: opacity 0.15s, transform 0.1s;
+            white-space: nowrap;
         }
 
-        .toast-undo-btn:hover {
-            background: #2563eb;
-        }
+        .toast-undo-btn:hover { opacity: 0.88; }
+        .toast-undo-btn:active { transform: scale(0.97); }
 
         /* Paginação da Agenda */
         .agenda-paginacao {
@@ -8993,8 +9017,7 @@
                     if (mostrarFeedback) {
                         mostrarBannerInformativo(
                             'Nenhum conjunto disponível',
-                            'Não há conjuntos de feriados disponíveis no momento.',
-                            'ℹ️'
+                            'Não há conjuntos de feriados disponíveis no momento.'
                         );
                     }
                     return;
@@ -9022,8 +9045,7 @@
                         mostrarBannerInformativo(
                             'Conjuntos disponíveis',
                             `Há <strong>${totalConjuntos} conjunto(s)</strong> de feriados disponível(is) para importação.<br>
-                            <small style="color: #9ca3af;">Use o botão de nuvem na barra de perfis para criar perfis automaticamente.</small>`,
-                            'ℹ️'
+                            <small style="color: #9ca3af;">Use o botão de nuvem na barra de perfis para criar perfis automaticamente.</small>`
                         );
                     }
                     return;
@@ -9057,7 +9079,7 @@
                     mostrarBannerInformativo(
                         'Tudo atualizado!',
                         'Todos os seus conjuntos de feriados estão atualizados.',
-                        '✅'
+                        'sucesso'
                     );
                 }
 
@@ -9067,7 +9089,7 @@
                     mostrarBannerInformativo(
                         'Erro ao verificar atualizações',
                         'Não foi possível verificar as atualizações. Verifique sua conexão com a internet e tente novamente.',
-                        '❌',
+                        'erro',
                         false // Não auto-fecha em caso de erro
                     );
                 }
@@ -9095,7 +9117,7 @@
 
             criarToast({
                 tipo: 'info',
-                icone: '🔔',
+                icone: _SVG_BELL,
                 titulo,
                 mensagemHTML,
                 botaoTexto: 'Atualizar',
@@ -9106,10 +9128,9 @@
             });
         }
 
-        function mostrarBannerInformativo(titulo, mensagem, icone = '💡', autoFechar = true) {
+        function mostrarBannerInformativo(titulo, mensagem, tipo = 'info', autoFechar = true) {
             criarToast({
-                tipo: 'info',
-                icone,
+                tipo,
                 titulo,
                 mensagemHTML: mensagem,
                 autoFechar: autoFechar ? 5000 : false
@@ -10495,11 +10516,17 @@
             }
         }
 
+        const _SVG_CHECK    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        const _SVG_X_CIRCLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        const _SVG_WARN     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        const _SVG_INFO     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        const _SVG_BELL     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+
         const TOAST_CONFIGS = {
-            sucesso: { titulo: 'Sucesso!',    icone: '✅' },
-            erro:    { titulo: 'Erro',        icone: '❌' },
-            aviso:   { titulo: 'Atenção',     icone: '⚠️' },
-            info:    { titulo: 'Informação',  icone: 'ℹ️' }
+            sucesso: { titulo: 'Sucesso!',    icone: _SVG_CHECK,    corIcone: 'modal-icon-green' },
+            erro:    { titulo: 'Erro',        icone: _SVG_X_CIRCLE, corIcone: 'modal-icon-red'   },
+            aviso:   { titulo: 'Atenção',     icone: _SVG_WARN,     corIcone: 'modal-icon-amber' },
+            info:    { titulo: 'Informação',  icone: _SVG_INFO,     corIcone: 'modal-icon-blue'  }
         };
 
         /**
@@ -10540,13 +10567,13 @@
                 : '';
 
             toast.innerHTML = `
-                <span class="toast-icon">${iconeDisplay}</span>
+                <span class="toast-icon-circle ${cfg.corIcone}">${iconeDisplay}</span>
                 <div class="toast-body">
                     <strong class="toast-titulo">${escapeHtml(tituloDisplay)}</strong>
                     <p class="toast-mensagem">${bodyContent}</p>
                     ${acoesHTML}
                 </div>
-                <button class="toast-close" aria-label="Fechar">✕</button>`;
+                <button class="toast-close" aria-label="Fechar"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>`;
 
             container.prepend(toast);
             tocarSomToast(tipo);
