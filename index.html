@@ -12623,31 +12623,62 @@
         (function() {
             var CLOSE_MS  = 180;
             var MODAL_SEL = '.modal, .modal-aviso, .modal-detalhes, .modal-input-titulo';
+            var pending   = {}; // modalId → timeoutId
 
-            /* Fecha com animação de saída — chamado pelo backdrop e X buttons */
-            function animatedClose(modal) {
-                if (!modal || !modal.classList.contains('active')) return;
+            /* Agenda fechamento com animação; cancela timer anterior do mesmo modal */
+            function scheduleClose(modal, fn, args) {
+                var id = modal.id;
+                if (pending[id]) clearTimeout(pending[id]);
                 modal.classList.add('closing');
-                setTimeout(function() { modal.classList.remove('active', 'closing'); }, CLOSE_MS);
+                pending[id] = setTimeout(function() {
+                    delete pending[id];
+                    fn.apply(window, args);
+                }, CLOSE_MS);
             }
 
             /* Fechar ao clicar no backdrop */
             document.querySelectorAll(MODAL_SEL).forEach(function(modal) {
                 modal.addEventListener('click', function(e) {
-                    if (e.target === modal) animatedClose(modal);
+                    if (e.target !== modal) return;
+                    if (!modal.classList.contains('active')) return;
+                    var id = modal.id;
+                    if (pending[id]) clearTimeout(pending[id]);
+                    modal.classList.add('closing');
+                    pending[id] = setTimeout(function() {
+                        delete pending[id];
+                        modal.classList.remove('active', 'closing');
+                    }, CLOSE_MS);
                 });
             });
 
-            /* Travar scroll do body via MutationObserver */
+            /* MutationObserver: scroll lock + cancelar timer quando modal reabre */
             function syncBodyScroll() {
                 var anyOpen = document.querySelector(
                     '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
                 );
                 document.body.style.overflow = anyOpen ? 'hidden' : '';
             }
-            var observer = new MutationObserver(syncBodyScroll);
+
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mut) {
+                    var el  = mut.target;
+                    var hadActive = mut.oldValue ? mut.oldValue.split(/\s+/).indexOf('active') !== -1 : false;
+                    var hasActive = el.classList.contains('active');
+                    /* Modal acabou de abrir — cancela qualquer fechamento pendente */
+                    if (hasActive && !hadActive) {
+                        var id = el.id;
+                        if (pending[id]) { clearTimeout(pending[id]); delete pending[id]; }
+                        el.classList.remove('closing');
+                    }
+                });
+                syncBodyScroll();
+            });
             document.querySelectorAll(MODAL_SEL).forEach(function(m) {
-                observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+                observer.observe(m, {
+                    attributes: true,
+                    attributeFilter: ['class'],
+                    attributeOldValue: true
+                });
             });
 
             /* Adiciona transição de saída às funções de fechar existentes */
@@ -12669,6 +12700,7 @@
                 ['fecharModalArquivamento',         'modalArquivamento'],
                 ['fecharModalDesarquivar',          'modalDesarquivar'],
                 ['dispensarBoasVindas',             'modalBoasVindas'],
+                ['fecharModalExportarFeriados',     'modalExportarFeriados'],
             ].forEach(function(pair) {
                 var fnName = pair[0], modalId = pair[1];
                 var original = window[fnName];
@@ -12677,8 +12709,7 @@
                     var args = arguments;
                     var modal = document.getElementById(modalId);
                     if (modal && modal.classList.contains('active')) {
-                        modal.classList.add('closing');
-                        setTimeout(function() { original.apply(window, args); }, CLOSE_MS);
+                        scheduleClose(modal, original, args);
                     } else {
                         original.apply(window, args);
                     }
