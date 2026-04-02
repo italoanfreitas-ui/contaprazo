@@ -2117,6 +2117,16 @@
         }
 
         /* Modal para importar feriados */
+        @keyframes modalOverlayFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes modalContentSlideIn {
+            from { opacity: 0; transform: scale(0.96) translateY(14px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);    }
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -2124,34 +2134,43 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
         }
 
         .modal.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-header {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 20px;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            padding: 1.5rem 1.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            letter-spacing: -0.02em;
         }
 
         .modal-body {
-            margin-bottom: 20px;
+            padding: 1rem 1.8rem;
             color: #374151;
             line-height: 1.6;
         }
@@ -2159,27 +2178,29 @@
         .modal-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            padding: 0.25rem 1.8rem 1rem;
         }
 
         .modal-option {
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .modal-option:hover {
             border-color: #3b82f6;
-            background: #f0f9ff;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .modal-option-title {
             font-weight: 600;
             color: #1f2937;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .modal-option-desc {
@@ -2189,20 +2210,20 @@
 
         /* Estilos para itens do dropdown de conjuntos pré-definidos */
         .item-predefinido {
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 12px;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            margin-bottom: 10px;
             background: white;
         }
 
         .item-predefinido:hover {
-            border-color: var(--primary-color);
-            background: #f9fafb;
+            border-color: var(--color-blue-500);
+            background: #eff6ff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .item-predefinido-nome {
@@ -2227,8 +2248,12 @@
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: 0.75rem;
             flex-wrap: wrap;
+            padding: 0.9rem 1.8rem 1.4rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(249, 250, 251, 0.6);
+            justify-content: flex-end;
         }
         .modal-buttons > .btn {
             flex: 1 1 0;
@@ -2430,8 +2455,8 @@
             max-height: 320px;
             overflow-y: auto;
             overflow-x: hidden;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1rem;
         }
 
         .modal-perfil-item {
@@ -2440,7 +2465,7 @@
             justify-content: space-between;
             gap: 12px;
             padding: 12px 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .modal-perfil-item:last-child {
@@ -2476,9 +2501,9 @@
         }
 
         .modal-perfil-btn {
-            padding: 4px 8px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 2rem;
             background: white;
             color: #6b7280;
             cursor: pointer;
@@ -2508,16 +2533,17 @@
 
         .modal-input-small {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
             font-size: 0.9rem;
+            transition: all 0.2s;
         }
 
         .modal-input-small:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         /* Modal de Aviso de Recálculo */
@@ -2528,65 +2554,58 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
         }
 
         .modal-aviso.active {
             display: flex;
-            animation: fadeIn 0.2s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-aviso-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 2rem 2rem 1.6rem;
+            border-radius: 2rem;
             max-width: 450px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
             text-align: center;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-aviso-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
         }
 
         .modal-aviso-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 15px;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
         }
 
         .modal-aviso-content p {
             color: #374151;
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .modal-aviso-checkbox {
-            margin: 20px 0;
+            margin: 16px 0;
             text-align: left;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
         }
 
         .modal-aviso-checkbox label {
@@ -4254,65 +4273,58 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .modal-detalhes.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-detalhes-content {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             width: 100%;
             max-width: 700px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-detalhes-header {
-            padding: 12px 16px;
-            border-bottom: 2px solid #e5e7eb;
+            padding: 1.2rem 1.6rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            z-index: 10;
-            border-radius: 16px 16px 0 0;
             flex-shrink: 0;
         }
 
         .modal-detalhes-titulo {
-            font-size: 1.125rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: #1f2937;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             margin: 0;
+            letter-spacing: -0.02em;
         }
 
         .modal-detalhes-fechar {
             width: 32px;
             height: 32px;
             border: none;
-            background: #f3f4f6;
-            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -4322,30 +4334,30 @@
         }
 
         .modal-detalhes-fechar:hover {
-            background: #e5e7eb;
-            color: #1f2937;
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+            color: #111827;
         }
 
         .modal-detalhes-body {
-            padding: 12px 16px;
+            padding: 1.2rem 1.6rem;
             overflow-y: auto;
             flex: 1;
         }
 
         /* Estilos de scrollbar para .modal-detalhes-body (Chromium/WebKit) */
         .modal-detalhes-body::-webkit-scrollbar {
-            width: 8px;
+            width: 5px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-track {
             background: transparent;
-            border-radius: 16px;
+            border-radius: 10px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 16px;
-            border: 2px solid white;
+            background: #b9c3d4;
+            border-radius: 10px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
@@ -4359,21 +4371,20 @@
         }
 
         .modal-detalhes-acoes {
-            padding: 12px 16px;
-            border-top: 2px solid #e5e7eb;
+            padding: 1rem 1.6rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            background: white;
-            border-radius: 0 0 16px 16px;
+            background: rgba(249, 250, 251, 0.6);
             flex-shrink: 0;
         }
 
         .modal-fechar {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.05);
             border: none;
-            font-size: 2rem;
-            color: #9ca3af;
+            font-size: 1.4rem;
+            color: #6b7280;
             cursor: pointer;
             padding: 0;
             width: 32px;
@@ -4381,31 +4392,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
+            border-radius: 50%;
             transition: all 0.2s;
         }
 
         .modal-fechar:hover {
-            background: #f3f4f6;
-            color: #1f2937;
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+            color: #111827;
         }
 
         .opcao-arquivamento {
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .opcao-arquivamento:hover {
             border-color: #3b82f6;
             background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .opcao-arquivamento.opcao-perigo:hover {
             border-color: #dc2626;
             background: #fef2f2;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.18);
         }
 
         /* Toast de Undo */
@@ -4539,61 +4554,70 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .modal-input-titulo.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-input-content {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-input-header {
-            padding: 24px 30px 20px;
-            border-bottom: 2px solid #e5e7eb;
+            padding: 1.5rem 1.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .modal-input-header h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #1f2937;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             margin: 0;
+            letter-spacing: -0.02em;
         }
 
         .modal-input-body {
-            padding: 25px 30px;
+            padding: 1.2rem 1.8rem;
         }
 
         .modal-input-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.2rem;
         }
 
         .modal-input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #374151;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .modal-input-group input,
         .modal-input-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
         }
 
@@ -4601,7 +4625,7 @@
         .modal-input-group textarea:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         .modal-input-group textarea {
@@ -4611,11 +4635,12 @@
         }
 
         .modal-input-footer {
-            padding: 20px 30px;
-            border-top: 2px solid #e5e7eb;
+            padding: 1rem 1.8rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            background: rgba(249, 250, 251, 0.6);
         }
 
         /* Responsividade Mobile */
@@ -4647,12 +4672,34 @@
 
             .modal-detalhes-content {
                 max-height: 90vh;
+                border-radius: 1.5rem;
+            }
+
+            .modal-content {
+                border-radius: 1.5rem;
+            }
+
+            .modal-aviso-content {
+                border-radius: 1.5rem;
+            }
+
+            .modal-input-content {
+                border-radius: 1.5rem;
             }
 
             .modal-detalhes-header,
             .modal-detalhes-body,
             .modal-detalhes-acoes {
-                padding: 20px;
+                padding: 1rem 1.2rem;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .modal-buttons > .btn {
+                text-align: center;
+                justify-content: center;
             }
         }
 
@@ -12258,15 +12305,15 @@
             <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
                 Edite o título e a descrição do prazo. As datas e cálculos são mantidos para auditoria.
             </p>
-            <div style="margin: 20px 0;">
-                <label for="editTitulo" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Título:</label>
+            <div style="margin: 16px 0;">
+                <label for="editTitulo" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Título:</label>
                 <input type="text" id="editTitulo" placeholder="Ex: Recurso Processo 12345"
-                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem;">
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; transition: all 0.2s;">
             </div>
-            <div style="margin: 20px 0;">
-                <label for="editDescricao" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Descrição (opcional):</label>
+            <div style="margin: 16px 0;">
+                <label for="editDescricao" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Descrição (opcional):</label>
                 <textarea id="editDescricao" placeholder="Detalhes adicionais..." rows="3"
-                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; resize: vertical;"></textarea>
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; resize: vertical; transition: all 0.2s;"></textarea>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
                 <button class="btn btn-secondary" onclick="fecharModalEditar()">Cancelar</button>
