@@ -904,6 +904,17 @@
             box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
         }
 
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
         .btn-purple {
             background: #9333ea;
             color: white;
@@ -6383,6 +6394,58 @@
         </div>
     </div>
 
+    <!-- Modal de confirmação genérico -->
+    <div class="modal" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-red" id="modalConfirmacaoIcone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title" id="modalConfirmacaoTitulo">Confirmar</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalConfirmacao()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalConfirmacaoMensagem"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalConfirmacao()">Cancelar</button>
+                <button class="btn btn-danger" id="modalConfirmacaoBtn" onclick="executarConfirmacao()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de opções para importar agenda (substituir vs mesclar) -->
+    <div class="modal" id="modalImportarPrazosOpcao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </span>
+                <span class="modal-header-title">Importar Agenda</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalImportarPrazosOpcao()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalImportarPrazosOpcaoInfo"></p>
+                <p>Como deseja importar os dados?</p>
+            </div>
+            <div class="modal-options">
+                <div class="modal-option" onclick="confirmarImportarPrazosMesclar()">
+                    <div class="modal-option-title">Mesclar</div>
+                    <div class="modal-option-desc">Adiciona os prazos importados à agenda atual sem remover os existentes.</div>
+                </div>
+                <div class="modal-option" onclick="confirmarImportarPrazosSubstituir()">
+                    <div class="modal-option-title">Substituir</div>
+                    <div class="modal-option-desc">Substitui toda a agenda atual pelos prazos importados. Esta ação não pode ser desfeita.</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalImportarPrazosOpcao()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Estado da aplicação
         let mesAtual = new Date();
@@ -6891,25 +6954,29 @@
             const perfil = perfisData.find(p => p.id === id);
             if (!perfil) return;
 
-            if (!confirm('Excluir o perfil "' + perfil.nome + '"?\n\nOs feriados carregados atualmente não serão afetados.')) {
-                return;
-            }
+            mostrarConfirmacao({
+                titulo: 'Excluir Perfil',
+                mensagemHTML: 'Excluir o perfil <strong>"' + perfil.nome.replace(/</g, '&lt;') + '"</strong>?<br><br>Os feriados carregados atualmente não serão afetados.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    perfisData = perfisData.filter(p => p.id !== id);
+                    salvarPerfisNoLocalStorage();
 
-            perfisData = perfisData.filter(p => p.id !== id);
-            salvarPerfisNoLocalStorage();
+                    // Se o perfil excluído era o ativo, desvincula
+                    if (perfilAtivoId === id) {
+                        perfilAtivoId = null;
+                        localStorage.removeItem(PERFIL_ATIVO_KEY);
+                        feriadosSnapshotPerfil = obterSnapshotFeriados();
+                        perfilTemAlteracoes = false;
+                    }
 
-            // Se o perfil excluído era o ativo, desvincula
-            if (perfilAtivoId === id) {
-                perfilAtivoId = null;
-                localStorage.removeItem(PERFIL_ATIVO_KEY);
-                feriadosSnapshotPerfil = obterSnapshotFeriados();
-                perfilTemAlteracoes = false;
-            }
-
-            renderizarListaPerfis();
-            atualizarUIPerfilAtivo();
-            atualizarDropdownPerfis();
-            mostrarNotificacao('Perfil "' + perfil.nome + '" excluído.', 'sucesso');
+                    renderizarListaPerfis();
+                    atualizarUIPerfilAtivo();
+                    atualizarDropdownPerfis();
+                    mostrarNotificacao('Perfil "' + perfil.nome + '" excluído.', 'sucesso');
+                }
+            });
         }
 
         function abrirModalRenomearPerfil(id) {
@@ -7974,18 +8041,24 @@
             }
 
             const quantidade = feriadosPersonalizados.size;
-            if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.\n\nA página será recarregada para aplicar as mudanças.`)) {
-                feriadosPersonalizados.clear();
-                localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
+            mostrarConfirmacao({
+                titulo: 'Limpar Feriados Personalizados',
+                mensagem: `Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita. A página será recarregada para aplicar as mudanças.`,
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Limpar',
+                onConfirmar: function() {
+                    feriadosPersonalizados.clear();
+                    localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
 
-                // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
-                sessionStorage.setItem('reloadToTop', 'true');
-                sessionStorage.setItem('contaprazo_importou_feriados', 'true');
-                sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
+                    // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
+                    sessionStorage.setItem('reloadToTop', 'true');
+                    sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
 
-                // Recarrega a página para aplicar as configurações
-                location.reload();
-            }
+                    // Recarrega a página para aplicar as configurações
+                    location.reload();
+                }
+            });
         }
 
         function renderizarCalendario() {
@@ -8236,6 +8309,77 @@
             URL.revokeObjectURL(url);
 
             fecharModalExportarFeriados();
+        }
+
+        // Modal de confirmação genérico
+        var _confirmacaoCallback = null;
+
+        function mostrarConfirmacao(opcoes) {
+            document.getElementById('modalConfirmacaoTitulo').textContent = opcoes.titulo || 'Confirmar';
+            var msgEl = document.getElementById('modalConfirmacaoMensagem');
+            if (opcoes.mensagemHTML) {
+                msgEl.innerHTML = opcoes.mensagemHTML;
+            } else {
+                msgEl.textContent = opcoes.mensagem || '';
+            }
+            var iconeEl = document.getElementById('modalConfirmacaoIcone');
+            iconeEl.className = 'modal-header-icon ' + (opcoes.icone || 'modal-icon-red');
+            var btn = document.getElementById('modalConfirmacaoBtn');
+            btn.textContent = opcoes.labelConfirmar || 'Confirmar';
+            btn.className = 'btn ' + (opcoes.classeBtn || 'btn-danger');
+            _confirmacaoCallback = opcoes.onConfirmar || null;
+            document.getElementById('modalConfirmacao').classList.add('active');
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modalConfirmacao').classList.remove('active');
+            _confirmacaoCallback = null;
+        }
+
+        function executarConfirmacao() {
+            var cb = _confirmacaoCallback;
+            fecharModalConfirmacao();
+            if (cb) cb();
+        }
+
+        // Modal de importar prazos (substituir vs mesclar)
+        var _importDataPendente = null;
+
+        function fecharModalImportarPrazosOpcao() {
+            document.getElementById('modalImportarPrazosOpcao').classList.remove('active');
+            _importDataPendente = null;
+        }
+
+        function _processarImportPrazos(substituir) {
+            if (!_importDataPendente) return;
+            const data = _importDataPendente;
+            const mapeado = data.prazos.map(prazo => ({
+                ...prazo,
+                ...(substituir ? {} : { id: gerarId() }),
+                dataInicio: new Date(prazo.dataInicio),
+                dataFinal: new Date(prazo.dataFinal),
+                dataCriacao: new Date(prazo.dataCriacao),
+                dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                detalhamentoDias: prazo.detalhamentoDias.map(dia => ({ ...dia, data: new Date(dia.data) }))
+            }));
+            if (substituir) {
+                prazos = mapeado;
+            } else {
+                prazos.push(...mapeado);
+            }
+            salvarPrazosStorage();
+            renderizarPrazos();
+            mostrarNotificacao('Agenda importada com sucesso!', 'sucesso');
+        }
+
+        function confirmarImportarPrazosSubstituir() {
+            fecharModalImportarPrazosOpcao();
+            _processarImportPrazos(true);
+        }
+
+        function confirmarImportarPrazosMesclar() {
+            fecharModalImportarPrazosOpcao();
+            _processarImportPrazos(false);
         }
 
         function importarFeriados(event) {
@@ -11223,13 +11367,17 @@
 
         // Excluir prazo
         function excluirPrazo(id) {
-            if (!confirm('Tem certeza que deseja excluir este prazo? Esta ação não pode ser desfeita.')) {
-                return;
-            }
-
-            prazos = prazos.filter(p => p.id !== id);
-            salvarPrazosStorage();
-            renderizarPrazos();
+            mostrarConfirmacao({
+                titulo: 'Excluir Prazo',
+                mensagem: 'Tem certeza que deseja excluir este prazo? Esta ação não pode ser desfeita.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    prazos = prazos.filter(p => p.id !== id);
+                    salvarPrazosStorage();
+                    renderizarPrazos();
+                }
+            });
         }
 
         // Excluir prazo do modal
@@ -11276,28 +11424,33 @@
         function excluirPrazoArquivadoModal() {
             if (!prazoEmEdicao) return;
 
-            if (!confirm('Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.')) {
-                return;
-            }
+            const idParaExcluir = prazoEmEdicao;
+            mostrarConfirmacao({
+                titulo: 'Excluir Permanentemente',
+                mensagem: 'Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    const prazo = prazosArquivados.find(p => p.id === idParaExcluir);
+                    if (!prazo) {
+                        mostrarNotificacao('Prazo não encontrado.', 'erro');
+                        fecharModalDetalhes();
+                        return;
+                    }
 
-            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
-            if (!prazo) {
-                mostrarNotificacao('Prazo não encontrado.', 'erro');
-                fecharModalDetalhes();
-                return;
-            }
+                    // Remover dos arquivados
+                    prazosArquivados = prazosArquivados.filter(p => p.id !== idParaExcluir);
 
-            // Remover dos arquivados
-            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+                    // Salvar
+                    salvarArquivadosStorage();
 
-            // Salvar
-            salvarArquivadosStorage();
+                    // Fechar modal e atualizar UI
+                    fecharModalDetalhes();
+                    renderizarPrazos();
 
-            // Fechar modal e atualizar UI
-            fecharModalDetalhes();
-            renderizarPrazos();
-
-            mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
+                    mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
+                }
+            });
         }
 
         // Exportar agenda para JSON
@@ -11345,46 +11498,10 @@
                         throw new Error('Formato de arquivo inválido');
                     }
 
-                    const confirmacao = confirm(
-                        `Deseja importar ${data.prazos.length} prazo(s)?\n\n` +
-                        `Escolha:\n` +
-                        `OK = Substituir agenda atual\n` +
-                        `Cancelar = Mesclar com agenda atual`
-                    );
-
-                    if (confirmacao) {
-                        // Substituir
-                        prazos = data.prazos.map(prazo => ({
-                            ...prazo,
-                            dataInicio: new Date(prazo.dataInicio),
-                            dataFinal: new Date(prazo.dataFinal),
-                            dataCriacao: new Date(prazo.dataCriacao),
-                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                                ...dia,
-                                data: new Date(dia.data)
-                            }))
-                        }));
-                    } else {
-                        // Mesclar
-                        const novosprazos = data.prazos.map(prazo => ({
-                            ...prazo,
-                            id: gerarId(), // Novo ID para evitar conflitos
-                            dataInicio: new Date(prazo.dataInicio),
-                            dataFinal: new Date(prazo.dataFinal),
-                            dataCriacao: new Date(prazo.dataCriacao),
-                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                                ...dia,
-                                data: new Date(dia.data)
-                            }))
-                        }));
-                        prazos.push(...novosprazos);
-                    }
-
-                    salvarPrazosStorage();
-                    renderizarPrazos();
-                    mostrarNotificacao('Agenda importada com sucesso!', 'sucesso');
+                    _importDataPendente = data;
+                    document.getElementById('modalImportarPrazosOpcaoInfo').textContent =
+                        data.prazos.length + ' prazo(s) encontrado(s).';
+                    document.getElementById('modalImportarPrazosOpcao').classList.add('active');
 
                 } catch (error) {
                     mostrarNotificacao('Erro ao importar agenda: ' + error.message, 'erro');
@@ -12086,22 +12203,30 @@
                     }
                 }
 
-                if (confirm(`Deseja salvar ${novosFeriados.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`)) {
-                    feriadosPersonalizados = novosFeriados;
+                const feriadosParaSalvar = novosFeriados;
+                mostrarConfirmacao({
+                    titulo: 'Salvar Feriados Personalizados',
+                    mensagem: `Deseja salvar ${feriadosParaSalvar.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`,
+                    icone: 'modal-icon-green',
+                    classeBtn: 'btn-success',
+                    labelConfirmar: 'Salvar',
+                    onConfirmar: function() {
+                        feriadosPersonalizados = feriadosParaSalvar;
 
-                    // Salva no formato novo: array de objetos {data, nome}
-                    const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                        data,
-                        nome: nome || ''
-                    }));
-                    localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+                        // Salva no formato novo: array de objetos {data, nome}
+                        const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                            data,
+                            nome: nome || ''
+                        }));
+                        localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
 
-                    atualizarVisualizacaoFeriados();
-                    renderizarCalendario();
-                    notificarAlteracaoFeriados();
-                    mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
-                    mostrarAvisoRecalculo();
-                }
+                        atualizarVisualizacaoFeriados();
+                        renderizarCalendario();
+                        notificarAlteracaoFeriados();
+                        mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
+                        mostrarAvisoRecalculo();
+                    }
+                });
             } catch (error) {
                 mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
@@ -12193,28 +12318,37 @@
                 const totalFixos = Object.keys(novosFeriadosFixos).length;
                 const totalMoveis = Object.values(novosFeriadosMoveis).reduce((acc, f) => acc + Object.keys(f).length, 0);
 
-                if (confirm(`Deseja salvar as configurações?\n\n✓ ${totalFixos} feriado(s) fixo(s)\n✓ ${totalMoveis} feriado(s) móvel(is)\n\nIsso substituirá as configurações atuais.`)) {
-                    // Atualizar variáveis globais
-                    Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
-                    Object.assign(feriadosFixos, novosFeriadosFixos);
+                const fixosParaSalvar = novosFeriadosFixos;
+                const moveisParaSalvar = novosFeriadosMoveis;
+                mostrarConfirmacao({
+                    titulo: 'Salvar Configurações',
+                    mensagem: `Deseja salvar as configurações?\n\n✓ ${totalFixos} feriado(s) fixo(s)\n✓ ${totalMoveis} feriado(s) móvel(is)\n\nIsso substituirá as configurações atuais.`,
+                    icone: 'modal-icon-green',
+                    classeBtn: 'btn-success',
+                    labelConfirmar: 'Salvar',
+                    onConfirmar: function() {
+                        // Atualizar variáveis globais
+                        Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
+                        Object.assign(feriadosFixos, fixosParaSalvar);
 
-                    Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
-                    Object.assign(feriadosMoveis, novosFeriadosMoveis);
+                        Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
+                        Object.assign(feriadosMoveis, moveisParaSalvar);
 
-                    // Salvar no localStorage
-                    localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
-                    localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
+                        // Salvar no localStorage
+                        localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
+                        localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
 
-                    atualizarVisualizacaoFeriados();
-                    renderizarCalendario();
+                        atualizarVisualizacaoFeriados();
+                        renderizarCalendario();
 
-                    // Marca flags para o reload
-                    sessionStorage.setItem('reloadToTop', 'true');
-                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
+                        // Marca flags para o reload
+                        sessionStorage.setItem('reloadToTop', 'true');
+                        sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
 
-                    // Recarrega a página para aplicar as configurações
-                    location.reload();
-                }
+                        // Recarrega a página para aplicar as configurações
+                        location.reload();
+                    }
+                });
             } catch (error) {
                 mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
@@ -12222,10 +12356,17 @@
 
         // Resetar feriados para padrão
         function resetarFeriadosPadrao() {
-            if (!confirm('🔄 Deseja restaurar os feriados padrão?\n\nIsso irá substituir todas as configurações atuais de feriados fixos e móveis pelos valores padrão do Brasil.\n\nA página será recarregada para aplicar as mudanças.')) {
-                return;
-            }
+            mostrarConfirmacao({
+                titulo: 'Restaurar Feriados Padrão',
+                mensagem: 'Isso irá substituir todas as configurações atuais de feriados fixos e móveis pelos valores padrão do Brasil.\n\nA página será recarregada para aplicar as mudanças.',
+                icone: 'modal-icon-amber',
+                classeBtn: 'btn-danger',
+                labelConfirmar: 'Restaurar',
+                onConfirmar: function() { _executarResetarFeriadosPadrao(); }
+            });
+        }
 
+        function _executarResetarFeriadosPadrao() {
             // Feriados fixos padrão do Brasil
             const feriadosFixosPadrao = {
                 '01-01': 'Ano Novo',
@@ -12536,7 +12677,7 @@
             </p>
             <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="fecharModalReset()">Cancelar</button>
-                <button class="btn" onclick="executarResetCompleto()" style="background: #dc2626; color: white;">
+                <button class="btn btn-danger" onclick="executarResetCompleto()">
                     Confirmar Reset
                 </button>
             </div>
@@ -12743,6 +12884,8 @@
                 ['fecharModalDesarquivar',          'modalDesarquivar'],
                 ['dispensarBoasVindas',             'modalBoasVindas'],
                 ['fecharModalExportarFeriados',     'modalExportarFeriados'],
+                ['fecharModalConfirmacao',          'modalConfirmacao'],
+                ['fecharModalImportarPrazosOpcao',  'modalImportarPrazosOpcao'],
             ].forEach(function(pair) {
                 var fnName = pair[0], modalId = pair[1];
                 var original = window[fnName];
