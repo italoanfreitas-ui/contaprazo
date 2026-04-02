@@ -2961,10 +2961,12 @@
 
         .toast-item {
             pointer-events: all;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-radius: 14px;
             padding: 14px 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: flex-start;
             gap: 12px;
@@ -2992,10 +2994,20 @@
         .toast-item[data-tipo="aviso"]   { border-left-color: #f59e0b; }
         .toast-item[data-tipo="info"]    { border-left-color: #3b82f6; }
 
-        .toast-icon {
-            font-size: 1.25rem;
+        .toast-icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
-            margin-top: 1px;
+        }
+
+        .toast-icon-circle svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.5;
         }
 
         .toast-body {
@@ -3025,35 +3037,85 @@
         }
 
         .toast-btn-acao {
-            padding: 5px 12px;
-            border-radius: 6px;
+            padding: 5px 14px;
+            border-radius: 2rem;
             border: none;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             background: #3b82f6;
             color: white;
-            transition: background 0.15s;
+            transition: background 0.15s, transform 0.1s;
             font-family: system-ui, -apple-system, sans-serif;
         }
 
-        .toast-btn-acao:hover { background: #2563eb; }
+        .toast-btn-acao:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .toast-btn-acao:active {
+            transform: translateY(1px);
+            transition-duration: 0.05s;
+        }
+
+        .toast-btn-secundario {
+            padding: 5px 14px;
+            border-radius: 2rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.12);
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: transparent;
+            color: #6b7280;
+            transition: background 0.15s, color 0.15s, transform 0.1s;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .toast-btn-secundario:hover {
+            background: rgba(0, 0, 0, 0.06);
+            color: #374151;
+            transform: translateY(-1px);
+        }
+
+        .toast-btn-secundario:active {
+            transform: translateY(1px);
+            transition-duration: 0.05s;
+        }
 
         .toast-close {
             flex-shrink: 0;
-            background: transparent;
+            width: 26px;
+            height: 26px;
             border: none;
-            color: #9ca3af;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
             cursor: pointer;
-            padding: 1px 5px;
-            font-size: 1rem;
-            line-height: 1;
-            border-radius: 4px;
-            transition: color 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            transition: background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.3);
             align-self: flex-start;
+            margin-top: -1px;
         }
 
-        .toast-close:hover { color: #374151; }
+        .toast-close svg {
+            width: 11px;
+            height: 11px;
+            stroke-width: 2;
+            display: block;
+        }
+
+        .toast-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #374151;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .toast-close:active {
+            transform: rotate(90deg) scale(0.95);
+        }
 
         @media (max-width: 640px) {
             #toastContainer {
@@ -4586,18 +4648,19 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1f2937;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(-50%) translateY(120px);
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 12px 16px 12px 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.10);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             z-index: 3000;
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
         .toast-undo.active {
@@ -4606,24 +4669,25 @@
         }
 
         .toast-undo-texto {
-            font-size: 0.95rem;
+            font-size: 0.88rem;
+            font-weight: 500;
         }
 
         .toast-undo-btn {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
             color: white;
             border: none;
             padding: 6px 16px;
-            border-radius: 6px;
+            border-radius: 2rem;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            font-size: 0.82rem;
+            transition: opacity 0.15s, transform 0.1s;
+            white-space: nowrap;
         }
 
-        .toast-undo-btn:hover {
-            background: #2563eb;
-        }
+        .toast-undo-btn:hover { opacity: 0.88; }
+        .toast-undo-btn:active { transform: scale(0.97); }
 
         /* Paginação da Agenda */
         .agenda-paginacao {
@@ -6064,7 +6128,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.7 • 2026 • Um projeto de Italoan F. • <a href="mailto:prazocerto@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.7 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -7854,7 +7918,8 @@
                     tipo: 'info',
                     titulo: 'Feriados fixos e móveis desativados',
                     mensagem: 'Ao usar feriados personalizados ou um perfil, os feriados fixos e móveis são desativados automaticamente para evitar duplicações. Você pode reativá-los pelos controles de tipos de feriado (Fixos / Móveis / Personalizados), se necessário — e o app lembrará da sua escolha.',
-                    autoFechar: false
+                    autoFechar: false,
+                    botaoTexto: 'Entendi'
                 });
             }
         }
@@ -7879,8 +7944,9 @@
                             titulo: 'Atenção: possível duplicidade de feriados',
                             mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
                             autoFechar: false,
-                            botaoTexto: 'Não mostrar novamente',
-                            botaoCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
+                            botaoTexto: 'Entendi',
+                            botaoSecundarioTexto: 'Não mostrar novamente',
+                            botaoSecundarioCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
                         });
                     }
                 }
@@ -8993,8 +9059,7 @@
                     if (mostrarFeedback) {
                         mostrarBannerInformativo(
                             'Nenhum conjunto disponível',
-                            'Não há conjuntos de feriados disponíveis no momento.',
-                            'ℹ️'
+                            'Não há conjuntos de feriados disponíveis no momento.'
                         );
                     }
                     return;
@@ -9022,8 +9087,7 @@
                         mostrarBannerInformativo(
                             'Conjuntos disponíveis',
                             `Há <strong>${totalConjuntos} conjunto(s)</strong> de feriados disponível(is) para importação.<br>
-                            <small style="color: #9ca3af;">Use o botão de nuvem na barra de perfis para criar perfis automaticamente.</small>`,
-                            'ℹ️'
+                            <small style="color: #9ca3af;">Use o botão de nuvem na barra de perfis para criar perfis automaticamente.</small>`
                         );
                     }
                     return;
@@ -9057,7 +9121,7 @@
                     mostrarBannerInformativo(
                         'Tudo atualizado!',
                         'Todos os seus conjuntos de feriados estão atualizados.',
-                        '✅'
+                        'sucesso'
                     );
                 }
 
@@ -9067,7 +9131,7 @@
                     mostrarBannerInformativo(
                         'Erro ao verificar atualizações',
                         'Não foi possível verificar as atualizações. Verifique sua conexão com a internet e tente novamente.',
-                        '❌',
+                        'erro',
                         false // Não auto-fecha em caso de erro
                     );
                 }
@@ -9095,7 +9159,7 @@
 
             criarToast({
                 tipo: 'info',
-                icone: '🔔',
+                icone: _SVG_BELL,
                 titulo,
                 mensagemHTML,
                 botaoTexto: 'Atualizar',
@@ -9106,10 +9170,9 @@
             });
         }
 
-        function mostrarBannerInformativo(titulo, mensagem, icone = '💡', autoFechar = true) {
+        function mostrarBannerInformativo(titulo, mensagem, tipo = 'info', autoFechar = true) {
             criarToast({
-                tipo: 'info',
-                icone,
+                tipo,
                 titulo,
                 mensagemHTML: mensagem,
                 autoFechar: autoFechar ? 5000 : false
@@ -10495,11 +10558,17 @@
             }
         }
 
+        const _SVG_CHECK    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        const _SVG_X_CIRCLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        const _SVG_WARN     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        const _SVG_INFO     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        const _SVG_BELL     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+
         const TOAST_CONFIGS = {
-            sucesso: { titulo: 'Sucesso!',    icone: '✅' },
-            erro:    { titulo: 'Erro',        icone: '❌' },
-            aviso:   { titulo: 'Atenção',     icone: '⚠️' },
-            info:    { titulo: 'Informação',  icone: 'ℹ️' }
+            sucesso: { titulo: 'Sucesso!',    icone: _SVG_CHECK,    corIcone: 'modal-icon-green' },
+            erro:    { titulo: 'Erro',        icone: _SVG_X_CIRCLE, corIcone: 'modal-icon-red'   },
+            aviso:   { titulo: 'Atenção',     icone: _SVG_WARN,     corIcone: 'modal-icon-amber' },
+            info:    { titulo: 'Informação',  icone: _SVG_INFO,     corIcone: 'modal-icon-blue'  }
         };
 
         /**
@@ -10519,6 +10588,7 @@
         function criarToast({
             tipo = 'info', icone, titulo, mensagem, mensagemHTML,
             botaoTexto, botaoCallback,
+            botaoSecundarioTexto, botaoSecundarioCallback,
             autoFechar = 5000, aoFechar = null, toastId = null
         } = {}) {
             const container = document.getElementById('toastContainer');
@@ -10535,26 +10605,37 @@
                 ? mensagemHTML
                 : (mensagem ? escapeHtml(mensagem) : '');
 
-            const acoesHTML = botaoTexto
-                ? `<div class="toast-actions"><button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button></div>`
+            const botoesHTML = (botaoTexto || botaoSecundarioTexto)
+                ? `<div class="toast-actions">
+                    ${botaoTexto ? `<button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button>` : ''}
+                    ${botaoSecundarioTexto ? `<button class="toast-btn-secundario">${escapeHtml(botaoSecundarioTexto)}</button>` : ''}
+                   </div>`
                 : '';
 
             toast.innerHTML = `
-                <span class="toast-icon">${iconeDisplay}</span>
+                <span class="toast-icon-circle ${cfg.corIcone}">${iconeDisplay}</span>
                 <div class="toast-body">
                     <strong class="toast-titulo">${escapeHtml(tituloDisplay)}</strong>
                     <p class="toast-mensagem">${bodyContent}</p>
-                    ${acoesHTML}
+                    ${botoesHTML}
                 </div>
-                <button class="toast-close" aria-label="Fechar">✕</button>`;
+                <button class="toast-close" aria-label="Fechar"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>`;
 
             container.prepend(toast);
             tocarSomToast(tipo);
 
-            // Botão de ação: executa callback e fecha (sem disparar aoFechar)
-            if (botaoTexto && botaoCallback) {
+            // Botão primário: executa callback (opcional) e fecha sem disparar aoFechar
+            if (botaoTexto) {
                 toast.querySelector('.toast-btn-acao').addEventListener('click', () => {
-                    botaoCallback();
+                    if (botaoCallback) botaoCallback();
+                    fecharToast(toast);
+                });
+            }
+
+            // Botão secundário: executa callback (opcional) e fecha sem disparar aoFechar
+            if (botaoSecundarioTexto) {
+                toast.querySelector('.toast-btn-secundario').addEventListener('click', () => {
+                    if (botaoSecundarioCallback) botaoSecundarioCallback();
                     fecharToast(toast);
                 });
             }
