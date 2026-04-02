@@ -904,6 +904,17 @@
             box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
         }
 
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        }
+
         .btn-purple {
             background: #9333ea;
             color: white;
@@ -2117,6 +2128,41 @@
         }
 
         /* Modal para importar feriados */
+        @keyframes modalOverlayFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes modalContentSlideIn {
+            from { opacity: 0; transform: scale(0.96) translateY(14px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0);    }
+        }
+
+        @keyframes modalOverlayFadeOut {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+
+        @keyframes modalContentSlideOut {
+            from { opacity: 1; transform: scale(1)    translateY(0);  }
+            to   { opacity: 0; transform: scale(0.95) translateY(8px);}
+        }
+
+        .modal.closing,
+        .modal-aviso.closing,
+        .modal-detalhes.closing,
+        .modal-input-titulo.closing {
+            animation: modalOverlayFadeOut 0.18s ease forwards;
+            pointer-events: none;
+        }
+
+        .modal.closing .modal-content,
+        .modal-aviso.closing .modal-aviso-content,
+        .modal-detalhes.closing .modal-detalhes-content,
+        .modal-input-titulo.closing .modal-input-content {
+            animation: modalContentSlideOut 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -2124,34 +2170,145 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
         }
 
         .modal.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-header {
-            font-size: 1.5rem;
+            padding: 1.3rem 1.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .modal-header-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header-icon svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.5;
+        }
+
+        .modal-icon-blue  { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+        .modal-icon-green { background: rgba(22, 163, 74,  0.12); color: #16a34a; }
+        .modal-icon-amber { background: rgba(217, 119, 6,  0.12); color: #d97706; }
+        .modal-icon-red   { background: rgba(220, 38,  38, 0.12); color: #dc2626; }
+
+        .modal-header-title {
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 20px;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-close-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            transition: background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.3);
+            flex-shrink: 0;
+        }
+
+        .modal-close-btn svg {
+            width: 12px;
+            height: 12px;
+            display: block;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #374151;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-close-btn:active {
+            transform: rotate(90deg) scale(0.95);
+        }
+
+        /* Variante absoluta para modal-aviso (centralizado) */
+        .modal-close-btn-abs {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        /* Botões dentro de modais — estilo pill */
+        .modal-content .btn,
+        .modal-aviso-content .btn,
+        .modal-detalhes-acoes .btn,
+        .modal-input-footer .btn {
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.4rem;
+        }
+
+        .modal-content .btn-secondary,
+        .modal-aviso-content .btn-secondary,
+        .modal-detalhes-acoes .btn-secondary,
+        .modal-input-footer .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .modal-content .btn-secondary:hover,
+        .modal-aviso-content .btn-secondary:hover,
+        .modal-detalhes-acoes .btn-secondary:hover,
+        .modal-input-footer .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-content .btn:active,
+        .modal-aviso-content .btn:active,
+        .modal-detalhes-acoes .btn:active,
+        .modal-input-footer .btn:active {
+            transform: translateY(1px);
+            transition-duration: 0.05s;
         }
 
         .modal-body {
-            margin-bottom: 20px;
+            padding: 1rem 1.8rem;
             color: #374151;
             line-height: 1.6;
         }
@@ -2159,27 +2316,29 @@
         .modal-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            padding: 0.25rem 1.8rem 1rem;
         }
 
         .modal-option {
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .modal-option:hover {
             border-color: #3b82f6;
-            background: #f0f9ff;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .modal-option-title {
             font-weight: 600;
             color: #1f2937;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .modal-option-desc {
@@ -2189,20 +2348,20 @@
 
         /* Estilos para itens do dropdown de conjuntos pré-definidos */
         .item-predefinido {
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 12px;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            margin-bottom: 10px;
             background: white;
         }
 
         .item-predefinido:hover {
-            border-color: var(--primary-color);
-            background: #f9fafb;
+            border-color: var(--color-blue-500);
+            background: #eff6ff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .item-predefinido-nome {
@@ -2227,8 +2386,12 @@
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: 0.75rem;
             flex-wrap: wrap;
+            padding: 0.9rem 1.8rem 1.4rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(249, 250, 251, 0.6);
+            justify-content: flex-end;
         }
         .modal-buttons > .btn {
             flex: 1 1 0;
@@ -2430,8 +2593,8 @@
             max-height: 320px;
             overflow-y: auto;
             overflow-x: hidden;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1rem;
         }
 
         .modal-perfil-item {
@@ -2440,7 +2603,7 @@
             justify-content: space-between;
             gap: 12px;
             padding: 12px 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .modal-perfil-item:last-child {
@@ -2476,9 +2639,9 @@
         }
 
         .modal-perfil-btn {
-            padding: 4px 8px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 2rem;
             background: white;
             color: #6b7280;
             cursor: pointer;
@@ -2508,16 +2671,17 @@
 
         .modal-input-small {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
             font-size: 0.9rem;
+            transition: all 0.2s;
         }
 
         .modal-input-small:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         /* Modal de Aviso de Recálculo */
@@ -2528,65 +2692,69 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
         }
 
         .modal-aviso.active {
             display: flex;
-            animation: fadeIn 0.2s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-aviso-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 2rem 2rem 1.6rem;
+            border-radius: 2rem;
             max-width: 450px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
             text-align: center;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            position: relative;
         }
 
         .modal-aviso-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-aviso-icon svg {
+            width: 24px;
+            height: 24px;
         }
 
         .modal-aviso-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 15px;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
         }
 
         .modal-aviso-content p {
             color: #374151;
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .modal-aviso-checkbox {
-            margin: 20px 0;
+            margin: 16px 0;
             text-align: left;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
         }
 
         .modal-aviso-checkbox label {
@@ -4254,65 +4422,58 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .modal-detalhes.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-detalhes-content {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             width: 100%;
             max-width: 700px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-detalhes-header {
-            padding: 12px 16px;
-            border-bottom: 2px solid #e5e7eb;
+            padding: 1.2rem 1.6rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            z-index: 10;
-            border-radius: 16px 16px 0 0;
             flex-shrink: 0;
         }
 
         .modal-detalhes-titulo {
-            font-size: 1.125rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: #1f2937;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             margin: 0;
+            letter-spacing: -0.02em;
         }
 
         .modal-detalhes-fechar {
             width: 32px;
             height: 32px;
             border: none;
-            background: #f3f4f6;
-            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -4322,30 +4483,30 @@
         }
 
         .modal-detalhes-fechar:hover {
-            background: #e5e7eb;
-            color: #1f2937;
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+            color: #111827;
         }
 
         .modal-detalhes-body {
-            padding: 12px 16px;
+            padding: 1.2rem 1.6rem;
             overflow-y: auto;
             flex: 1;
         }
 
         /* Estilos de scrollbar para .modal-detalhes-body (Chromium/WebKit) */
         .modal-detalhes-body::-webkit-scrollbar {
-            width: 8px;
+            width: 5px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-track {
             background: transparent;
-            border-radius: 16px;
+            border-radius: 10px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 16px;
-            border: 2px solid white;
+            background: #b9c3d4;
+            border-radius: 10px;
         }
 
         .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
@@ -4359,53 +4520,65 @@
         }
 
         .modal-detalhes-acoes {
-            padding: 12px 16px;
-            border-top: 2px solid #e5e7eb;
+            padding: 1rem 1.6rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            background: white;
-            border-radius: 0 0 16px 16px;
+            background: rgba(249, 250, 251, 0.6);
             flex-shrink: 0;
         }
 
         .modal-fechar {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.05);
             border: none;
-            font-size: 2rem;
             color: #9ca3af;
             cursor: pointer;
             padding: 0;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.3);
+        }
+
+        .modal-fechar svg {
+            width: 12px;
+            height: 12px;
+            display: block;
         }
 
         .modal-fechar:hover {
-            background: #f3f4f6;
-            color: #1f2937;
+            background: rgba(0, 0, 0, 0.1);
+            color: #374151;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-fechar:active {
+            transform: rotate(90deg) scale(0.95);
         }
 
         .opcao-arquivamento {
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .opcao-arquivamento:hover {
             border-color: #3b82f6;
             background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
         }
 
         .opcao-arquivamento.opcao-perigo:hover {
             border-color: #dc2626;
             background: #fef2f2;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.18);
         }
 
         /* Toast de Undo */
@@ -4539,61 +4712,77 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .modal-input-titulo.active {
             display: flex;
+            animation: modalOverlayFadeIn 0.25s ease;
         }
 
         .modal-input-content {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 2rem;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: modalSlideIn 0.3s ease-out;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            overflow: hidden;
+            animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         .modal-input-header {
-            padding: 24px 30px 20px;
-            border-bottom: 2px solid #e5e7eb;
+            padding: 1.3rem 1.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
         }
 
         .modal-input-header h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #1f2937;
+            background: linear-gradient(125deg, #1e293b, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             margin: 0;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
         }
 
         .modal-input-body {
-            padding: 25px 30px;
+            padding: 1.2rem 1.8rem;
         }
 
         .modal-input-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.2rem;
         }
 
         .modal-input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #374151;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .modal-input-group input,
         .modal-input-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
         }
 
@@ -4601,7 +4790,7 @@
         .modal-input-group textarea:focus {
             outline: none;
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
         .modal-input-group textarea {
@@ -4611,11 +4800,12 @@
         }
 
         .modal-input-footer {
-            padding: 20px 30px;
-            border-top: 2px solid #e5e7eb;
+            padding: 1rem 1.8rem 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            background: rgba(249, 250, 251, 0.6);
         }
 
         /* Responsividade Mobile */
@@ -4647,12 +4837,34 @@
 
             .modal-detalhes-content {
                 max-height: 90vh;
+                border-radius: 1.5rem;
+            }
+
+            .modal-content {
+                border-radius: 1.5rem;
+            }
+
+            .modal-aviso-content {
+                border-radius: 1.5rem;
+            }
+
+            .modal-input-content {
+                border-radius: 1.5rem;
             }
 
             .modal-detalhes-header,
             .modal-detalhes-body,
             .modal-detalhes-acoes {
-                padding: 20px;
+                padding: 1rem 1.2rem;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .modal-buttons > .btn {
+                text-align: center;
+                justify-content: center;
             }
         }
 
@@ -5867,7 +6079,15 @@
     <!-- Modal para selecionar fonte de importação -->
     <div class="modal" id="modalSelecionarFonte">
         <div class="modal-content">
-            <div class="modal-header">Importar Feriados</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <span class="modal-header-title">Importar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalSelecionarFonte()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 Escolha a origem dos feriados:
             </div>
@@ -5890,7 +6110,15 @@
     <!-- Modal para escolher conjunto pré-definido -->
     <div class="modal" id="modalPredefinidos">
         <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">Conjuntos Pré-definidos Online</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </span>
+                <span class="modal-header-title">Conjuntos Pré-definidos Online</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalPredefinidos()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 <div id="listaPredefinidos" style="max-height: 400px; overflow-y: auto;">
                     <div style="text-align: center; padding: 20px; color: #6b7280;">
@@ -5907,7 +6135,15 @@
     <!-- Modal de Boas-vindas / Importar Perfis Online -->
     <div class="modal" id="modalBoasVindas">
         <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
-            <div class="modal-header" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </span>
+                <span class="modal-header-title" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="dispensarBoasVindas('fechar')">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body" style="overflow-y: auto; flex: 1;">
                 <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.875rem; line-height: 1.5;">
                     <p style="margin: 0 0 6px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
@@ -5936,7 +6172,15 @@
     <!-- Modal para importar feriados -->
     <div class="modal" id="modalImportar">
         <div class="modal-content">
-            <div class="modal-header">Importar Feriados</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>
+                </span>
+                <span class="modal-header-title">Importar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModal()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 Escolha como deseja importar os feriados:
             </div>
@@ -5959,7 +6203,15 @@
     <!-- Modal para escolher tipo de export PDF -->
     <div class="modal" id="modalExportPDF">
         <div class="modal-content">
-            <div class="modal-header">Exportar PDF</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title">Exportar PDF</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportPDF()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 Escolha o tipo de export PDF:
             </div>
@@ -5982,7 +6234,15 @@
     <!-- Modal para criar novo perfil -->
     <div class="modal" id="modalCriarPerfil">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">Criar Novo Perfil</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+                </span>
+                <span class="modal-header-title">Criar Novo Perfil</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalCriarPerfil()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
                     O perfil salvará os <strong id="qtdFeriadosAtuais">0</strong> feriados personalizados atuais.
@@ -6002,7 +6262,15 @@
     <!-- Modal para gerenciar perfis -->
     <div class="modal" id="modalGerenciarPerfis">
         <div class="modal-content" style="max-width: 540px;">
-            <div class="modal-header">Gerenciar Perfis</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                </span>
+                <span class="modal-header-title">Gerenciar Perfis</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalGerenciarPerfis()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 <div class="modal-perfis-list" id="listaPerfisModal">
                     <div class="modal-perfis-empty">Nenhum perfil criado ainda.</div>
@@ -6017,7 +6285,15 @@
     <!-- Modal para renomear perfil -->
     <div class="modal" id="modalRenomearPerfil">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">Renomear Perfil</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </span>
+                <span class="modal-header-title">Renomear Perfil</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalRenomearPerfil()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 <div class="modal-input-group">
                     <label for="inputRenomearPerfil">Novo nome (máx. 30 caracteres)</label>
@@ -6034,7 +6310,15 @@
     <!-- Modal de confirmação para trocar perfil com alterações não salvas -->
     <div class="modal" id="modalConfirmarTrocaPerfil">
         <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header">Alterações Não Salvas</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title">Alterações Não Salvas</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalConfirmarTrocaPerfil()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 <p style="font-size: 0.9rem; color: #374151;">
                     Existem alterações não salvas no perfil atual. Deseja salvar antes de trocar?
@@ -6051,7 +6335,15 @@
     <!-- Modal para escolher tipo de export PNG -->
     <div class="modal" id="modalExportPNG">
         <div class="modal-content">
-            <div class="modal-header">Exportar PNG</div>
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </span>
+                <span class="modal-header-title">Exportar PNG</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportPNG()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
             <div class="modal-body">
                 Escolha o tipo de export PNG:
             </div>
@@ -6067,6 +6359,89 @@
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="fecharModalExportPNG()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalExportarFeriados">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <span class="modal-header-title">Exportar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportarFeriados()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Salve seus feriados personalizados em um arquivo JSON para backup ou uso em outro dispositivo.</p>
+                <div style="margin-top:12px;">
+                    <label style="display:block;font-size:0.82rem;font-weight:600;color:var(--text-secondary,#64748b);margin-bottom:6px;letter-spacing:0.02em;">Nome do arquivo</label>
+                    <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border,#e2e8f0);border-radius:8px;overflow:hidden;background:#fff;">
+                        <input type="text" id="exportarFeriadosNome" placeholder="feriados-personalizados"
+                            style="flex:1;padding:9px 12px;border:none;outline:none;font-size:0.9rem;background:transparent;color:var(--text-primary,#1e293b);"
+                            oninput="atualizarPreviewExportarFeriados()" />
+                        <span id="exportarFeriadosExt" style="padding:9px 12px 9px 0;font-size:0.9rem;color:var(--text-secondary,#64748b);pointer-events:none;white-space:nowrap;">.json</span>
+                    </div>
+                    <p id="exportarFeriadosPreview" style="margin:6px 0 0;font-size:0.78rem;color:var(--text-secondary,#64748b);">Arquivo: <strong>feriados-personalizados.json</strong></p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalExportarFeriados()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmarExportarFeriados()">Exportar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação genérico -->
+    <div class="modal" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-red" id="modalConfirmacaoIcone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title" id="modalConfirmacaoTitulo">Confirmar</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalConfirmacao()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalConfirmacaoMensagem"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalConfirmacao()">Cancelar</button>
+                <button class="btn btn-danger" id="modalConfirmacaoBtn" onclick="executarConfirmacao()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de opções para importar agenda (substituir vs mesclar) -->
+    <div class="modal" id="modalImportarPrazosOpcao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </span>
+                <span class="modal-header-title">Importar Agenda</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalImportarPrazosOpcao()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalImportarPrazosOpcaoInfo"></p>
+                <p>Como deseja importar os dados?</p>
+            </div>
+            <div class="modal-options">
+                <div class="modal-option" onclick="confirmarImportarPrazosMesclar()">
+                    <div class="modal-option-title">Mesclar</div>
+                    <div class="modal-option-desc">Adiciona os prazos importados à agenda atual sem remover os existentes.</div>
+                </div>
+                <div class="modal-option" onclick="confirmarImportarPrazosSubstituir()">
+                    <div class="modal-option-title">Substituir</div>
+                    <div class="modal-option-desc">Substitui toda a agenda atual pelos prazos importados. Esta ação não pode ser desfeita.</div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalImportarPrazosOpcao()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -6579,25 +6954,29 @@
             const perfil = perfisData.find(p => p.id === id);
             if (!perfil) return;
 
-            if (!confirm('Excluir o perfil "' + perfil.nome + '"?\n\nOs feriados carregados atualmente não serão afetados.')) {
-                return;
-            }
+            mostrarConfirmacao({
+                titulo: 'Excluir Perfil',
+                mensagemHTML: 'Excluir o perfil <strong>"' + perfil.nome.replace(/</g, '&lt;') + '"</strong>?<br><br>Os feriados carregados atualmente não serão afetados.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    perfisData = perfisData.filter(p => p.id !== id);
+                    salvarPerfisNoLocalStorage();
 
-            perfisData = perfisData.filter(p => p.id !== id);
-            salvarPerfisNoLocalStorage();
+                    // Se o perfil excluído era o ativo, desvincula
+                    if (perfilAtivoId === id) {
+                        perfilAtivoId = null;
+                        localStorage.removeItem(PERFIL_ATIVO_KEY);
+                        feriadosSnapshotPerfil = obterSnapshotFeriados();
+                        perfilTemAlteracoes = false;
+                    }
 
-            // Se o perfil excluído era o ativo, desvincula
-            if (perfilAtivoId === id) {
-                perfilAtivoId = null;
-                localStorage.removeItem(PERFIL_ATIVO_KEY);
-                feriadosSnapshotPerfil = obterSnapshotFeriados();
-                perfilTemAlteracoes = false;
-            }
-
-            renderizarListaPerfis();
-            atualizarUIPerfilAtivo();
-            atualizarDropdownPerfis();
-            mostrarNotificacao('Perfil "' + perfil.nome + '" excluído.', 'sucesso');
+                    renderizarListaPerfis();
+                    atualizarUIPerfilAtivo();
+                    atualizarDropdownPerfis();
+                    mostrarNotificacao('Perfil "' + perfil.nome + '" excluído.', 'sucesso');
+                }
+            });
         }
 
         function abrirModalRenomearPerfil(id) {
@@ -7662,18 +8041,24 @@
             }
 
             const quantidade = feriadosPersonalizados.size;
-            if (confirm(`🗑️ Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita.\n\nA página será recarregada para aplicar as mudanças.`)) {
-                feriadosPersonalizados.clear();
-                localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
+            mostrarConfirmacao({
+                titulo: 'Limpar Feriados Personalizados',
+                mensagem: `Deseja realmente limpar ${quantidade} feriado(s) personalizado(s)?\n\nEsta ação não pode ser desfeita. A página será recarregada para aplicar as mudanças.`,
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Limpar',
+                onConfirmar: function() {
+                    feriadosPersonalizados.clear();
+                    localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
 
-                // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
-                sessionStorage.setItem('reloadToTop', 'true');
-                sessionStorage.setItem('contaprazo_importou_feriados', 'true');
-                sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
+                    // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
+                    sessionStorage.setItem('reloadToTop', 'true');
+                    sessionStorage.setItem('contaprazo_importou_feriados', 'true');
+                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Feriados personalizados limpos com sucesso!', tipo: 'sucesso' }));
 
-                // Recarrega a página para aplicar as configurações
-                location.reload();
-            }
+                    // Recarrega a página para aplicar as configurações
+                    location.reload();
+                }
+            });
         }
 
         function renderizarCalendario() {
@@ -7879,19 +8264,33 @@
         }
 
         function exportarFeriados() {
-            // Solicita nome personalizado para o arquivo
-            const nomePersonalizado = prompt('Digite um nome para o arquivo (sem extensão):\n\nDeixe em branco para usar o nome padrão.', '');
+            // Reset input and preview, then open modal
+            const input = document.getElementById('exportarFeriadosNome');
+            if (input) input.value = '';
+            atualizarPreviewExportarFeriados();
+            document.getElementById('modalExportarFeriados').classList.add('active');
+        }
 
-            // Se usuário cancelar, interrompe a exportação
-            if (nomePersonalizado === null) {
-                return;
-            }
+        function fecharModalExportarFeriados() {
+            document.getElementById('modalExportarFeriados').classList.remove('active');
+        }
+
+        function atualizarPreviewExportarFeriados() {
+            const input = document.getElementById('exportarFeriadosNome');
+            const preview = document.getElementById('exportarFeriadosPreview');
+            if (!input || !preview) return;
+            const nome = input.value.trim() || 'feriados-personalizados';
+            preview.innerHTML = 'Arquivo: <strong>' + nome + '.json</strong>';
+        }
+
+        function confirmarExportarFeriados() {
+            const input = document.getElementById('exportarFeriadosNome');
+            const nomePersonalizado = input ? input.value.trim() : '';
 
             // Converte feriados personalizados para formato brasileiro DD-MM-YYYY Nome
             const feriadosBrasileiro = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
                 const [ano, mes, dia] = data.split('-');
                 const dataFormatada = `${dia}-${mes}-${ano}`;
-                // Se tiver nome, inclui; senão, só a data
                 return nome ? `${dataFormatada} ${nome}` : dataFormatada;
             });
 
@@ -7904,15 +8303,83 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-
-            // Usa nome personalizado ou padrão
-            const nomeArquivo = nomePersonalizado.trim() ?
-                `${nomePersonalizado.trim()}.json` :
-                `feriados-${Date.now()}.json`;
+            const nomeArquivo = nomePersonalizado ? `${nomePersonalizado}.json` : 'feriados-personalizados.json';
             link.download = nomeArquivo;
-
             link.click();
             URL.revokeObjectURL(url);
+
+            fecharModalExportarFeriados();
+        }
+
+        // Modal de confirmação genérico
+        var _confirmacaoCallback = null;
+
+        function mostrarConfirmacao(opcoes) {
+            document.getElementById('modalConfirmacaoTitulo').textContent = opcoes.titulo || 'Confirmar';
+            var msgEl = document.getElementById('modalConfirmacaoMensagem');
+            if (opcoes.mensagemHTML) {
+                msgEl.innerHTML = opcoes.mensagemHTML;
+            } else {
+                msgEl.textContent = opcoes.mensagem || '';
+            }
+            var iconeEl = document.getElementById('modalConfirmacaoIcone');
+            iconeEl.className = 'modal-header-icon ' + (opcoes.icone || 'modal-icon-red');
+            var btn = document.getElementById('modalConfirmacaoBtn');
+            btn.textContent = opcoes.labelConfirmar || 'Confirmar';
+            btn.className = 'btn ' + (opcoes.classeBtn || 'btn-danger');
+            _confirmacaoCallback = opcoes.onConfirmar || null;
+            document.getElementById('modalConfirmacao').classList.add('active');
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modalConfirmacao').classList.remove('active');
+            _confirmacaoCallback = null;
+        }
+
+        function executarConfirmacao() {
+            var cb = _confirmacaoCallback;
+            fecharModalConfirmacao();
+            if (cb) cb();
+        }
+
+        // Modal de importar prazos (substituir vs mesclar)
+        var _importDataPendente = null;
+
+        function fecharModalImportarPrazosOpcao() {
+            document.getElementById('modalImportarPrazosOpcao').classList.remove('active');
+            _importDataPendente = null;
+        }
+
+        function _processarImportPrazos(substituir) {
+            if (!_importDataPendente) return;
+            const data = _importDataPendente;
+            const mapeado = data.prazos.map(prazo => ({
+                ...prazo,
+                ...(substituir ? {} : { id: gerarId() }),
+                dataInicio: new Date(prazo.dataInicio),
+                dataFinal: new Date(prazo.dataFinal),
+                dataCriacao: new Date(prazo.dataCriacao),
+                dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
+                detalhamentoDias: prazo.detalhamentoDias.map(dia => ({ ...dia, data: new Date(dia.data) }))
+            }));
+            if (substituir) {
+                prazos = mapeado;
+            } else {
+                prazos.push(...mapeado);
+            }
+            salvarPrazosStorage();
+            renderizarPrazos();
+            mostrarNotificacao('Agenda importada com sucesso!', 'sucesso');
+        }
+
+        function confirmarImportarPrazosSubstituir() {
+            fecharModalImportarPrazosOpcao();
+            _processarImportPrazos(true);
+        }
+
+        function confirmarImportarPrazosMesclar() {
+            fecharModalImportarPrazosOpcao();
+            _processarImportPrazos(false);
         }
 
         function importarFeriados(event) {
@@ -10900,13 +11367,17 @@
 
         // Excluir prazo
         function excluirPrazo(id) {
-            if (!confirm('Tem certeza que deseja excluir este prazo? Esta ação não pode ser desfeita.')) {
-                return;
-            }
-
-            prazos = prazos.filter(p => p.id !== id);
-            salvarPrazosStorage();
-            renderizarPrazos();
+            mostrarConfirmacao({
+                titulo: 'Excluir Prazo',
+                mensagem: 'Tem certeza que deseja excluir este prazo? Esta ação não pode ser desfeita.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    prazos = prazos.filter(p => p.id !== id);
+                    salvarPrazosStorage();
+                    renderizarPrazos();
+                }
+            });
         }
 
         // Excluir prazo do modal
@@ -10953,28 +11424,33 @@
         function excluirPrazoArquivadoModal() {
             if (!prazoEmEdicao) return;
 
-            if (!confirm('Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.')) {
-                return;
-            }
+            const idParaExcluir = prazoEmEdicao;
+            mostrarConfirmacao({
+                titulo: 'Excluir Permanentemente',
+                mensagem: 'Tem certeza que deseja excluir este prazo permanentemente? Esta ação não pode ser desfeita.',
+                icone: 'modal-icon-red',
+                labelConfirmar: 'Excluir',
+                onConfirmar: function() {
+                    const prazo = prazosArquivados.find(p => p.id === idParaExcluir);
+                    if (!prazo) {
+                        mostrarNotificacao('Prazo não encontrado.', 'erro');
+                        fecharModalDetalhes();
+                        return;
+                    }
 
-            const prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
-            if (!prazo) {
-                mostrarNotificacao('Prazo não encontrado.', 'erro');
-                fecharModalDetalhes();
-                return;
-            }
+                    // Remover dos arquivados
+                    prazosArquivados = prazosArquivados.filter(p => p.id !== idParaExcluir);
 
-            // Remover dos arquivados
-            prazosArquivados = prazosArquivados.filter(p => p.id !== prazoEmEdicao);
+                    // Salvar
+                    salvarArquivadosStorage();
 
-            // Salvar
-            salvarArquivadosStorage();
+                    // Fechar modal e atualizar UI
+                    fecharModalDetalhes();
+                    renderizarPrazos();
 
-            // Fechar modal e atualizar UI
-            fecharModalDetalhes();
-            renderizarPrazos();
-
-            mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
+                    mostrarNotificacao('Prazo excluído permanentemente.', 'sucesso');
+                }
+            });
         }
 
         // Exportar agenda para JSON
@@ -11022,46 +11498,10 @@
                         throw new Error('Formato de arquivo inválido');
                     }
 
-                    const confirmacao = confirm(
-                        `Deseja importar ${data.prazos.length} prazo(s)?\n\n` +
-                        `Escolha:\n` +
-                        `OK = Substituir agenda atual\n` +
-                        `Cancelar = Mesclar com agenda atual`
-                    );
-
-                    if (confirmacao) {
-                        // Substituir
-                        prazos = data.prazos.map(prazo => ({
-                            ...prazo,
-                            dataInicio: new Date(prazo.dataInicio),
-                            dataFinal: new Date(prazo.dataFinal),
-                            dataCriacao: new Date(prazo.dataCriacao),
-                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                                ...dia,
-                                data: new Date(dia.data)
-                            }))
-                        }));
-                    } else {
-                        // Mesclar
-                        const novosprazos = data.prazos.map(prazo => ({
-                            ...prazo,
-                            id: gerarId(), // Novo ID para evitar conflitos
-                            dataInicio: new Date(prazo.dataInicio),
-                            dataFinal: new Date(prazo.dataFinal),
-                            dataCriacao: new Date(prazo.dataCriacao),
-                            dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                            detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                                ...dia,
-                                data: new Date(dia.data)
-                            }))
-                        }));
-                        prazos.push(...novosprazos);
-                    }
-
-                    salvarPrazosStorage();
-                    renderizarPrazos();
-                    mostrarNotificacao('Agenda importada com sucesso!', 'sucesso');
+                    _importDataPendente = data;
+                    document.getElementById('modalImportarPrazosOpcaoInfo').textContent =
+                        data.prazos.length + ' prazo(s) encontrado(s).';
+                    document.getElementById('modalImportarPrazosOpcao').classList.add('active');
 
                 } catch (error) {
                     mostrarNotificacao('Erro ao importar agenda: ' + error.message, 'erro');
@@ -11763,22 +12203,30 @@
                     }
                 }
 
-                if (confirm(`Deseja salvar ${novosFeriados.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`)) {
-                    feriadosPersonalizados = novosFeriados;
+                const feriadosParaSalvar = novosFeriados;
+                mostrarConfirmacao({
+                    titulo: 'Salvar Feriados Personalizados',
+                    mensagem: `Deseja salvar ${feriadosParaSalvar.size} feriado(s) personalizado(s)?\n\nIsso substituirá todos os feriados personalizados atuais.`,
+                    icone: 'modal-icon-green',
+                    classeBtn: 'btn-success',
+                    labelConfirmar: 'Salvar',
+                    onConfirmar: function() {
+                        feriadosPersonalizados = feriadosParaSalvar;
 
-                    // Salva no formato novo: array de objetos {data, nome}
-                    const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                        data,
-                        nome: nome || ''
-                    }));
-                    localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+                        // Salva no formato novo: array de objetos {data, nome}
+                        const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
+                            data,
+                            nome: nome || ''
+                        }));
+                        localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
 
-                    atualizarVisualizacaoFeriados();
-                    renderizarCalendario();
-                    notificarAlteracaoFeriados();
-                    mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
-                    mostrarAvisoRecalculo();
-                }
+                        atualizarVisualizacaoFeriados();
+                        renderizarCalendario();
+                        notificarAlteracaoFeriados();
+                        mostrarNotificacao('Feriados personalizados salvos com sucesso!', 'sucesso');
+                        mostrarAvisoRecalculo();
+                    }
+                });
             } catch (error) {
                 mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
@@ -11870,28 +12318,37 @@
                 const totalFixos = Object.keys(novosFeriadosFixos).length;
                 const totalMoveis = Object.values(novosFeriadosMoveis).reduce((acc, f) => acc + Object.keys(f).length, 0);
 
-                if (confirm(`Deseja salvar as configurações?\n\n✓ ${totalFixos} feriado(s) fixo(s)\n✓ ${totalMoveis} feriado(s) móvel(is)\n\nIsso substituirá as configurações atuais.`)) {
-                    // Atualizar variáveis globais
-                    Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
-                    Object.assign(feriadosFixos, novosFeriadosFixos);
+                const fixosParaSalvar = novosFeriadosFixos;
+                const moveisParaSalvar = novosFeriadosMoveis;
+                mostrarConfirmacao({
+                    titulo: 'Salvar Configurações',
+                    mensagem: `Deseja salvar as configurações?\n\n✓ ${totalFixos} feriado(s) fixo(s)\n✓ ${totalMoveis} feriado(s) móvel(is)\n\nIsso substituirá as configurações atuais.`,
+                    icone: 'modal-icon-green',
+                    classeBtn: 'btn-success',
+                    labelConfirmar: 'Salvar',
+                    onConfirmar: function() {
+                        // Atualizar variáveis globais
+                        Object.keys(feriadosFixos).forEach(key => delete feriadosFixos[key]);
+                        Object.assign(feriadosFixos, fixosParaSalvar);
 
-                    Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
-                    Object.assign(feriadosMoveis, novosFeriadosMoveis);
+                        Object.keys(feriadosMoveis).forEach(key => delete feriadosMoveis[key]);
+                        Object.assign(feriadosMoveis, moveisParaSalvar);
 
-                    // Salvar no localStorage
-                    localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
-                    localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
+                        // Salvar no localStorage
+                        localStorage.setItem('feriadosFixos', JSON.stringify(feriadosFixos));
+                        localStorage.setItem('feriadosMoveis', JSON.stringify(feriadosMoveis));
 
-                    atualizarVisualizacaoFeriados();
-                    renderizarCalendario();
+                        atualizarVisualizacaoFeriados();
+                        renderizarCalendario();
 
-                    // Marca flags para o reload
-                    sessionStorage.setItem('reloadToTop', 'true');
-                    sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
+                        // Marca flags para o reload
+                        sessionStorage.setItem('reloadToTop', 'true');
+                        sessionStorage.setItem('contaprazo_notificacao_pendente', JSON.stringify({ mensagem: 'Configurações salvas com sucesso!', tipo: 'sucesso' }));
 
-                    // Recarrega a página para aplicar as configurações
-                    location.reload();
-                }
+                        // Recarrega a página para aplicar as configurações
+                        location.reload();
+                    }
+                });
             } catch (error) {
                 mostrarNotificacao('Erro ao processar os feriados: ' + error.message, 'erro');
             }
@@ -11899,10 +12356,17 @@
 
         // Resetar feriados para padrão
         function resetarFeriadosPadrao() {
-            if (!confirm('🔄 Deseja restaurar os feriados padrão?\n\nIsso irá substituir todas as configurações atuais de feriados fixos e móveis pelos valores padrão do Brasil.\n\nA página será recarregada para aplicar as mudanças.')) {
-                return;
-            }
+            mostrarConfirmacao({
+                titulo: 'Restaurar Feriados Padrão',
+                mensagem: 'Isso irá substituir todas as configurações atuais de feriados fixos e móveis pelos valores padrão do Brasil.\n\nA página será recarregada para aplicar as mudanças.',
+                icone: 'modal-icon-amber',
+                classeBtn: 'btn-danger',
+                labelConfirmar: 'Restaurar',
+                onConfirmar: function() { _executarResetarFeriadosPadrao(); }
+            });
+        }
 
+        function _executarResetarFeriadosPadrao() {
             // Feriados fixos padrão do Brasil
             const feriadosFixosPadrao = {
                 '01-01': 'Ano Novo',
@@ -12169,7 +12633,12 @@
     <!-- Modal de Aviso de Recálculo -->
     <div id="modalAvisoRecalculo" class="modal-aviso">
         <div class="modal-aviso-content">
-            <div class="modal-aviso-icon">ℹ️</div>
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharAvisoRecalculo()">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+            </button>
+            <div class="modal-aviso-icon modal-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
             <h3>Recálculo Necessário</h3>
             <p>Você modificou os parâmetros do cálculo. Recalcule para ver o resultado atualizado.</p>
             <div class="modal-aviso-checkbox">
@@ -12188,7 +12657,12 @@
     <!-- Modal de Confirmação de Reset -->
     <div id="modalResetCompleto" class="modal-aviso">
         <div class="modal-aviso-content" style="max-width: 500px;">
-            <div class="modal-aviso-icon">⚠️</div>
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharModalReset()">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+            </button>
+            <div class="modal-aviso-icon modal-icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <h3>Restaurar Configurações Padrão</h3>
             <p style="text-align: left; margin-bottom: 20px;">
                 Esta ação irá <strong>restaurar todas as configurações</strong> para os valores originais:
@@ -12203,7 +12677,7 @@
             </p>
             <div style="display: flex; gap: 10px; justify-content: center;">
                 <button class="btn btn-secondary" onclick="fecharModalReset()">Cancelar</button>
-                <button class="btn" onclick="executarResetCompleto()" style="background: #dc2626; color: white;">
+                <button class="btn btn-danger" onclick="executarResetCompleto()">
                     Confirmar Reset
                 </button>
             </div>
@@ -12253,20 +12727,25 @@
     <!-- Modal de Edição -->
     <div id="modalEditarPrazo" class="modal-aviso">
         <div class="modal-aviso-content" style="max-width: 500px;">
-            <div class="modal-aviso-icon">✏️</div>
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharModalEditar()">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+            </button>
+            <div class="modal-aviso-icon modal-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
             <h3>Editar Prazo</h3>
             <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
                 Edite o título e a descrição do prazo. As datas e cálculos são mantidos para auditoria.
             </p>
-            <div style="margin: 20px 0;">
-                <label for="editTitulo" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Título:</label>
+            <div style="margin: 16px 0;">
+                <label for="editTitulo" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Título:</label>
                 <input type="text" id="editTitulo" placeholder="Ex: Recurso Processo 12345"
-                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem;">
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; transition: all 0.2s;">
             </div>
-            <div style="margin: 20px 0;">
-                <label for="editDescricao" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Descrição (opcional):</label>
+            <div style="margin: 16px 0;">
+                <label for="editDescricao" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Descrição (opcional):</label>
                 <textarea id="editDescricao" placeholder="Detalhes adicionais..." rows="3"
-                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; resize: vertical;"></textarea>
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; resize: vertical; transition: all 0.2s;"></textarea>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
                 <button class="btn btn-secondary" onclick="fecharModalEditar()">Cancelar</button>
@@ -12285,7 +12764,15 @@
     <div id="modalInputTitulo" class="modal-input-titulo">
         <div class="modal-input-content">
             <div class="modal-input-header">
-                <h3>💾 Salvar Prazo na Agenda</h3>
+                <h3>
+                    <span class="modal-header-icon modal-icon-green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    </span>
+                    Salvar Prazo na Agenda
+                </h3>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalInputTitulo()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
             </div>
             <div class="modal-input-body">
                 <div class="modal-input-group">
@@ -12313,6 +12800,108 @@
 
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
+
+    <script>
+        /* ===== MODAL UX: transição de saída + backdrop click + scroll lock ===== */
+        (function() {
+            var CLOSE_MS  = 180;
+            var MODAL_SEL = '.modal, .modal-aviso, .modal-detalhes, .modal-input-titulo';
+            var pending   = {}; // modalId → timeoutId
+
+            /* Agenda fechamento com animação; cancela timer anterior do mesmo modal */
+            function scheduleClose(modal, fn, args) {
+                var id = modal.id;
+                if (pending[id]) clearTimeout(pending[id]);
+                modal.classList.add('closing');
+                pending[id] = setTimeout(function() {
+                    delete pending[id];
+                    fn.apply(window, args);
+                }, CLOSE_MS);
+            }
+
+            /* Fechar ao clicar no backdrop */
+            document.querySelectorAll(MODAL_SEL).forEach(function(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target !== modal) return;
+                    if (!modal.classList.contains('active')) return;
+                    var id = modal.id;
+                    if (pending[id]) clearTimeout(pending[id]);
+                    modal.classList.add('closing');
+                    pending[id] = setTimeout(function() {
+                        delete pending[id];
+                        modal.classList.remove('active', 'closing');
+                    }, CLOSE_MS);
+                });
+            });
+
+            /* MutationObserver: scroll lock + cancelar timer quando modal reabre */
+            function syncBodyScroll() {
+                var anyOpen = document.querySelector(
+                    '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
+                );
+                document.body.style.overflow = anyOpen ? 'hidden' : '';
+            }
+
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mut) {
+                    var el  = mut.target;
+                    var hadActive = mut.oldValue ? mut.oldValue.split(/\s+/).indexOf('active') !== -1 : false;
+                    var hasActive = el.classList.contains('active');
+                    /* Modal acabou de abrir — cancela qualquer fechamento pendente */
+                    if (hasActive && !hadActive) {
+                        var id = el.id;
+                        if (pending[id]) { clearTimeout(pending[id]); delete pending[id]; }
+                        el.classList.remove('closing');
+                    }
+                });
+                syncBodyScroll();
+            });
+            document.querySelectorAll(MODAL_SEL).forEach(function(m) {
+                observer.observe(m, {
+                    attributes: true,
+                    attributeFilter: ['class'],
+                    attributeOldValue: true
+                });
+            });
+
+            /* Adiciona transição de saída às funções de fechar existentes */
+            [
+                ['fecharModal',                    'modalImportar'],
+                ['fecharModalSelecionarFonte',      'modalSelecionarFonte'],
+                ['fecharModalPredefinidos',         'modalPredefinidos'],
+                ['fecharModalExportPDF',            'modalExportPDF'],
+                ['fecharModalCriarPerfil',          'modalCriarPerfil'],
+                ['fecharModalGerenciarPerfis',      'modalGerenciarPerfis'],
+                ['fecharModalRenomearPerfil',       'modalRenomearPerfil'],
+                ['fecharModalConfirmarTrocaPerfil', 'modalConfirmarTrocaPerfil'],
+                ['fecharModalExportPNG',            'modalExportPNG'],
+                ['fecharAvisoRecalculo',            'modalAvisoRecalculo'],
+                ['fecharModalReset',                'modalResetCompleto'],
+                ['fecharModalDetalhes',             'modalDetalhesPrazo'],
+                ['fecharModalEditar',               'modalEditarPrazo'],
+                ['fecharModalInputTitulo',          'modalInputTitulo'],
+                ['fecharModalArquivamento',         'modalArquivamento'],
+                ['fecharModalDesarquivar',          'modalDesarquivar'],
+                ['dispensarBoasVindas',             'modalBoasVindas'],
+                ['fecharModalExportarFeriados',     'modalExportarFeriados'],
+                ['fecharModalConfirmacao',          'modalConfirmacao'],
+                ['fecharModalImportarPrazosOpcao',  'modalImportarPrazosOpcao'],
+            ].forEach(function(pair) {
+                var fnName = pair[0], modalId = pair[1];
+                var original = window[fnName];
+                if (typeof original !== 'function') return;
+                window[fnName] = function() {
+                    var args = arguments;
+                    var modal = document.getElementById(modalId);
+                    if (modal && modal.classList.contains('active')) {
+                        scheduleClose(modal, original, args);
+                    } else {
+                        original.apply(window, args);
+                    }
+                };
+            });
+        })();
+    </script>
 
     <!-- Banner de Notificação de Prazo Salvo -->
     <div id="bannerPrazoSalvo" class="update-banner" style="display:none!important;">
@@ -12361,7 +12950,9 @@
         <div class="modal-detalhes-content" style="max-width: 600px;">
             <div class="modal-detalhes-header">
                 <h2>Arquivar Prazos Concluídos</h2>
-                <button class="modal-fechar" onclick="fecharModalArquivamento()">×</button>
+                <button class="modal-fechar" onclick="fecharModalArquivamento()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
             </div>
             <div class="modal-detalhes-body">
                 <p style="margin-bottom: 20px; color: #6b7280;">
@@ -12417,7 +13008,9 @@
         <div class="modal-detalhes-content" style="max-width: 500px;">
             <div class="modal-detalhes-header">
                 <h2>Desarquivar Prazo</h2>
-                <button class="modal-fechar" onclick="fecharModalDesarquivar()">×</button>
+                <button class="modal-fechar" onclick="fecharModalDesarquivar()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
             </div>
             <div class="modal-detalhes-body">
                 <p style="margin-bottom: 20px; color: #6b7280;">
