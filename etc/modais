@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Modais & Botões Modernos | UI Polished</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f0f4fe 0%, #e9eef8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        /* Container principal */
+        .demo-container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Título e descrição */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a2a3a, #2c3e66);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #4a5568;
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        /* GRADE DE BOTÕES - moderna, responsiva */
+        .buttons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Estilo base dos botões modernos */
+        .btn-modern {
+            border: none;
+            background: transparent;
+            padding: 0.85rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.01em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-family: inherit;
+        }
+
+        /* Variações de estilo */
+        .btn-primary {
+            background: linear-gradient(105deg, #1e3a8a, #2563eb);
+            color: white;
+            box-shadow: 0 10px 18px -8px rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(105deg, #1e40af, #3b82f6);
+            box-shadow: 0 20px 28px -12px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            color: #1f2937;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 24px -10px rgba(0, 0, 0, 0.12);
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #2c3e66;
+            color: #2c3e66;
+            backdrop-filter: none;
+        }
+
+        .btn-outline:hover {
+            background: #2c3e66;
+            color: white;
+            transform: scale(1.02);
+            border-color: #2c3e66;
+            box-shadow: 0 10px 20px -6px rgba(44, 62, 102, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(115deg, #b91c1c, #dc2626);
+            color: white;
+            box-shadow: 0 8px 18px -6px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(115deg, #991b1b, #ef4444);
+            box-shadow: 0 14px 22px -10px rgba(220, 38, 38, 0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(115deg, #0b5e42, #10b981);
+            color: white;
+            box-shadow: 0 8px 18px -6px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(115deg, #065f46, #34d399);
+        }
+
+        .btn-modern:active {
+            transform: translateY(1px);
+            transition: 0.05s;
+        }
+
+        /* cards de demonstração extra */
+        .info-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.2rem 1.8rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #2d3e50;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-top: 1rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ========= MODAIS MODERNOS E POLIDOS ========= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 25, 45, 0.65);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s ease, opacity 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* container modal com design refinado */
+        .modal {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(0px);
+            max-width: 550px;
+            width: 100%;
+            border-radius: 2rem;
+            box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            transform: scale(0.96) translateY(12px);
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0px);
+        }
+
+        /* cabeçalho do modal - CORREÇÃO: emojis não herdam gradiente */
+        .modal-header {
+            padding: 1.5rem 1.8rem 0.8rem 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-header h2 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Estilo para o texto do título (gradiente) */
+        .modal-header h2 .title-text {
+            background: linear-gradient(125deg, #1e293b, #2d3e6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Estilo para os emojis - NÃO herdam gradiente, mantêm cor original */
+        .modal-header h2 .title-emoji {
+            font-size: 1.65rem;
+            display: inline-block;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: inherit;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-close {
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5563;
+            transition: all 0.2s;
+            font-weight: 300;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+            color: #111827;
+        }
+
+        /* corpo do modal - conteúdo dinâmico responsivo */
+        .modal-body {
+            padding: 1.5rem 1.8rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            color: #1f2a3e;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+        }
+
+        .modal-body .highlight {
+            background: #eef2ff;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            border-left: 4px solid #3b82f6;
+            margin: 1rem 0;
+        }
+
+        /* rodapé do modal com ações */
+        .modal-footer {
+            padding: 1rem 1.8rem 1.8rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: flex-end;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(249, 250, 251, 0.5);
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.3rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-btn-confirm {
+            background: #1e3a8a;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-btn-confirm:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .modal-btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .modal-btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Modal de formulário / exemplo interativo */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4b5563;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 1.2rem;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* responsividade extra para modais em telas pequenas */
+        @media (max-width: 580px) {
+            .demo-container {
+                padding: 1rem;
+            }
+            .modal {
+                max-width: 95%;
+                border-radius: 1.5rem;
+            }
+            .modal-header h2 {
+                font-size: 1.3rem;
+            }
+            .modal-header h2 .title-emoji {
+                font-size: 1.3rem;
+            }
+            .modal-body {
+                padding: 1.2rem;
+                font-size: 0.9rem;
+            }
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .modal-btn {
+                text-align: center;
+                justify-content: center;
+            }
+            .buttons-grid {
+                gap: 1rem;
+            }
+            .btn-modern {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Personalização da scrollbar no modal */
+        .modal-body::-webkit-scrollbar {
+            width: 5px;
+        }
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #b9c3d4;
+            border-radius: 10px;
+        }
+
+        /* Animações suaves */
+        @keyframes gentleFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="demo-container">
+    <div class="header">
+        <h1>✨ Modais & Botões Polidos</h1>
+        <p>Interface moderna, totalmente responsiva e sem dependências externas</p>
+    </div>
+
+    <div class="buttons-grid">
+        <button class="btn-modern btn-primary" data-modal="modalInfo">📘 Modal Informativo</button>
+        <button class="btn-modern btn-secondary" data-modal="modalForm">✍️ Formulário Moderno</button>
+        <button class="btn-modern btn-outline" data-modal="modalAlert">⚠️ Ação Importante</button>
+        <button class="btn-modern btn-success" data-modal="modalSuccess">✅ Confirmação</button>
+        <button class="btn-modern btn-danger" data-modal="modalDanger">🗑️ Excluir Item</button>
+    </div>
+
+    <div class="info-card">
+        💡 Clique nos botões acima — cada modal ajusta conteúdo e layout perfeitamente para qualquer tela.
+    </div>
+</div>
+
+<!-- ==================== MODAIS (cada um com estrutura única e responsiva) ==================== -->
+
+<!-- MODAL 1: Informativo com descrição detalhada -->
+<div id="modalInfo" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>
+                <span class="title-emoji">📌</span>
+                <span class="title-text">Informação Detalhada</span>
+            </h2>
+            <button class="modal-close" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Este é um <strong>modal altamente polido</strong>, com design responsivo e fluído. A caixa de diálogo se adapta perfeitamente a diferentes resoluções, desde smartphones até telas widescreen.</p>
+            <div class="highlight">
+                ✨ Destaque visual: gradientes suaves, sombras elegantes e transições suaves.
+            </div>
+            <p>Os botões modernos apresentam efeitos de elevação, feedback tátil e cores que seguem tendências atuais de UI. Este modal contém um texto informativo para demonstrar a capacidade de rolagem quando o conteúdo excede a altura máxima.</p>
+            <p>💎 Construído com CSS puro, sem frameworks, garantindo máxima performance e leveza.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel close-modal-btn">Entendi</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 2: Formulário moderno (coleta de dados) -->
+<div id="modalForm" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>
+                <span class="title-emoji">📋</span>
+                <span class="title-text">Formulário Interativo</span>
+            </h2>
+            <button class="modal-close" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Preencha os campos abaixo para demonstrar a interatividade dentro do modal (feedback visual).</p>
+            <div class="form-group">
+                <label>Nome completo</label>
+                <input type="text" id="nomeInput" placeholder="Seu nome" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="emailInput" placeholder="exemplo@dominio.com">
+            </div>
+            <div class="form-group">
+                <label>Mensagem rápida</label>
+                <textarea rows="2" id="msgInput" placeholder="Escreva algo..."></textarea>
+            </div>
+            <div id="formFeedback" style="font-size:0.85rem; color:#2563eb; margin-top: 0.2rem;"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel close-modal-btn">Cancelar</button>
+            <button class="modal-btn modal-btn-confirm" id="submitFormBtn">Enviar Dados</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 3: Alerta / ação importante -->
+<div id="modalAlert" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>
+                <span class="title-emoji">⚠️</span>
+                <span class="title-text">Ação Importante</span>
+            </h2>
+            <button class="modal-close" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Esta ação não pode ser desfeita facilmente. Deseja realmente prosseguir com a operação crítica?</p>
+            <div class="highlight" style="border-left-color: #f97316; background: #fff7ed;">
+                🧠 Apenas um exemplo demonstrativo. Nenhum dado será alterado.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel close-modal-btn">Voltar</button>
+            <button class="modal-btn modal-btn-danger" id="confirmAlertBtn">Confirmar Ação</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 4: Confirmação positiva -->
+<div id="modalSuccess" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>
+                <span class="title-emoji">✅</span>
+                <span class="title-text">Confirmação</span>
+            </h2>
+            <button class="modal-close" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Parabéns! Esta é uma confirmação de sucesso. O modal ajusta conteúdo e tamanho com base no viewport.</p>
+            <p style="font-weight: 500;">Você pode continuar navegando ou fechar esta janela com efeitos suaves.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-confirm close-modal-btn">Continuar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 5: Excluir Item (perigo) -->
+<div id="modalDanger" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>
+                <span class="title-emoji">🗑️</span>
+                <span class="title-text">Excluir Item</span>
+            </h2>
+            <button class="modal-close" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Tem certeza que deseja excluir este item?</strong> Esta operação é irreversível e os dados serão removidos permanentemente.</p>
+            <p>Caso queira cancelar, utilize o botão de fechar ou "Cancelar".</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel close-modal-btn">Cancelar</button>
+            <button class="modal-btn modal-btn-danger" id="dangerDeleteBtn">Sim, Excluir</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // Seleciona todos os overlays de modais
+        const modals = document.querySelectorAll('.modal-overlay');
+        // Mapeia os botões que abrem modais via data-modal
+        const triggerButtons = document.querySelectorAll('[data-modal]');
+        
+        // Função para fechar um modal específico
+        function closeModal(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('active');
+                // Se for o modal de formulário, limpar feedback visual opcional
+                if (modalElement.id === 'modalForm') {
+                    const feedbackDiv = document.getElementById('formFeedback');
+                    if (feedbackDiv) feedbackDiv.innerHTML = '';
+                    // reset dos campos (opcional, mas mantém experiência limpa)
+                    const nomeInp = document.getElementById('nomeInput');
+                    const emailInp = document.getElementById('emailInput');
+                    const msgInp = document.getElementById('msgInput');
+                    if (nomeInp) nomeInp.value = '';
+                    if (emailInp) emailInp.value = '';
+                    if (msgInp) msgInp.value = '';
+                }
+            }
+        }
+        
+        // Função para abrir um modal específico
+        function openModal(modalElement) {
+            if (modalElement) {
+                // Fecha todos os outros modais abertos (garantia de apenas um modal por vez)
+                modals.forEach(m => {
+                    if (m !== modalElement && m.classList.contains('active')) {
+                        m.classList.remove('active');
+                    }
+                });
+                modalElement.classList.add('active');
+                // Previne scroll do body quando modal está aberto (boa prática)
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Configurar listeners para botões que abrem modais
+        triggerButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modalId = btn.getAttribute('data-modal');
+                const targetModal = document.getElementById(modalId);
+                if (targetModal) {
+                    openModal(targetModal);
+                } else {
+                    console.warn('Modal não encontrado:', modalId);
+                }
+            });
+        });
+        
+        // Fechar modal ao clicar no X (botão close) e também nos botões com classe close-modal-btn
+        function attachCloseEvents() {
+            // Fechar pelos X dentro dos modais
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', (e) => {
+                    const modal = closeBtn.closest('.modal-overlay');
+                    if (modal) closeModal(modal);
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // Fechar pelos botões que tem a classe 'close-modal-btn' (cancelar / voltar / continuar)
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modal = btn.closest('.modal-overlay');
+                    if (modal) closeModal(modal);
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+        
+        // Fechar ao clicar no overlay (background escuro)
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                // Se clicar exatamente no overlay (não nos filhos internos do modal)
+                if (e.target === modal) {
+                    closeModal(modal);
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Previne que cliques dentro do modal propaguem para o overlay
+        document.querySelectorAll('.modal').forEach(modalContainer => {
+            modalContainer.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+        
+        // Lógica específica para o modal de formulário (submit)
+        const submitFormBtn = document.getElementById('submitFormBtn');
+        if (submitFormBtn) {
+            submitFormBtn.addEventListener('click', () => {
+                const nome = document.getElementById('nomeInput')?.value.trim() || '';
+                const email = document.getElementById('emailInput')?.value.trim() || '';
+                const mensagem = document.getElementById('msgInput')?.value.trim() || '';
+                const feedbackDiv = document.getElementById('formFeedback');
+                if (feedbackDiv) {
+                    if (nome === '' || email === '') {
+                        feedbackDiv.innerHTML = '⚠️ Por favor, preencha nome e e-mail.';
+                        feedbackDiv.style.color = '#dc2626';
+                    } else if (!email.includes('@') || !email.includes('.')) {
+                        feedbackDiv.innerHTML = '📧 Insira um e-mail válido (ex: nome@dominio.com).';
+                        feedbackDiv.style.color = '#f97316';
+                    } else {
+                        feedbackDiv.innerHTML = `✅ Obrigado, ${nome}! Seu feedback foi registrado. (simulação)`;
+                        feedbackDiv.style.color = '#10b981';
+                        // Opcional: Limpar campos após 2s e fechar modal? Vamos deixar o usuário decidir, mas dá um retorno.
+                        setTimeout(() => {
+                            const modalForm = document.getElementById('modalForm');
+                            if (modalForm && modalForm.classList.contains('active')) {
+                                // não fecha automaticamente, apenas reseta mensagem depois de 2s?
+                                feedbackDiv.innerHTML = '';
+                                // reset dos campos (opcional)
+                                const nomeInp = document.getElementById('nomeInput');
+                                const emailInp = document.getElementById('emailInput');
+                                const msgInp = document.getElementById('msgInput');
+                                if (nomeInp) nomeInp.value = '';
+                                if (emailInp) emailInp.value = '';
+                                if (msgInp) msgInp.value = '';
+                            }
+                        }, 1800);
+                    }
+                }
+            });
+        }
+        
+        // Modal de alerta (ação importante) - Botão Confirmar Ação
+        const confirmAlertBtn = document.getElementById('confirmAlertBtn');
+        if (confirmAlertBtn) {
+            confirmAlertBtn.addEventListener('click', () => {
+                const modalAlert = document.getElementById('modalAlert');
+                if (modalAlert) {
+                    // Exibe um feedback visual antes de fechar (simulação)
+                    const bodyModal = modalAlert.querySelector('.modal-body');
+                    const originalHtml = bodyModal.innerHTML;
+                    bodyModal.innerHTML = '<div class="highlight" style="background:#d1fae5;">✅ Ação confirmada com sucesso! (simulação)</div><p style="margin-top:12px;">O modal será fechado em instantes.</p>';
+                    setTimeout(() => {
+                        closeModal(modalAlert);
+                        document.body.style.overflow = '';
+                        // restaurar conteúdo após fechar (para próxima abertura)
+                        bodyModal.innerHTML = originalHtml;
+                    }, 1200);
+                }
+            });
+        }
+        
+        // Modal Danger (excluir)
+        const dangerDelete = document.getElementById('dangerDeleteBtn');
+        if (dangerDelete) {
+            dangerDelete.addEventListener('click', () => {
+                const modalDanger = document.getElementById('modalDanger');
+                if (modalDanger) {
+                    const bodyDanger = modalDanger.querySelector('.modal-body');
+                    const originalContent = bodyDanger.innerHTML;
+                    bodyDanger.innerHTML = '<div class="highlight" style="background:#fee2e2;">🗑️ Item excluído permanentemente (demonstração).</div>';
+                    setTimeout(() => {
+                        closeModal(modalDanger);
+                        document.body.style.overflow = '';
+                        bodyDanger.innerHTML = originalContent;
+                    }, 1000);
+                }
+            });
+        }
+        
+        // Adicionar evento para impedir scroll quando modal ativo e restaurar quando fechar
+        // Já está sendo tratado nas funções open/close, mas adicionalmente garantir no fechamento por overlay e X
+        const originalCloseHandler = closeModal;
+        window.closeModal = closeModal; // não necessário, mas garantia
+        
+        // Atualiza o estilo do body sempre que um modal for fechado ou aberto via observer? 
+        // Melhor: sobrescrever closeModal e openModal para controlar overflow
+        const superClose = closeModal;
+        window.closeModal = function(modal) {
+            superClose(modal);
+            const anyActive = document.querySelector('.modal-overlay.active');
+            if (!anyActive) document.body.style.overflow = '';
+        };
+        
+        // Reatribuir a função global para usar o controle
+        function patchedCloseModal(modal) {
+            if (modal) modal.classList.remove('active');
+            const anyActive = document.querySelector('.modal-overlay.active');
+            if (!anyActive) document.body.style.overflow = '';
+            // reset adicional form se for o modal específico
+            if (modal && modal.id === 'modalForm') {
+                const fb = document.getElementById('formFeedback');
+                if (fb) fb.innerHTML = '';
+            }
+        }
+        
+        // Substituir as referências de close nos eventos
+        document.querySelectorAll('.modal-close, .close-modal-btn').forEach(btn => {
+            btn.removeEventListener('click', btn.__modalCloseHandler);
+            const handler = function(e) {
+                const modal = this.closest('.modal-overlay');
+                if (modal) {
+                    patchedCloseModal(modal);
+                }
+            };
+            btn.__modalCloseHandler = handler;
+            btn.addEventListener('click', handler);
+        });
+        
+        // Reabrir openModal com overflow
+        const originalOpen = openModal;
+        window.openModal = function(modalEl) {
+            originalOpen(modalEl);
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Re-link dos botões que abrem modal
+        triggerButtons.forEach(btn => {
+            btn.removeEventListener('click', btn.__openHandler);
+            const openHandler = function() {
+                const modalId = this.getAttribute('data-modal');
+                const target = document.getElementById(modalId);
+                if (target) {
+                    window.openModal(target);
+                }
+            };
+            btn.__openHandler = openHandler;
+            btn.addEventListener('click', openHandler);
+        });
+        
+        // Overlay click
+        modals.forEach(modal => {
+            modal.removeEventListener('click', modal.__overlayClick);
+            const overlayClick = (e) => {
+                if (e.target === modal) patchedCloseModal(modal);
+            };
+            modal.__overlayClick = overlayClick;
+            modal.addEventListener('click', overlayClick);
+        });
+        
+        attachCloseEvents(); // Fallback
+        
+        // Garantir que ao carregar nenhum modal ativo
+        document.body.style.overflow = '';
+    })();
+</script>
+</body>
+</html>
