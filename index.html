@@ -3059,6 +3059,30 @@
             transition-duration: 0.05s;
         }
 
+        .toast-btn-secundario {
+            padding: 5px 14px;
+            border-radius: 2rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.12);
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: transparent;
+            color: #6b7280;
+            transition: background 0.15s, color 0.15s, transform 0.1s;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .toast-btn-secundario:hover {
+            background: rgba(0, 0, 0, 0.06);
+            color: #374151;
+            transform: translateY(-1px);
+        }
+
+        .toast-btn-secundario:active {
+            transform: translateY(1px);
+            transition-duration: 0.05s;
+        }
+
         .toast-close {
             flex-shrink: 0;
             width: 26px;
@@ -7919,8 +7943,9 @@
                             titulo: 'Atenção: possível duplicidade de feriados',
                             mensagem: 'Conjuntos personalizados frequentemente incluem suspensões em datas de feriados nacionais ou feriados remanejados. Manter fixos e/ou móveis ativos simultaneamente pode resultar na contagem duplicada dessas datas.',
                             autoFechar: false,
-                            botaoTexto: 'Não mostrar novamente',
-                            botaoCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
+                            botaoTexto: 'Entendi',
+                            botaoSecundarioTexto: 'Não mostrar novamente',
+                            botaoSecundarioCallback: () => localStorage.setItem('contaprazo_aviso_duplicidade_dispensado', 'true')
                         });
                     }
                 }
@@ -10562,6 +10587,7 @@
         function criarToast({
             tipo = 'info', icone, titulo, mensagem, mensagemHTML,
             botaoTexto, botaoCallback,
+            botaoSecundarioTexto, botaoSecundarioCallback,
             autoFechar = 5000, aoFechar = null, toastId = null
         } = {}) {
             const container = document.getElementById('toastContainer');
@@ -10578,8 +10604,11 @@
                 ? mensagemHTML
                 : (mensagem ? escapeHtml(mensagem) : '');
 
-            const acoesHTML = botaoTexto
-                ? `<div class="toast-actions"><button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button></div>`
+            const botoesHTML = (botaoTexto || botaoSecundarioTexto)
+                ? `<div class="toast-actions">
+                    ${botaoTexto ? `<button class="toast-btn-acao">${escapeHtml(botaoTexto)}</button>` : ''}
+                    ${botaoSecundarioTexto ? `<button class="toast-btn-secundario">${escapeHtml(botaoSecundarioTexto)}</button>` : ''}
+                   </div>`
                 : '';
 
             toast.innerHTML = `
@@ -10587,17 +10616,25 @@
                 <div class="toast-body">
                     <strong class="toast-titulo">${escapeHtml(tituloDisplay)}</strong>
                     <p class="toast-mensagem">${bodyContent}</p>
-                    ${acoesHTML}
+                    ${botoesHTML}
                 </div>
                 <button class="toast-close" aria-label="Fechar"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>`;
 
             container.prepend(toast);
             tocarSomToast(tipo);
 
-            // Botão de ação: executa callback e fecha (sem disparar aoFechar)
-            if (botaoTexto && botaoCallback) {
+            // Botão primário: executa callback (opcional) e fecha sem disparar aoFechar
+            if (botaoTexto) {
                 toast.querySelector('.toast-btn-acao').addEventListener('click', () => {
-                    botaoCallback();
+                    if (botaoCallback) botaoCallback();
+                    fecharToast(toast);
+                });
+            }
+
+            // Botão secundário: executa callback (opcional) e fecha sem disparar aoFechar
+            if (botaoSecundarioTexto) {
+                toast.querySelector('.toast-btn-secundario').addEventListener('click', () => {
+                    if (botaoSecundarioCallback) botaoSecundarioCallback();
                     fecharToast(toast);
                 });
             }
