@@ -2158,15 +2158,86 @@
         }
 
         .modal-header {
-            font-size: 1.4rem;
+            padding: 1.3rem 1.8rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .modal-header-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .modal-header-title {
+            font-size: 1.3rem;
             font-weight: 700;
             background: linear-gradient(125deg, #1e293b, #1e3a8a);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            padding: 1.5rem 1.8rem 1rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             letter-spacing: -0.02em;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-close-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            line-height: 1;
+            color: #6b7280;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            font-family: inherit;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+            color: #111827;
+        }
+
+        /* Variante absoluta para modal-aviso (centralizado) */
+        .modal-close-btn-abs {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        /* Botões dentro de modais — estilo pill */
+        .modal-content .btn,
+        .modal-aviso-content .btn,
+        .modal-detalhes-acoes .btn,
+        .modal-input-footer .btn {
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.4rem;
+        }
+
+        .modal-content .btn-secondary,
+        .modal-aviso-content .btn-secondary,
+        .modal-detalhes-acoes .btn-secondary,
+        .modal-input-footer .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .modal-content .btn-secondary:hover,
+        .modal-aviso-content .btn-secondary:hover,
+        .modal-detalhes-acoes .btn-secondary:hover,
+        .modal-input-footer .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: none;
+            box-shadow: none;
         }
 
         .modal-body {
@@ -2576,6 +2647,7 @@
             box-shadow: 0 35px 65px -20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
             text-align: center;
             animation: modalContentSlideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            position: relative;
         }
 
         .modal-aviso-icon {
@@ -4578,12 +4650,16 @@
         }
 
         .modal-input-header {
-            padding: 1.5rem 1.8rem 1rem;
+            padding: 1.3rem 1.8rem 1rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
         }
 
         .modal-input-header h3 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             background: linear-gradient(125deg, #1e293b, #1e3a8a);
             background-clip: text;
@@ -5914,7 +5990,11 @@
     <!-- Modal para selecionar fonte de importação -->
     <div class="modal" id="modalSelecionarFonte">
         <div class="modal-content">
-            <div class="modal-header">Importar Feriados</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">📥</span>
+                <span class="modal-header-title">Importar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalSelecionarFonte()">×</button>
+            </div>
             <div class="modal-body">
                 Escolha a origem dos feriados:
             </div>
@@ -5937,7 +6017,11 @@
     <!-- Modal para escolher conjunto pré-definido -->
     <div class="modal" id="modalPredefinidos">
         <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">Conjuntos Pré-definidos Online</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">📦</span>
+                <span class="modal-header-title">Conjuntos Pré-definidos Online</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalPredefinidos()">×</button>
+            </div>
             <div class="modal-body">
                 <div id="listaPredefinidos" style="max-height: 400px; overflow-y: auto;">
                     <div style="text-align: center; padding: 20px; color: #6b7280;">
@@ -5954,7 +6038,11 @@
     <!-- Modal de Boas-vindas / Importar Perfis Online -->
     <div class="modal" id="modalBoasVindas">
         <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
-            <div class="modal-header" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">👋</span>
+                <span class="modal-header-title" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="dispensarBoasVindas('fechar')">×</button>
+            </div>
             <div class="modal-body" style="overflow-y: auto; flex: 1;">
                 <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.875rem; line-height: 1.5;">
                     <p style="margin: 0 0 6px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
@@ -5983,7 +6071,11 @@
     <!-- Modal para importar feriados -->
     <div class="modal" id="modalImportar">
         <div class="modal-content">
-            <div class="modal-header">Importar Feriados</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">📂</span>
+                <span class="modal-header-title">Importar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModal()">×</button>
+            </div>
             <div class="modal-body">
                 Escolha como deseja importar os feriados:
             </div>
@@ -6006,7 +6098,11 @@
     <!-- Modal para escolher tipo de export PDF -->
     <div class="modal" id="modalExportPDF">
         <div class="modal-content">
-            <div class="modal-header">Exportar PDF</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">📄</span>
+                <span class="modal-header-title">Exportar PDF</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportPDF()">×</button>
+            </div>
             <div class="modal-body">
                 Escolha o tipo de export PDF:
             </div>
@@ -6029,7 +6125,11 @@
     <!-- Modal para criar novo perfil -->
     <div class="modal" id="modalCriarPerfil">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">Criar Novo Perfil</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">✨</span>
+                <span class="modal-header-title">Criar Novo Perfil</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalCriarPerfil()">×</button>
+            </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">
                     O perfil salvará os <strong id="qtdFeriadosAtuais">0</strong> feriados personalizados atuais.
@@ -6049,7 +6149,11 @@
     <!-- Modal para gerenciar perfis -->
     <div class="modal" id="modalGerenciarPerfis">
         <div class="modal-content" style="max-width: 540px;">
-            <div class="modal-header">Gerenciar Perfis</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">⚙️</span>
+                <span class="modal-header-title">Gerenciar Perfis</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalGerenciarPerfis()">×</button>
+            </div>
             <div class="modal-body">
                 <div class="modal-perfis-list" id="listaPerfisModal">
                     <div class="modal-perfis-empty">Nenhum perfil criado ainda.</div>
@@ -6064,7 +6168,11 @@
     <!-- Modal para renomear perfil -->
     <div class="modal" id="modalRenomearPerfil">
         <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">Renomear Perfil</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">✏️</span>
+                <span class="modal-header-title">Renomear Perfil</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalRenomearPerfil()">×</button>
+            </div>
             <div class="modal-body">
                 <div class="modal-input-group">
                     <label for="inputRenomearPerfil">Novo nome (máx. 30 caracteres)</label>
@@ -6081,7 +6189,11 @@
     <!-- Modal de confirmação para trocar perfil com alterações não salvas -->
     <div class="modal" id="modalConfirmarTrocaPerfil">
         <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header">Alterações Não Salvas</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">⚠️</span>
+                <span class="modal-header-title">Alterações Não Salvas</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalConfirmarTrocaPerfil()">×</button>
+            </div>
             <div class="modal-body">
                 <p style="font-size: 0.9rem; color: #374151;">
                     Existem alterações não salvas no perfil atual. Deseja salvar antes de trocar?
@@ -6098,7 +6210,11 @@
     <!-- Modal para escolher tipo de export PNG -->
     <div class="modal" id="modalExportPNG">
         <div class="modal-content">
-            <div class="modal-header">Exportar PNG</div>
+            <div class="modal-header">
+                <span class="modal-header-icon">🖼️</span>
+                <span class="modal-header-title">Exportar PNG</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportPNG()">×</button>
+            </div>
             <div class="modal-body">
                 Escolha o tipo de export PNG:
             </div>
@@ -12216,6 +12332,7 @@
     <!-- Modal de Aviso de Recálculo -->
     <div id="modalAvisoRecalculo" class="modal-aviso">
         <div class="modal-aviso-content">
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharAvisoRecalculo()">×</button>
             <div class="modal-aviso-icon">ℹ️</div>
             <h3>Recálculo Necessário</h3>
             <p>Você modificou os parâmetros do cálculo. Recalcule para ver o resultado atualizado.</p>
@@ -12235,6 +12352,7 @@
     <!-- Modal de Confirmação de Reset -->
     <div id="modalResetCompleto" class="modal-aviso">
         <div class="modal-aviso-content" style="max-width: 500px;">
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharModalReset()">×</button>
             <div class="modal-aviso-icon">⚠️</div>
             <h3>Restaurar Configurações Padrão</h3>
             <p style="text-align: left; margin-bottom: 20px;">
@@ -12300,6 +12418,7 @@
     <!-- Modal de Edição -->
     <div id="modalEditarPrazo" class="modal-aviso">
         <div class="modal-aviso-content" style="max-width: 500px;">
+            <button class="modal-close-btn modal-close-btn-abs" aria-label="Fechar" onclick="fecharModalEditar()">×</button>
             <div class="modal-aviso-icon">✏️</div>
             <h3>Editar Prazo</h3>
             <p style="margin-bottom: 15px; color: #6b7280; font-size: 0.9rem;">
@@ -12333,6 +12452,7 @@
         <div class="modal-input-content">
             <div class="modal-input-header">
                 <h3>💾 Salvar Prazo na Agenda</h3>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalInputTitulo()">×</button>
             </div>
             <div class="modal-input-body">
                 <div class="modal-input-group">
@@ -12360,6 +12480,33 @@
 
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
+
+    <script>
+        /* ===== MODAL UX: fechar ao clicar no backdrop + travar scroll ===== */
+        (function() {
+            var MODAL_SELECTOR = '.modal, .modal-aviso, .modal-detalhes, .modal-input-titulo';
+
+            // Fechar ao clicar no backdrop (overlay)
+            document.querySelectorAll(MODAL_SELECTOR).forEach(function(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) modal.classList.remove('active');
+                });
+            });
+
+            // Travar scroll do body quando qualquer modal estiver aberto
+            function syncBodyScroll() {
+                var anyOpen = document.querySelector(
+                    '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
+                );
+                document.body.style.overflow = anyOpen ? 'hidden' : '';
+            }
+
+            var observer = new MutationObserver(syncBodyScroll);
+            document.querySelectorAll(MODAL_SELECTOR).forEach(function(m) {
+                observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+            });
+        })();
+    </script>
 
     <!-- Banner de Notificação de Prazo Salvo -->
     <div id="bannerPrazoSalvo" class="update-banner" style="display:none!important;">
