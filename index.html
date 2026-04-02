@@ -6352,6 +6352,37 @@
         </div>
     </div>
 
+    <div class="modal" id="modalExportarFeriados">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <span class="modal-header-title">Exportar Feriados</span>
+                <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalExportarFeriados()">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Salve seus feriados personalizados em um arquivo JSON para backup ou uso em outro dispositivo.</p>
+                <div style="margin-top:12px;">
+                    <label style="display:block;font-size:0.82rem;font-weight:600;color:var(--text-secondary,#64748b);margin-bottom:6px;letter-spacing:0.02em;">Nome do arquivo</label>
+                    <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border,#e2e8f0);border-radius:8px;overflow:hidden;background:#fff;">
+                        <input type="text" id="exportarFeriadosNome" placeholder="feriados-personalizados"
+                            style="flex:1;padding:9px 12px;border:none;outline:none;font-size:0.9rem;background:transparent;color:var(--text-primary,#1e293b);"
+                            oninput="atualizarPreviewExportarFeriados()" />
+                        <span id="exportarFeriadosExt" style="padding:9px 12px 9px 0;font-size:0.9rem;color:var(--text-secondary,#64748b);pointer-events:none;white-space:nowrap;">.json</span>
+                    </div>
+                    <p id="exportarFeriadosPreview" style="margin:6px 0 0;font-size:0.78rem;color:var(--text-secondary,#64748b);">Arquivo: <strong>feriados-personalizados.json</strong></p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalExportarFeriados()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmarExportarFeriados()">Exportar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Estado da aplicação
         let mesAtual = new Date();
@@ -8160,19 +8191,33 @@
         }
 
         function exportarFeriados() {
-            // Solicita nome personalizado para o arquivo
-            const nomePersonalizado = prompt('Digite um nome para o arquivo (sem extensão):\n\nDeixe em branco para usar o nome padrão.', '');
+            // Reset input and preview, then open modal
+            const input = document.getElementById('exportarFeriadosNome');
+            if (input) input.value = '';
+            atualizarPreviewExportarFeriados();
+            document.getElementById('modalExportarFeriados').classList.add('active');
+        }
 
-            // Se usuário cancelar, interrompe a exportação
-            if (nomePersonalizado === null) {
-                return;
-            }
+        function fecharModalExportarFeriados() {
+            document.getElementById('modalExportarFeriados').classList.remove('active');
+        }
+
+        function atualizarPreviewExportarFeriados() {
+            const input = document.getElementById('exportarFeriadosNome');
+            const preview = document.getElementById('exportarFeriadosPreview');
+            if (!input || !preview) return;
+            const nome = input.value.trim() || 'feriados-personalizados';
+            preview.innerHTML = 'Arquivo: <strong>' + nome + '.json</strong>';
+        }
+
+        function confirmarExportarFeriados() {
+            const input = document.getElementById('exportarFeriadosNome');
+            const nomePersonalizado = input ? input.value.trim() : '';
 
             // Converte feriados personalizados para formato brasileiro DD-MM-YYYY Nome
             const feriadosBrasileiro = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
                 const [ano, mes, dia] = data.split('-');
                 const dataFormatada = `${dia}-${mes}-${ano}`;
-                // Se tiver nome, inclui; senão, só a data
                 return nome ? `${dataFormatada} ${nome}` : dataFormatada;
             });
 
@@ -8185,15 +8230,12 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-
-            // Usa nome personalizado ou padrão
-            const nomeArquivo = nomePersonalizado.trim() ?
-                `${nomePersonalizado.trim()}.json` :
-                `feriados-${Date.now()}.json`;
+            const nomeArquivo = nomePersonalizado ? `${nomePersonalizado}.json` : 'feriados-personalizados.json';
             link.download = nomeArquivo;
-
             link.click();
             URL.revokeObjectURL(url);
+
+            fecharModalExportarFeriados();
         }
 
         function importarFeriados(event) {
