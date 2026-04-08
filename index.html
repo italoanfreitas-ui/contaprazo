@@ -5279,7 +5279,7 @@
                 </div>
             </div>
 
-            <div class="tipos-feriado-toggle-row" id="rowNavegarPeriodo" onclick="toggleNavegarPeriodo()" title="Após calcular, o calendário navega automaticamente para mostrar o período calculado — ajusta a visualização se necessário" style="margin-bottom:16px;">
+            <div class="tipos-feriado-toggle-row" id="rowNavegarPeriodo" onclick="toggleNavegarPeriodo()" title="Após calcular, o calendário navega automaticamente para mostrar o período calculado — ajusta a visualização se necessário" style="border-top:1px solid #f3f4f6; padding-top:14px; margin-top:4px; margin-bottom:16px;">
                 <span class="tipos-feriado-checkbox" id="switchNavegarPeriodo"></span>
                 <span class="tipos-feriado-toggle-label" style="font-weight:400; color:#6b7280;">Navegar para o período calculado no calendário</span>
             </div>
@@ -8189,27 +8189,29 @@
             const diffMeses = (mesFim.getFullYear() - mesInicio.getFullYear()) * 12
                             + (mesFim.getMonth() - mesInicio.getMonth());
 
-            if (visualizacaoCalendario === 'mensal') {
-                const mesesVisiveis = calcularMesesVisiveis();
+            const mesesVisiveis = calcularMesesVisiveis();
 
-                if (diffMeses < mesesVisiveis) {
-                    // Vista mensal atual comporta início e fim — navega para o mês de início
-                    if (mesAtual.getFullYear() !== mesInicio.getFullYear() || mesAtual.getMonth() !== mesInicio.getMonth()) {
-                        mesAtual = mesInicio;
-                        renderizarCalendario();
-                    }
-                } else if (mesInicio.getFullYear() === mesFim.getFullYear()) {
-                    // Mesmo ano mas excede meses visíveis — alterna para vista anual (mostra os dois)
+            if (diffMeses < mesesVisiveis) {
+                // Vista mensal é suficiente — usa/retorna para mensal no mês de início
+                if (visualizacaoCalendario !== 'mensal') {
                     mesAtual = mesInicio;
-                    alternarVisualizacao('anual');
-                } else {
-                    // Anos diferentes — impossível mostrar ambos; navega ao menos para o mês de início
+                    alternarVisualizacao('mensal');
+                } else if (mesAtual.getFullYear() !== mesInicio.getFullYear() || mesAtual.getMonth() !== mesInicio.getMonth()) {
                     mesAtual = mesInicio;
                     renderizarCalendario();
                 }
+            } else if (mesInicio.getFullYear() === mesFim.getFullYear()) {
+                // Mesmo ano mas excede mensal — usa/mantém anual no ano correto
+                if (visualizacaoCalendario !== 'anual' || mesAtual.getFullYear() !== mesInicio.getFullYear()) {
+                    mesAtual = mesInicio;
+                    alternarVisualizacao('anual');
+                }
             } else {
-                // Vista anual: navega para o ano da data de início
-                if (mesAtual.getFullYear() !== mesInicio.getFullYear()) {
+                // Anos diferentes — impossível mostrar ambos; usa/retorna para mensal no mês de início
+                if (visualizacaoCalendario !== 'mensal') {
+                    mesAtual = mesInicio;
+                    alternarVisualizacao('mensal');
+                } else if (mesAtual.getFullYear() !== mesInicio.getFullYear() || mesAtual.getMonth() !== mesInicio.getMonth()) {
                     mesAtual = mesInicio;
                     renderizarCalendario();
                 }
