@@ -50,6 +50,16 @@
       "dataAtualizacao": "08-04-2026",
       "ano": "2025-2026",
       "link": "https://bdjur.stj.jus.br/server/api/core/bitstreams/6257b5ff-8c9d-408f-a7d5-c6d7064af8eb/content"
+    },
+    {
+      "id": "stf-2025-2026",
+      "id2": "STF 2025-2026",
+      "arquivo": "STF-2025-2026.json",
+      "nome": "STF - Supremo Tribunal Federal (2025-2026)",
+      "descricao": "Suspensões de acordo com a Portaria nº 189, de 26 de setembro de 2025",
+      "dataAtualizacao": "08-04-2026",
+      "ano": "2025-2026",
+      "link": "https://atosnormativos.stf.jus.br/visualizador/4rgBq5kBmFdZiXoIf1Wi"
     }
   ]
 }
