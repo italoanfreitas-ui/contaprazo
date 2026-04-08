@@ -1423,15 +1423,17 @@
         }
 
         .timeline-feriado-link {
-            color: #6366f1;
-            font-size: 0.78em;
-            text-decoration: none;
-            vertical-align: middle;
-            margin-left: 1px;
-            opacity: 0.7;
-            transition: opacity 0.15s;
+            color: inherit;
+            font-size: 0.9em;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            text-decoration-color: rgba(165,6,6,0.35);
+            vertical-align: baseline;
+            margin-left: 4px;
+            opacity: 0.8;
+            transition: opacity 0.15s, text-decoration-color 0.15s;
         }
-        .timeline-feriado-link:hover { opacity: 1; color: #4338ca; }
+        .timeline-feriado-link:hover { opacity: 1; text-decoration-color: #a50606; }
 
         .timeline-item-final .timeline-date-text {
             color: #15803d;
@@ -6317,6 +6319,28 @@
         </div>
     </div>
 
+    <!-- Modal de migração forçada de dados legados -->
+    <div class="modal" id="modalMigracaoDados">
+        <div class="modal-content" style="max-width: 460px;">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                </span>
+                <span class="modal-header-title">Atualização de dados</span>
+            </div>
+            <div class="modal-body" style="line-height: 1.6;">
+                <p style="margin:0 0 10px;">Uma atualização foi identificada nos seus perfis de feriados.</p>
+                <p style="margin:0 0 10px;">Para que os <strong>links dos atos normativos</strong> apareçam corretamente no detalhamento do cálculo, é necessário atualizar os dados de feriados de todos os perfis.</p>
+                <p style="margin:0 0 14px; color:#6b7280; font-size:0.9em;">Isso será feito automaticamente agora. O aplicativo será recarregado ao final.</p>
+                <div id="migracaoStatus" style="display:none; padding: 10px 12px; border-radius: 8px; background: #f0fdf4; color: #15803d; font-size: 0.9em; border: 1px solid #bbf7d0;"></div>
+                <div id="migracaoErro" style="display:none; padding: 10px 12px; border-radius: 8px; background: #fef2f2; color: #b91c1c; font-size: 0.9em; border: 1px solid #fecaca;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="btnExecutarMigracao" onclick="executarMigracaoForcada()">Atualizar agora</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para importar feriados -->
     <div class="modal" id="modalImportar">
         <div class="modal-content">
@@ -9232,59 +9256,108 @@
             }
         }
 
-        // Migração silenciosa: atribui feriadosArquivoMap a feriados legados sem arquivo-fonte.
-        // Executada uma única vez em background quando dados antigos são detectados.
-        async function tentarMigrarArquivosSilencioso() {
-            if (feriadosPersonalizados.size === 0) return;
-            if (feriadosArquivoMap.size > 0) return; // já migrado
+        // Detecta se algum perfil ou os feriados globais têm entradas sem campo `arquivo`.
+        // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
+        function verificarNecessidadeMigracao() {
             const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
-            if (conjuntos.length === 0) return;
+            if (conjuntos.length === 0) return; // nada a resolver
 
-            let migrado = false;
-            for (const conjunto of conjuntos) {
-                try {
-                    const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`);
-                    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
-                    if (!resp.ok) continue;
-                    const json = await resp.json();
-                    if (!Array.isArray(json.feriadosPersonalizados)) continue;
+            const perfilTemLegado = perfisData.some(p =>
+                p.feriados && p.feriados.some(f => f && f.data && !f.arquivo)
+            );
+            const globalRaw = JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]');
+            const globalTemLegado = Array.isArray(globalRaw) &&
+                globalRaw.some(f => f && typeof f === 'object' && f.data && !f.arquivo);
 
-                    const datesDoConjunto = new Set();
-                    json.feriadosPersonalizados.forEach(item => {
-                        let iso = null;
-                        if (typeof item === 'string') {
-                            const m = item.match(/^(\d{2})-(\d{2})-(\d{4})/);
-                            if (m) iso = `${m[3]}-${m[2]}-${m[1]}`;
-                        } else if (item && item.data) {
-                            iso = /^\d{4}-\d{2}-\d{2}/.test(item.data)
-                                ? item.data.substring(0, 10)
-                                : (() => { const m = item.data.match(/^(\d{2})-(\d{2})-(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : null; })();
-                        }
-                        if (iso) datesDoConjunto.add(iso);
-                    });
+            if (!perfilTemLegado && !globalTemLegado) return;
 
-                    for (const [data] of feriadosPersonalizados) {
-                        if (datesDoConjunto.has(data) && !feriadosArquivoMap.has(data)) {
-                            feriadosArquivoMap.set(data, conjunto.arquivo);
-                            migrado = true;
-                        }
-                    }
-                } catch (_) { /* silently skip */ }
-            }
+            document.getElementById('modalMigracaoDados').classList.add('active');
+        }
 
-            if (!migrado) return;
-            salvarFeriadosNoLocalStorage();
-            if (perfilAtivoId) {
-                const perfil = perfisData.find(p => p.id === perfilAtivoId);
-                if (perfil) {
-                    perfil.feriados = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
-                        const obj = { data, nome: nome || '' };
-                        const arq = feriadosArquivoMap.get(data);
-                        if (arq) obj.arquivo = arq;
-                        return obj;
-                    });
-                    salvarPerfisNoLocalStorage();
+        // Extrai datas ISO de um array de feriados no formato do JSON de conjunto.
+        function _extrairDatasConjunto(arr) {
+            const out = new Set();
+            arr.forEach(item => {
+                let iso = null;
+                if (typeof item === 'string') {
+                    const m = item.match(/^(\d{2})-(\d{2})-(\d{4})/);
+                    if (m) iso = `${m[3]}-${m[2]}-${m[1]}`;
+                } else if (item && item.data) {
+                    iso = /^\d{4}-\d{2}-\d{2}/.test(item.data)
+                        ? item.data.substring(0, 10)
+                        : (() => { const m = item.data.match(/^(\d{2})-(\d{2})-(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : null; })();
                 }
+                if (iso) out.add(iso);
+            });
+            return out;
+        }
+
+        async function executarMigracaoForcada() {
+            const btn = document.getElementById('btnExecutarMigracao');
+            const statusEl = document.getElementById('migracaoStatus');
+            const erroEl = document.getElementById('migracaoErro');
+
+            btn.disabled = true;
+            btn.textContent = 'Atualizando…';
+            erroEl.style.display = 'none';
+            statusEl.style.display = '';
+            statusEl.textContent = 'Buscando dados dos conjuntos online…';
+
+            try {
+                const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
+
+                // Monta mapa: arquivo → Set<data ISO>
+                const conjuntoDateMap = new Map();
+                for (const conjunto of conjuntos) {
+                    try {
+                        const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`);
+                        const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
+                        if (!resp.ok) continue;
+                        const json = await resp.json();
+                        if (!Array.isArray(json.feriadosPersonalizados)) continue;
+                        conjuntoDateMap.set(conjunto.arquivo, _extrairDatasConjunto(json.feriadosPersonalizados));
+                    } catch (_) { /* pula conjunto inacessível */ }
+                }
+
+                if (conjuntoDateMap.size === 0) {
+                    throw new Error('Não foi possível acessar nenhum conjunto online. Verifique sua conexão.');
+                }
+
+                statusEl.textContent = 'Atualizando perfis…';
+
+                // Função auxiliar: atribui arquivo a um feriado sem origem conhecida
+                function atribuirArquivo(feriado) {
+                    if (!feriado || !feriado.data || feriado.arquivo) return feriado;
+                    const dataISO = feriado.data.substring(0, 10);
+                    for (const [arquivo, dates] of conjuntoDateMap) {
+                        if (dates.has(dataISO)) return { ...feriado, arquivo };
+                    }
+                    return feriado;
+                }
+
+                // Atualiza TODOS os perfis
+                perfisData.forEach(perfil => {
+                    if (!perfil.feriados) return;
+                    perfil.feriados = perfil.feriados.map(atribuirArquivo);
+                });
+                salvarPerfisNoLocalStorage();
+
+                // Atualiza feriados globais (localStorage independente de perfil)
+                const globalRaw = JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]');
+                if (Array.isArray(globalRaw)) {
+                    localStorage.setItem('feriadosPersonalizados',
+                        JSON.stringify(globalRaw.map(atribuirArquivo)));
+                }
+
+                statusEl.textContent = 'Concluído! Recarregando o aplicativo…';
+                setTimeout(() => location.reload(), 900);
+
+            } catch (err) {
+                statusEl.style.display = 'none';
+                erroEl.style.display = '';
+                erroEl.textContent = err.message || 'Erro durante a atualização. Verifique sua conexão e tente novamente.';
+                btn.disabled = false;
+                btn.textContent = 'Tentar novamente';
             }
         }
 
@@ -12777,7 +12850,7 @@
         posicionarGlider();
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
-        tentarMigrarArquivosSilencioso(); // migração de dados legados em background
+        verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
 
         // Função para scroll suave ao topo
         function scrollToTop() {
