@@ -7449,6 +7449,7 @@
             localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
             localStorage.removeItem('conjuntosPredefinidosImportados');
             localStorage.removeItem('contaprazo_navegar_periodo'); // volta ao padrão: ativo
+            localStorage.removeItem('contaprazo_migracao_arquivo_ok'); // permite re-migrar após reset
 
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
@@ -9301,7 +9302,10 @@
 
         // Detecta se algum perfil ou os feriados globais têm entradas sem campo `arquivo`.
         // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
+        // A flag 'contaprazo_migracao_arquivo_ok' impede re-disparo após a migração ter rodado,
+        // evitando loop infinito causado por feriados adicionados manualmente (sem arquivo-fonte).
         function verificarNecessidadeMigracao() {
+            if (localStorage.getItem('contaprazo_migracao_arquivo_ok')) return;
             const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
             if (conjuntos.length === 0) return; // nada a resolver
 
@@ -9393,6 +9397,7 @@
                 }
 
                 statusEl.textContent = 'Concluído! Recarregando o aplicativo…';
+                localStorage.setItem('contaprazo_migracao_arquivo_ok', '1');
                 setTimeout(() => location.reload(), 900);
 
             } catch (err) {
