@@ -6335,7 +6335,7 @@
     </div>
 
     <!-- Modal de migração forçada de dados legados -->
-    <div class="modal" id="modalMigracaoDados">
+    <div class="modal" id="modalMigracaoDados" data-no-backdrop-close="true">
         <div class="modal-content" style="max-width: 460px;">
             <div class="modal-header">
                 <span class="modal-header-icon modal-icon-blue">
@@ -13292,6 +13292,7 @@
                 modal.addEventListener('click', function(e) {
                     if (e.target !== modal) return;
                     if (!modal.classList.contains('active')) return;
+                    if (modal.dataset.noBackdropClose) return; // modal não pode ser fechado pelo backdrop
                     var id = modal.id;
                     if (pending[id]) clearTimeout(pending[id]);
                     modal.classList.add('closing');
