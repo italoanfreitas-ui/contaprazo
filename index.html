@@ -5628,16 +5628,21 @@
                         Gerencie feriados específicos adicionados por você (via calendário ou importação JSON). <strong>Formato: DD-MM-YYYY Nome</strong> (nome opcional)
                     </p>
 
+                    <div id="avisoEditorMultiFonte" style="display:none; background:#fef9ec; border:1px solid #fcd34d; border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:0.88rem; color:#92400e; line-height:1.5;">
+                        <strong>Perfil com múltiplas fontes mescladas.</strong><br>
+                        O editor de texto não está disponível para este perfil. Para alterar os feriados, importe um novo conjunto usando <em>Substituir</em> (descarta as fontes atuais) ou <em>Mesclar</em> (adiciona sem remover as fontes existentes).
+                    </div>
+
                     <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025 Natal&#10;01-01-2026 Ano Novo&#10;15-06-2026"></textarea>
 
                     <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-success" onclick="salvarFeriadosPersonalizadosEditor()">
+                        <button class="btn btn-success" id="btnSalvarPersonalizados" onclick="salvarFeriadosPersonalizadosEditor()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                             Salvar Personalizados
                         </button>
-                        <button class="btn btn-red" onclick="limparFeriadosPersonalizados()">
+                        <button class="btn btn-red" id="btnLimparPersonalizados" onclick="limparFeriadosPersonalizados()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -6373,7 +6378,7 @@
                 </div>
                 <div class="modal-option" onclick="finalizarImportacao('mesclar')">
                     <div class="modal-option-title">➕ Mesclar</div>
-                    <div class="modal-option-desc">Mantém os feriados atuais e adiciona os novos do arquivo (sem duplicatas).</div>
+                    <div class="modal-option-desc">Mantém os feriados atuais e adiciona os do novo conjunto. <strong>Datas em conflito são substituídas pela descrição do novo conjunto.</strong> Os atos normativos de todas as fontes continuam visíveis abaixo do detalhamento.</div>
                 </div>
             </div>
             <div class="modal-buttons">
@@ -7440,6 +7445,7 @@
             localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
             localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
             localStorage.removeItem('conjuntosPredefinidosImportados');
+            localStorage.removeItem('contaprazo_navegar_periodo'); // volta ao padrão: ativo
 
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
@@ -8237,6 +8243,22 @@
             renderizarCalendario();
         }
 
+        // Desativa o editor de personalizados quando o perfil tem múltiplas fontes mescladas.
+        function atualizarEstadoEditorPersonalizados() {
+            const multiSource = obterMetadataConjuntos().length > 1;
+            const aviso    = document.getElementById('avisoEditorMultiFonte');
+            const textarea = document.getElementById('editorFeriadosPersonalizados');
+            const btnSalvar = document.getElementById('btnSalvarPersonalizados');
+            const btnLimpar = document.getElementById('btnLimparPersonalizados');
+            if (!aviso || !textarea) return;
+            aviso.style.display       = multiSource ? '' : 'none';
+            textarea.disabled         = multiSource;
+            textarea.style.opacity    = multiSource ? '0.45' : '';
+            textarea.style.cursor     = multiSource ? 'not-allowed' : '';
+            if (btnSalvar) { btnSalvar.disabled = multiSource; btnSalvar.style.opacity = multiSource ? '0.45' : ''; }
+            if (btnLimpar) { btnLimpar.disabled = multiSource; btnLimpar.style.opacity = multiSource ? '0.45' : ''; }
+        }
+
         function toggleNavegarPeriodo() {
             navegarParaPeriodo = !navegarParaPeriodo;
             localStorage.setItem('contaprazo_navegar_periodo', navegarParaPeriodo);
@@ -8740,32 +8762,18 @@
                 });
                 msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
             } else if (tipo === 'mesclar') {
-                let adicionados = 0, combinados = 0;
+                let novos = 0, substituidos = 0;
                 dadosConvertidos.forEach(item => {
                     if (!item || !item.data) return;
-                    if (feriadosPersonalizados.has(item.data)) {
-                        // Data já existe: concatena os nomes se forem diferentes
-                        const nomeAtual = feriadosPersonalizados.get(item.data) || '';
-                        const nomeNovo = item.nome || '';
-                        if (nomeNovo && nomeNovo !== nomeAtual &&
-                            !nomeAtual.split(' / ').includes(nomeNovo)) {
-                            feriadosPersonalizados.set(item.data,
-                                nomeAtual ? `${nomeAtual} / ${nomeNovo}` : nomeNovo);
-                            combinados++;
-                        }
-                        // arquivo: mantém o do primeiro conjunto (não sobrescreve)
-                    } else {
-                        feriadosPersonalizados.set(item.data, item.nome || '');
-                        if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
-                        adicionados++;
-                    }
+                    if (feriadosPersonalizados.has(item.data)) substituidos++;
+                    else novos++;
+                    feriadosPersonalizados.set(item.data, item.nome || '');
+                    if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
                 });
                 const partes = [];
-                if (adicionados > 0) partes.push(`${adicionados} data(s) adicionada(s)`);
-                if (combinados > 0) partes.push(`${combinados} nome(s) combinado(s)`);
-                const sem_alteracao = quantidade - adicionados - combinados;
-                if (sem_alteracao > 0) partes.push(`${sem_alteracao} data(s) idêntica(s) ignorada(s)`);
-                msgNotificacao = `Feriados mesclados com sucesso! ${partes.join(', ')}.`;
+                if (novos > 0) partes.push(`${novos} data(s) adicionada(s)`);
+                if (substituidos > 0) partes.push(`${substituidos} data(s) em conflito substituída(s) pelo novo conjunto`);
+                msgNotificacao = `Feriados mesclados! ${partes.join('; ')}.`;
             }
 
             // Salva no formato novo: array de objetos {data, nome[, arquivo]}
@@ -12897,6 +12905,7 @@
         posicionarGlider();
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
+        atualizarEstadoEditorPersonalizados();
         verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
 
         // Função para scroll suave ao topo
