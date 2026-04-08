@@ -1570,6 +1570,16 @@
             background: #eff6ff !important;
         }
 
+        /* Destaque discreto quando o mês/ano atual não está visível no calendário */
+        .btn-nav-today.fora-do-mes {
+            background: #eff6ff !important;
+            box-shadow: 0 0 0 1.5px #93c5fd;
+            color: #3b82f6 !important;
+        }
+        .btn-nav-today.fora-do-mes:hover {
+            box-shadow: 0 0 0 1.5px #60a5fa;
+        }
+
         .btn-nav svg {
             stroke: currentColor;
         }
@@ -2020,16 +2030,39 @@
             color: #2563eb;
         }
 
-        /* Indicador de "hoje": anel interno sutil via box-shadow inset
-           (não usa ::before para não conflitar com a seta do tooltip) */
-        .dia-hoje {
-            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.45);
+        /* Indicador de "hoje" — vista mensal: círculo preenchido ao redor do número,
+           como Apple/Fantastical. O .dia-label (FERIADO) fica abaixo, sem conflito. */
+        .calendario-dia.dia-hoje .dia-numero {
+            display: inline-block;
+            width: 1.8em;
+            height: 1.8em;
+            line-height: 1.8;
+            border-radius: 50%;
+            background: #6366f1;
+            color: #ffffff;
+            font-weight: 700;
         }
 
-        /* Em células escuras/coloridas, o anel fica branco/translúcido */
+        /* Quando hoje coincide com início ou fim: reverte o círculo e usa anel branco na célula */
+        .calendario-dia.dia-inicio.dia-hoje .dia-numero,
+        .calendario-dia.dia-final.dia-hoje .dia-numero {
+            display: block;
+            width: 100%;
+            height: auto;
+            line-height: 1;
+            background: transparent;
+            color: inherit;
+            font-weight: inherit;
+            border-radius: 0;
+        }
         .dia-inicio.dia-hoje,
         .dia-final.dia-hoje {
-            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.65) !important;
+        }
+
+        /* Indicador de "hoje" — vista anual (mini-calendário): anel sutil, sem .dia-numero */
+        .calendario-mini-dia.dia-hoje {
+            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.45);
         }
 
         /* Data de início: âncora escura, contraste máximo */
@@ -4974,6 +5007,50 @@
                 min-width: 90px;
             }
         }
+
+        /* ── Toggle "Navegar para o período calculado" ── */
+        .navegar-periodo-option {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .navegar-toggle-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .navegar-mini-toggle {
+            width: 30px;
+            height: 17px;
+            border-radius: 9px;
+            background: #e5e7eb;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .navegar-mini-toggle.ativo {
+            background: #6366f1;
+        }
+        .navegar-toggle-knob {
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .navegar-mini-toggle.ativo .navegar-toggle-knob {
+            transform: translateX(13px);
+        }
+        .navegar-toggle-texto {
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
     </style>
     <!-- Biblioteca html-to-image para exportação de PNG -->
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
@@ -5253,6 +5330,16 @@
                     Limpar
                 </button>
             </div>
+
+            <div class="navegar-periodo-option">
+                <label class="navegar-toggle-row" title="Após calcular, o calendário navega automaticamente para exibir o mês da data de início">
+                    <div class="navegar-mini-toggle" id="navegarPeriodoBtn" onclick="toggleNavegarPeriodo()">
+                        <div class="navegar-toggle-knob"></div>
+                    </div>
+                    <span class="navegar-toggle-texto">Navegar para o período calculado no calendário</span>
+                </label>
+            </div>
+
             <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
 
             <div id="resultado" style="display:none"></div>
@@ -5302,12 +5389,13 @@
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
                             </button>
-                            <button class="btn-nav btn-nav-today" onclick="irParaHoje()" title="Ir para hoje">
+                            <button class="btn-nav btn-nav-today" id="btnIrParaHoje" onclick="irParaHoje()" title="Ir para hoje">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                     <line x1="16" y1="2" x2="16" y2="6"></line>
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    <circle cx="12" cy="16" r="2.5" fill="currentColor" stroke="none"></circle>
                                 </svg>
                             </button>
                             <button class="btn-nav" onclick="mudarMes(1)" id="btnNavProximo" title="Próximo mês">
@@ -6567,6 +6655,7 @@
         let configImportacaoPendente = null;
         let conjuntoPendenteMetadata = null; // Armazena metadata do conjunto sendo importado
         let calculoRealizado = false; // Controla se já foi feito um cálculo
+        let navegarParaPeriodo = localStorage.getItem('contaprazo_navegar_periodo') !== 'false'; // padrão: ativo
 
         // ========================================
         // SISTEMA DE PERFIS DE FERIADOS
@@ -7729,6 +7818,7 @@
             calculoRealizado = true; // Marca que o cálculo foi realizado
             mostrarResultado();
             renderizarCalendario();
+            if (navegarParaPeriodo) navegarCalendarioParaPeriodo();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
 
             // Scroll suave até os resultados (com 10px de espaço acima)
@@ -8114,6 +8204,46 @@
             renderizarCalendario();
         }
 
+        function toggleNavegarPeriodo() {
+            navegarParaPeriodo = !navegarParaPeriodo;
+            localStorage.setItem('contaprazo_navegar_periodo', navegarParaPeriodo);
+            atualizarToggleNavegarPeriodo();
+        }
+
+        function atualizarToggleNavegarPeriodo() {
+            const btn = document.getElementById('navegarPeriodoBtn');
+            if (btn) btn.classList.toggle('ativo', navegarParaPeriodo);
+        }
+
+        function navegarCalendarioParaPeriodo() {
+            if (!dataInicio) return;
+            const inicio = new Date(dataInicio + 'T00:00:00');
+            const mesInicio = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+
+            if (visualizacaoCalendario === 'mensal') {
+                const mesesVisiveis = calcularMesesVisiveis();
+                // Verifica se o mês de início já está visível
+                let jaVisivel = false;
+                for (let i = 0; i < mesesVisiveis; i++) {
+                    const m = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + i, 1);
+                    if (m.getFullYear() === mesInicio.getFullYear() && m.getMonth() === mesInicio.getMonth()) {
+                        jaVisivel = true;
+                        break;
+                    }
+                }
+                if (!jaVisivel) {
+                    mesAtual = mesInicio;
+                    renderizarCalendario();
+                }
+            } else {
+                // Vista anual: navega para o ano da data de início
+                if (mesAtual.getFullYear() !== mesInicio.getFullYear()) {
+                    mesAtual = mesInicio;
+                    renderizarCalendario();
+                }
+            }
+        }
+
         function toggleConfigFeriados() {
             const content = document.getElementById('configFeriadosContent');
             const icon = document.getElementById('configToggleIcon');
@@ -8155,6 +8285,27 @@
             } else {
                 renderizarCalendarioAnual();
             }
+            atualizarBotaoHoje();
+        }
+
+        function atualizarBotaoHoje() {
+            const btn = document.getElementById('btnIrParaHoje');
+            if (!btn) return;
+            const hoje = new Date();
+            let visivel = false;
+            if (visualizacaoCalendario === 'mensal') {
+                const mesesVisiveis = calcularMesesVisiveis();
+                for (let i = 0; i < mesesVisiveis; i++) {
+                    const m = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + i, 1);
+                    if (m.getFullYear() === hoje.getFullYear() && m.getMonth() === hoje.getMonth()) {
+                        visivel = true;
+                        break;
+                    }
+                }
+            } else {
+                visivel = mesAtual.getFullYear() === hoje.getFullYear();
+            }
+            btn.classList.toggle('fora-do-mes', !visivel);
         }
 
         function calcularMesesVisiveis() {
@@ -12562,6 +12713,7 @@
         atualizarTitlesBotoesNav();
         posicionarGlider();
         posicionarGliderVisualizacao();
+        atualizarToggleNavegarPeriodo();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
