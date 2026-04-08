@@ -6224,7 +6224,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.7 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.8 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -8740,16 +8740,32 @@
                 });
                 msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
             } else if (tipo === 'mesclar') {
-                let adicionados = 0;
+                let adicionados = 0, combinados = 0;
                 dadosConvertidos.forEach(item => {
-                    if (item && item.data && !feriadosPersonalizados.has(item.data)) {
+                    if (!item || !item.data) return;
+                    if (feriadosPersonalizados.has(item.data)) {
+                        // Data já existe: concatena os nomes se forem diferentes
+                        const nomeAtual = feriadosPersonalizados.get(item.data) || '';
+                        const nomeNovo = item.nome || '';
+                        if (nomeNovo && nomeNovo !== nomeAtual &&
+                            !nomeAtual.split(' / ').includes(nomeNovo)) {
+                            feriadosPersonalizados.set(item.data,
+                                nomeAtual ? `${nomeAtual} / ${nomeNovo}` : nomeNovo);
+                            combinados++;
+                        }
+                        // arquivo: mantém o do primeiro conjunto (não sobrescreve)
+                    } else {
                         feriadosPersonalizados.set(item.data, item.nome || '');
                         if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
                         adicionados++;
                     }
                 });
-                const ignorados = quantidade - adicionados;
-                msgNotificacao = `Feriados mesclados com sucesso! ${adicionados} data(s) adicionada(s)${ignorados > 0 ? `, ${ignorados} já existente(s) preservada(s)` : ''}.`;
+                const partes = [];
+                if (adicionados > 0) partes.push(`${adicionados} data(s) adicionada(s)`);
+                if (combinados > 0) partes.push(`${combinados} nome(s) combinado(s)`);
+                const sem_alteracao = quantidade - adicionados - combinados;
+                if (sem_alteracao > 0) partes.push(`${sem_alteracao} data(s) idêntica(s) ignorada(s)`);
+                msgNotificacao = `Feriados mesclados com sucesso! ${partes.join(', ')}.`;
             }
 
             // Salva no formato novo: array de objetos {data, nome[, arquivo]}
@@ -10031,7 +10047,7 @@
                 diasVisuaisHTML: diasVisuaisHTMLFormatado,
                 conteudoEspecifico: '',
                 conjuntosHTML: gerarHTMLConjuntosNota('print'),
-                titulo: sanitizarTituloPDF(descricaoPrazo)
+                titulo: sanitizarTituloPDF(descricaoPrazo || gerarTituloFallbackExport())
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -10089,7 +10105,6 @@
                 .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
                 .timeline-item-feriado .timeline-desc { color: #a50606; }
                 .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-                .timeline-link-pill { display: none !important; }
                 a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }
             `;
 
@@ -10103,7 +10118,7 @@
                 conteudoEspecifico,
                 estilosAdicionais,
                 conjuntosHTML: gerarHTMLConjuntosNota('print'),
-                titulo: sanitizarTituloPDF(descricaoPrazo)
+                titulo: sanitizarTituloPDF(descricaoPrazo || gerarTituloFallbackExport())
             });
 
             const popup = window.open('', '_blank', 'width=900,height=700');
@@ -10140,6 +10155,17 @@
                 .replace(/^-|-$/g, '');
 
             return nome ? `${nome}-` : '';
+        }
+
+        // Gera um título descritivo a partir dos parâmetros do cálculo quando o usuário não fornece descrição.
+        function gerarTituloFallbackExport() {
+            if (!dataInicio || !diasUteis) return '';
+            const tipoLabel = usarDiasUteis ? 'dias úteis' : 'dias corridos';
+            const d = new Date(dataInicio + 'T00:00:00');
+            const dd = d.getDate().toString().padStart(2, '0');
+            const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+            const yyyy = d.getFullYear();
+            return `${diasUteis} ${tipoLabel} a partir de ${dd}/${mm}/${yyyy}`;
         }
 
         function exportarImagemResumo() {
@@ -10317,7 +10343,7 @@
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+                const prefixo = sanitizarNomeArquivo(descricaoPrazo || gerarTituloFallbackExport());
                 link.download = prefixo ? `${prefixo}-contaprazo-resumo.png` : `contaprazo-resumo-${Date.now()}.png`;
                 link.click();
                 URL.revokeObjectURL(url);
@@ -10461,7 +10487,7 @@
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                const prefixo = sanitizarNomeArquivo(descricaoPrazo);
+                const prefixo = sanitizarNomeArquivo(descricaoPrazo || gerarTituloFallbackExport());
                 link.download = prefixo ? `${prefixo}contaprazo-completo.png` : `contaprazo-completo-${Date.now()}.png`;
                 link.click();
                 URL.revokeObjectURL(url);
