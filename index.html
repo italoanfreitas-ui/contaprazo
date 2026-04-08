@@ -7031,10 +7031,11 @@
                     }
                 });
             }
-            // Restaura metadata dos conjuntos importados associados a este perfil
-            if (perfil.conjuntosImportados !== undefined) {
-                localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(perfil.conjuntosImportados));
-            }
+            // Restaura metadata dos conjuntos importados associados a este perfil.
+            // Sempre sobrescreve — se o perfil não tiver conjuntosImportados, limpa o valor
+            // anterior para não herdar dados de outro perfil.
+            localStorage.setItem('conjuntosPredefinidosImportados',
+                JSON.stringify(perfil.conjuntosImportados || []));
             // Atualiza localStorage dos feriados
             salvarFeriadosNoLocalStorage();
         }
