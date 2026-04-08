@@ -40,6 +40,16 @@
       "dataAtualizacao": "26-02-2026",
       "ano": "2025-2026",
       "link": "https://www.trf1.jus.br/sjap/conteudo/Portaria%20Presi%205%20-%20Divulga%20os%20dias%20de%20feriados%20nacionais%20e%20os%20dias%20de%20ponto%20facultativo%20na%20JF1.pdf"
+    },
+    {
+      "id": "stj-2025-2026",
+      "id2": "STJ 2025-2026",
+      "arquivo": "STJ-2025-2026.json",
+      "nome": "STJ - Superior Tribunal de Justiça (2025-2026)",
+      "descricao": "Suspensões de acordo com a Portaria STJ/GDG nº 1010, de 24 de dezembro de 2025",
+      "dataAtualizacao": "08-04-2026",
+      "ano": "2025-2026",
+      "link": "https://bdjur.stj.jus.br/server/api/core/bitstreams/6257b5ff-8c9d-408f-a7d5-c6d7064af8eb/content"
     }
   ]
 }
