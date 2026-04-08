@@ -1422,18 +1422,28 @@
             color: #a50606;
         }
 
-        .timeline-feriado-link {
+        .timeline-link-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 0.67rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.12s, color 0.12s;
+        }
+        .timeline-link-pill:hover { background: #fecaca; color: #991b1b; }
+
+        .timeline-desc-link {
             color: inherit;
-            font-size: 0.9em;
+            text-decoration: none;
+        }
+        .timeline-desc-link:hover {
             text-decoration: underline;
             text-underline-offset: 2px;
-            text-decoration-color: rgba(165,6,6,0.35);
-            vertical-align: baseline;
-            margin-left: 4px;
-            opacity: 0.8;
-            transition: opacity 0.15s, text-decoration-color 0.15s;
         }
-        .timeline-feriado-link:hover { opacity: 1; text-decoration-color: #a50606; }
 
         .timeline-item-final .timeline-date-text {
             color: #15803d;
@@ -7733,11 +7743,14 @@
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
                     const linkFer = obterLinkFeriado(dia.data);
-                    const nomeFerExibir = linkFer
-                        ? `${nomeFer}\u2009<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-feriado-link" onclick="event.stopPropagation()" title="Ver ato normativo">↗</a>`
-                        : nomeFer;
-                    desc = `${nomeFerExibir} — suspensão de prazo.`;
-                    extraPill = '<span class="timeline-feriado-pill">Feriado</span>';
+                    const descText = `${nomeFer} — suspensão de prazo.`;
+                    desc = linkFer
+                        ? `<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-desc-link" onclick="event.stopPropagation()">${descText}</a>`
+                        : descText;
+                    const linkPill = linkFer
+                        ? `<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-link-pill" onclick="event.stopPropagation()" title="Ver ato normativo">↗</a>`
+                        : '';
+                    extraPill = `<span class="timeline-feriado-pill">Feriado</span>${linkPill}`;
                 }
 
                 const connector = !isLast ? '<div class="timeline-connector"></div>' : '';
@@ -8727,13 +8740,16 @@
                 });
                 msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
             } else if (tipo === 'mesclar') {
+                let adicionados = 0;
                 dadosConvertidos.forEach(item => {
-                    if (item && item.data) {
+                    if (item && item.data && !feriadosPersonalizados.has(item.data)) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
                         if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
+                        adicionados++;
                     }
                 });
-                msgNotificacao = `Feriados mesclados com sucesso! ${quantidade} data(s) importada(s).`;
+                const ignorados = quantidade - adicionados;
+                msgNotificacao = `Feriados mesclados com sucesso! ${adicionados} data(s) adicionada(s)${ignorados > 0 ? `, ${ignorados} já existente(s) preservada(s)` : ''}.`;
             }
 
             // Salva no formato novo: array de objetos {data, nome[, arquivo]}
@@ -10073,6 +10089,8 @@
                 .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
                 .timeline-item-feriado .timeline-desc { color: #a50606; }
                 .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
+                .timeline-link-pill { display: none !important; }
+                a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }
             `;
 
             // Gerar HTML usando função helper
@@ -10372,6 +10390,8 @@
     .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
     .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
     .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
+    .export-wrapper .timeline-link-pill { display: none !important; }
+    .export-wrapper a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }
 `;
             const htmlContent = `<div class="export-wrapper">
     <div class="brand-header">
