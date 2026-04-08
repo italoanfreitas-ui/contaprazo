@@ -7038,6 +7038,8 @@
                 JSON.stringify(perfil.conjuntosImportados || []));
             // Atualiza localStorage dos feriados
             salvarFeriadosNoLocalStorage();
+            // Reavalia estado do editor (multi-fonte pode ter mudado entre perfis)
+            atualizarEstadoEditorPersonalizados();
         }
 
         function salvarFeriadosNoLocalStorage() {
