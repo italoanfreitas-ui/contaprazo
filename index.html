@@ -1570,14 +1570,24 @@
             background: #eff6ff !important;
         }
 
-        /* Destaque discreto quando o mês/ano atual não está visível no calendário */
+        /* Quando o mês/ano atual não está visível: anel tracejado com rotação lenta */
         .btn-nav-today.fora-do-mes {
             background: #eff6ff !important;
-            box-shadow: 0 0 0 1.5px #93c5fd;
             color: #3b82f6 !important;
+            position: relative;
         }
-        .btn-nav-today.fora-do-mes:hover {
-            box-shadow: 0 0 0 1.5px #60a5fa;
+        .btn-nav-today.fora-do-mes::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 1.5px dashed #60a5fa;
+            animation: girar-anel-hoje 5s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes girar-anel-hoje {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
         }
 
         .btn-nav svg {
@@ -5008,49 +5018,6 @@
             }
         }
 
-        /* ── Toggle "Navegar para o período calculado" ── */
-        .navegar-periodo-option {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-        }
-        .navegar-toggle-row {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .navegar-mini-toggle {
-            width: 30px;
-            height: 17px;
-            border-radius: 9px;
-            background: #e5e7eb;
-            position: relative;
-            transition: background 0.2s;
-            flex-shrink: 0;
-        }
-        .navegar-mini-toggle.ativo {
-            background: #6366f1;
-        }
-        .navegar-toggle-knob {
-            position: absolute;
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            background: white;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        .navegar-mini-toggle.ativo .navegar-toggle-knob {
-            transform: translateX(13px);
-        }
-        .navegar-toggle-texto {
-            font-size: 0.78rem;
-            color: #6b7280;
-        }
     </style>
     <!-- Biblioteca html-to-image para exportação de PNG -->
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
@@ -5312,6 +5279,11 @@
                 </div>
             </div>
 
+            <div class="tipos-feriado-toggle-row" id="rowNavegarPeriodo" onclick="toggleNavegarPeriodo()" title="Após calcular, o calendário navega automaticamente para mostrar o período calculado — ajusta a visualização se necessário" style="margin-bottom:16px;">
+                <span class="tipos-feriado-checkbox" id="switchNavegarPeriodo"></span>
+                <span class="tipos-feriado-toggle-label" style="font-weight:400; color:#6b7280;">Navegar para o período calculado no calendário</span>
+            </div>
+
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="calcularPrazo()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -5329,15 +5301,6 @@
                     </svg>
                     Limpar
                 </button>
-            </div>
-
-            <div class="navegar-periodo-option">
-                <label class="navegar-toggle-row" title="Após calcular, o calendário navega automaticamente para exibir o mês da data de início">
-                    <div class="navegar-mini-toggle" id="navegarPeriodoBtn" onclick="toggleNavegarPeriodo()">
-                        <div class="navegar-toggle-knob"></div>
-                    </div>
-                    <span class="navegar-toggle-texto">Navegar para o período calculado no calendário</span>
-                </label>
             </div>
 
             <input type="file" id="importarFeriados" accept=".json" style="display:none" onchange="importarFeriados(event)">
@@ -8211,27 +8174,36 @@
         }
 
         function atualizarToggleNavegarPeriodo() {
-            const btn = document.getElementById('navegarPeriodoBtn');
-            if (btn) btn.classList.toggle('ativo', navegarParaPeriodo);
+            const chk = document.getElementById('switchNavegarPeriodo');
+            if (chk) chk.classList.toggle('active', navegarParaPeriodo);
         }
 
         function navegarCalendarioParaPeriodo() {
-            if (!dataInicio) return;
+            if (!dataInicio || !dataFinal) return;
+
             const inicio = new Date(dataInicio + 'T00:00:00');
             const mesInicio = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+            const mesFim   = new Date(dataFinal.getFullYear(), dataFinal.getMonth(), 1);
+
+            // Diferença em meses entre início e fim (0 = mesmo mês)
+            const diffMeses = (mesFim.getFullYear() - mesInicio.getFullYear()) * 12
+                            + (mesFim.getMonth() - mesInicio.getMonth());
 
             if (visualizacaoCalendario === 'mensal') {
                 const mesesVisiveis = calcularMesesVisiveis();
-                // Verifica se o mês de início já está visível
-                let jaVisivel = false;
-                for (let i = 0; i < mesesVisiveis; i++) {
-                    const m = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + i, 1);
-                    if (m.getFullYear() === mesInicio.getFullYear() && m.getMonth() === mesInicio.getMonth()) {
-                        jaVisivel = true;
-                        break;
+
+                if (diffMeses < mesesVisiveis) {
+                    // Vista mensal atual comporta início e fim — navega para o mês de início
+                    if (mesAtual.getFullYear() !== mesInicio.getFullYear() || mesAtual.getMonth() !== mesInicio.getMonth()) {
+                        mesAtual = mesInicio;
+                        renderizarCalendario();
                     }
-                }
-                if (!jaVisivel) {
+                } else if (mesInicio.getFullYear() === mesFim.getFullYear()) {
+                    // Mesmo ano mas excede meses visíveis — alterna para vista anual (mostra os dois)
+                    mesAtual = mesInicio;
+                    alternarVisualizacao('anual');
+                } else {
+                    // Anos diferentes — impossível mostrar ambos; navega ao menos para o mês de início
                     mesAtual = mesInicio;
                     renderizarCalendario();
                 }
