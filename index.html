@@ -7887,25 +7887,29 @@
             // ── Indicador de dias restantes ──
             const hoje = new Date(); hoje.setHours(0,0,0,0);
             const diasRestantes = Math.ceil((dataFinal - hoje) / 86400000);
+            const totalDiasCalendario = Math.ceil(
+                (dataFinal - new Date(dataInicio + 'T00:00:00')) / 86400000
+            );
+            const pctRestante = totalDiasCalendario > 0 ? diasRestantes / totalDiasCalendario : 0;
             let statusRestClasse, statusRestTexto;
-            if (diasRestantes > 30) {
-                statusRestClasse = 'prazo-status-verde';
-                statusRestTexto = diasRestantes + ' dias restantes';
-            } else if (diasRestantes > 7) {
-                statusRestClasse = 'prazo-status-amarelo';
-                statusRestTexto = diasRestantes + ' dias restantes';
-            } else if (diasRestantes === 1) {
+            if (diasRestantes === 1) {
                 statusRestClasse = 'prazo-status-vermelho';
                 statusRestTexto = '1 dia restante';
             } else if (diasRestantes === 0) {
                 statusRestClasse = 'prazo-status-vermelho';
                 statusRestTexto = 'Vence hoje';
-            } else if (diasRestantes > 0) {
-                statusRestClasse = 'prazo-status-vermelho';
-                statusRestTexto = diasRestantes + ' dias restantes';
-            } else {
+            } else if (diasRestantes < 0) {
                 statusRestClasse = 'prazo-status-passado';
                 statusRestTexto = 'Prazo encerrado';
+            } else if (pctRestante > 0.5) {
+                statusRestClasse = 'prazo-status-verde';
+                statusRestTexto = diasRestantes + ' dias restantes';
+            } else if (pctRestante > 0.25) {
+                statusRestClasse = 'prazo-status-amarelo';
+                statusRestTexto = diasRestantes + ' dias restantes';
+            } else {
+                statusRestClasse = 'prazo-status-vermelho';
+                statusRestTexto = diasRestantes + ' dias restantes';
             }
 
             // ── Conjuntos importados ──
@@ -10680,19 +10684,16 @@
             const dataFinal = new Date(prazo.dataFinal);
             dataFinal.setHours(0, 0, 0, 0);
 
-            if (dataFinal < hoje) {
-                return 'atrasado';
-            } else if (dataFinal.getTime() === hoje.getTime()) {
-                return 'vencendo';
-            } else {
-                // Vencendo em até 3 dias
-                const diffTime = dataFinal - hoje;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays <= 3) {
-                    return 'vencendo';
-                }
-                return 'pendente';
-            }
+            if (dataFinal < hoje) return 'atrasado';
+            if (dataFinal.getTime() === hoje.getTime()) return 'vencendo';
+
+            const diffDays = Math.ceil((dataFinal - hoje) / (1000 * 60 * 60 * 24));
+            const dataInicioPrazo = prazo.dataInicio instanceof Date
+                ? prazo.dataInicio
+                : new Date(prazo.dataInicio);
+            const totalDias = Math.ceil((dataFinal - dataInicioPrazo) / (1000 * 60 * 60 * 24));
+            const pct = totalDias > 0 ? diffDays / totalDias : 0;
+            return pct <= 0.25 ? 'vencendo' : 'pendente';
         }
 
         // Calcular dias restantes (respeitando o tipo original)
