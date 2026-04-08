@@ -1422,6 +1422,17 @@
             color: #a50606;
         }
 
+        .timeline-feriado-link {
+            color: #6366f1;
+            font-size: 0.78em;
+            text-decoration: none;
+            vertical-align: middle;
+            margin-left: 1px;
+            opacity: 0.7;
+            transition: opacity 0.15s;
+        }
+        .timeline-feriado-link:hover { opacity: 1; color: #4338ca; }
+
         .timeline-item-final .timeline-date-text {
             color: #15803d;
             font-weight: 700;
@@ -6589,17 +6600,19 @@
 
         // Carregar feriados personalizados do localStorage com retrocompatibilidade
         let feriadosPersonalizados = new Map();
+        let feriadosArquivoMap = new Map(); // data → arquivo (qual conjunto originou o feriado)
         const feriadosPersonalizadosStorage = JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]');
 
-        // Retrocompatibilidade: se for array de strings (formato antigo), converte para Map
+        // Retrocompatibilidade: suporta string pura (v1), {data,nome} (v2) e {data,nome,arquivo} (v3)
         if (Array.isArray(feriadosPersonalizadosStorage)) {
             feriadosPersonalizadosStorage.forEach(item => {
                 if (typeof item === 'string') {
                     // Formato antigo: apenas data
                     feriadosPersonalizados.set(item, '');
                 } else if (item && typeof item === 'object') {
-                    // Formato novo: objeto {data, nome}
+                    // Formato novo: objeto {data, nome} ou {data, nome, arquivo}
                     feriadosPersonalizados.set(item.data, item.nome || '');
+                    if (item.arquivo) feriadosArquivoMap.set(item.data, item.arquivo);
                 }
             });
         }
@@ -6923,6 +6936,7 @@
                 perfilAtivoId = null;
                 localStorage.removeItem(PERFIL_ATIVO_KEY);
                 feriadosPersonalizados.clear();
+                feriadosArquivoMap.clear();
                 salvarFeriadosNoLocalStorage();
                 feriadosSnapshotPerfil = obterSnapshotFeriados();
                 perfilTemAlteracoes = false;
@@ -6969,10 +6983,12 @@
 
         function carregarFeriadosDoPerfil(perfil) {
             feriadosPersonalizados.clear();
+            feriadosArquivoMap.clear();
             if (perfil.feriados && Array.isArray(perfil.feriados)) {
                 perfil.feriados.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
+                        if (item.arquivo) feriadosArquivoMap.set(item.data, item.arquivo);
                     }
                 });
             }
@@ -6985,10 +7001,12 @@
         }
 
         function salvarFeriadosNoLocalStorage() {
-            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                data,
-                nome: nome || ''
-            }));
+            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
+                const obj = { data, nome: nome || '' };
+                const arquivo = feriadosArquivoMap.get(data);
+                if (arquivo) obj.arquivo = arquivo;
+                return obj;
+            });
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
         }
 
@@ -7168,10 +7186,12 @@
             const perfil = perfisData.find(p => p.id === perfilAtivoId);
             if (!perfil) return;
 
-            perfil.feriados = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                data,
-                nome: nome || ''
-            }));
+            perfil.feriados = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
+                const obj = { data, nome: nome || '' };
+                const arquivo = feriadosArquivoMap.get(data);
+                if (arquivo) obj.arquivo = arquivo;
+                return obj;
+            });
             perfil.conjuntosImportados = obterMetadataConjuntos();
 
             salvarPerfisNoLocalStorage();
@@ -7283,6 +7303,14 @@
             return `${dia}-${mes}`;
         }
 
+        // Retorna o link do ato normativo associado ao feriado personalizado, se disponível
+        function obterLinkFeriado(data) {
+            const dataStr = formatarDataCompleta(data);
+            const arquivo = feriadosArquivoMap.get(dataStr);
+            if (!arquivo) return null;
+            return obterMetadataConjuntos().find(c => c.arquivo === arquivo)?.link || null;
+        }
+
         // Obtém nome de feriado de todas as fontes possíveis
         function obterNomeFeriado(data) {
             const dataStr = formatarData(data);
@@ -7360,6 +7388,7 @@
         function executarResetCompleto() {
             // Limpa feriados personalizados
             feriadosPersonalizados.clear();
+            feriadosArquivoMap.clear();
             localStorage.removeItem('feriadosPersonalizados');
 
             // Remove feriados fixos e móveis customizados (volta ao padrão do código)
@@ -7679,7 +7708,11 @@
                     badge = '✖';
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
-                    desc = `${nomeFer} — suspensão de prazo.`;
+                    const linkFer = obterLinkFeriado(dia.data);
+                    const nomeFerExibir = linkFer
+                        ? `${nomeFer}\u2009<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-feriado-link" onclick="event.stopPropagation()" title="Ver ato normativo">↗</a>`
+                        : nomeFer;
+                    desc = `${nomeFerExibir} — suspensão de prazo.`;
                     extraPill = '<span class="timeline-feriado-pill">Feriado</span>';
                 }
 
@@ -8240,6 +8273,7 @@
                 labelConfirmar: 'Limpar',
                 onConfirmar: function() {
                     feriadosPersonalizados.clear();
+                    feriadosArquivoMap.clear();
                     localStorage.setItem('feriadosPersonalizados', JSON.stringify([]));
 
                     // Marca flags para o reload (não altera o perfil salvo — o usuário decide se quer salvar)
@@ -8456,17 +8490,12 @@
         function toggleDia(dataStr) {
             if (feriadosPersonalizados.has(dataStr)) {
                 feriadosPersonalizados.delete(dataStr);
+                feriadosArquivoMap.delete(dataStr);
             } else {
                 // Adiciona sem nome (usuário pode editar depois no Editor de Feriados)
                 feriadosPersonalizados.set(dataStr, '');
             }
-
-            // Salva no formato novo: array de objetos {data, nome}
-            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                data,
-                nome: nome || ''
-            }));
-            localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+            salvarFeriadosNoLocalStorage();
             renderizarCalendario();
 
             // Notifica o sistema de perfis sobre alteração
@@ -8661,12 +8690,15 @@
             const dadosConvertidos = converterParaInterno(configImportacaoPendente.feriadosPersonalizados);
             const quantidade = dadosConvertidos.length;
 
+            const _arqPendente = conjuntoPendenteMetadata?.arquivo || '';
             let msgNotificacao = '';
             if (tipo === 'substituir') {
                 feriadosPersonalizados.clear();
+                feriadosArquivoMap.clear();
                 dadosConvertidos.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
+                        if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
                     }
                 });
                 msgNotificacao = `Feriados substituídos com sucesso! ${quantidade} data(s) importada(s).`;
@@ -8674,16 +8706,19 @@
                 dadosConvertidos.forEach(item => {
                     if (item && item.data) {
                         feriadosPersonalizados.set(item.data, item.nome || '');
+                        if (_arqPendente) feriadosArquivoMap.set(item.data, _arqPendente);
                     }
                 });
                 msgNotificacao = `Feriados mesclados com sucesso! ${quantidade} data(s) importada(s).`;
             }
 
-            // Salva no formato novo: array de objetos {data, nome}
-            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                data,
-                nome: nome || ''
-            }));
+            // Salva no formato novo: array de objetos {data, nome[, arquivo]}
+            const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
+                const obj = { data, nome: nome || '' };
+                const arquivo = feriadosArquivoMap.get(data);
+                if (arquivo) obj.arquivo = arquivo;
+                return obj;
+            });
             localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
 
             // Salva metadata do conjunto importado (se for de um conjunto predefinido)
@@ -9066,7 +9101,7 @@
                 perfisData.push({
                     id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
                     nome: nomePerfil,
-                    feriados: dados.feriados,
+                    feriados: dados.feriados.map(f => ({ ...f, arquivo: cb.dataset.arquivo })),
                     conjuntosImportados: [{
                         nome: cb.dataset.nome,
                         arquivo: cb.dataset.arquivo,
@@ -9194,6 +9229,62 @@
                 localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(novaMetadata));
             } catch (error) {
                 console.error('Erro ao salvar metadata de conjunto:', error);
+            }
+        }
+
+        // Migração silenciosa: atribui feriadosArquivoMap a feriados legados sem arquivo-fonte.
+        // Executada uma única vez em background quando dados antigos são detectados.
+        async function tentarMigrarArquivosSilencioso() {
+            if (feriadosPersonalizados.size === 0) return;
+            if (feriadosArquivoMap.size > 0) return; // já migrado
+            const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
+            if (conjuntos.length === 0) return;
+
+            let migrado = false;
+            for (const conjunto of conjuntos) {
+                try {
+                    const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`);
+                    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+                    if (!resp.ok) continue;
+                    const json = await resp.json();
+                    if (!Array.isArray(json.feriadosPersonalizados)) continue;
+
+                    const datesDoConjunto = new Set();
+                    json.feriadosPersonalizados.forEach(item => {
+                        let iso = null;
+                        if (typeof item === 'string') {
+                            const m = item.match(/^(\d{2})-(\d{2})-(\d{4})/);
+                            if (m) iso = `${m[3]}-${m[2]}-${m[1]}`;
+                        } else if (item && item.data) {
+                            iso = /^\d{4}-\d{2}-\d{2}/.test(item.data)
+                                ? item.data.substring(0, 10)
+                                : (() => { const m = item.data.match(/^(\d{2})-(\d{2})-(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : null; })();
+                        }
+                        if (iso) datesDoConjunto.add(iso);
+                    });
+
+                    for (const [data] of feriadosPersonalizados) {
+                        if (datesDoConjunto.has(data) && !feriadosArquivoMap.has(data)) {
+                            feriadosArquivoMap.set(data, conjunto.arquivo);
+                            migrado = true;
+                        }
+                    }
+                } catch (_) { /* silently skip */ }
+            }
+
+            if (!migrado) return;
+            salvarFeriadosNoLocalStorage();
+            if (perfilAtivoId) {
+                const perfil = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfil) {
+                    perfil.feriados = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => {
+                        const obj = { data, nome: nome || '' };
+                        const arq = feriadosArquivoMap.get(data);
+                        if (arq) obj.arquivo = arq;
+                        return obj;
+                    });
+                    salvarPerfisNoLocalStorage();
+                }
             }
         }
 
@@ -9392,7 +9483,7 @@
                 const json = await resp.json();
                 if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) throw new Error('Formato inválido');
 
-                // Converte datas DD-MM-YYYY → YYYY-MM-DD
+                // Converte datas DD-MM-YYYY → YYYY-MM-DD e adiciona referência ao arquivo-fonte
                 const feriados = [];
                 json.feriadosPersonalizados.forEach(item => {
                     if (typeof item === 'string') {
@@ -9400,13 +9491,13 @@
                         const mSemNome = item.match(/^(\d{2})-(\d{2})-(\d{4})$/);
                         if (mNome) {
                             const [, dia, mes, ano, nome] = mNome;
-                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: nome.trim() });
+                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: nome.trim(), arquivo });
                         } else if (mSemNome) {
                             const [, dia, mes, ano] = mSemNome;
-                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: '' });
+                            feriados.push({ data: `${ano}-${mes}-${dia}`, nome: '', arquivo });
                         }
                     } else if (item && item.data) {
-                        feriados.push({ data: item.data, nome: item.nome || '' });
+                        feriados.push({ data: item.data, nome: item.nome || '', arquivo });
                     }
                 });
 
@@ -12452,13 +12543,11 @@
                     labelConfirmar: 'Salvar',
                     onConfirmar: function() {
                         feriadosPersonalizados = feriadosParaSalvar;
-
-                        // Salva no formato novo: array de objetos {data, nome}
-                        const dadosParaSalvar = Array.from(feriadosPersonalizados.entries()).map(([data, nome]) => ({
-                            data,
-                            nome: nome || ''
-                        }));
-                        localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+                        // Remove arquivo attribution para datas que foram apagadas no editor
+                        for (const data of [...feriadosArquivoMap.keys()]) {
+                            if (!feriadosParaSalvar.has(data)) feriadosArquivoMap.delete(data);
+                        }
+                        salvarFeriadosNoLocalStorage();
 
                         atualizarVisualizacaoFeriados();
                         renderizarCalendario();
@@ -12688,6 +12777,7 @@
         posicionarGlider();
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
+        tentarMigrarArquivosSilencioso(); // migração de dados legados em background
 
         // Função para scroll suave ao topo
         function scrollToTop() {
