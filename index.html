@@ -10483,6 +10483,10 @@
                     <div class="chip-label">Dias contados</div>
                     <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
                 </div>
+                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
+                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
+                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
+                </div>` : ''}
             </div>
             <div style="line-height: 36px; text-align: left; margin-bottom: 10px;">${diasVisuaisHTML}</div>
             <div style="padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
@@ -10621,6 +10625,10 @@
                     <div class="chip-label">Dias contados</div>
                     <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
                 </div>
+                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
+                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
+                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
+                </div>` : ''}
             </div>
             ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
