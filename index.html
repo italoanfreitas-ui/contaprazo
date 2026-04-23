@@ -142,7 +142,7 @@
 
         .nav-tab:hover {
             background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         .nav-tab.active {
@@ -314,7 +314,7 @@
         }
 
         .perfil-badge-dropdown-item.selected {
-            color: #15803d;
+            color: var(--color-green-700);
             font-weight: 600;
         }
 
@@ -372,12 +372,12 @@
         }
 
         .section-title svg {
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         .section-divider {
             height: 2px;
-            background: linear-gradient(to right, #3b82f6, transparent);
+            background: linear-gradient(to right, var(--color-blue-500), transparent);
             margin-bottom: 20px;
         }
 
@@ -411,7 +411,7 @@
         }
 
         .brand-conta {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-blue-600));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -423,7 +423,7 @@
         }
 
         .brand-prazo {
-            background: linear-gradient(135deg, #16a34a, #15803d);
+            background: linear-gradient(135deg, var(--color-green-600), var(--color-green-700));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -501,7 +501,7 @@
 
         .btn-data-hoje {
             padding: 12px 16px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-blue-600));
             color: white;
             border: none;
             border-radius: 8px;
@@ -515,7 +515,7 @@
         }
 
         .btn-data-hoje:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background: linear-gradient(135deg, var(--color-blue-600), #1d4ed8);
             transform: translateY(-1px);
             box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
         }
@@ -531,8 +531,7 @@
             cursor: pointer; position: relative; user-select: none;
             font-style: normal; line-height: 1;
         }
-        /* .tooltip-box convertido para JS (#calTooltipEl) — regras CSS removidas */
-        .tooltip-icon .tooltip-box { display: none !important; }
+
 
         label {
             font-weight: 600;
@@ -560,7 +559,7 @@
         input:focus,
         textarea:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
@@ -610,7 +609,7 @@
         }
 
         .segmented-btn.active {
-            color: #16a34a;
+            color: var(--color-green-600);
         }
 
         .segmented-btn:not(.active):hover {
@@ -655,7 +654,7 @@
         .sidebar-logo-cp {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-green-600));
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -703,12 +702,12 @@
 
         .sidebar-tab:hover {
             background: rgba(59, 130, 246, 0.08);
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         .sidebar-tab.active {
             background: rgba(22, 163, 74, 0.09);
-            color: #16a34a;
+            color: var(--color-green-600);
         }
 
         .sidebar-tab svg {
@@ -785,7 +784,7 @@
         }
         .perfil-calculo-select:focus {
             outline: none;
-            border-color: #16a34a;
+            border-color: var(--color-green-600);
             box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
         }
         .perfil-calculo-hint {
@@ -798,7 +797,7 @@
             line-height: 1.4;
         }
         .perfil-calculo-hint a {
-            color: #16a34a;
+            color: var(--color-green-600);
         }
 
         .tipos-feriado-pills {
@@ -829,8 +828,8 @@
         }
 
         .tipos-feriado-checkbox.active {
-            border-color: #16a34a;
-            background: #16a34a;
+            border-color: var(--color-green-600);
+            background: var(--color-green-600);
         }
 
         .tipos-feriado-checkbox::after {
@@ -872,12 +871,12 @@
         }
 
         .btn-primary {
-            background: #3b82f6;
+            background: var(--color-blue-500);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #2563eb;
+            background: var(--color-blue-600);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
@@ -894,12 +893,12 @@
         }
 
         .btn-success {
-            background: #16a34a;
+            background: var(--color-green-600);
             color: white;
         }
 
         .btn-success:hover {
-            background: #15803d;
+            background: var(--color-green-700);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
         }
@@ -1007,7 +1006,7 @@
         /* Barra de acento superior com gradiente da marca */
         .resultado-top-bar {
             height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #16a34a);
+            background: linear-gradient(90deg, var(--color-blue-500), var(--color-green-600));
         }
 
         /* ── Hero block ── */
@@ -1028,7 +1027,7 @@
             font-weight: 700;
             letter-spacing: 1.4px;
             text-transform: uppercase;
-            color: #16a34a;
+            color: var(--color-green-600);
             margin-bottom: 10px;
         }
 
@@ -1097,8 +1096,8 @@
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .prazo-status-verde   { color: #16a34a; }
-        .prazo-status-verde   .resultado-prazo-status-dot { background: #16a34a; }
+        .prazo-status-verde   { color: var(--color-green-600); }
+        .prazo-status-verde   .resultado-prazo-status-dot { background: var(--color-green-600); }
         .prazo-status-amarelo { color: #b45309; }
         .prazo-status-amarelo .resultado-prazo-status-dot { background: #d97706; }
         .prazo-status-vermelho{ color: #dc2626; }
@@ -1117,7 +1116,7 @@
             border-radius: 8px;
             background: rgba(255,255,255,0.72);
             backdrop-filter: blur(4px);
-            color: #15803d;
+            color: var(--color-green-700);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1223,7 +1222,7 @@
 
         .resultado-descricao {
             background: #f0fdf4;
-            border-left: 3px solid #16a34a;
+            border-left: 3px solid var(--color-green-600);
             padding: 9px 12px;
             margin: 0 0 18px;
             border-radius: 6px;
@@ -1234,11 +1233,11 @@
 
         .resultado-descricao strong {
             font-style: normal;
-            color: #15803d;
+            color: var(--color-green-700);
         }
 
         .data-final {
-            color: #15803d;
+            color: var(--color-green-700);
             font-size: 1.1rem;
             font-weight: bold;
         }
@@ -1269,7 +1268,8 @@
             border: 2px solid white;
         }
 
-        .detalhamento::-webkit-scrollbar-thumb:hover {
+        .detalhamento::-webkit-scrollbar-thumb:hover,
+        .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
 
@@ -1360,7 +1360,7 @@
             align-items: center;
             padding: 2px 9px;
             border-radius: 4px;
-            background: #16a34a;
+            background: var(--color-green-600);
             color: white;
             font-size: 0.67rem;
             font-weight: 700;
@@ -1388,7 +1388,7 @@
 
         .timeline-item-contado .timeline-badge,
         .timeline-item-final .timeline-badge {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(135deg, #22c55e, var(--color-green-600));
             color: white;
             box-shadow: 0 1px 3px rgba(22, 163, 74, 0.3);
         }
@@ -1437,7 +1437,7 @@
         }
 
         .timeline-item-final .timeline-date-text {
-            color: #15803d;
+            color: var(--color-green-700);
             font-weight: 700;
         }
 
@@ -1526,7 +1526,7 @@
             font-weight: 700;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #3b82f6;   /* azul primário do app */
+            color: var(--color-blue-500);   /* azul primário do app */
             line-height: 1.2;
         }
 
@@ -1576,18 +1576,18 @@
         }
 
         .btn-nav-today {
-            color: #3b82f6 !important;
+            color: var(--color-blue-500) !important;
         }
 
         .btn-nav-today:hover {
-            color: #2563eb !important;
+            color: var(--color-blue-600) !important;
             background: #eff6ff !important;
         }
 
         /* Quando o mês/ano atual não está visível: anel tracejado com rotação lenta */
         .btn-nav-today.fora-do-mes {
             background: #eff6ff !important;
-            color: #3b82f6 !important;
+            color: var(--color-blue-500) !important;
             position: relative;
         }
         .btn-nav-today.fora-do-mes::after {
@@ -1670,7 +1670,7 @@
 
         .mes-mini h4 {
             text-align: center;
-            color: #3b82f6;
+            color: var(--color-blue-500);
             margin-bottom: 10px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -1766,7 +1766,7 @@
         }
 
         .tipos-feriado-badge {
-            background: #16a34a;
+            background: var(--color-green-600);
             color: white;
             font-size: 0.68rem;
             font-weight: 700;
@@ -1823,7 +1823,7 @@
             font-size: 0.7rem;
             font-weight: 700;
             background: #dcfce7;
-            color: #16a34a;
+            color: var(--color-green-600);
             border: 1.5px solid #86efac;
             flex-shrink: 0;
         }
@@ -1901,7 +1901,7 @@
         }
 
         .toggle-ativo {
-            background: #16a34a;
+            background: var(--color-green-600);
             color: white;
         }
 
@@ -1953,7 +1953,7 @@
 
         .mes-container h4 {
             font-size: 0.9rem;
-            color: #3b82f6;
+            color: var(--color-blue-500);
             margin: 0 0 10px 0;
             text-align: center;
             font-weight: 600;
@@ -2051,7 +2051,7 @@
         /* Dias percorridos (contados): azul-aço muito suave — claramente distinto dos especiais */
         .dia-percorrido {
             background: #eff6ff;
-            color: #2563eb;
+            color: var(--color-blue-600);
         }
 
         /* Indicador de "hoje" — vista mensal: círculo preenchido ao redor do número,
@@ -2274,8 +2274,8 @@
             stroke-width: 2.5;
         }
 
-        .modal-icon-blue  { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
-        .modal-icon-green { background: rgba(22, 163, 74,  0.12); color: #16a34a; }
+        .modal-icon-blue  { background: rgba(59, 130, 246, 0.12); color: var(--color-blue-500); }
+        .modal-icon-green { background: rgba(22, 163, 74,  0.12); color: var(--color-green-600); }
         .modal-icon-amber { background: rgba(217, 119, 6,  0.12); color: #d97706; }
         .modal-icon-red   { background: rgba(220, 38,  38, 0.12); color: #dc2626; }
 
@@ -2386,7 +2386,7 @@
         }
 
         .modal-option:hover {
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             background: #eff6ff;
             transform: translateY(-2px);
             box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
@@ -2459,8 +2459,8 @@
         }
 
         .item-predefinido-link:hover {
-            color: #3b82f6;
-            text-decoration-color: #3b82f6;
+            color: var(--color-blue-500);
+            text-decoration-color: var(--color-blue-500);
         }
 
         .modal-buttons {
@@ -2532,8 +2532,8 @@
 
         .perfil-pill.active {
             background: white;
-            border-color: #16a34a;
-            color: #15803d;
+            border-color: var(--color-green-600);
+            color: var(--color-green-700);
         }
 
         .perfil-pill.unsaved {
@@ -2759,7 +2759,7 @@
 
         .modal-input-small:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
@@ -2892,7 +2892,7 @@
             border-radius: 4px;
             font-family: monospace;
             font-size: 0.9em;
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         /* Gerenciamento Avançado */
@@ -2924,7 +2924,7 @@
 
         .batch-editor textarea:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
@@ -2976,7 +2976,7 @@
             margin: 5px 0;
             background: white;
             border-radius: 6px;
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid var(--color-blue-500);
         }
 
         .feriado-item.fixo,
@@ -3068,10 +3068,10 @@
             to   { opacity: 0; transform: translateY(-6px) scale(0.97); max-height: 0;   padding-top: 0;    padding-bottom: 0;    }
         }
 
-        .toast-item[data-tipo="sucesso"] { border-left-color: #16a34a; }
+        .toast-item[data-tipo="sucesso"] { border-left-color: var(--color-green-600); }
         .toast-item[data-tipo="erro"]    { border-left-color: #ef4444; }
         .toast-item[data-tipo="aviso"]   { border-left-color: #f59e0b; }
-        .toast-item[data-tipo="info"]    { border-left-color: #3b82f6; }
+        .toast-item[data-tipo="info"]    { border-left-color: var(--color-blue-500); }
 
         .toast-icon-circle {
             width: 32px;
@@ -3122,14 +3122,14 @@
             font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
-            background: #3b82f6;
+            background: var(--color-blue-500);
             color: white;
             transition: background 0.15s, transform 0.1s;
             font-family: system-ui, -apple-system, sans-serif;
         }
 
         .toast-btn-acao:hover {
-            background: #2563eb;
+            background: var(--color-blue-600);
             transform: translateY(-1px);
         }
 
@@ -3711,7 +3711,7 @@
         }
 
         .update-banner-btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-blue-600));
             color: white;
             box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
@@ -3872,14 +3872,14 @@
         }
 
         .filtro-btn:hover {
-            border-color: #3b82f6;
-            color: #3b82f6;
+            border-color: var(--color-blue-500);
+            color: var(--color-blue-500);
             background: #f0f9ff;
         }
 
         .filtro-btn.active {
-            border-color: #3b82f6;
-            background: #3b82f6;
+            border-color: var(--color-blue-500);
+            background: var(--color-blue-500);
             color: white;
             box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
         }
@@ -3898,7 +3898,7 @@
 
         /* Barra de Seleção Múltipla */
         .barra-selecao {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-blue-600));
             padding: 12px 20px;
             border-radius: 12px;
             margin-bottom: 15px;
@@ -4024,13 +4024,13 @@
         }
 
         .checkbox-selecao:hover {
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             background: #eff6ff;
         }
 
         .checkbox-selecao.selecionado {
-            background: #3b82f6;
-            border-color: #3b82f6;
+            background: var(--color-blue-500);
+            border-color: var(--color-blue-500);
         }
 
         .checkbox-selecao.selecionado::after {
@@ -4090,7 +4090,7 @@
 
         .prazo-item-concluido {
             background: #f0fdf4;
-            border-left: 3px solid #16a34a;
+            border-left: 3px solid var(--color-green-600);
         }
 
         .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-vence-hoje):not(.prazo-item-concluido) {
@@ -4149,13 +4149,13 @@
         }
 
         .prazo-checkbox:hover {
-            border-color: #16a34a;
+            border-color: var(--color-green-600);
             background: #f0fdf4;
         }
 
         .prazo-checkbox.checked {
-            background: #16a34a;
-            border-color: #16a34a;
+            background: var(--color-green-600);
+            border-color: var(--color-green-600);
         }
 
         .prazo-checkbox.checked svg {
@@ -4218,7 +4218,7 @@
             margin-top: 8px;
             padding: 8px 12px;
             background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
-            border-left: 3px solid #3b82f6;
+            border-left: 3px solid var(--color-blue-500);
             border-radius: 4px;
         }
 
@@ -4226,7 +4226,7 @@
             width: 18px;
             height: 18px;
             flex-shrink: 0;
-            stroke: #3b82f6;
+            stroke: var(--color-blue-500);
         }
 
         .prazo-data-final-texto {
@@ -4346,7 +4346,7 @@
 
         /* Pendente - azul */
         .contador-pendente .contador-numero {
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         /* Contador Inline (sem caixa, apenas texto destacado) */
@@ -4372,11 +4372,11 @@
         }
 
         .prazo-contador-inline.pendente {
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         .prazo-contador-inline.concluido {
-            color: #16a34a;
+            color: var(--color-green-600);
         }
 
         .prazo-contador-inline strong {
@@ -4468,11 +4468,11 @@
         }
 
         .prazo-menu-item.menu-ver {
-            color: #3b82f6;
+            color: var(--color-blue-500);
         }
 
         .prazo-menu-item.menu-ver svg {
-            stroke: #3b82f6;
+            stroke: var(--color-blue-500);
         }
 
         .prazo-menu-item.menu-editar {
@@ -4650,10 +4650,6 @@
             border-radius: 10px;
         }
 
-        .modal-detalhes-body::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
         /* Estilos de scrollbar para Firefox */
         .modal-detalhes-body {
             scrollbar-width: thin;
@@ -4710,7 +4706,7 @@
         }
 
         .opcao-arquivamento:hover {
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             background: #eff6ff;
             transform: translateY(-2px);
             box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
@@ -4753,7 +4749,7 @@
         }
 
         .toast-undo-btn {
-            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            background: linear-gradient(135deg, var(--color-blue-500), var(--color-green-600));
             color: white;
             border: none;
             padding: 6px 16px;
@@ -4813,8 +4809,8 @@
 
         .paginacao-btn:hover:not(:disabled) {
             background: #f9fafb;
-            border-color: #3b82f6;
-            color: #3b82f6;
+            border-color: var(--color-blue-500);
+            color: var(--color-blue-500);
         }
 
         .paginacao-btn:disabled {
@@ -4835,9 +4831,9 @@
         }
 
         .paginacao-numero.ativa {
-            background: #3b82f6;
+            background: var(--color-blue-500);
             color: white;
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
         }
 
         /* Botões de Gerenciamento da Agenda */
@@ -4932,7 +4928,7 @@
         .modal-input-group input:focus,
         .modal-input-group textarea:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--color-blue-500);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
@@ -7040,11 +7036,19 @@
                 if (arquivo) obj.arquivo = arquivo;
                 return obj;
             });
-            localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+            try {
+                localStorage.setItem('feriadosPersonalizados', JSON.stringify(dadosParaSalvar));
+            } catch (e) {
+                mostrarNotificacao('Não foi possível salvar os feriados. Verifique o espaço disponível no navegador.', 'erro');
+            }
         }
 
         function salvarPerfisNoLocalStorage() {
-            localStorage.setItem(PERFIS_STORAGE_KEY, JSON.stringify(perfisData));
+            try {
+                localStorage.setItem(PERFIS_STORAGE_KEY, JSON.stringify(perfisData));
+            } catch (e) {
+                mostrarNotificacao('Não foi possível salvar os perfis. Verifique o espaço disponível no navegador.', 'erro');
+            }
         }
 
         // === Modais de Perfil ===
@@ -7787,12 +7791,22 @@
             }
 
             const inicio = new Date(dataInicio + 'T00:00:00');
+            if (isNaN(inicio.getTime())) {
+                mostrarNotificacao('A data de início informada é inválida.', 'erro');
+                return;
+            }
+
+            const diasNum = parseInt(diasUteis, 10);
+            if (!Number.isFinite(diasNum) || diasNum < 1 || diasNum > 9999) {
+                mostrarNotificacao('A quantidade de dias deve ser um número entre 1 e 9999.', 'erro');
+                return;
+            }
             let diasContados = 0;
             let dataAtual = new Date(inicio);
             todosOsDias = [];
             let contador = 0;
 
-            while (diasContados < parseInt(diasUteis)) {
+            while (diasContados < diasNum) {
                 dataAtual.setDate(dataAtual.getDate() + 1);
 
                 const ehFds = ehFimDeSemana(dataAtual);
@@ -8113,11 +8127,15 @@
         }
 
         function salvarTiposFeriadoAtivos() {
-            localStorage.setItem('tiposFeriadoAtivos', JSON.stringify({
-                fixos: feriadosFixosAtivos,
-                moveis: feriadosMoveisAtivos,
-                personalizados: feriadosPersonalizadosAtivos
-            }));
+            try {
+                localStorage.setItem('tiposFeriadoAtivos', JSON.stringify({
+                    fixos: feriadosFixosAtivos,
+                    moveis: feriadosMoveisAtivos,
+                    personalizados: feriadosPersonalizadosAtivos
+                }));
+            } catch (e) {
+                // preferência menor — falha silenciosa aceitável
+            }
         }
 
         function atualizarPillsTiposFeriado() {
@@ -8875,7 +8893,7 @@
             try {
                 // Busca manifest.json com cache-busting
                 const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
-                const response = await fetch(manifestUrl);
+                const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -9011,7 +9029,7 @@
                 // 1. Carrega o manifest
                 container.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7280;">Carregando lista de conjuntos...</div>';
                 const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
-                const manifestResp = await fetch(manifestUrl);
+                const manifestResp = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
                 if (!manifestResp.ok) throw new Error(`HTTP ${manifestResp.status}`);
                 const manifest = await manifestResp.json();
 
@@ -9033,7 +9051,7 @@
                 await Promise.allSettled(conjuntos.map(async c => {
                     try {
                         const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${c.arquivo}`);
-                        const resp = await fetch(url);
+                        const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
                         if (!resp.ok) return;
                         const json = await resp.json();
                         if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) return;
@@ -9206,7 +9224,7 @@
             try {
                 // Busca o JSON com cache-busting
                 const urlComCacheBusting = adicionarCacheBusting(url);
-                const response = await fetch(urlComCacheBusting);
+                const response = await fetch(urlComCacheBusting, { signal: AbortSignal.timeout(12000) });
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -9409,7 +9427,7 @@
             try {
                 // Busca o manifest online
                 const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
-                const response = await fetch(manifestUrl);
+                const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -9594,7 +9612,7 @@
         async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova) {
             try {
                 const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${arquivo}`);
-                const resp = await fetch(url);
+                const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const json = await resp.json();
                 if (!json.feriadosPersonalizados || !Array.isArray(json.feriadosPersonalizados)) throw new Error('Formato inválido');
@@ -9655,7 +9673,7 @@
 
             try {
                 const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
-                const response = await fetch(manifestUrl);
+                const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -13361,6 +13379,41 @@
                     }
                 };
             });
+
+            /* Atalhos de teclado globais */
+            document.addEventListener('keydown', function(e) {
+                /* Escape: fecha o modal/aviso aberto (se permitir fechar) */
+                if (e.key === 'Escape') {
+                    var open = document.querySelector(
+                        '.modal.active:not([data-no-backdrop-close]), ' +
+                        '.modal-aviso.active, ' +
+                        '.modal-detalhes.active, ' +
+                        '.modal-input-titulo.active'
+                    );
+                    if (!open) return;
+                    var id = open.id;
+                    if (pending[id]) clearTimeout(pending[id]);
+                    open.classList.add('closing');
+                    pending[id] = setTimeout(function() {
+                        delete pending[id];
+                        open.classList.remove('active', 'closing');
+                    }, CLOSE_MS);
+                }
+            });
+
+            /* Enter no campo de quantidade de dias dispara o cálculo */
+            var inputDias = document.getElementById('diasUteis');
+            if (inputDias) {
+                inputDias.addEventListener('keydown', function(e) {
+                    if (e.key !== 'Enter') return;
+                    var modalAberto = document.querySelector(
+                        '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
+                    );
+                    if (modalAberto) return;
+                    e.preventDefault();
+                    if (typeof calcularPrazo === 'function') calcularPrazo();
+                });
+            }
         })();
     </script>
 
