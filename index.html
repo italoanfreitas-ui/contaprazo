@@ -1082,6 +1082,113 @@
             white-space: nowrap;
         }
 
+        /* Chip de feriados — variante interativa (clicável) */
+        .chip-feriados {
+            border-color: #fed7aa;
+            cursor: pointer;
+            position: relative;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+        .chip-feriados:hover {
+            border-color: #fb923c;
+            box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+        }
+        .chip-feriados .resultado-hero-chip-label { color: #ea580c; }
+        .chip-feriados .resultado-hero-chip-value { color: #c2410c; }
+
+        /* Tooltip do chip de feriados */
+        .chip-feriados-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #f1f5f9;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            padding: 10px 14px;
+            border-radius: 8px;
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            z-index: 500;
+            pointer-events: none;
+        }
+        .chip-feriados-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1e293b;
+        }
+        .chip-feriados-tooltip-item { display: block; }
+        .chip-feriados-tooltip-mais {
+            display: block;
+            margin-top: 4px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .chip-feriados-tooltip-hint {
+            display: block;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #64748b;
+            font-size: 0.68rem;
+            text-align: center;
+        }
+        .chip-feriados:hover .chip-feriados-tooltip { display: block; }
+
+        /* Modal de feriados do cálculo */
+        .modal-feriados-lista {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .modal-feriados-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-feriados-item:last-child { border-bottom: none; }
+        .modal-feriados-data {
+            flex-shrink: 0;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #6b7280;
+            width: 110px;
+            padding-top: 1px;
+        }
+        .modal-feriados-nome {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            flex: 1;
+        }
+        .modal-feriados-badge {
+            flex-shrink: 0;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #f1f5f9;
+            color: #6b7280;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+        .modal-feriados-subtitulo {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        }
+
         /* Status de dias restantes — ponto + texto, sem pílula */
         .resultado-prazo-status {
             display: inline-flex;
@@ -6650,6 +6757,7 @@
         let dataInicio = null;
         let diasUteis = null;
         let todosOsDias = [];
+        let feriadosDoCalculo = []; // [{data, nome, emFimDeSemana}] — preenchido em calcularPrazo()
         let dataFinal = null;
         let visualizacaoCalendario = 'mensal'; // 'mensal' ou 'anual'
         let usarDiasUteis = true; // true = dias úteis, false = dias corridos
@@ -7804,6 +7912,7 @@
             let diasContados = 0;
             let dataAtual = new Date(inicio);
             todosOsDias = [];
+            feriadosDoCalculo = [];
             let contador = 0;
 
             while (diasContados < diasNum) {
@@ -7811,6 +7920,14 @@
 
                 const ehFds = ehFimDeSemana(dataAtual);
                 const ehFer = ehFeriado(dataAtual);
+
+                if (ehFer) {
+                    feriadosDoCalculo.push({
+                        data: new Date(dataAtual),
+                        nome: obterNomeFeriado(dataAtual) || 'Feriado/Ponto Facultativo',
+                        emFimDeSemana: ehFds
+                    });
+                }
 
                 let motivo = '';
                 let contado = false;
@@ -7969,6 +8086,30 @@
                                 <span class="resultado-hero-chip-label">Dias contados</span>
                                 <span class="resultado-hero-chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</span>
                             </div>
+                            ${(() => {
+                                if (feriadosDoCalculo.length === 0) return '';
+                                const label = usarDiasUteis ? 'Feriados pulados' : 'Feriados no período';
+                                const MAX_TOOLTIP = 5;
+                                const tooltipItems = feriadosDoCalculo
+                                    .slice(0, MAX_TOOLTIP)
+                                    .map(f => {
+                                        const d = f.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+                                        return `<span class="chip-feriados-tooltip-item">${escapeHtml(d)} — ${escapeHtml(f.nome)}</span>`;
+                                    }).join('');
+                                const mais = feriadosDoCalculo.length > MAX_TOOLTIP
+                                    ? `<span class="chip-feriados-tooltip-mais">+ ${feriadosDoCalculo.length - MAX_TOOLTIP} mais...</span>`
+                                    : '';
+                                return `
+                                    <div class="resultado-hero-chip chip-feriados" onclick="abrirModalFeriadosCalculo()" title="">
+                                        <span class="resultado-hero-chip-label">${label}</span>
+                                        <span class="resultado-hero-chip-value">${feriadosDoCalculo.length}</span>
+                                        <div class="chip-feriados-tooltip">
+                                            ${tooltipItems}
+                                            ${mais}
+                                            <span class="chip-feriados-tooltip-hint">Clique para ver todos</span>
+                                        </div>
+                                    </div>`;
+                            })()}
                         </div>
 
                         <!-- Indicador de dias restantes (ponto + texto) -->
@@ -12104,6 +12245,35 @@
             document.getElementById('modalDesarquivar').classList.remove('active');
         }
 
+        function abrirModalFeriadosCalculo() {
+            if (!feriadosDoCalculo.length) return;
+            const ehUteis = usarDiasUteis;
+            document.getElementById('modalFeriadosCalculoTitulo').textContent =
+                ehUteis ? 'Feriados pulados no cálculo' : 'Feriados no período calculado';
+            const subtitulo = ehUteis
+                ? 'Estes feriados ocorreram em dias úteis e não foram computados no prazo.'
+                : 'Estes feriados caíram dentro do período contado.';
+            const itens = feriadosDoCalculo.map(f => {
+                const dataFmt = f.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+                const semana  = f.data.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const badge   = f.emFimDeSemana ? '<span class="modal-feriados-badge">Fim de semana</span>' : '';
+                return `
+                    <li class="modal-feriados-item">
+                        <span class="modal-feriados-data">${escapeHtml(dataFmt)}<br><span style="font-weight:400;color:#9ca3af">${escapeHtml(semana)}</span></span>
+                        <span class="modal-feriados-nome">${escapeHtml(f.nome)}</span>
+                        ${badge}
+                    </li>`;
+            }).join('');
+            document.getElementById('modalFeriadosCalculoBody').innerHTML = `
+                <p class="modal-feriados-subtitulo">${escapeHtml(subtitulo)}</p>
+                <ul class="modal-feriados-lista">${itens}</ul>`;
+            document.getElementById('modalFeriadosCalculo').classList.add('active');
+        }
+
+        function fecharModalFeriadosCalculo() {
+            document.getElementById('modalFeriadosCalculo').classList.remove('active');
+        }
+
         function confirmarDesarquivar(novoStatus) {
             if (!prazoParaDesarquivar) return;
 
@@ -13361,6 +13531,7 @@
                 ['fecharModalInputTitulo',          'modalInputTitulo'],
                 ['fecharModalArquivamento',         'modalArquivamento'],
                 ['fecharModalDesarquivar',          'modalDesarquivar'],
+                ['fecharModalFeriadosCalculo',      'modalFeriadosCalculo'],
                 ['dispensarBoasVindas',             'modalBoasVindas'],
                 ['fecharModalExportarFeriados',     'modalExportarFeriados'],
                 ['fecharModalConfirmacao',          'modalConfirmacao'],
@@ -13558,6 +13729,24 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Feriados do Cálculo -->
+    <div id="modalFeriadosCalculo" class="modal-detalhes">
+        <div class="modal-detalhes-content" style="max-width: 520px;">
+            <div class="modal-detalhes-header">
+                <h2 class="modal-detalhes-titulo" id="modalFeriadosCalculoTitulo">Feriados no período</h2>
+                <button class="modal-detalhes-fechar" onclick="fecharModalFeriadosCalculo()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-detalhes-body" id="modalFeriadosCalculoBody"></div>
+            <div class="modal-detalhes-acoes">
+                <button class="btn btn-secondary" onclick="fecharModalFeriadosCalculo()">Fechar</button>
             </div>
         </div>
     </div>
