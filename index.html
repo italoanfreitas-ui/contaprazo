@@ -1187,7 +1187,6 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #f1f5f9;
         }
-        }
 
         /* Status de dias restantes — ponto + texto, sem pílula */
         .resultado-prazo-status {
@@ -10088,6 +10087,10 @@
                     <div class="chip-label">Dias contados</div>
                     <div class="chip-value">${diasContados} dias ${tipoDias.toLowerCase()}</div>
                 </div>
+                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
+                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
+                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
+                </div>` : ''}
             </div>
             ${diasVisuaisHTML}
             ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
@@ -13467,22 +13470,6 @@
                 }, CLOSE_MS);
             }
 
-            /* Fechar ao clicar no backdrop */
-            document.querySelectorAll(MODAL_SEL).forEach(function(modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target !== modal) return;
-                    if (!modal.classList.contains('active')) return;
-                    if (modal.dataset.noBackdropClose) return; // modal não pode ser fechado pelo backdrop
-                    var id = modal.id;
-                    if (pending[id]) clearTimeout(pending[id]);
-                    modal.classList.add('closing');
-                    pending[id] = setTimeout(function() {
-                        delete pending[id];
-                        modal.classList.remove('active', 'closing');
-                    }, CLOSE_MS);
-                });
-            });
-
             /* MutationObserver: scroll lock + cancelar timer quando modal reabre */
             function syncBodyScroll() {
                 var anyOpen = document.querySelector(
@@ -13505,11 +13492,32 @@
                 });
                 syncBodyScroll();
             });
-            document.querySelectorAll(MODAL_SEL).forEach(function(m) {
-                observer.observe(m, {
-                    attributes: true,
-                    attributeFilter: ['class'],
-                    attributeOldValue: true
+
+            /* Backdrop click + MutationObserver devem ser configurados após todo o DOM estar pronto,
+               pois há modais definidos depois deste <script> (ex.: #modalArquivamento, #modalFeriadosCalculo) */
+            document.addEventListener('DOMContentLoaded', function() {
+                /* Fechar ao clicar no backdrop */
+                document.querySelectorAll(MODAL_SEL).forEach(function(modal) {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target !== modal) return;
+                        if (!modal.classList.contains('active')) return;
+                        if (modal.dataset.noBackdropClose) return;
+                        var id = modal.id;
+                        if (pending[id]) clearTimeout(pending[id]);
+                        modal.classList.add('closing');
+                        pending[id] = setTimeout(function() {
+                            delete pending[id];
+                            modal.classList.remove('active', 'closing');
+                        }, CLOSE_MS);
+                    });
+                });
+
+                document.querySelectorAll(MODAL_SEL).forEach(function(m) {
+                    observer.observe(m, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                        attributeOldValue: true
+                    });
                 });
             });
 
@@ -13737,7 +13745,10 @@
     <div id="modalFeriadosCalculo" class="modal-detalhes">
         <div class="modal-detalhes-content" style="max-width: 520px;">
             <div class="modal-detalhes-header">
-                <h2 class="modal-detalhes-titulo" id="modalFeriadosCalculoTitulo">Feriados no período</h2>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    <h2 class="modal-detalhes-titulo" id="modalFeriadosCalculoTitulo">Feriados no período</h2>
+                </div>
                 <button class="modal-detalhes-fechar" onclick="fecharModalFeriadosCalculo()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
