@@ -1142,83 +1142,6 @@
         .chip-feriados:hover .chip-feriados-tooltip { display: block; }
 
         /* Modal de feriados do cálculo */
-        .modal-feriados-lista {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .modal-feriados-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .modal-feriados-item:last-child { border-bottom: none; }
-        .modal-feriados-num {
-            flex-shrink: 0;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: white;
-            font-size: 0.62rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 2px;
-        }
-        .modal-feriados-content {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            flex: 1;
-            min-width: 0;
-        }
-        .modal-feriados-meta {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .modal-feriados-data {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #2563eb;
-            white-space: nowrap;
-        }
-        .modal-feriados-semana {
-            font-size: 0.72rem;
-            color: #9ca3af;
-            text-transform: capitalize;
-        }
-        .modal-feriados-nome {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #111827;
-            line-height: 1.35;
-        }
-        .modal-feriados-badge {
-            flex-shrink: 0;
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: #eff6ff;
-            color: #3b82f6;
-            border: 1px solid #bfdbfe;
-            border-radius: 4px;
-            padding: 2px 6px;
-        }
-        .modal-feriados-link {
-            font-size: 0.7rem;
-            color: #6b7280;
-            text-decoration: underline;
-            text-underline-offset: 2px;
-            transition: color 0.15s;
-        }
-        .modal-feriados-link:hover { color: #2563eb; }
         .modal-feriados-subtitulo {
             font-size: 0.8rem;
             color: #6b7280;
@@ -12449,31 +12372,47 @@
             const subtitulo = ehUteis
                 ? 'Estes feriados ocorreram em dias úteis e não foram computados no prazo.'
                 : 'Estes feriados caíram dentro do período contado.';
+
+            const months = ['janeiro','fevereiro','março','abril','maio','junho',
+                            'julho','agosto','setembro','outubro','novembro','dezembro'];
+            const weekdays = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira',
+                              'Quinta-feira','Sexta-feira','Sábado'];
+
             const itens = feriadosDoCalculo.map((f, i) => {
-                const dataFmt = f.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-                const semana  = f.data.toLocaleDateString('pt-BR', { weekday: 'long' });
-                const badge   = f.emFimDeSemana ? '<span class="modal-feriados-badge">Fim de semana</span>' : '';
+                const isLast  = i === feriadosDoCalculo.length - 1;
+                const day     = f.data.getDate().toString().padStart(2, '0');
+                const dateStr = `${day} de ${months[f.data.getMonth()]} de ${f.data.getFullYear()}`;
+                const weekday = weekdays[f.data.getDay()];
                 const link    = obterLinkFeriado(f.data);
-                const linkHTML = link
-                    ? `<a class="modal-feriados-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">Ver ato normativo ↗</a>`
+                const descText = `${escapeHtml(f.nome)} — suspensão de prazo.`;
+                const desc = link
+                    ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="timeline-desc-link">${descText}</a>`
+                    : descText;
+                const linkPill = link
+                    ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="timeline-link-pill" title="Ver ato normativo">↗</a>`
                     : '';
+                const connector = !isLast ? '<div class="timeline-connector"></div>' : '';
                 return `
-                    <li class="modal-feriados-item">
-                        <span class="modal-feriados-num">${i + 1}</span>
-                        <div class="modal-feriados-content">
-                            <div class="modal-feriados-meta">
-                                <span class="modal-feriados-data">${escapeHtml(dataFmt)}</span>
-                                <span class="modal-feriados-semana">${escapeHtml(semana)}</span>
-                                ${badge}
-                            </div>
-                            <span class="modal-feriados-nome">${escapeHtml(f.nome)}</span>
-                            ${linkHTML}
+                    <div class="timeline-item timeline-item-feriado">
+                        <div class="timeline-track">
+                            <div class="timeline-badge">✖</div>
+                            ${connector}
                         </div>
-                    </li>`;
+                        <div class="timeline-content">
+                            <div class="timeline-date-row">
+                                <span class="timeline-date-text">${escapeHtml(dateStr)}</span>
+                                <span class="timeline-weekday-pill">${escapeHtml(weekday)}</span>
+                                <span class="timeline-feriado-pill">Feriado</span>
+                                ${linkPill}
+                            </div>
+                            <div class="timeline-desc">${desc}</div>
+                        </div>
+                    </div>`;
             }).join('');
+
             document.getElementById('modalFeriadosCalculoBody').innerHTML = `
                 <p class="modal-feriados-subtitulo">${escapeHtml(subtitulo)}</p>
-                <ul class="modal-feriados-lista">${itens}</ul>`;
+                <div>${itens}</div>`;
             document.getElementById('modalFeriadosCalculo').classList.add('active');
         }
 
