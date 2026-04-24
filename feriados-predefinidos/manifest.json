@@ -28,8 +28,13 @@
       "links": [
         {
           "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=41093&tmp.secao=9",
-          "rotulo": "Decretos nº 949-951/2024 e 1050/2025",
+          "rotulo": "Decreto nº 1050/2025",
           "ate": "2026-12-31"
+        },
+        {
+          "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=38639&tmp.secao=9",
+          "rotulo": "Decretos nº 949-951/2024",
+          "ate": "2025-12-31"
         }
       ]
     },
