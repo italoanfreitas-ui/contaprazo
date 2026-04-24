@@ -1578,13 +1578,20 @@
             color: #374151;
         }
 
+        .conjunto-obs-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 3px;
+        }
+
         .conjunto-obs-link {
-            font-weight: 600;
-            color: #374151;
+            font-size: 0.78rem;
+            color: #9ca3af;
             text-decoration: underline;
             text-underline-offset: 2px;
             text-decoration-color: #d1d5db;
-            cursor: pointer;
+            transition: color 0.15s, text-decoration-color 0.15s;
         }
 
         .conjunto-obs-link:hover {
@@ -6428,6 +6435,28 @@
     </div>
 
     <!-- Modal de migração forçada de dados legados -->
+    <!-- Modal de migração: atualização para suporte a múltiplos atos normativos por conjunto -->
+    <div class="modal" id="modalMigracaoLinks" data-no-backdrop-close="true">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                </span>
+                <span class="modal-header-title">Atualização necessária</span>
+            </div>
+            <div class="modal-body" style="line-height: 1.6;">
+                <p style="margin:0 0 10px;">O aplicativo passou a suportar <strong>múltiplos atos normativos por conjunto de feriados</strong>, permitindo que conjuntos de mais de um ano referenciem cada decreto, portaria ou resolução individualmente.</p>
+                <p style="margin:0 0 10px;">Para isso, os conjuntos que você já importou precisam ser <strong>re-baixados do GitHub</strong> com os novos metadados. Nenhuma data salva nos seus perfis será alterada.</p>
+                <p style="margin:0 0 14px; color:#6b7280; font-size:0.9em;">O aplicativo será recarregado ao final. É necessário concordar para garantir o funcionamento correto do app.</p>
+                <div id="migracaoLinksStatus" style="display:none; padding: 10px 12px; border-radius: 8px; background: #f0fdf4; color: #15803d; font-size: 0.9em; border: 1px solid #bbf7d0;"></div>
+                <div id="migracaoLinksErro" style="display:none; padding: 10px 12px; border-radius: 8px; background: #fef2f2; color: #b91c1c; font-size: 0.9em; border: 1px solid #fecaca;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="btnExecutarMigracaoLinks" onclick="executarMigracaoLinks()">Atualizar conjuntos</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="modalMigracaoDados" data-no-backdrop-close="true">
         <div class="modal-content" style="max-width: 460px;">
             <div class="modal-header">
@@ -7448,11 +7477,26 @@
         }
 
         // Retorna o link do ato normativo associado ao feriado personalizado, se disponível
+        // Normaliza: retorna sempre um array [{url, rotulo, ate?}] independente do formato armazenado
+        function obterLinksDoConjunto(c) {
+            if (Array.isArray(c.links) && c.links.length > 0) return c.links;
+            if (c.link) return [{ url: c.link, rotulo: 'Ver ato normativo' }];
+            return [];
+        }
+
         function obterLinkFeriado(data) {
             const dataStr = formatarDataCompleta(data);
             const arquivo = feriadosArquivoMap.get(dataStr);
             if (!arquivo) return null;
-            return obterMetadataConjuntos().find(c => c.arquivo === arquivo)?.link || null;
+            const conjunto = obterMetadataConjuntos().find(c => c.arquivo === arquivo);
+            if (!conjunto) return null;
+            const links = obterLinksDoConjunto(conjunto);
+            if (links.length === 0) return null;
+            if (links.length === 1) return links[0].url;
+            // Múltiplos links: seleciona pelo campo 'ate' (primeiro cujo 'ate' >= data do feriado)
+            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
+            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
+            return (match || sorted[sorted.length - 1]).url;
         }
 
         // Obtém nome de feriado de todas as fontes possíveis
@@ -8038,15 +8082,19 @@
                 if (!usarDiasUteis) return '';
                 const conjuntos = obterMetadataConjuntos();
                 if (!conjuntos || conjuntos.length === 0) return '';
-                const itens = conjuntos.map(c => `
+                const itens = conjuntos.map(c => {
+                    const links = obterLinksDoConjunto(c);
+                    const linksHTML = links.length > 0
+                        ? `<div class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</div>`
+                        : '';
+                    return `
                     <div class="conjunto-obs-item">
-                        ${c.link
-                            ? `<a class="conjunto-obs-link" href="${escapeHtml(c.link)}" target="_blank" rel="noopener" title="Ver ato normativo: ${escapeHtml(c.nome)}">${escapeHtml(c.nome)}</a>`
-                            : `<span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>`
-                        }
+                        <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
                         ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
+                        ${linksHTML}
                     </div>
-                `).join('');
+                `;
+                }).join('');
                 return `
                     <div class="conjuntos-obs">
                         <span class="conjuntos-obs-label">Feriados online utilizados:</span>
@@ -8950,7 +8998,7 @@
                         nome: conjuntoPendenteMetadata.nome,
                         arquivo: conjuntoPendenteMetadata.arquivo,
                         descricao: conjuntoPendenteMetadata.descricao || '',
-                        link: conjuntoPendenteMetadata.link || '',
+                        links: conjuntoPendenteMetadata.links || [],
                         dataAtualizacao: conjuntoPendenteMetadata.dataAtualizacao,
                         dataImportacao: new Date().toISOString()
                     }]));
@@ -8960,7 +9008,7 @@
                         conjuntoPendenteMetadata.nome,
                         conjuntoPendenteMetadata.arquivo,
                         conjuntoPendenteMetadata.descricao || '',
-                        conjuntoPendenteMetadata.link || '',
+                        conjuntoPendenteMetadata.links || [],
                         conjuntoPendenteMetadata.dataAtualizacao
                     );
                 }
@@ -9054,6 +9102,10 @@
                 });
                 const html = conjuntosOrdenados.map(conjunto => {
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
+                    const linksConj = obterLinksDoConjunto(conjunto);
+                    const linksHTML = linksConj.map(l =>
+                        `<a class="item-predefinido-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
+                    ).join('');
                     return `
                         <div class="item-predefinido"
                              data-url="${escapeHtml(urlArquivo)}"
@@ -9061,12 +9113,12 @@
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
                              data-descricao="${escapeHtml(conjunto.descricao || '')}"
-                             data-link="${escapeHtml(conjunto.link || '')}">
+                             data-links="${escapeHtml(JSON.stringify(linksConj))}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-footer">
                                 <span class="item-predefinido-data">Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</span>
-                                ${conjunto.link ? `<a class="item-predefinido-link" href="${escapeHtml(conjunto.link)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver ato normativo ↗</a>` : ''}
+                                ${linksHTML}
                             </div>
                         </div>
                     `;
@@ -9083,7 +9135,7 @@
                             this.dataset.arquivo,
                             this.dataset.dataAtualizacao,
                             this.dataset.descricao || '',
-                            this.dataset.link || ''
+                            JSON.parse(this.dataset.links || '[]')
                         );
                     });
                 });
@@ -9223,6 +9275,10 @@
                 // 4. Renderiza a lista
                 container.innerHTML = conjuntos.map(c => {
                     const ok = !!_feriadosCarregados[c.arquivo];
+                    const linksConj = obterLinksDoConjunto(c);
+                    const linksWelcomeHTML = linksConj.map(l =>
+                        `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;transition:color 0.15s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#9ca3af'" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
+                    ).join('');
                     return `
                         <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
                             ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
@@ -9232,7 +9288,7 @@
                                 data-nome="${escapeHtml(c.nome)}"
                                 data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
                                 data-descricao="${escapeHtml(c.descricao || '')}"
-                                data-link="${escapeHtml(c.link || '')}"
+                                data-links="${escapeHtml(JSON.stringify(linksConj))}"
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
@@ -9240,7 +9296,7 @@
                                 <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
                                 <div style="font-size:11px;color:#9ca3af;font-style:italic;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                                     <span>Atualizado em: ${escapeHtml(c.dataAtualizacao)}</span>
-                                    ${c.link ? `<a href="${escapeHtml(c.link)}" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;transition:color 0.15s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#9ca3af'" onclick="event.stopPropagation()">Ver ato normativo ↗</a>` : ''}
+                                    ${linksWelcomeHTML}
                                 </div>
                             </div>
                         </label>
@@ -9327,7 +9383,7 @@
                         nome: cb.dataset.nome,
                         arquivo: cb.dataset.arquivo,
                         descricao: cb.dataset.descricao || '',
-                        link: cb.dataset.link || '',
+                        links: JSON.parse(cb.dataset.links || '[]'),
                         dataAtualizacao: cb.dataset.dataAtualizacao,
                         dataImportacao: new Date().toISOString()
                     }],
@@ -9357,7 +9413,7 @@
             btn.textContent = textoOriginal;
         }
 
-        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', link = '') {
+        async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', links = []) {
             const listaPredefinidos = document.getElementById('listaPredefinidos');
             mostrarMensagemLoading(listaPredefinidos, `⏳ Baixando ${nome}...`);
 
@@ -9389,7 +9445,7 @@
                         nome: nome,
                         arquivo: arquivo,
                         descricao: descricao || '',
-                        link: link || '',
+                        links: Array.isArray(links) ? links : [],
                         dataAtualizacao: dataAtualizacao
                     };
                 } else {
@@ -9430,19 +9486,22 @@
             }
         }
 
-        function salvarMetadataConjunto(nome, arquivo, descricao, link, dataAtualizacao) {
+        function salvarMetadataConjunto(nome, arquivo, descricao, links, dataAtualizacao) {
             try {
                 const metadata = obterMetadataConjuntos();
 
                 // Remove entrada anterior se existir (deduplicação por arquivo)
                 const novaMetadata = metadata.filter(item => item.arquivo !== arquivo);
 
-                // Adiciona nova entrada
+                // Normaliza: aceita string legada (retrocompat) ou array
+                const linksNorm = Array.isArray(links) ? links
+                    : (links ? [{ url: links, rotulo: 'Ver ato normativo' }] : []);
+
                 novaMetadata.push({
                     nome: nome,
                     arquivo: arquivo,
                     descricao: descricao || '',
-                    link: link || '',
+                    links: linksNorm,
                     dataAtualizacao: dataAtualizacao,
                     dataImportacao: new Date().toISOString()
                 });
@@ -9453,13 +9512,87 @@
             }
         }
 
+        // Detecta se os conjuntos importados ainda usam o campo legado `link` (string) em vez de `links` (array).
+        // Se sim, e houver conjuntos importados, exibe modal de migração obrigatória.
+        function verificarNecessidadeMigracaoLinks() {
+            if (localStorage.getItem('contaprazo_migracao_links_ok')) return;
+            const temConjuntosGlobal = obterMetadataConjuntos().length > 0;
+            const temConjuntosPerfil = perfisData.some(p => p.conjuntosImportados && p.conjuntosImportados.length > 0);
+            if (!temConjuntosGlobal && !temConjuntosPerfil) {
+                localStorage.setItem('contaprazo_migracao_links_ok', '1');
+                return;
+            }
+            document.getElementById('modalMigracaoLinks').classList.add('active');
+        }
+
+        async function executarMigracaoLinks() {
+            const btn = document.getElementById('btnExecutarMigracaoLinks');
+            const statusEl = document.getElementById('migracaoLinksStatus');
+            const erroEl = document.getElementById('migracaoLinksErro');
+
+            btn.disabled = true;
+            btn.textContent = 'Atualizando…';
+            erroEl.style.display = 'none';
+            statusEl.style.display = '';
+            statusEl.textContent = 'Buscando dados dos conjuntos no GitHub…';
+
+            try {
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const resp = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+                const manifest = await resp.json();
+                if (!manifest.conjuntos || manifest.conjuntos.length === 0) throw new Error('Manifest vazio ou inválido.');
+
+                const manifestMap = new Map();
+                manifest.conjuntos.forEach(c => manifestMap.set(c.arquivo, c));
+
+                statusEl.textContent = 'Atualizando metadados dos conjuntos…';
+
+                function normalizarEntrada(existente) {
+                    const entry = manifestMap.get(existente.arquivo);
+                    const links = entry ? obterLinksDoConjunto(entry) : obterLinksDoConjunto(existente);
+                    return {
+                        nome: entry ? entry.nome : existente.nome,
+                        arquivo: existente.arquivo,
+                        descricao: entry ? (entry.descricao || '') : (existente.descricao || ''),
+                        links,
+                        dataAtualizacao: entry ? entry.dataAtualizacao : existente.dataAtualizacao,
+                        dataImportacao: existente.dataImportacao || new Date().toISOString()
+                    };
+                }
+
+                const globalMetadata = obterMetadataConjuntos();
+                if (globalMetadata.length > 0) {
+                    localStorage.setItem('conjuntosPredefinidosImportados',
+                        JSON.stringify(globalMetadata.map(normalizarEntrada)));
+                }
+
+                perfisData.forEach(perfil => {
+                    if (!perfil.conjuntosImportados || perfil.conjuntosImportados.length === 0) return;
+                    perfil.conjuntosImportados = perfil.conjuntosImportados.map(normalizarEntrada);
+                });
+                salvarPerfisNoLocalStorage();
+
+                statusEl.textContent = 'Concluído! Recarregando o aplicativo…';
+                localStorage.setItem('contaprazo_migracao_links_ok', '1');
+                setTimeout(() => location.reload(), 900);
+
+            } catch (e) {
+                console.error('Erro na migração de links:', e);
+                erroEl.style.display = '';
+                erroEl.textContent = `Erro: ${e.message}. Verifique sua conexão e tente novamente.`;
+                btn.disabled = false;
+                btn.textContent = 'Tentar novamente';
+            }
+        }
+
         // Detecta se algum perfil ou os feriados globais têm entradas sem campo `arquivo`.
         // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
         // A flag 'contaprazo_migracao_arquivo_ok' impede re-disparo após a migração ter rodado,
         // evitando loop infinito causado por feriados adicionados manualmente (sem arquivo-fonte).
         function verificarNecessidadeMigracao() {
             if (localStorage.getItem('contaprazo_migracao_arquivo_ok')) return;
-            const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
+            const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && obterLinksDoConjunto(c).length > 0);
             if (conjuntos.length === 0) return; // nada a resolver
 
             const perfilTemLegado = perfisData.some(p =>
@@ -9504,7 +9637,7 @@
             statusEl.textContent = 'Buscando dados dos conjuntos online…';
 
             try {
-                const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && c.link);
+                const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && obterLinksDoConjunto(c).length > 0);
 
                 // Monta mapa: arquivo → Set<data ISO>
                 const conjuntoDateMap = new Map();
@@ -9833,6 +9966,10 @@
                     const urlArquivo = `${GITHUB_RAW_BASE_URL}/${conjunto.arquivo}`;
                     const isAtualizado = arquivosAtualizados.includes(conjunto.arquivo);
                     const badgeAtualizado = isAtualizado ? '<span style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 8px;">ATUALIZADO</span>' : '';
+                    const linksConj = obterLinksDoConjunto(conjunto);
+                    const linksHTML = linksConj.map(l =>
+                        `<a class="item-predefinido-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
+                    ).join('');
 
                     return `
                         <div class="item-predefinido"
@@ -9840,13 +9977,14 @@
                              data-nome="${escapeHtml(conjunto.nome)}"
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
-                             data-link="${escapeHtml(conjunto.link || '')}"
+                             data-descricao="${escapeHtml(conjunto.descricao || '')}"
+                             data-links="${escapeHtml(JSON.stringify(linksConj))}"
                              style="${isAtualizado ? 'border-left: 4px solid #16a34a;' : ''}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}${badgeAtualizado}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-footer">
                                 <span class="item-predefinido-data">Atualizado em: ${escapeHtml(conjunto.dataAtualizacao)}</span>
-                                ${conjunto.link ? `<a class="item-predefinido-link" href="${escapeHtml(conjunto.link)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Ver ato normativo ↗</a>` : ''}
+                                ${linksHTML}
                             </div>
                         </div>
                     `;
@@ -9860,7 +9998,9 @@
                             this.dataset.url,
                             this.dataset.nome,
                             this.dataset.arquivo,
-                            this.dataset.dataAtualizacao
+                            this.dataset.dataAtualizacao,
+                            this.dataset.descricao || '',
+                            JSON.parse(this.dataset.links || '[]')
                         );
                     });
                 });
@@ -9960,12 +10100,14 @@
             if (!conjuntos || conjuntos.length === 0) return '';
 
             const itensHTML = conjuntos.map(c => {
-                // Nome: link clicável apenas no PDF (abre em browser); PNG é bitmap, sem hiperlinks
-                const nomeHTML = (contexto === 'print' && c.link)
-                    ? `<a href="${escapeHtml(c.link)}" style="font-weight:600; color:#374151; text-decoration:underline; text-underline-offset:2px;" title="Ver ato normativo">${escapeHtml(c.nome)}</a>`
-                    : `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
+                const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
-                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}</div>`;
+                const links = obterLinksDoConjunto(c);
+                // Links clicáveis apenas no PDF (PNG é bitmap, sem hiperlinks)
+                const linksHTML = contexto === 'print' && links.length > 0
+                    ? ' ' + links.map(l => `<a href="${escapeHtml(l.url)}" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;font-size:11px;" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join(' · ')
+                    : '';
+                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linksHTML}</div>`;
             }).join('');
 
             return `
@@ -10938,13 +11080,17 @@
             const perfil = perfilAtivoId ? perfisData.find(p => p.id === perfilAtivoId)?.nome : null;
             if (perfil) detalhes += `\nPerfil de feriados: ${perfil}`;
 
-            // Conjuntos importados com link de ato normativo
+            // Conjuntos importados com links de atos normativos
             if (usarDiasUteis) {
                 const conjuntos = obterMetadataConjuntos();
-                const comLink = conjuntos.filter(c => c.link);
-                if (comLink.length > 0) {
+                const comLinks = conjuntos.filter(c => obterLinksDoConjunto(c).length > 0);
+                if (comLinks.length > 0) {
                     detalhes += '\n\nAtos normativos consultados:';
-                    comLink.forEach(c => { detalhes += `\n· ${c.nome}: ${c.link}`; });
+                    comLinks.forEach(c => {
+                        obterLinksDoConjunto(c).forEach(l => {
+                            detalhes += `\n· ${c.nome} — ${l.rotulo || 'Ver ato normativo'}: ${l.url}`;
+                        });
+                    });
                 }
             }
 
@@ -13105,6 +13251,7 @@
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
         atualizarEstadoEditorPersonalizados();
+        verificarNecessidadeMigracaoLinks(); // migração: link string → links array (múltiplos atos normativos)
         verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
 
         // Função para scroll suave ao topo

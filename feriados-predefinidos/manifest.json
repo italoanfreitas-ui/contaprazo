@@ -1,5 +1,5 @@
 {
-  "versao": "1.0",
+  "versao": "2.0",
   "conjuntos": [
     {
       "id": "pmvc-2026",
@@ -9,7 +9,13 @@
       "descricao": "Suspensões conforme Decreto Municipal nº 24.007, de 26 de novembro de 2025 - Calendário oficial de feriados",
       "dataAtualizacao": "18-12-2025",
       "ano": "2026",
-      "link": "https://dom.pmvc.ba.gov.br/diarios/previsualizar/OV6M9ljG/54"
+      "links": [
+        {
+          "url": "https://dom.pmvc.ba.gov.br/diarios/previsualizar/OV6M9ljG/54",
+          "rotulo": "Decreto Municipal nº 24.007/2025",
+          "ate": "2026-12-31"
+        }
+      ]
     },
     {
       "id": "tjba-2025-2026",
@@ -19,7 +25,18 @@
       "descricao": "Suspensões de acordo com os Decretos Judiciários nº 949, 950 e 951, de 12 de dezembro de 2024, e Decreto Judiciário nº 1050, de 04 de dezembro de 2025",
       "dataAtualizacao": "04-02-2026",
       "ano": "2025-2026",
-      "link": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=41093&tmp.secao=9"
+      "links": [
+        {
+          "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=41093&tmp.secao=9",
+          "rotulo": "Decreto nº 1050/2025",
+          "ate": "2026-12-31"
+        },
+        {
+          "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=38639&tmp.secao=9",
+          "rotulo": "Decretos nº 949-951/2024",
+          "ate": "2025-12-31"
+        }
+      ]
     },
     {
       "id": "trt5-2025-2026",
@@ -29,7 +46,13 @@
       "descricao": "Suspensões de acordo com a Resolução administrativa TRT5 nº 037, de 10 de junho 2025",
       "dataAtualizacao": "24-02-2026",
       "ano": "2025-2026",
-      "link": "https://www.trt5.jus.br/sites/default/files/sistema/normas/2026-01/0037-2025_aprova_calendario_exercicio_de_2026_0.pdf"
+      "links": [
+        {
+          "url": "https://www.trt5.jus.br/sites/default/files/sistema/normas/2026-01/0037-2025_aprova_calendario_exercicio_de_2026_0.pdf",
+          "rotulo": "Resolução TRT5 nº 037/2025",
+          "ate": "2026-12-31"
+        }
+      ]
     },
     {
       "id": "trf1-2025-2026",
@@ -39,7 +62,13 @@
       "descricao": "Suspensões de acordo com a Portaria PRESI nº 5, de 12 de janeiro 2026, do TRF1",
       "dataAtualizacao": "26-02-2026",
       "ano": "2025-2026",
-      "link": "https://www.trf1.jus.br/sjap/conteudo/Portaria%20Presi%205%20-%20Divulga%20os%20dias%20de%20feriados%20nacionais%20e%20os%20dias%20de%20ponto%20facultativo%20na%20JF1.pdf"
+      "links": [
+        {
+          "url": "https://www.trf1.jus.br/sjap/conteudo/Portaria%20Presi%205%20-%20Divulga%20os%20dias%20de%20feriados%20nacionais%20e%20os%20dias%20de%20ponto%20facultativo%20na%20JF1.pdf",
+          "rotulo": "Portaria PRESI nº 5/2026",
+          "ate": "2026-12-31"
+        }
+      ]
     },
     {
       "id": "stj-2025-2026",
@@ -49,7 +78,13 @@
       "descricao": "Suspensões de acordo com a Portaria STJ/GDG nº 1010, de 24 de dezembro de 2025",
       "dataAtualizacao": "08-04-2026",
       "ano": "2025-2026",
-      "link": "https://bdjur.stj.jus.br/server/api/core/bitstreams/6257b5ff-8c9d-408f-a7d5-c6d7064af8eb/content"
+      "links": [
+        {
+          "url": "https://bdjur.stj.jus.br/server/api/core/bitstreams/6257b5ff-8c9d-408f-a7d5-c6d7064af8eb/content",
+          "rotulo": "Portaria STJ/GDG nº 1010/2025",
+          "ate": "2026-12-31"
+        }
+      ]
     },
     {
       "id": "stf-2025-2026",
@@ -59,7 +94,13 @@
       "descricao": "Suspensões de acordo com a Portaria nº 189, de 26 de setembro de 2025",
       "dataAtualizacao": "08-04-2026",
       "ano": "2025-2026",
-      "link": "https://atosnormativos.stf.jus.br/visualizador/4rgBq5kBmFdZiXoIf1Wi"
+      "links": [
+        {
+          "url": "https://atosnormativos.stf.jus.br/visualizador/4rgBq5kBmFdZiXoIf1Wi",
+          "rotulo": "Portaria STF nº 189/2025",
+          "ate": "2026-12-31"
+        }
+      ]
     }
   ]
 }
