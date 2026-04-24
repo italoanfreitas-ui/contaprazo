@@ -1084,24 +1084,24 @@
 
         /* Chip de feriados — variante interativa (clicável) */
         .chip-feriados {
-            border-color: #fed7aa;
+            border-color: #bfdbfe;
             cursor: pointer;
             position: relative;
             transition: box-shadow 0.15s, border-color 0.15s;
         }
         .chip-feriados:hover {
-            border-color: #fb923c;
-            box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
+            border-color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
         }
-        .chip-feriados .resultado-hero-chip-label { color: #ea580c; }
-        .chip-feriados .resultado-hero-chip-value { color: #c2410c; }
+        .chip-feriados .resultado-hero-chip-label { color: #2563eb; }
+        .chip-feriados .resultado-hero-chip-value { color: #1d4ed8; }
 
-        /* Tooltip do chip de feriados */
+        /* Tooltip do chip de feriados — position:fixed para escapar de overflow:hidden do hero */
         .chip-feriados-tooltip {
             display: none;
-            position: absolute;
-            bottom: calc(100% + 10px);
-            left: 50%;
+            position: fixed;
+            bottom: auto;
+            left: 0;
             transform: translateX(-50%);
             background: #1e293b;
             color: #f1f5f9;
@@ -1111,7 +1111,7 @@
             border-radius: 8px;
             white-space: nowrap;
             box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-            z-index: 500;
+            z-index: 9999;
             pointer-events: none;
         }
         .chip-feriados-tooltip::after {
@@ -1150,28 +1150,57 @@
         .modal-feriados-item {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 10px 0;
+            gap: 10px;
+            padding: 11px 0;
             border-bottom: 1px solid #f1f5f9;
         }
         .modal-feriados-item:last-child { border-bottom: none; }
-        .modal-feriados-data {
+        .modal-feriados-num {
             flex-shrink: 0;
-            font-size: 0.75rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #9ca3af;
+            font-size: 0.62rem;
             font-weight: 700;
-            color: #6b7280;
-            width: 110px;
-            padding-top: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+        }
+        .modal-feriados-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+        }
+        .modal-feriados-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .modal-feriados-data {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #374151;
+            white-space: nowrap;
+        }
+        .modal-feriados-semana {
+            font-size: 0.72rem;
+            color: #9ca3af;
+            text-transform: capitalize;
         }
         .modal-feriados-nome {
             font-size: 0.875rem;
             font-weight: 600;
             color: #1f2937;
-            flex: 1;
         }
         .modal-feriados-badge {
             flex-shrink: 0;
-            font-size: 0.65rem;
+            font-size: 0.63rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -1180,6 +1209,14 @@
             border-radius: 4px;
             padding: 2px 6px;
         }
+        .modal-feriados-link {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.15s;
+        }
+        .modal-feriados-link:hover { color: #3b82f6; }
         .modal-feriados-subtitulo {
             font-size: 0.8rem;
             color: #6b7280;
@@ -12410,15 +12447,26 @@
             const subtitulo = ehUteis
                 ? 'Estes feriados ocorreram em dias úteis e não foram computados no prazo.'
                 : 'Estes feriados caíram dentro do período contado.';
-            const itens = feriadosDoCalculo.map(f => {
+            const itens = feriadosDoCalculo.map((f, i) => {
                 const dataFmt = f.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
                 const semana  = f.data.toLocaleDateString('pt-BR', { weekday: 'long' });
                 const badge   = f.emFimDeSemana ? '<span class="modal-feriados-badge">Fim de semana</span>' : '';
+                const link    = obterLinkFeriado(f.data);
+                const linkHTML = link
+                    ? `<a class="modal-feriados-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">Ver ato normativo ↗</a>`
+                    : '';
                 return `
                     <li class="modal-feriados-item">
-                        <span class="modal-feriados-data">${escapeHtml(dataFmt)}<br><span style="font-weight:400;color:#9ca3af">${escapeHtml(semana)}</span></span>
-                        <span class="modal-feriados-nome">${escapeHtml(f.nome)}</span>
-                        ${badge}
+                        <span class="modal-feriados-num">${i + 1}</span>
+                        <div class="modal-feriados-content">
+                            <div class="modal-feriados-meta">
+                                <span class="modal-feriados-data">${escapeHtml(dataFmt)}</span>
+                                <span class="modal-feriados-semana">${escapeHtml(semana)}</span>
+                                ${badge}
+                            </div>
+                            <span class="modal-feriados-nome">${escapeHtml(f.nome)}</span>
+                            ${linkHTML}
+                        </div>
                     </li>`;
             }).join('');
             document.getElementById('modalFeriadosCalculoBody').innerHTML = `
@@ -13251,6 +13299,17 @@
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
         atualizarEstadoEditorPersonalizados();
+        // Posiciona tooltip do chip de feriados com coordenadas fixas para escapar de overflow:hidden
+        document.addEventListener('mouseenter', function(e) {
+            const chip = e.target.closest('.chip-feriados');
+            if (!chip) return;
+            const tooltip = chip.querySelector('.chip-feriados-tooltip');
+            if (!tooltip) return;
+            const rect = chip.getBoundingClientRect();
+            tooltip.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+        }, true);
+
         verificarNecessidadeMigracaoLinks(); // migração: link string → links array (múltiplos atos normativos)
         verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
 
@@ -13901,7 +13960,7 @@
         <div class="modal-detalhes-content" style="max-width: 520px;">
             <div class="modal-detalhes-header">
                 <div style="display:flex;align-items:center;gap:10px;">
-                    <span class="modal-header-icon modal-icon-amber">
+                    <span class="modal-header-icon modal-icon-blue">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                     </span>
                     <h2 class="modal-detalhes-titulo" id="modalFeriadosCalculoTitulo">Feriados no período</h2>
