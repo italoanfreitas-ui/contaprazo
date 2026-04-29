@@ -9296,83 +9296,90 @@
                 // Cria os novos imediatamente
                 if (novos.length > 0) _executarCriacaoPerfis(novos, false);
 
-                // Pergunta sobre os existentes
-                const nomes = existentes.map(cb => `<strong>${escapeHtml(cb.dataset.id2.substring(0, MAX_NOME_PERFIL))}</strong>`).join(', ');
+                // Pergunta sobre os existentes — captura a referência snapshot para o callback
+                const existentesSnapshot = existentes.slice();
+                const nomes = existentesSnapshot.map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`).join(', ');
                 criarToast({
                     tipo: 'aviso',
-                    titulo: existentes.length === 1 ? 'Perfil já existe' : `${existentes.length} perfis já existem`,
-                    mensagemHTML: `${nomes} já ${existentes.length === 1 ? 'existe' : 'existem'}. Deseja sobrescrever com os dados online mais recentes?`,
+                    titulo: existentesSnapshot.length === 1 ? 'Perfil já existe' : `${existentesSnapshot.length} perfis já existem`,
+                    mensagemHTML: `${nomes} já ${existentesSnapshot.length === 1 ? 'existe' : 'existem'}. Deseja sobrescrever com os dados online mais recentes?`,
                     autoFechar: false,
                     botaoTexto: 'Sim, sobrescrever',
-                    botaoCallback: () => criarPerfisDosConjuntos(true),
+                    botaoCallback: () => _executarCriacaoPerfis(existentesSnapshot.filter(cb => cb.checked), true),
                     botaoSecundarioTexto: 'Não, manter'
                 });
                 return;
             }
 
-            // forceOverwrite=true: processa todos (sobrescreve existentes)
+            // forceOverwrite=true: processa todos os selecionados (sobrescreve existentes)
             _executarCriacaoPerfis(forceOverwrite ? checkboxes : novos, forceOverwrite);
         }
 
         function _executarCriacaoPerfis(checkboxes, sobrescrever) {
-            if (checkboxes.length === 0) return;
+            if (!checkboxes || checkboxes.length === 0) return;
 
             const btn = document.getElementById('btnCriarPerfisSelecionados');
+            if (!btn) return;
             btn.disabled = true;
             const textoOriginal = btn.textContent;
             btn.textContent = 'Criando perfis...';
 
-            let criados = 0, sobrescritos = 0, semDados = 0;
+            try {
+                let criados = 0, sobrescritos = 0, semDados = 0;
 
-            for (const cb of checkboxes) {
-                const nomePerfil = cb.dataset.id2.substring(0, MAX_NOME_PERFIL);
-                const dados = _feriadosCarregados[cb.dataset.arquivo];
-                if (!dados || dados.feriados.length === 0) { semDados++; continue; }
+                for (const cb of checkboxes) {
+                    const nomePerfil = (cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL);
+                    const dados = _feriadosCarregados[cb.dataset.arquivo];
+                    if (!dados || !Array.isArray(dados.feriados) || dados.feriados.length === 0) { semDados++; continue; }
 
-                const existingIdx = perfisData.findIndex(p => p.nome.toLowerCase() === nomePerfil.toLowerCase());
-                if (existingIdx >= 0) {
-                    perfisData.splice(existingIdx, 1);
-                    sobrescritos++;
-                } else {
-                    criados++;
+                    const existingIdx = perfisData.findIndex(p => p.nome.toLowerCase() === nomePerfil.toLowerCase());
+                    if (existingIdx >= 0) {
+                        perfisData.splice(existingIdx, 1);
+                        sobrescritos++;
+                    } else {
+                        criados++;
+                    }
+
+                    let links = [];
+                    try { links = JSON.parse(cb.dataset.links || '[]'); } catch (_) { links = []; }
+
+                    perfisData.push({
+                        id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                        nome: nomePerfil,
+                        feriados: dados.feriados.map(f => ({ ...f, arquivo: cb.dataset.arquivo })),
+                        conjuntosImportados: [{
+                            nome: cb.dataset.nome,
+                            arquivo: cb.dataset.arquivo,
+                            descricao: cb.dataset.descricao || '',
+                            links,
+                            dataAtualizacao: cb.dataset.dataAtualizacao,
+                            dataImportacao: new Date().toISOString()
+                        }],
+                        criadoEm: new Date().toISOString()
+                    });
                 }
 
-                perfisData.push({
-                    id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                    nome: nomePerfil,
-                    feriados: dados.feriados.map(f => ({ ...f, arquivo: cb.dataset.arquivo })),
-                    conjuntosImportados: [{
-                        nome: cb.dataset.nome,
-                        arquivo: cb.dataset.arquivo,
-                        descricao: cb.dataset.descricao || '',
-                        links: JSON.parse(cb.dataset.links || '[]'),
-                        dataAtualizacao: cb.dataset.dataAtualizacao,
-                        dataImportacao: new Date().toISOString()
-                    }],
-                    criadoEm: new Date().toISOString()
-                });
-            }
+                salvarPerfisNoLocalStorage();
+                atualizarDropdownPerfis();
+                renderizarDropdownPerfilCalculo();
 
-            salvarPerfisNoLocalStorage();
-            atualizarDropdownPerfis();
-            renderizarDropdownPerfilCalculo();
-
-            const total = criados + sobrescritos;
-            if (total > 0) {
-                document.getElementById('modalBoasVindas').classList.remove('active');
-                localStorage.setItem('contaprazo_welcome_dispensado', 'true');
-                let msg;
-                if (criados > 0 && sobrescritos > 0) msg = `${criados} criado(s) e ${sobrescritos} atualizado(s) com sucesso!`;
-                else if (criados > 0) msg = criados === 1 ? '1 perfil criado com sucesso!' : `${criados} perfis criados com sucesso!`;
-                else msg = sobrescritos === 1 ? '1 perfil atualizado com sucesso!' : `${sobrescritos} perfis atualizados com sucesso!`;
-                mostrarNotificacao(msg, 'sucesso');
+                const total = criados + sobrescritos;
+                if (total > 0) {
+                    localStorage.setItem('contaprazo_welcome_dispensado', 'true');
+                    dispensarBoasVindas('fechar');
+                    let msg;
+                    if (criados > 0 && sobrescritos > 0) msg = `${criados} criado(s) e ${sobrescritos} atualizado(s) com sucesso!`;
+                    else if (criados > 0) msg = criados === 1 ? '1 perfil criado com sucesso!' : `${criados} perfis criados com sucesso!`;
+                    else msg = sobrescritos === 1 ? '1 perfil atualizado com sucesso!' : `${sobrescritos} perfis atualizados com sucesso!`;
+                    mostrarNotificacao(msg, 'sucesso');
+                }
+                if (semDados > 0) {
+                    mostrarNotificacao(`${semDados} conjunto(s) sem dados. Feche e reabra o modal para tentar novamente.`, 'erro');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
             }
-            if (semDados > 0) {
-                mostrarNotificacao(`${semDados} conjunto(s) sem dados. Feche e reabra o modal para tentar novamente.`, 'erro');
-            }
-
-            btn.disabled = false;
-            btn.textContent = textoOriginal;
         }
 
         async function importarFeriadoPredefinido(url, nome, arquivo = null, dataAtualizacao = null, descricao = '', links = []) {
@@ -9717,6 +9724,7 @@
                             nome: conjuntoOnline.nome,
                             arquivo: conjuntoOnline.arquivo,
                             descricao: conjuntoOnline.descricao,
+                            links: obterLinksDoConjunto(conjuntoOnline),
                             dataAtualizacaoNova: conjuntoOnline.dataAtualizacao,
                             dataAtualizacaoAntiga: metadataItem.dataAtualizacao,
                             url: `${GITHUB_RAW_BASE_URL}/${conjuntoOnline.arquivo}`,
@@ -9756,6 +9764,7 @@
         // Função para mostrar o banner de atualização
         function mostrarBannerAtualizacao(conjuntosAtualizados) {
             if (sessionStorage.getItem('updateBannerClosed') === 'true') return;
+            if (document.querySelector('[data-toast-id="updateBanner"]')) return;
 
             let titulo, mensagemHTML;
             if (conjuntosAtualizados.length === 1) {
@@ -9820,7 +9829,7 @@
             // Atualiza perfis diretamente — sem substituir/mesclar, sem reload de página
             let perfisAtualizados = 0, perfisErros = 0;
             for (const update of perfilUpdates) {
-                const ok = await atualizarPerfilComConjunto(update.perfilId, update.arquivo, update.dataAtualizacaoNova);
+                const ok = await atualizarPerfilComConjunto(update.perfilId, update.arquivo, update.dataAtualizacaoNova, update.links, update.nome, update.descricao);
                 if (ok) perfisAtualizados++; else perfisErros++;
             }
             if (perfisAtualizados > 0) {
@@ -9836,7 +9845,7 @@
             // Para importações globais mantém o fluxo original (substituir/mesclar)
             if (globalUpdates.length === 1) {
                 const c = globalUpdates[0];
-                importarFeriadoPredefinido(c.url, c.nome, c.arquivo, c.dataAtualizacaoNova);
+                importarFeriadoPredefinido(c.url, c.nome, c.arquivo, c.dataAtualizacaoNova, c.descricao, c.links);
             } else if (globalUpdates.length > 1) {
                 atualizacoesDisponiveis = globalUpdates;
                 abrirModalPredefinidosComAtualizacoes();
@@ -9844,7 +9853,7 @@
         }
 
         // Atualiza o perfil buscando o JSON online e substituindo os feriados diretamente
-        async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova) {
+        async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova, linksNovos, nomeNovo, descricaoNova) {
             try {
                 const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${arquivo}`);
                 const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
@@ -9880,6 +9889,9 @@
                     if (ci) {
                         ci.dataAtualizacao = dataAtualizacaoNova;
                         ci.dataImportacao = new Date().toISOString();
+                        if (nomeNovo) ci.nome = nomeNovo;
+                        if (descricaoNova !== undefined) ci.descricao = descricaoNova;
+                        if (Array.isArray(linksNovos)) ci.links = linksNovos;
                     }
                 }
 
@@ -9991,11 +10003,6 @@
             intervaloVerificacaoId = setInterval(() => {
                 verificarAtualizacoesFeriados(false);
             }, INTERVALO_VERIFICACAO);
-        }
-
-        // Função chamada ao finalizar importação - salva metadata
-        function salvarMetadataAposImportacao(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto) {
-            salvarMetadataConjunto(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto);
         }
 
         function abrirModalExportPDF() {
