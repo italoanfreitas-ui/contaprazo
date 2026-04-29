@@ -9724,6 +9724,7 @@
                             nome: conjuntoOnline.nome,
                             arquivo: conjuntoOnline.arquivo,
                             descricao: conjuntoOnline.descricao,
+                            links: obterLinksDoConjunto(conjuntoOnline),
                             dataAtualizacaoNova: conjuntoOnline.dataAtualizacao,
                             dataAtualizacaoAntiga: metadataItem.dataAtualizacao,
                             url: `${GITHUB_RAW_BASE_URL}/${conjuntoOnline.arquivo}`,
@@ -9828,7 +9829,7 @@
             // Atualiza perfis diretamente — sem substituir/mesclar, sem reload de página
             let perfisAtualizados = 0, perfisErros = 0;
             for (const update of perfilUpdates) {
-                const ok = await atualizarPerfilComConjunto(update.perfilId, update.arquivo, update.dataAtualizacaoNova);
+                const ok = await atualizarPerfilComConjunto(update.perfilId, update.arquivo, update.dataAtualizacaoNova, update.links, update.nome, update.descricao);
                 if (ok) perfisAtualizados++; else perfisErros++;
             }
             if (perfisAtualizados > 0) {
@@ -9844,7 +9845,7 @@
             // Para importações globais mantém o fluxo original (substituir/mesclar)
             if (globalUpdates.length === 1) {
                 const c = globalUpdates[0];
-                importarFeriadoPredefinido(c.url, c.nome, c.arquivo, c.dataAtualizacaoNova);
+                importarFeriadoPredefinido(c.url, c.nome, c.arquivo, c.dataAtualizacaoNova, c.descricao, c.links);
             } else if (globalUpdates.length > 1) {
                 atualizacoesDisponiveis = globalUpdates;
                 abrirModalPredefinidosComAtualizacoes();
@@ -9852,7 +9853,7 @@
         }
 
         // Atualiza o perfil buscando o JSON online e substituindo os feriados diretamente
-        async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova) {
+        async function atualizarPerfilComConjunto(perfilId, arquivo, dataAtualizacaoNova, linksNovos, nomeNovo, descricaoNova) {
             try {
                 const url = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/${arquivo}`);
                 const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
@@ -9888,6 +9889,9 @@
                     if (ci) {
                         ci.dataAtualizacao = dataAtualizacaoNova;
                         ci.dataImportacao = new Date().toISOString();
+                        if (nomeNovo) ci.nome = nomeNovo;
+                        if (descricaoNova !== undefined) ci.descricao = descricaoNova;
+                        if (Array.isArray(linksNovos)) ci.links = linksNovos;
                     }
                 }
 
@@ -9999,11 +10003,6 @@
             intervaloVerificacaoId = setInterval(() => {
                 verificarAtualizacoesFeriados(false);
             }, INTERVALO_VERIFICACAO);
-        }
-
-        // Função chamada ao finalizar importação - salva metadata
-        function salvarMetadataAposImportacao(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto) {
-            salvarMetadataConjunto(nomeConjunto, arquivoConjunto, dataAtualizacaoConjunto);
         }
 
         function abrirModalExportPDF() {
