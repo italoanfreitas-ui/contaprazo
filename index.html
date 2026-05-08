@@ -9221,7 +9221,7 @@
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
                              data-descricao="${escapeHtml(conjunto.descricao || '')}"
-                             data-links="${escapeHtml(JSON.stringify(linksConj))}">
+                             data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-footer">
@@ -9397,7 +9397,7 @@
                                 data-nome="${escapeHtml(c.nome)}"
                                 data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
                                 data-descricao="${escapeHtml(c.descricao || '')}"
-                                data-links="${escapeHtml(JSON.stringify(linksConj))}"
+                                data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}"
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
@@ -9477,8 +9477,8 @@
                         criados++;
                     }
 
-                    let links = [];
-                    try { links = JSON.parse(cb.dataset.links || '[]'); } catch (_) { links = []; }
+                    const conjCache = _feriadosCarregados[cb.dataset.arquivo];
+                    const links = conjCache ? obterLinksDoConjunto(conjCache.conjunto) : [];
 
                     perfisData.push({
                         id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -10101,7 +10101,7 @@
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
                              data-descricao="${escapeHtml(conjunto.descricao || '')}"
-                             data-links="${escapeHtml(JSON.stringify(linksConj))}"
+                             data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}"
                              style="${isAtualizado ? 'border-left: 4px solid #16a34a;' : ''}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}${badgeAtualizado}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
