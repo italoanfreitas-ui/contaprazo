@@ -6363,35 +6363,49 @@
     <div class="modal" id="modalBoasVindas">
         <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
             <div class="modal-header">
-                <span class="modal-header-icon modal-icon-blue">
+                <span class="modal-header-icon modal-icon-blue" id="boasVindasIconeHeader">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 </span>
                 <span class="modal-header-title" id="boasVindasHeader">Bem-vindo ao ContaPrazo!</span>
-                <button class="modal-close-btn" aria-label="Fechar" onclick="dispensarBoasVindas('fechar')">
+                <button class="modal-close-btn" id="boasVindasCloseBtnHeader" aria-label="Fechar" onclick="dispensarBoasVindas('fechar')">
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
                 </button>
             </div>
             <div class="modal-body" style="overflow-y: auto; flex: 1;">
-                <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.875rem; line-height: 1.5;">
-                    <p style="margin: 0 0 6px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
-                    <p style="margin: 0;">Identificamos conjuntos disponíveis online. Selecione os de interesse e crie <strong>perfis automaticamente</strong> — cada perfil ficará disponível para uso direto na calculadora.</p>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-weight: 600; font-size: 0.875rem; color: #111827;">Conjuntos disponíveis:</span>
-                    <div style="display: flex; gap: 6px;">
-                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(true)">Todos</button>
-                        <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(false)">Nenhum</button>
+                <!-- Painel de seleção (padrão) -->
+                <div id="boasVindasSelecaoView">
+                    <div id="boasVindasTexto" style="margin-bottom: 12px; color: #374151; font-size: 0.875rem; line-height: 1.5;">
+                        <p style="margin: 0 0 6px;">O <strong>ContaPrazo</strong> calcula prazos processuais considerando feriados e suspensões de forma precisa.</p>
+                        <p style="margin: 0;">Identificamos conjuntos disponíveis online. Selecione os de interesse e crie <strong>perfis automaticamente</strong> — cada perfil ficará disponível para uso direto na calculadora.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: 600; font-size: 0.875rem; color: #111827;">Conjuntos disponíveis:</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(true)">Todos</button>
+                            <button class="btn btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="selecionarTodosConjuntos(false)">Nenhum</button>
+                        </div>
+                    </div>
+                    <div id="listaConjuntosWelcome" style="max-height: 380px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
+                        <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
                     </div>
                 </div>
-                <div id="listaConjuntosWelcome" style="max-height: 380px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px;">
-                    <div style="text-align: center; padding: 20px; color: #6b7280;">Carregando conjuntos disponíveis...</div>
+                <!-- Painel de confirmação de sobrescrita (oculto por padrão) -->
+                <div id="boasVindasSobrescritaView" style="display:none; line-height:1.6;">
+                    <div id="sobrescritaCorpo"></div>
+                    <p style="margin: 10px 0 0; font-size: 0.85rem; color: #6b7280;">Esta ação substituirá permanentemente os feriados salvos nesses perfis pelos dados mais recentes do conjunto online. As alterações não poderão ser desfeitas.</p>
                 </div>
             </div>
-            <div class="modal-buttons">
+            <!-- Botões do painel de seleção -->
+            <div class="modal-buttons" id="boasVindasBotoesSelecao">
                 <button class="btn btn-secondary" id="btnNaoMostrarNovamente" onclick="dispensarBoasVindas('permanente')">Não mostrar novamente</button>
                 <button class="btn btn-secondary" id="btnAdiarBoasVindas" onclick="dispensarBoasVindas('snooze')">Adiar</button>
                 <button class="btn btn-secondary" id="btnFecharBoasVindas" style="display: none;" onclick="dispensarBoasVindas('fechar')">Fechar</button>
                 <button class="btn btn-primary" id="btnCriarPerfisSelecionados" onclick="criarPerfisDosConjuntos()" disabled>Criar perfis selecionados</button>
+            </div>
+            <!-- Botões do painel de sobrescrita -->
+            <div class="modal-buttons" id="boasVindasBotoesSobrescrita" style="display:none">
+                <button class="btn btn-secondary" onclick="voltarViewSelecaoBoasVindas()">Voltar</button>
+                <button class="btn btn-danger" onclick="confirmarSobrescritaPerfis()">Sim, sobrescrever</button>
             </div>
         </div>
     </div>
@@ -6599,26 +6613,6 @@
                 <button class="btn btn-secondary" onclick="descartarETrocarPerfil()">Descartar</button>
                 <button class="btn btn-secondary" onclick="fecharModalConfirmarTrocaPerfil()">Cancelar</button>
                 <button class="btn btn-primary" onclick="salvarETrocarPerfil()">Salvar e Trocar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de confirmação de sobrescrita de perfis já existentes -->
-    <div class="modal" id="modalConfirmarSobrescritaPerfis" data-no-backdrop-close="true">
-        <div class="modal-content" style="max-width: 460px;">
-            <div class="modal-header">
-                <span class="modal-header-icon modal-icon-amber">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                </span>
-                <span class="modal-header-title" id="sobrescritaTitulo">Perfil já existe</span>
-            </div>
-            <div class="modal-body" style="line-height: 1.6;">
-                <div id="sobrescritaCorpo"></div>
-                <p style="margin: 10px 0 0; font-size: 0.85rem; color: #6b7280;">Esta ação substituirá permanentemente os feriados salvos nesses perfis pelos dados mais recentes do conjunto online. As alterações não poderão ser desfeitas.</p>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="fecharModalConfirmarSobrescritaPerfis()">Cancelar</button>
-                <button class="btn btn-danger" onclick="confirmarSobrescritaPerfis()">Sim, sobrescrever</button>
             </div>
         </div>
     </div>
@@ -7417,33 +7411,55 @@
 
         }
 
-        // === Modal de confirmação de sobrescrita de perfis ===
+        // === Confirmação de sobrescrita: painel in-place dentro de modalBoasVindas ===
 
         let _sobrescritaPerfisPendente = null; // [checkbox] a processar ao confirmar
+        let _boasVindasTituloOriginal = '';   // título salvo antes de entrar no painel de sobrescrita
 
         function abrirModalConfirmarSobrescritaPerfis(existentesSnapshot) {
             _sobrescritaPerfisPendente = existentesSnapshot;
+            _boasVindasTituloOriginal = document.getElementById('boasVindasHeader').textContent;
             const total = existentesSnapshot.length;
-            document.getElementById('sobrescritaTitulo').textContent =
-                total === 1 ? 'Perfil já existe' : `${total} perfis já existem`;
             const nomes = existentesSnapshot
                 .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
                 .join(', ');
             document.getElementById('sobrescritaCorpo').innerHTML =
                 `<p style="margin:0 0 6px;">${total === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${total === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${total === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+
+            const iconSpan = document.getElementById('boasVindasIconeHeader');
+            iconSpan.className = 'modal-header-icon modal-icon-amber';
+            iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+            document.getElementById('boasVindasHeader').textContent =
+                total === 1 ? 'Perfil já existe' : `${total} perfis já existem`;
+            document.getElementById('boasVindasCloseBtnHeader').style.display = 'none';
+            document.getElementById('modalBoasVindas').setAttribute('data-no-backdrop-close', 'true');
+
+            document.getElementById('boasVindasSelecaoView').style.display = 'none';
+            document.getElementById('boasVindasSobrescritaView').style.display = '';
+            document.getElementById('boasVindasBotoesSelecao').style.display = 'none';
+            document.getElementById('boasVindasBotoesSobrescrita').style.display = '';
             tocarSomToast('aviso');
-            document.getElementById('modalConfirmarSobrescritaPerfis').classList.add('active');
         }
 
-        function fecharModalConfirmarSobrescritaPerfis() {
-            document.getElementById('modalConfirmarSobrescritaPerfis').classList.remove('active');
+        function voltarViewSelecaoBoasVindas() {
             _sobrescritaPerfisPendente = null;
+            const iconSpan = document.getElementById('boasVindasIconeHeader');
+            iconSpan.className = 'modal-header-icon modal-icon-blue';
+            iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+            if (_boasVindasTituloOriginal) document.getElementById('boasVindasHeader').textContent = _boasVindasTituloOriginal;
+            _boasVindasTituloOriginal = '';
+            document.getElementById('boasVindasCloseBtnHeader').style.display = '';
+            document.getElementById('modalBoasVindas').removeAttribute('data-no-backdrop-close');
+            document.getElementById('boasVindasSelecaoView').style.display = '';
+            document.getElementById('boasVindasSobrescritaView').style.display = 'none';
+            document.getElementById('boasVindasBotoesSelecao').style.display = '';
+            document.getElementById('boasVindasBotoesSobrescrita').style.display = 'none';
         }
 
         function confirmarSobrescritaPerfis() {
             const pendentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
-            fecharModalConfirmarSobrescritaPerfis();
             if (pendentes.length > 0) _executarCriacaoPerfis(pendentes, true);
+            // dispensarBoasVindas é chamado dentro de _executarCriacaoPerfis e dispara voltarViewSelecaoBoasVindas
         }
 
         // === Modal de confirmação para remover feriado de conjunto online ===
@@ -7983,7 +7999,10 @@
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
                     const linkFer = obterLinkFeriado(dia.data);
-                    const descText = `${nomeFer} — suspensão de prazo.`;
+                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
+                        ? 'Feriado/Ponto Facultativo personalizado'
+                        : nomeFer;
+                    const descText = `${nomeFerDisplay} — suspensão de prazo.`;
                     desc = linkFer
                         ? `<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-desc-link" onclick="event.stopPropagation()">${descText}</a>`
                         : descText;
@@ -9105,6 +9124,11 @@
 
             fecharModal();
 
+            // Limpa flags de migração para que as verificações rodem uma vez no próximo
+            // carregamento e confirmem que os dados recém-importados estão corretos.
+            localStorage.removeItem('contaprazo_migracao_links_ok');
+            localStorage.removeItem('contaprazo_migracao_arquivo_ok');
+
             // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
             sessionStorage.setItem('contaprazo_importou_feriados', 'true');
@@ -9202,7 +9226,7 @@
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
                              data-descricao="${escapeHtml(conjunto.descricao || '')}"
-                             data-links="${escapeHtml(JSON.stringify(linksConj))}">
+                             data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
                             <div class="item-predefinido-footer">
@@ -9282,6 +9306,7 @@
         }
 
         function dispensarBoasVindas(tipo) {
+            voltarViewSelecaoBoasVindas();
             document.getElementById('modalBoasVindas').classList.remove('active');
             if (tipo === 'permanente') {
                 localStorage.setItem('contaprazo_welcome_dispensado', 'true');
@@ -9377,7 +9402,7 @@
                                 data-nome="${escapeHtml(c.nome)}"
                                 data-data-atualizacao="${escapeHtml(c.dataAtualizacao)}"
                                 data-descricao="${escapeHtml(c.descricao || '')}"
-                                data-links="${escapeHtml(JSON.stringify(linksConj))}"
+                                data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}"
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
@@ -9457,8 +9482,8 @@
                         criados++;
                     }
 
-                    let links = [];
-                    try { links = JSON.parse(cb.dataset.links || '[]'); } catch (_) { links = []; }
+                    const conjCache = _feriadosCarregados[cb.dataset.arquivo];
+                    const links = conjCache ? obterLinksDoConjunto(conjCache.conjunto) : [];
 
                     perfisData.push({
                         id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -9479,6 +9504,30 @@
                 salvarPerfisNoLocalStorage();
                 atualizarDropdownPerfis();
                 renderizarDropdownPerfilCalculo();
+
+                // Atualiza conjuntosPredefinidosImportados com os metadados dos conjuntos
+                // recém-importados (com links[] corretos), para que o estado global não
+                // fique defasado se o perfil ativo for substituído e o ID mudar.
+                {
+                    const metaAtual = obterMetadataConjuntos();
+                    const metaNova = [...metaAtual];
+                    for (const cb of checkboxes) {
+                        const conjCache = _feriadosCarregados[cb.dataset.arquivo];
+                        if (!conjCache) continue;
+                        const links = obterLinksDoConjunto(conjCache.conjunto);
+                        const entry = {
+                            nome: conjCache.conjunto.nome,
+                            arquivo: cb.dataset.arquivo,
+                            descricao: conjCache.conjunto.descricao || '',
+                            links,
+                            dataAtualizacao: conjCache.conjunto.dataAtualizacao,
+                            dataImportacao: new Date().toISOString()
+                        };
+                        const idx = metaNova.findIndex(m => m.arquivo === cb.dataset.arquivo);
+                        if (idx >= 0) metaNova[idx] = entry; else metaNova.push(entry);
+                    }
+                    localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(metaNova));
+                }
 
                 const total = criados + sobrescritos;
                 if (total > 0) {
@@ -9602,13 +9651,17 @@
         // Usa flag apenas para pular quando não há conjuntos; caso contrário verifica os dados reais,
         // cobrindo tanto a migração inicial quanto o caso de conjuntos reimportados com links vazios.
         function verificarNecessidadeMigracaoLinks() {
+            // Flag: evita re-checagem após migração bem-sucedida.
+            // Limpa ao importar novos conjuntos para que a verificação rode uma vez e valide os dados.
+            if (localStorage.getItem('contaprazo_migracao_links_ok')) return false;
+
             const globalConjuntos = obterMetadataConjuntos();
             const temConjuntosGlobal = globalConjuntos.length > 0;
             const temConjuntosPerfil = perfisData.some(p => p.conjuntosImportados && p.conjuntosImportados.length > 0);
 
             if (!temConjuntosGlobal && !temConjuntosPerfil) {
                 localStorage.setItem('contaprazo_migracao_links_ok', '1');
-                return;
+                return false;
             }
 
             // Verifica dados reais: algum conjunto está sem links[] preenchido?
@@ -9619,10 +9672,11 @@
 
             if (!globalSemLinks && !perfilSemLinks) {
                 localStorage.setItem('contaprazo_migracao_links_ok', '1');
-                return; // todos os conjuntos já têm links
+                return false; // todos os conjuntos já têm links
             }
 
             document.getElementById('modalMigracaoLinks').classList.add('active');
+            return true;
         }
 
         async function executarMigracaoLinks() {
@@ -9690,8 +9744,12 @@
         // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
         // Não usa flag: a condição é idempotente (só dispara quando há problema real).
         function verificarNecessidadeMigracao() {
+            // Flag: evita loop quando feriados manuais (sem arquivo) coexistem com conjuntos.
+            // Limpa ao importar novos conjuntos para que a verificação rode uma vez após a importação.
+            if (localStorage.getItem('contaprazo_migracao_arquivo_ok')) return false;
+
             const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && obterLinksDoConjunto(c).length > 0);
-            if (conjuntos.length === 0) return; // nada a resolver
+            if (conjuntos.length === 0) return false; // nada a resolver
 
             const perfilTemLegado = perfisData.some(p =>
                 p.feriados && p.feriados.some(f => f && f.data && !f.arquivo)
@@ -9700,9 +9758,10 @@
             const globalTemLegado = Array.isArray(globalRaw) &&
                 globalRaw.some(f => f && typeof f === 'object' && f.data && !f.arquivo);
 
-            if (!perfilTemLegado && !globalTemLegado) return;
+            if (!perfilTemLegado && !globalTemLegado) return false;
 
             document.getElementById('modalMigracaoDados').classList.add('active');
+            return true;
         }
 
         // Extrai datas ISO de um array de feriados no formato do JSON de conjunto.
@@ -10081,7 +10140,7 @@
                              data-arquivo="${escapeHtml(conjunto.arquivo)}"
                              data-data-atualizacao="${escapeHtml(conjunto.dataAtualizacao)}"
                              data-descricao="${escapeHtml(conjunto.descricao || '')}"
-                             data-links="${escapeHtml(JSON.stringify(linksConj))}"
+                             data-links="${escapeHtml(JSON.stringify(linksConj)).replace(/"/g, '&quot;')}"
                              style="${isAtualizado ? 'border-left: 4px solid #16a34a;' : ''}">
                             <div class="item-predefinido-nome">${escapeHtml(conjunto.nome)}${badgeAtualizado}</div>
                             <div class="item-predefinido-desc">${escapeHtml(conjunto.descricao)}</div>
@@ -12520,7 +12579,10 @@
                 const dateStr = `${day} de ${months[f.data.getMonth()]} de ${f.data.getFullYear()}`;
                 const weekday = weekdays[f.data.getDay()];
                 const link    = obterLinkFeriado(f.data);
-                const descText = `${escapeHtml(f.nome)} — suspensão de prazo.`;
+                const nomeDisplay = (f.nome === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(f.data)))
+                    ? 'Feriado/Ponto Facultativo personalizado'
+                    : f.nome;
+                const descText = `${escapeHtml(nomeDisplay)} — suspensão de prazo.`;
                 const desc = link
                     ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="timeline-desc-link">${descText}</a>`
                     : descText;
@@ -13387,8 +13449,8 @@
             tooltip.style.left = (rect.left + rect.width / 2) + 'px';
         }, true);
 
-        verificarNecessidadeMigracaoLinks(); // migração: link string → links array (múltiplos atos normativos)
-        verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
+        // Verificações de migração sequenciais: a segunda só roda se a primeira não exibiu modal.
+        if (!verificarNecessidadeMigracaoLinks()) verificarNecessidadeMigracao();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
