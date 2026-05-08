@@ -9505,12 +9505,32 @@
                 atualizarDropdownPerfis();
                 renderizarDropdownPerfilCalculo();
 
+                // Atualiza conjuntosPredefinidosImportados com os metadados dos conjuntos
+                // recém-importados (com links[] corretos), para que o estado global não
+                // fique defasado se o perfil ativo for substituído e o ID mudar.
+                {
+                    const metaAtual = obterMetadataConjuntos();
+                    const metaNova = [...metaAtual];
+                    for (const cb of checkboxes) {
+                        const conjCache = _feriadosCarregados[cb.dataset.arquivo];
+                        if (!conjCache) continue;
+                        const links = obterLinksDoConjunto(conjCache.conjunto);
+                        const entry = {
+                            nome: conjCache.conjunto.nome,
+                            arquivo: cb.dataset.arquivo,
+                            descricao: conjCache.conjunto.descricao || '',
+                            links,
+                            dataAtualizacao: conjCache.conjunto.dataAtualizacao,
+                            dataImportacao: new Date().toISOString()
+                        };
+                        const idx = metaNova.findIndex(m => m.arquivo === cb.dataset.arquivo);
+                        if (idx >= 0) metaNova[idx] = entry; else metaNova.push(entry);
+                    }
+                    localStorage.setItem('conjuntosPredefinidosImportados', JSON.stringify(metaNova));
+                }
+
                 const total = criados + sobrescritos;
                 if (total > 0) {
-                    // Limpa flags de migração para que as verificações rodem uma vez no próximo
-                    // carregamento e confirmem que os dados recém-importados estão corretos.
-                    localStorage.removeItem('contaprazo_migracao_links_ok');
-                    localStorage.removeItem('contaprazo_migracao_arquivo_ok');
                     localStorage.setItem('contaprazo_welcome_dispensado', 'true');
                     dispensarBoasVindas('fechar');
                     let msg;
