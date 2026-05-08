@@ -7983,7 +7983,10 @@
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
                     const linkFer = obterLinkFeriado(dia.data);
-                    const descText = `${nomeFer} — suspensão de prazo.`;
+                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
+                        ? 'Feriado/Ponto Facultativo personalizado'
+                        : nomeFer;
+                    const descText = `${nomeFerDisplay} — suspensão de prazo.`;
                     desc = linkFer
                         ? `<a href="${escapeHtml(linkFer)}" target="_blank" rel="noopener" class="timeline-desc-link" onclick="event.stopPropagation()">${descText}</a>`
                         : descText;
@@ -12520,7 +12523,10 @@
                 const dateStr = `${day} de ${months[f.data.getMonth()]} de ${f.data.getFullYear()}`;
                 const weekday = weekdays[f.data.getDay()];
                 const link    = obterLinkFeriado(f.data);
-                const descText = `${escapeHtml(f.nome)} — suspensão de prazo.`;
+                const nomeDisplay = (f.nome === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(f.data)))
+                    ? 'Feriado/Ponto Facultativo personalizado'
+                    : f.nome;
+                const descText = `${escapeHtml(nomeDisplay)} — suspensão de prazo.`;
                 const desc = link
                     ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="timeline-desc-link">${descText}</a>`
                     : descText;
