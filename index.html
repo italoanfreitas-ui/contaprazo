@@ -6817,10 +6817,21 @@
             verificarAlteracoesPerfil();
 
             // Após qualquer importação (substituir ou mesclar) com perfil ativo,
-            // sempre sinaliza alterações não salvas — mesmo que os feriados sejam
-            // idênticos, os metadados dos conjuntos podem ter mudado.
+            // sincroniza automaticamente o perfil com os dados recém-importados
+            // (feriados com campo arquivo + conjuntosImportados atualizados com links[]).
+            // Isso evita que um reload posterior sobrescreva os dados corretos com
+            // os dados antigos do perfil (que não têm arquivo nem links[]).
             if (importouAntes && perfilAtivoId) {
-                perfilTemAlteracoes = true;
+                const perfilAtivo = perfisData.find(p => p.id === perfilAtivoId);
+                if (perfilAtivo) {
+                    const globalFeriados = JSON.parse(localStorage.getItem('feriadosPersonalizados') || '[]');
+                    if (Array.isArray(globalFeriados)) perfilAtivo.feriados = globalFeriados;
+                    perfilAtivo.conjuntosImportados = obterMetadataConjuntos();
+                    salvarPerfisNoLocalStorage();
+                    perfilTemAlteracoes = false;
+                } else {
+                    perfilTemAlteracoes = true;
+                }
                 atualizarIndicadorAlteracoes();
             }
 
@@ -7182,10 +7193,12 @@
             const novoPerfil = {
                 id: 'perfil_' + Date.now(),
                 nome: nome,
-                feriados: Array.from(feriadosPersonalizados.entries()).map(([data, nomeFeriado]) => ({
-                    data,
-                    nome: nomeFeriado || ''
-                })),
+                feriados: Array.from(feriadosPersonalizados.entries()).map(([data, nomeFeriado]) => {
+                    const obj = { data, nome: nomeFeriado || '' };
+                    const arquivo = feriadosArquivoMap.get(data);
+                    if (arquivo) obj.arquivo = arquivo;
+                    return obj;
+                }),
                 conjuntosImportados: obterMetadataConjuntos(),
                 criadoEm: new Date().toISOString()
             };
@@ -9481,16 +9494,30 @@
             }
         }
 
-        // Detecta se os conjuntos importados ainda usam o campo legado `link` (string) em vez de `links` (array).
-        // Se sim, e houver conjuntos importados, exibe modal de migração obrigatória.
+        // Detecta se algum conjunto importado está sem links[] (legado link string ou links vazio).
+        // Usa flag apenas para pular quando não há conjuntos; caso contrário verifica os dados reais,
+        // cobrindo tanto a migração inicial quanto o caso de conjuntos reimportados com links vazios.
         function verificarNecessidadeMigracaoLinks() {
-            if (localStorage.getItem('contaprazo_migracao_links_ok')) return;
-            const temConjuntosGlobal = obterMetadataConjuntos().length > 0;
+            const globalConjuntos = obterMetadataConjuntos();
+            const temConjuntosGlobal = globalConjuntos.length > 0;
             const temConjuntosPerfil = perfisData.some(p => p.conjuntosImportados && p.conjuntosImportados.length > 0);
+
             if (!temConjuntosGlobal && !temConjuntosPerfil) {
                 localStorage.setItem('contaprazo_migracao_links_ok', '1');
                 return;
             }
+
+            // Verifica dados reais: algum conjunto está sem links[] preenchido?
+            const globalSemLinks = globalConjuntos.some(c => obterLinksDoConjunto(c).length === 0);
+            const perfilSemLinks = perfisData.some(p =>
+                p.conjuntosImportados && p.conjuntosImportados.some(c => obterLinksDoConjunto(c).length === 0)
+            );
+
+            if (!globalSemLinks && !perfilSemLinks) {
+                localStorage.setItem('contaprazo_migracao_links_ok', '1');
+                return; // todos os conjuntos já têm links
+            }
+
             document.getElementById('modalMigracaoLinks').classList.add('active');
         }
 
@@ -9557,10 +9584,8 @@
 
         // Detecta se algum perfil ou os feriados globais têm entradas sem campo `arquivo`.
         // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
-        // A flag 'contaprazo_migracao_arquivo_ok' impede re-disparo após a migração ter rodado,
-        // evitando loop infinito causado por feriados adicionados manualmente (sem arquivo-fonte).
+        // Não usa flag: a condição é idempotente (só dispara quando há problema real).
         function verificarNecessidadeMigracao() {
-            if (localStorage.getItem('contaprazo_migracao_arquivo_ok')) return;
             const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && obterLinksDoConjunto(c).length > 0);
             if (conjuntos.length === 0) return; // nada a resolver
 
