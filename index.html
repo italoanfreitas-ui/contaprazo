@@ -6603,6 +6603,46 @@
         </div>
     </div>
 
+    <!-- Modal de confirmação de sobrescrita de perfis já existentes -->
+    <div class="modal" id="modalConfirmarSobrescritaPerfis" data-no-backdrop-close="true">
+        <div class="modal-content" style="max-width: 460px;">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title" id="sobrescritaTitulo">Perfil já existe</span>
+            </div>
+            <div class="modal-body" style="line-height: 1.6;">
+                <div id="sobrescritaCorpo"></div>
+                <p style="margin: 10px 0 0; font-size: 0.85rem; color: #6b7280;">Esta ação substituirá permanentemente os feriados salvos nesses perfis pelos dados mais recentes do conjunto online. As alterações não poderão ser desfeitas.</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalConfirmarSobrescritaPerfis()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmarSobrescritaPerfis()">Sim, sobrescrever</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para remover feriado originado de conjunto online -->
+    <div class="modal" id="modalConfirmarRemoverFeriadoConjunto" data-no-backdrop-close="true">
+        <div class="modal-content" style="max-width: 440px;">
+            <div class="modal-header">
+                <span class="modal-header-icon modal-icon-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </span>
+                <span class="modal-header-title">Feriado do conjunto online</span>
+            </div>
+            <div class="modal-body" style="line-height: 1.6;">
+                <div id="removerFeriadoConjuntoCorpo"></div>
+                <p style="margin: 10px 0 0; font-size: 0.85rem; color: #6b7280;">Se removido, o dia deixará de ser tratado como feriado nos cálculos. Para restaurá-lo, será necessário reimportar o conjunto.</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="fecharModalConfirmarRemoverFeriadoConjunto()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmarRemoverFeriadoConjunto()">Remover mesmo assim</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para escolher tipo de export PNG -->
     <div class="modal" id="modalExportPNG">
         <div class="modal-content">
@@ -7374,6 +7414,75 @@
             const idPendente = perfilPendenteId;
             perfilPendenteId = null;
             efetuarTrocaPerfil(idPendente);
+
+        }
+
+        // === Modal de confirmação de sobrescrita de perfis ===
+
+        let _sobrescritaPerfisPendente = null; // [checkbox] a processar ao confirmar
+
+        function abrirModalConfirmarSobrescritaPerfis(existentesSnapshot) {
+            _sobrescritaPerfisPendente = existentesSnapshot;
+            const total = existentesSnapshot.length;
+            document.getElementById('sobrescritaTitulo').textContent =
+                total === 1 ? 'Perfil já existe' : `${total} perfis já existem`;
+            const nomes = existentesSnapshot
+                .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
+                .join(', ');
+            document.getElementById('sobrescritaCorpo').innerHTML =
+                `<p style="margin:0 0 6px;">${total === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${total === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${total === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+            tocarSomToast('aviso');
+            document.getElementById('modalConfirmarSobrescritaPerfis').classList.add('active');
+        }
+
+        function fecharModalConfirmarSobrescritaPerfis() {
+            document.getElementById('modalConfirmarSobrescritaPerfis').classList.remove('active');
+            _sobrescritaPerfisPendente = null;
+        }
+
+        function confirmarSobrescritaPerfis() {
+            const pendentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
+            fecharModalConfirmarSobrescritaPerfis();
+            if (pendentes.length > 0) _executarCriacaoPerfis(pendentes, true);
+        }
+
+        // === Modal de confirmação para remover feriado de conjunto online ===
+
+        let _dataFeriadoConjuntoPendente = null; // string YYYY-MM-DD a remover ao confirmar
+
+        function abrirModalConfirmarRemoverFeriadoConjunto(dataStr) {
+            _dataFeriadoConjuntoPendente = dataStr;
+            const arquivo = feriadosArquivoMap.get(dataStr);
+            const conjunto = arquivo
+                ? obterMetadataConjuntos().find(c => c.arquivo === arquivo)
+                : null;
+            const nomeConjunto = conjunto ? conjunto.nome : 'conjunto de feriados online';
+            const nomeFeriado = feriadosPersonalizados.get(dataStr);
+            const [ano, mes, dia] = dataStr.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+            let descFeriado = nomeFeriado ? `"<strong>${escapeHtml(nomeFeriado)}</strong>" (${dataFormatada})` : dataFormatada;
+            document.getElementById('removerFeriadoConjuntoCorpo').innerHTML =
+                `<p style="margin:0 0 6px;">O dia ${descFeriado} faz parte do perfil de feriados <strong>${escapeHtml(nomeConjunto)}</strong>.</p>` +
+                `<p style="margin:0;">Você está prestes a remover manualmente um feriado definido pelo conjunto online. Tem certeza?</p>`;
+            tocarSomToast('aviso');
+            document.getElementById('modalConfirmarRemoverFeriadoConjunto').classList.add('active');
+        }
+
+        function fecharModalConfirmarRemoverFeriadoConjunto() {
+            document.getElementById('modalConfirmarRemoverFeriadoConjunto').classList.remove('active');
+            _dataFeriadoConjuntoPendente = null;
+        }
+
+        function confirmarRemoverFeriadoConjunto() {
+            const dataStr = _dataFeriadoConjuntoPendente;
+            fecharModalConfirmarRemoverFeriadoConjunto();
+            if (!dataStr) return;
+            feriadosPersonalizados.delete(dataStr);
+            feriadosArquivoMap.delete(dataStr);
+            salvarFeriadosNoLocalStorage();
+            renderizarCalendario();
+            notificarAlteracaoFeriados();
+            mostrarAvisoRecalculo();
         }
 
         // Hook: marcar alterações quando feriados mudam (chamado pelo toggleDia e importação)
@@ -8728,6 +8837,11 @@
 
         function toggleDia(dataStr) {
             if (feriadosPersonalizados.has(dataStr)) {
+                // Se o feriado veio de um conjunto online, exige confirmação antes de remover
+                if (feriadosArquivoMap.has(dataStr)) {
+                    abrirModalConfirmarRemoverFeriadoConjunto(dataStr);
+                    return;
+                }
                 feriadosPersonalizados.delete(dataStr);
                 feriadosArquivoMap.delete(dataStr);
             } else {
@@ -9309,18 +9423,8 @@
                 // Cria os novos imediatamente
                 if (novos.length > 0) _executarCriacaoPerfis(novos, false);
 
-                // Pergunta sobre os existentes — captura a referência snapshot para o callback
-                const existentesSnapshot = existentes.slice();
-                const nomes = existentesSnapshot.map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`).join(', ');
-                criarToast({
-                    tipo: 'aviso',
-                    titulo: existentesSnapshot.length === 1 ? 'Perfil já existe' : `${existentesSnapshot.length} perfis já existem`,
-                    mensagemHTML: `${nomes} já ${existentesSnapshot.length === 1 ? 'existe' : 'existem'}. Deseja sobrescrever com os dados online mais recentes?`,
-                    autoFechar: false,
-                    botaoTexto: 'Sim, sobrescrever',
-                    botaoCallback: () => _executarCriacaoPerfis(existentesSnapshot.filter(cb => cb.checked), true),
-                    botaoSecundarioTexto: 'Não, manter'
-                });
+                // Pergunta sobre os existentes via modal (não-ignorável)
+                abrirModalConfirmarSobrescritaPerfis(existentes.slice());
                 return;
             }
 
