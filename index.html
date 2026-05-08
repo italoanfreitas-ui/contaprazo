@@ -9124,6 +9124,11 @@
 
             fecharModal();
 
+            // Limpa flags de migração para que as verificações rodem uma vez no próximo
+            // carregamento e confirmem que os dados recém-importados estão corretos.
+            localStorage.removeItem('contaprazo_migracao_links_ok');
+            localStorage.removeItem('contaprazo_migracao_arquivo_ok');
+
             // Marca flags para o reload
             sessionStorage.setItem('reloadToTop', 'true');
             sessionStorage.setItem('contaprazo_importou_feriados', 'true');
@@ -9502,6 +9507,10 @@
 
                 const total = criados + sobrescritos;
                 if (total > 0) {
+                    // Limpa flags de migração para que as verificações rodem uma vez no próximo
+                    // carregamento e confirmem que os dados recém-importados estão corretos.
+                    localStorage.removeItem('contaprazo_migracao_links_ok');
+                    localStorage.removeItem('contaprazo_migracao_arquivo_ok');
                     localStorage.setItem('contaprazo_welcome_dispensado', 'true');
                     dispensarBoasVindas('fechar');
                     let msg;
@@ -9622,13 +9631,17 @@
         // Usa flag apenas para pular quando não há conjuntos; caso contrário verifica os dados reais,
         // cobrindo tanto a migração inicial quanto o caso de conjuntos reimportados com links vazios.
         function verificarNecessidadeMigracaoLinks() {
+            // Flag: evita re-checagem após migração bem-sucedida.
+            // Limpa ao importar novos conjuntos para que a verificação rode uma vez e valide os dados.
+            if (localStorage.getItem('contaprazo_migracao_links_ok')) return false;
+
             const globalConjuntos = obterMetadataConjuntos();
             const temConjuntosGlobal = globalConjuntos.length > 0;
             const temConjuntosPerfil = perfisData.some(p => p.conjuntosImportados && p.conjuntosImportados.length > 0);
 
             if (!temConjuntosGlobal && !temConjuntosPerfil) {
                 localStorage.setItem('contaprazo_migracao_links_ok', '1');
-                return;
+                return false;
             }
 
             // Verifica dados reais: algum conjunto está sem links[] preenchido?
@@ -9639,10 +9652,11 @@
 
             if (!globalSemLinks && !perfilSemLinks) {
                 localStorage.setItem('contaprazo_migracao_links_ok', '1');
-                return; // todos os conjuntos já têm links
+                return false; // todos os conjuntos já têm links
             }
 
             document.getElementById('modalMigracaoLinks').classList.add('active');
+            return true;
         }
 
         async function executarMigracaoLinks() {
@@ -9710,8 +9724,12 @@
         // Se sim, e houver conjuntos com link disponíveis, exibe modal de migração forçada.
         // Não usa flag: a condição é idempotente (só dispara quando há problema real).
         function verificarNecessidadeMigracao() {
+            // Flag: evita loop quando feriados manuais (sem arquivo) coexistem com conjuntos.
+            // Limpa ao importar novos conjuntos para que a verificação rode uma vez após a importação.
+            if (localStorage.getItem('contaprazo_migracao_arquivo_ok')) return false;
+
             const conjuntos = obterMetadataConjuntos().filter(c => c.arquivo && obterLinksDoConjunto(c).length > 0);
-            if (conjuntos.length === 0) return; // nada a resolver
+            if (conjuntos.length === 0) return false; // nada a resolver
 
             const perfilTemLegado = perfisData.some(p =>
                 p.feriados && p.feriados.some(f => f && f.data && !f.arquivo)
@@ -9720,9 +9738,10 @@
             const globalTemLegado = Array.isArray(globalRaw) &&
                 globalRaw.some(f => f && typeof f === 'object' && f.data && !f.arquivo);
 
-            if (!perfilTemLegado && !globalTemLegado) return;
+            if (!perfilTemLegado && !globalTemLegado) return false;
 
             document.getElementById('modalMigracaoDados').classList.add('active');
+            return true;
         }
 
         // Extrai datas ISO de um array de feriados no formato do JSON de conjunto.
@@ -13410,8 +13429,8 @@
             tooltip.style.left = (rect.left + rect.width / 2) + 'px';
         }, true);
 
-        verificarNecessidadeMigracaoLinks(); // migração: link string → links array (múltiplos atos normativos)
-        verificarNecessidadeMigracao(); // mostra modal de migração se houver dados legados
+        // Verificações de migração sequenciais: a segunda só roda se a primeira não exibiu modal.
+        if (!verificarNecessidadeMigracaoLinks()) verificarNecessidadeMigracao();
 
         // Função para scroll suave ao topo
         function scrollToTop() {
