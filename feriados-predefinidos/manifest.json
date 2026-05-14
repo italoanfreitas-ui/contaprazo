@@ -17,6 +17,22 @@
         }
       ]
     },
+      {
+      "id": "tjsp-2025-2026",
+      "id2": "TJSP 2025-2026",
+      "arquivo": "TJSP-2025-2026.json",
+      "nome": "PMVC - Prefeitura Municipal de Vitória da Conquista (2026)",
+      "descricao": "Suspensões conforme o Provimento CSM Nº 2.813/2025",
+      "dataAtualizacao": "14-05-2026",
+      "ano": "2026",
+      "links": [
+        {
+          "url": "https://esaj.tjsp.jus.br/gcn-frontend-vue/legislacao/find/236794",
+          "rotulo": "PROVIMENTO CSM Nº 2.813/2025",
+          "ate": "2026-12-31"
+        }
+      ]
+    },
     {
       "id": "tjba-2025-2026",
       "id2": "TJBA 2025-2026",
