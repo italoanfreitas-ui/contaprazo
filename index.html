@@ -2736,6 +2736,22 @@
             50% { transform: scale(1.4); opacity: 0.7; }
         }
 
+        .conjunto-badge-novo {
+            display: inline-flex;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 5px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
         .perfil-btn-save {
             background: #dcfce7;
             border-color: #86efac;
@@ -7437,23 +7453,36 @@
 
         let _sobrescritaPerfisPendente = null; // [checkbox] existentes a sobrescrever ao confirmar
         let _novosPerfisPendentes = null;     // [checkbox] novos a criar junto com a confirmação
+        let _arquivosNovosNoModal = new Set(); // arquivos detectados como novos na sessão atual (para badge no modal)
         let _boasVindasTituloOriginal = '';   // título salvo antes de entrar no painel de sobrescrita
 
         function abrirModalConfirmarSobrescritaPerfis(existentesSnapshot) {
             _sobrescritaPerfisPendente = existentesSnapshot;
             _boasVindasTituloOriginal = document.getElementById('boasVindasHeader').textContent;
-            const total = existentesSnapshot.length;
+            const totalExistentes = existentesSnapshot.length;
+            const totalNovos = (_novosPerfisPendentes || []).length;
+            const totalSelecionados = totalExistentes + totalNovos;
             const nomes = existentesSnapshot
                 .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
                 .join(', ');
-            document.getElementById('sobrescritaCorpo').innerHTML =
-                `<p style="margin:0 0 6px;">${total === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${total === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${total === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+
+            let corpoHTML = `<p style="margin:0 0 6px;">${totalExistentes === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${totalExistentes === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${totalExistentes === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+            if (totalNovos > 0) {
+                const nomesNovos = (_novosPerfisPendentes || [])
+                    .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
+                    .join(', ');
+                corpoHTML += `<p style="margin:6px 0 0;font-size:13px;color:#6b7280;">${totalNovos === 1 ? `O perfil ${nomesNovos} é novo e será criado normalmente.` : `Os perfis ${nomesNovos} são novos e serão criados normalmente.`}</p>`;
+            }
+            document.getElementById('sobrescritaCorpo').innerHTML = corpoHTML;
 
             const iconSpan = document.getElementById('boasVindasIconeHeader');
             iconSpan.className = 'modal-header-icon modal-icon-amber';
             iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+            const tituloBase = totalExistentes === 1 ? '1 perfil já existe' : `${totalExistentes} perfis já existem`;
             document.getElementById('boasVindasHeader').textContent =
-                total === 1 ? 'Perfil já existe' : `${total} perfis já existem`;
+                totalSelecionados > totalExistentes
+                    ? `${tituloBase} (de ${totalSelecionados} selecionados)`
+                    : tituloBase;
             document.getElementById('boasVindasCloseBtnHeader').style.display = 'none';
             document.getElementById('modalBoasVindas').setAttribute('data-no-backdrop-close', 'true');
 
@@ -9356,23 +9385,33 @@
 
                 if (novos.length === 0) return;
 
+                // Marca para badge no modal durante esta sessão
+                novos.forEach(c => _arquivosNovosNoModal.add(c.arquivo));
+
                 // Destaca os botões de importar
                 ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
                     const btn = document.getElementById(id);
                     if (btn) btn.classList.add('btn-novos-conjuntos');
                 });
 
-                const nomes = novos.map(c => `<strong>${escapeHtml(c.nome)}</strong>`).join(', ');
+                // Toast resumido: mostra no máximo 2 nomes, depois "+ N mais"
+                const MAX_NOMES_TOAST = 2;
                 const plural = novos.length > 1;
+                const nomesExibidos = novos.slice(0, MAX_NOMES_TOAST)
+                    .map(c => `<strong>${escapeHtml(c.nome)}</strong>`).join(', ');
+                const resto = novos.length - MAX_NOMES_TOAST;
+                const nomesHTML = resto > 0
+                    ? `${nomesExibidos} e mais ${resto}`
+                    : nomesExibidos;
+
                 criarToast({
                     tipo: 'info',
                     titulo: plural ? `${novos.length} novos conjuntos disponíveis` : 'Novo conjunto disponível',
-                    mensagemHTML: plural
-                        ? `Novos conjuntos de feriados online: ${nomes}.`
-                        : `Novo conjunto de feriados online: ${nomes}.`,
-                    autoFechar: 10000,
+                    mensagemHTML: `${plural ? 'Novos conjuntos' : 'Novo conjunto'} de feriados online: ${nomesHTML}.`,
+                    autoFechar: 12000,
                     botaoTexto: 'Ver agora',
-                    botaoCallback: () => abrirModalImportarPerfisOnline()
+                    botaoCallback: () => abrirModalImportarPerfisOnline(),
+                    botaoSecundarioTexto: 'Ignorar'
                 });
             } catch (e) {
                 // Silencia erros de rede — verificação em segundo plano
@@ -9382,6 +9421,7 @@
         function dispensarBoasVindas(tipo) {
             voltarViewSelecaoBoasVindas();
             document.getElementById('modalBoasVindas').classList.remove('active');
+            _arquivosNovosNoModal.clear(); // badges "Novo" somem ao fechar o modal
             if (tipo === 'permanente') {
                 localStorage.setItem('contaprazo_welcome_dispensado', 'true');
             } else if (tipo === 'snooze') {
@@ -9463,6 +9503,7 @@
                 // 4. Renderiza a lista
                 container.innerHTML = conjuntos.map(c => {
                     const ok = !!_feriadosCarregados[c.arquivo];
+                    const isNovo = _arquivosNovosNoModal.has(c.arquivo);
                     const linksConj = obterLinksDoConjunto(c);
                     const linksWelcomeHTML = linksConj.map(l =>
                         `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;transition:color 0.15s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#9ca3af'" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
@@ -9480,7 +9521,7 @@
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
-                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
+                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}${isNovo ? '<span class="conjunto-badge-novo">Novo</span>' : ''}</div>
                                 <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
                                 <div style="font-size:11px;color:#9ca3af;font-style:italic;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                                     <span>Atualizado em: ${escapeHtml(c.dataAtualizacao)}</span>
