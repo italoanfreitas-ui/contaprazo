@@ -6209,12 +6209,19 @@
                     <li>O botão "Limpar" remove o resultado atual e permite fazer um novo cálculo rapidamente.</li>
                 </ul>
 
-                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e7eb; text-align: center;">
-                    <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 15px;">
-                        Precisa restaurar a calculadora para as configurações originais?
-                    </p>
-                    <button class="btn btn-secondary" onclick="confirmarResetCompleto()" style="font-size: 0.875rem; padding: 8px 16px;">
-                        🔄 Restaurar Configurações Padrão
+                <div style="margin-top: 40px; padding: 20px 24px; border: 1px solid #fecaca; border-radius: 12px; background: #fff5f5; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+                    <div style="display:flex;align-items:flex-start;gap:14px;">
+                        <div style="width:36px;height:36px;border-radius:8px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-weight:600;color:#991b1b;font-size:0.9rem;margin-bottom:3px;">Restaurar configurações padrão</div>
+                            <div style="color:#9f1b1b;font-size:0.8rem;line-height:1.5;opacity:0.85;">Remove todos os feriados, perfis e dados da Minha Agenda. Esta ação não pode ser desfeita.</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" onclick="confirmarResetCompleto()" style="white-space:nowrap;flex-shrink:0;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                        Restaurar padrão
                     </button>
                 </div>
             </div>
@@ -7838,7 +7845,7 @@
             modal.classList.remove('active');
         }
 
-        function executarResetCompleto() {
+        async function executarResetCompleto() {
             // Limpa feriados personalizados
             feriadosPersonalizados.clear();
             feriadosArquivoMap.clear();
@@ -7859,14 +7866,31 @@
             localStorage.removeItem('contaprazo_fixos_moveis_com_perfil');
             localStorage.removeItem('contaprazo_aviso_duplicidade_dispensado');
             localStorage.removeItem('conjuntosPredefinidosImportados');
-            localStorage.removeItem('contaprazo_navegar_periodo'); // volta ao padrão: ativo
-            localStorage.removeItem('contaprazo_migracao_arquivo_ok'); // permite re-migrar após reset
+            localStorage.removeItem('contaprazo_navegar_periodo');
+            localStorage.removeItem('contaprazo_migracao_arquivo_ok');
 
             // Limpa perfis de feriados
             localStorage.removeItem(PERFIS_STORAGE_KEY);
             localStorage.removeItem(PERFIL_ATIVO_KEY);
             perfisData = [];
             perfilAtivoId = null;
+
+            // Limpa dados da Minha Agenda (localStorage legado e preferência de modo)
+            localStorage.removeItem('agendaPrazos');
+            localStorage.removeItem('agendaPrazosArquivados');
+            localStorage.removeItem('agendaStorageMode');
+
+            // Limpa IndexedDB: dados da agenda e handle do arquivo salvo
+            try {
+                const db = await _abrirAgendaDB();
+                await new Promise(resolve => {
+                    const tx = db.transaction(['agenda-dados', 'handles'], 'readwrite');
+                    tx.objectStore('agenda-dados').clear();
+                    tx.objectStore('handles').clear();
+                    tx.oncomplete = () => { db.close(); resolve(); };
+                    tx.onerror = () => { db.close(); resolve(); };
+                });
+            } catch(e) { /* IndexedDB indisponível, ignorar */ }
 
             // Fecha o modal
             fecharModalReset();
@@ -10527,8 +10551,12 @@
             if (!usarDiasUteis) return '';
             const conjuntos = obterMetadataConjuntos();
             if (!conjuntos || conjuntos.length === 0) return '';
+            // Só exibe conjuntos que realmente contribuíram com feriados no cálculo atual
+            const arquivosAtivos = new Set(feriadosArquivoMap.values());
+            const conjuntosAtivos = conjuntos.filter(c => arquivosAtivos.has(c.arquivo));
+            if (conjuntosAtivos.length === 0) return '';
 
-            const itensHTML = conjuntos.map(c => {
+            const itensHTML = conjuntosAtivos.map(c => {
                 const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
                 const links = obterLinksDoConjunto(c);
@@ -10551,8 +10579,14 @@
             if (prazo.tipoDias !== 'uteis') return '';
             const conjuntos = prazo.conjuntosMetadata;
             if (!conjuntos || conjuntos.length === 0) return '';
+            // Só exibe conjuntos que realmente contribuíram com feriados neste prazo
+            const arquivosUsados = new Set(
+                (prazo.detalhamentoDias || []).map(d => d.arquivo).filter(Boolean)
+            );
+            const conjuntosAtivos = conjuntos.filter(c => arquivosUsados.has(c.arquivo));
+            if (conjuntosAtivos.length === 0) return '';
 
-            const itensHTML = conjuntos.map(c => {
+            const itensHTML = conjuntosAtivos.map(c => {
                 const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
                 const links = obterLinksDoConjunto(c);
@@ -11288,7 +11322,10 @@
 
             const ferPers = new Set();
             if (prazo.feriadosUsados && prazo.feriadosUsados.personalizados) {
-                prazo.feriadosUsados.personalizados.forEach(([ds]) => ferPers.add(ds));
+                prazo.feriadosUsados.personalizados.forEach(p => {
+                    // Suporta formato legado [[ds, nome]] e novo {data, nome, arquivo}
+                    ferPers.add(Array.isArray(p) ? p[0] : p.data);
+                });
             }
 
             const feriadosCount = prazo.detalhamentoDias.filter(dia => {
@@ -11745,11 +11782,11 @@
 
         function _abrirAgendaDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open('contaprazo-db', 1);
+                const req = indexedDB.open('contaprazo-db', 2);
                 req.onupgradeneeded = e => {
-                    if (!e.target.result.objectStoreNames.contains('handles')) {
-                        e.target.result.createObjectStore('handles');
-                    }
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+                    if (!db.objectStoreNames.contains('agenda-dados')) db.createObjectStore('agenda-dados');
                 };
                 req.onsuccess = e => resolve(e.target.result);
                 req.onerror = e => reject(e.target.error);
@@ -11837,7 +11874,7 @@
         function _agendarGravacaoAgenda() {
             if (!agendaFilePronto) return;
             clearTimeout(_agendaSaveTimer);
-            _agendaSaveTimer = setTimeout(_gravarArquivoAgenda, 600);
+            _agendaSaveTimer = setTimeout(agendaModoIDB ? _gravarDadosIDB : _gravarArquivoAgenda, 600);
         }
 
         function _limparAgendaLocalStorage() {
@@ -11856,9 +11893,187 @@
             }
         }
 
-        async function inicializarArquivoAgenda() {
-            if (!('showOpenFilePicker' in window)) {
+        let agendaModoIDB = false;
+
+        async function _carregarDadosIDB() {
+            const db = await _abrirAgendaDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('agenda-dados', 'readonly');
+                const req = tx.objectStore('agenda-dados').get('dados');
+                req.onsuccess = e => {
+                    const dados = e.target.result;
+                    if (dados) {
+                        prazos = _deserializarPrazos(dados.prazos);
+                        prazosArquivados = _deserializarPrazos(dados.prazosArquivados);
+                    } else {
+                        prazos = []; prazosArquivados = [];
+                    }
+                    db.close(); resolve();
+                };
+                req.onerror = e => { db.close(); reject(e.target.error); };
+            });
+        }
+
+        async function _gravarDadosIDB() {
+            if (!agendaFilePronto) return;
+            try {
+                const db = await _abrirAgendaDB();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction('agenda-dados', 'readwrite');
+                    tx.objectStore('agenda-dados').put({ versao: '1.0', prazos, prazosArquivados }, 'dados');
+                    tx.oncomplete = () => { db.close(); resolve(); };
+                    tx.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) {
+                console.error('Erro ao gravar no IndexedDB:', e);
+                mostrarNotificacao('Erro ao salvar na agenda.', 'erro');
+            }
+        }
+
+        async function limparDadosIDB() {
+            criarToast({
+                tipo: 'aviso',
+                titulo: 'Limpar todos os dados da agenda?',
+                mensagemHTML: 'Esta ação é irreversível. Todos os prazos serão excluídos permanentemente.',
+                autoFechar: false,
+                botaoTexto: 'Limpar tudo',
+                botaoCallback: async () => {
+                    prazos = []; prazosArquivados = [];
+                    await _gravarDadosIDB();
+                    renderizarPrazos();
+                    mostrarNotificacao('Dados da agenda removidos.', 'sucesso');
+                },
+                botaoSecundarioTexto: 'Cancelar'
+            });
+        }
+
+        async function usarModoIDBDiretamente() {
+            agendaModoIDB = true;
+            localStorage.setItem('agendaStorageMode', 'idb');
+            try {
+                await _carregarDadosIDB();
+                const temDadosLS = !!(localStorage.getItem('agendaPrazos') || localStorage.getItem('agendaPrazosArquivados'));
+                if (prazos.length === 0 && prazosArquivados.length === 0 && temDadosLS) {
+                    _migrarDeLocalStorage();
+                    if (prazos.length > 0 || prazosArquivados.length > 0) {
+                        await _gravarDadosIDB();
+                        _limparAgendaLocalStorage();
+                    }
+                }
+                agendaInitStatus = 'ready';
+                agendaFilePronto = true;
+                _ocultarTelaSetupAgenda();
+                renderizarPrazos();
+                mostrarNotificacao('Usando armazenamento no navegador (IndexedDB).', 'sucesso');
+            } catch(e) {
+                agendaModoIDB = false;
+                localStorage.removeItem('agendaStorageMode');
                 agendaInitStatus = 'unsupported';
+                mostrarNotificacao('Não foi possível acessar o IndexedDB.', 'erro');
+            }
+        }
+
+        async function mudarParaModoIDB() {
+            criarToast({
+                tipo: 'aviso',
+                titulo: 'Mudar para armazenamento no navegador?',
+                mensagemHTML: 'Os dados atuais serão copiados para o IndexedDB deste navegador. O arquivo JSON continuará existindo no seu computador, mas não será mais sincronizado automaticamente.',
+                autoFechar: false,
+                botaoTexto: 'Mudar para IndexedDB',
+                botaoCallback: async () => {
+                    try {
+                        agendaModoIDB = true;
+                        localStorage.setItem('agendaStorageMode', 'idb');
+                        await _gravarDadosIDB();
+                        _atualizarInfoArquivoAgenda();
+                        mostrarNotificacao('Modo alterado para armazenamento no navegador.', 'sucesso');
+                    } catch(e) {
+                        agendaModoIDB = false;
+                        localStorage.removeItem('agendaStorageMode');
+                        mostrarNotificacao('Erro ao migrar para IndexedDB.', 'erro');
+                    }
+                },
+                botaoSecundarioTexto: 'Cancelar'
+            });
+        }
+
+        async function mudarParaModoArquivo() {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: 'minha-agenda-contaprazo.json',
+                    types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(JSON.stringify({ versao: '1.0', prazos, prazosArquivados }, null, 2));
+                await writable.close();
+                agendaFileHandle = handle;
+                agendaFileName = handle.name;
+                await _salvarHandleDB(handle);
+                agendaModoIDB = false;
+                localStorage.setItem('agendaStorageMode', 'file');
+                _atualizarInfoArquivoAgenda();
+                mostrarNotificacao('Modo alterado para arquivo no computador: ' + handle.name, 'sucesso');
+            } catch(e) {
+                if (e.name !== 'AbortError') mostrarNotificacao('Erro ao criar arquivo.', 'erro');
+            }
+        }
+
+        async function importarBackupParaIDB() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,application/json';
+            input.onchange = async () => {
+                const file = input.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const dados = JSON.parse(text);
+                    if (!dados || (!Array.isArray(dados.prazos) && !Array.isArray(dados.prazosArquivados))) {
+                        mostrarNotificacao('Arquivo inválido ou não reconhecido.', 'erro');
+                        return;
+                    }
+                    criarToast({
+                        tipo: 'aviso',
+                        titulo: 'Importar backup?',
+                        mensagemHTML: `Os dados atuais serão <strong>substituídos</strong> pelos do arquivo <em>${escapeHtml(file.name)}</em>. Esta ação não pode ser desfeita.`,
+                        autoFechar: false,
+                        botaoTexto: 'Importar e substituir',
+                        botaoCallback: async () => {
+                            prazos = _deserializarPrazos(dados.prazos || []);
+                            prazosArquivados = _deserializarPrazos(dados.prazosArquivados || []);
+                            await _gravarDadosIDB();
+                            renderizarPrazos();
+                            mostrarNotificacao('Backup importado com sucesso!', 'sucesso');
+                        },
+                        botaoSecundarioTexto: 'Cancelar'
+                    });
+                } catch(e) {
+                    mostrarNotificacao('Erro ao ler o arquivo de backup.', 'erro');
+                }
+            };
+            input.click();
+        }
+
+        async function inicializarArquivoAgenda() {
+            const fsApiDisponivel = 'showOpenFilePicker' in window;
+            const prefStorageMode = localStorage.getItem('agendaStorageMode');
+            if (!fsApiDisponivel || prefStorageMode === 'idb') {
+                agendaModoIDB = true;
+                try {
+                    await _carregarDadosIDB();
+                    if (prazos.length === 0 && prazosArquivados.length === 0) {
+                        _migrarDeLocalStorage();
+                        if (prazos.length > 0 || prazosArquivados.length > 0) {
+                            await _gravarDadosIDB();
+                            _limparAgendaLocalStorage();
+                        }
+                    }
+                    agendaInitStatus = 'ready';
+                    agendaFilePronto = true;
+                } catch(e) {
+                    console.error('Erro ao inicializar IndexedDB:', e);
+                    agendaInitStatus = 'unsupported';
+                }
                 _atualizarInfoArquivoAgenda();
                 if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
                 return;
@@ -11898,7 +12113,9 @@
             const gerenciarBtn = document.getElementById('agendaMaisGerenciarArquivo');
             if (!infoDiv) return;
             if (agendaInitStatus === 'ready') {
-                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">Arquivo da agenda</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</div>`;
+                const label = agendaModoIDB ? 'Armazenamento no navegador' : 'Arquivo da agenda';
+                const nome = agendaModoIDB ? 'IndexedDB — dados salvos neste navegador' : agendaFileName;
+                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">${label}</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(nome)}">${escapeHtml(nome)}</div>`;
                 infoDiv.style.display = 'block';
                 if (sepDiv) sepDiv.style.display = 'block';
                 if (gerenciarBtn) gerenciarBtn.style.display = 'flex';
@@ -11921,8 +12138,8 @@
             if (agendaInitStatus === 'unsupported') {
                 html = `<div class="agenda-setup-screen">
                     <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-                    <div class="agenda-setup-titulo">Navegador não suportado</div>
-                    <div class="agenda-setup-desc">A Minha Agenda salva dados localmente usando a <strong>File System Access API</strong>, disponível apenas no <strong>Chrome</strong> e <strong>Edge</strong> em computadores (versão 86+). Em dispositivos móveis ou outros navegadores, essa funcionalidade não está disponível.</div>
+                    <div class="agenda-setup-titulo">Armazenamento indisponível</div>
+                    <div class="agenda-setup-desc">Não foi possível acessar o armazenamento local neste ambiente. Isso pode ocorrer em modo privado com restrições rígidas ou em contextos sem suporte a IndexedDB. Tente um navegador diferente ou desative restrições de armazenamento.</div>
                 </div>`;
             } else if (agendaInitStatus === 'needs-permission') {
                 html = `<div class="agenda-setup-screen">
@@ -11944,6 +12161,8 @@
                     <div class="agenda-setup-acoes">
                         <button class="agenda-setup-btn-primario" onclick="trocarArquivoAgenda('novo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo</button>
                         <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Abrir arquivo existente</button>
+                        <div style="display:flex;align-items:center;gap:10px;margin:4px 0;"><hr style="flex:1;border:none;border-top:1px solid #e5e7eb;"><span style="color:#9ca3af;font-size:0.78rem;white-space:nowrap;">ou use o armazenamento do navegador</span><hr style="flex:1;border:none;border-top:1px solid #e5e7eb;"></div>
+                        <button class="agenda-setup-btn-secundario" onclick="usarModoIDBDiretamente()" style="color:#3b82f6;border-color:#bfdbfe;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Usar IndexedDB (dados no navegador)</button>
                     </div>
                     <div class="agenda-setup-nota">O arquivo ficará onde você escolher. O app precisa de permissão de leitura e escrita. Nenhum dado é enviado à nuvem.</div>
                 </div>`;
@@ -12032,20 +12251,43 @@
                 modal.className = 'modal-aviso';
                 document.body.appendChild(modal);
             }
-            modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
-                <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
-                <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
-                <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
-                <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
-                    <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
-                    <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
-                </div>
-                <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
-            </div>`;
+            const closeModal = `document.getElementById('${modalId}').classList.remove('active')`;
+            if (agendaModoIDB) {
+                const fsDisp = 'showOpenFilePicker' in window;
+                const trocarParaArquivoBtnHTML = fsDisp
+                    ? `<button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="mudarParaModoArquivo();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>Mudar para arquivo no computador</button>`
+                    : '';
+                modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                    <button class="modal-close-btn modal-close-btn-abs" onclick="${closeModal}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                    <div class="modal-aviso-icon" style="background:#eff6ff;"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+                    <h3 style="margin-bottom:4px;">Armazenamento no navegador</h3>
+                    <p style="color:#6b7280;font-size:0.82rem;margin-bottom:6px;text-align:center;">Os dados da agenda estão salvos no <strong>IndexedDB</strong> deste navegador.</p>
+                    <p style="color:#92400e;font-size:0.78rem;margin-bottom:18px;text-align:center;background:#fef3c7;padding:8px 12px;border-radius:6px;line-height:1.5;">⚠️ Dados ficam vinculados a este navegador e podem ser perdidos se o histórico/dados do site forem apagados. Faça backups regulares.</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados (JSON)</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="importarBackupParaIDB();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="8 6 12 2 16 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Restaurar de backup (JSON)</button>
+                        ${trocarParaArquivoBtnHTML}
+                        <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                        <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="limparDadosIDB();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Limpar todos os dados</button>
+                    </div>
+                </div>`;
+            } else {
+                modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                    <button class="modal-close-btn modal-close-btn-abs" onclick="${closeModal}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                    <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                    <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
+                    <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="mudarParaModoIDB();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Mudar para armazenamento no navegador</button>
+                        <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                        <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
+                    </div>
+                    <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
+                </div>`;
+            }
             modal.classList.add('active');
         }
 
@@ -12278,9 +12520,23 @@
                 feriadosUsados: {
                     fixos: {...feriadosFixos},
                     moveis: {...feriadosMoveis},
-                    personalizados: Array.from(feriadosPersonalizados.entries())
+                    personalizados: Array.from(feriadosPersonalizados.entries()).map(([ds, nome]) => ({
+                        data: ds,
+                        nome,
+                        arquivo: feriadosArquivoMap.get(ds) || null
+                    }))
                 },
-                conjuntosMetadata: obterMetadataConjuntos()
+                conjuntosMetadata: (() => {
+                    const arquivosUsados = new Set(
+                        todosOsDias.map(d => feriadosArquivoMap.get(formatarDataCompleta(d.data))).filter(Boolean)
+                    );
+                    return obterMetadataConjuntos().filter(c => arquivosUsados.has(c.arquivo));
+                })(),
+                perfilUsado: (() => {
+                    if (!perfilAtivoId) return null;
+                    const p = perfisData.find(pf => pf.id === perfilAtivoId);
+                    return p ? { id: p.id, nome: p.nome } : null;
+                })()
             };
 
             prazos.push(novoPrazo);
@@ -14680,23 +14936,19 @@
             <div class="modal-aviso-icon modal-icon-red">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
-            <h3>Restaurar Configurações Padrão</h3>
-            <p style="text-align: left; margin-bottom: 20px;">
-                Esta ação irá <strong>restaurar todas as configurações</strong> para os valores originais:
-            </p>
-            <ul style="text-align: left; margin: 0 0 20px 20px; color: #374151; line-height: 1.8;">
-                <li>Todos os <strong>feriados personalizados</strong> serão removidos</li>
-                <li>Feriados <strong>fixos e móveis</strong> voltarão ao padrão</li>
-                <li>Preferência de <strong>avisos</strong> será resetada</li>
-            </ul>
-            <p style="text-align: left; color: #991b1b; font-weight: 600; margin-bottom: 20px;">
-                ⚠️ Esta ação não pode ser desfeita!
-            </p>
-            <div style="display: flex; gap: 10px; justify-content: center;">
+            <h3>Restaurar configurações padrão</h3>
+            <p style="color:#6b7280;font-size:0.85rem;margin-bottom:16px;">O seguinte será apagado permanentemente:</p>
+            <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+                <ul style="margin:0;padding-left:18px;color:#7f1d1d;font-size:0.85rem;line-height:2;">
+                    <li>Todos os <strong>feriados personalizados</strong> e perfis</li>
+                    <li>Feriados <strong>fixos e móveis</strong> customizados (volta ao padrão)</li>
+                    <li>Todos os <strong>prazos da Minha Agenda</strong> (arquivo e IndexedDB)</li>
+                    <li>Todas as <strong>preferências e avisos</strong> dispensados</li>
+                </ul>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <button class="btn btn-secondary" onclick="fecharModalReset()">Cancelar</button>
-                <button class="btn btn-danger" onclick="executarResetCompleto()">
-                    Confirmar Reset
-                </button>
+                <button class="btn btn-danger" onclick="executarResetCompleto()">Resetar tudo</button>
             </div>
         </div>
     </div>
