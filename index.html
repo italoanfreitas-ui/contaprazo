@@ -4780,6 +4780,27 @@
             flex-shrink: 0;
         }
 
+        /* ── Arquivo da Agenda ── */
+        .agenda-info-arquivo {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 12px;
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+            font-size: 0.82rem; color: #166534; cursor: pointer;
+            transition: all 0.18s; user-select: none; margin-bottom: 14px;
+        }
+        .agenda-info-arquivo:hover { background: #dcfce7; border-color: #86efac; }
+        .agenda-info-arquivo-nome { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .agenda-setup-screen { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; text-align: center; }
+        .agenda-setup-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #16a34a; }
+        .agenda-setup-titulo { font-size: 1.15rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+        .agenda-setup-desc { font-size: 0.9rem; color: #6b7280; max-width: 420px; line-height: 1.6; margin-bottom: 24px; }
+        .agenda-setup-acoes { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .agenda-setup-btn-primario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+        .agenda-setup-btn-primario:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,0.3); }
+        .agenda-setup-btn-secundario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+        .agenda-setup-btn-secundario:hover { background: #f9fafb; border-color: #9ca3af; }
+        .agenda-setup-nota { font-size: 0.78rem; color: #9ca3af; margin-top: 16px; max-width: 380px; line-height: 1.5; }
+
         .modal-fechar {
             background: rgba(0, 0, 0, 0.05);
             border: none;
@@ -6143,6 +6164,10 @@
                     Minha Agenda de Prazos
                 </h3>
                 <div class="section-divider"></div>
+
+                <!-- Arquivo da Agenda -->
+                <div id="agendaInfoArquivo" class="agenda-info-arquivo" onclick="abrirGerenciamentoArquivoAgenda()" style="display:none;" title="Clique para gerenciar o arquivo da agenda"></div>
+                <div id="agendaSetup" style="display:none;"></div>
 
                 <!-- Filtros -->
                 <div class="agenda-filtros">
@@ -7565,6 +7590,13 @@
         // ========================================
         let prazos = []; // Array de prazos salvos
         let prazosArquivados = []; // Array de prazos arquivados
+
+        // ── Arquivo da Agenda ──
+        let agendaFileHandle = null;
+        let agendaFileName = '';
+        let agendaFilePronto = false;
+        let agendaInitStatus = 'loading'; // 'loading'|'ready'|'no-file'|'needs-permission'|'unsupported'
+        let _agendaSaveTimer = null;
         let modoVisualizacao = 'ativos'; // 'ativos' ou 'arquivados'
         let filtroAtual = 'todos'; // Filtro ativo
         let prazoEmEdicao = null; // ID do prazo sendo editado
@@ -10432,6 +10464,29 @@
             `;
         }
 
+        function _gerarHTMLConjuntosNotaPrazo(prazo, contexto) {
+            if (prazo.tipoDias !== 'uteis') return '';
+            const conjuntos = prazo.conjuntosMetadata;
+            if (!conjuntos || conjuntos.length === 0) return '';
+
+            const itensHTML = conjuntos.map(c => {
+                const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
+                const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
+                const links = obterLinksDoConjunto(c);
+                const linksHTML = contexto === 'print' && links.length > 0
+                    ? ' ' + links.map(l => `<a href="${escapeHtml(l.url)}" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;font-size:11px;" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join(' · ')
+                    : '';
+                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linksHTML}</div>`;
+            }).join('');
+
+            return `
+                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
+                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
+                    ${itensHTML}
+                </div>
+            `;
+        }
+
         /**
          * Gera o cabeçalho HTML padronizado para exports PDF/PNG
          * @param {Object} params - Parâmetros do cabeçalho
@@ -11317,6 +11372,7 @@
         </div>
     </div>
     ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias)}</div>` : ''}
+    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'print')}
     <div class="no-print" style="text-align:center;margin-top:28px;padding:18px;background:#fef3c7;border-radius:8px;">
         <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
         <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
@@ -11419,6 +11475,7 @@
         </div>
     </div>
     ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${listaHTML}</div>` : ''}
+    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'image')}
 </div>`;
 
             const exportStyleEl = document.createElement('style');
@@ -11586,73 +11643,350 @@
 
         // Carregar prazos do localStorage
         function carregarPrazosStorage() {
-            const prazosStorage = localStorage.getItem('agendaPrazos');
-            if (prazosStorage) {
-                try {
-                    prazos = JSON.parse(prazosStorage);
-                    // Converter strings de data de volta para objetos Date
-                    prazos = prazos.map(prazo => ({
-                        ...prazo,
-                        dataInicio: new Date(prazo.dataInicio),
-                        dataFinal: new Date(prazo.dataFinal),
-                        dataCriacao: new Date(prazo.dataCriacao),
-                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                            ...dia,
-                            data: new Date(dia.data)
-                        }))
-                    }));
-                } catch (error) {
-                    console.error('Erro ao carregar prazos:', error);
-                    prazos = [];
-                }
-            }
+            // Dados carregados do arquivo via inicializarArquivoAgenda()
         }
 
-        // Salvar prazos no localStorage
         function salvarPrazosStorage() {
+            _agendarGravacaoAgenda();
+        }
+
+        function carregarArquivadosStorage() {
+            // Dados carregados do arquivo via inicializarArquivoAgenda()
+        }
+
+        function salvarArquivadosStorage() {
+            _agendarGravacaoAgenda();
+        }
+
+        // ==================== ARQUIVO DA AGENDA ====================
+
+        function _abrirAgendaDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('contaprazo-db', 1);
+                req.onupgradeneeded = e => {
+                    if (!e.target.result.objectStoreNames.contains('handles')) {
+                        e.target.result.createObjectStore('handles');
+                    }
+                };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        async function _salvarHandleDB(handle) {
+            const db = await _abrirAgendaDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readwrite');
+                tx.objectStore('handles').put(handle, 'agenda');
+                tx.oncomplete = () => { db.close(); resolve(); };
+                tx.onerror = e => { db.close(); reject(e.target.error); };
+            });
+        }
+
+        async function _recuperarHandleDB() {
             try {
-                localStorage.setItem('agendaPrazos', JSON.stringify(prazos));
-            } catch (error) {
-                console.error('Erro ao salvar prazos:', error);
-                mostrarNotificacao('Erro ao salvar prazos. Verifique o espaço disponível.', 'erro');
+                const db = await _abrirAgendaDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction('handles', 'readonly');
+                    const req = tx.objectStore('handles').get('agenda');
+                    req.onsuccess = e => { db.close(); resolve(e.target.result || null); };
+                    req.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) { return null; }
+        }
+
+        async function _limparHandleDB() {
+            try {
+                const db = await _abrirAgendaDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction('handles', 'readwrite');
+                    tx.objectStore('handles').delete('agenda');
+                    tx.oncomplete = () => { db.close(); resolve(); };
+                    tx.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) {}
+        }
+
+        function _deserializarPrazos(arr) {
+            return (arr || []).map(p => ({
+                ...p,
+                dataInicio: new Date(p.dataInicio),
+                dataFinal: new Date(p.dataFinal),
+                dataCriacao: new Date(p.dataCriacao),
+                dataConclusao: p.dataConclusao ? new Date(p.dataConclusao) : null,
+                dataArquivamento: p.dataArquivamento ? new Date(p.dataArquivamento) : null,
+                detalhamentoDias: (p.detalhamentoDias || []).map(d => ({ ...d, data: new Date(d.data) }))
+            }));
+        }
+
+        async function _carregarDadosArquivoAgenda() {
+            const file = await agendaFileHandle.getFile();
+            const text = await file.text();
+            if (!text.trim()) { prazos = []; prazosArquivados = []; return; }
+            try {
+                const dados = JSON.parse(text);
+                prazos = _deserializarPrazos(dados.prazos);
+                prazosArquivados = _deserializarPrazos(dados.prazosArquivados);
+            } catch(e) {
+                mostrarNotificacao('O arquivo da agenda está corrompido. Os dados foram reiniciados.', 'aviso');
+                prazos = []; prazosArquivados = [];
             }
         }
 
-        // Carregar prazos arquivados do localStorage
-        function carregarArquivadosStorage() {
-            const arquivadosStorage = localStorage.getItem('agendaPrazosArquivados');
-            if (arquivadosStorage) {
-                try {
-                    prazosArquivados = JSON.parse(arquivadosStorage);
-                    // Converter strings de data de volta para objetos Date
-                    prazosArquivados = prazosArquivados.map(prazo => ({
-                        ...prazo,
-                        dataInicio: new Date(prazo.dataInicio),
-                        dataFinal: new Date(prazo.dataFinal),
-                        dataCriacao: new Date(prazo.dataCriacao),
-                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                        dataArquivamento: prazo.dataArquivamento ? new Date(prazo.dataArquivamento) : null,
-                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                            ...dia,
-                            data: new Date(dia.data)
-                        }))
-                    }));
-                } catch (error) {
-                    console.error('Erro ao carregar arquivados:', error);
-                    prazosArquivados = [];
+        async function _gravarArquivoAgenda() {
+            if (!agendaFilePronto || !agendaFileHandle) return;
+            try {
+                const writable = await agendaFileHandle.createWritable();
+                await writable.write(JSON.stringify({ versao: '1.0', prazos, prazosArquivados }, null, 2));
+                await writable.close();
+            } catch(e) {
+                console.error('Erro ao gravar arquivo da agenda:', e);
+                if (e.name === 'NotAllowedError' || e.name === 'SecurityError') {
+                    agendaFilePronto = false;
+                    agendaInitStatus = 'needs-permission';
+                    _atualizarInfoArquivoAgenda();
+                } else {
+                    mostrarNotificacao('Erro ao salvar na agenda. Verifique se o arquivo está acessível.', 'erro');
                 }
             }
         }
 
-        // Salvar prazos arquivados no localStorage
-        function salvarArquivadosStorage() {
-            try {
-                localStorage.setItem('agendaPrazosArquivados', JSON.stringify(prazosArquivados));
-            } catch (error) {
-                console.error('Erro ao salvar arquivados:', error);
-                mostrarNotificacao('Erro ao salvar arquivados. Verifique o espaço disponível.', 'erro');
+        function _agendarGravacaoAgenda() {
+            if (!agendaFilePronto) return;
+            clearTimeout(_agendaSaveTimer);
+            _agendaSaveTimer = setTimeout(_gravarArquivoAgenda, 600);
+        }
+
+        function _limparAgendaLocalStorage() {
+            localStorage.removeItem('agendaPrazos');
+            localStorage.removeItem('agendaPrazosArquivados');
+        }
+
+        function _migrarDeLocalStorage() {
+            const stored = localStorage.getItem('agendaPrazos');
+            const storedArq = localStorage.getItem('agendaPrazosArquivados');
+            if (stored) {
+                try { prazos = _deserializarPrazos(JSON.parse(stored)); } catch(e) { prazos = []; }
             }
+            if (storedArq) {
+                try { prazosArquivados = _deserializarPrazos(JSON.parse(storedArq)); } catch(e) { prazosArquivados = []; }
+            }
+        }
+
+        async function inicializarArquivoAgenda() {
+            if (!('showOpenFilePicker' in window)) {
+                agendaInitStatus = 'unsupported';
+                _atualizarInfoArquivoAgenda();
+                if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+                return;
+            }
+            try {
+                const handle = await _recuperarHandleDB();
+                if (!handle) {
+                    agendaInitStatus = 'no-file';
+                } else {
+                    agendaFileHandle = handle;
+                    agendaFileName = handle.name;
+                    const perm = await handle.queryPermission({ mode: 'readwrite' });
+                    if (perm === 'granted') {
+                        try {
+                            await _carregarDadosArquivoAgenda();
+                            agendaInitStatus = 'ready';
+                            agendaFilePronto = true;
+                        } catch(e) {
+                            console.error('Erro ao carregar arquivo da agenda:', e);
+                            agendaInitStatus = 'needs-permission';
+                        }
+                    } else {
+                        agendaInitStatus = 'needs-permission';
+                    }
+                }
+            } catch(e) {
+                console.error('Erro ao inicializar arquivo da agenda:', e);
+                agendaInitStatus = 'no-file';
+            }
+            _atualizarInfoArquivoAgenda();
+            if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+        }
+
+        function _atualizarInfoArquivoAgenda() {
+            const bar = document.getElementById('agendaInfoArquivo');
+            if (!bar) return;
+            if (agendaInitStatus === 'ready') {
+                bar.style.display = 'flex';
+                bar.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg><span class="agenda-info-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;opacity:0.6;"><polyline points="6 9 12 15 18 9"/></svg>`;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function _mostrarTelaSetupAgenda() {
+            const setupDiv = document.getElementById('agendaSetup');
+            if (!setupDiv) return;
+            ['#agendaInfoArquivo','#agendaPaginacao','#agendaLista','#agendaVazia','.agenda-filtros','#barraSelecao','.agenda-acoes-gerenciamento'].forEach(sel => {
+                const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
+                if (el) el.style.display = 'none';
+            });
+
+            let html = '';
+            if (agendaInitStatus === 'unsupported') {
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+                    <div class="agenda-setup-titulo">Navegador não suportado</div>
+                    <div class="agenda-setup-desc">A Minha Agenda salva dados localmente usando a <strong>File System Access API</strong>, disponível apenas no <strong>Chrome</strong> e <strong>Edge</strong> em computadores (versão 86+). Em dispositivos móveis ou outros navegadores, essa funcionalidade não está disponível.</div>
+                </div>`;
+            } else if (agendaInitStatus === 'needs-permission') {
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                    <div class="agenda-setup-titulo">Permissão necessária</div>
+                    <div class="agenda-setup-desc">O arquivo <strong>${escapeHtml(agendaFileName)}</strong> foi encontrado, mas o navegador precisa de sua confirmação para acessá-lo nesta sessão.</div>
+                    <div class="agenda-setup-acoes">
+                        <button class="agenda-setup-btn-primario" onclick="reconectarArquivoAgenda()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>Reconectar ao arquivo</button>
+                        <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')">Selecionar outro arquivo</button>
+                    </div>
+                    <div class="agenda-setup-nota">O navegador exige essa confirmação por segurança. Seu arquivo não foi perdido.</div>
+                </div>`;
+            } else {
+                const temDadosLS = !!(localStorage.getItem('agendaPrazos') || localStorage.getItem('agendaPrazosArquivados'));
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                    <div class="agenda-setup-titulo">Configure o arquivo da sua agenda</div>
+                    <div class="agenda-setup-desc">A Minha Agenda salva prazos diretamente em um arquivo JSON no seu computador, sem depender do armazenamento do navegador.${temDadosLS ? '<br><br><strong style="color:#92400e;">&#9888;&#65039; Dados anteriores encontrados</strong> — serão migrados automaticamente para o arquivo escolhido.' : ''}</div>
+                    <div class="agenda-setup-acoes">
+                        <button class="agenda-setup-btn-primario" onclick="trocarArquivoAgenda('novo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo</button>
+                        <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Abrir arquivo existente</button>
+                    </div>
+                    <div class="agenda-setup-nota">O arquivo ficará onde você escolher. O app precisa de permissão de leitura e escrita. Nenhum dado é enviado à nuvem.</div>
+                </div>`;
+            }
+            setupDiv.innerHTML = html;
+            setupDiv.style.display = 'block';
+        }
+
+        function _ocultarTelaSetupAgenda() {
+            const setupDiv = document.getElementById('agendaSetup');
+            if (setupDiv) setupDiv.style.display = 'none';
+            ['#agendaLista','#agendaVazia','.agenda-filtros','.agenda-acoes-gerenciamento'].forEach(sel => {
+                const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
+                if (el) el.style.display = '';
+            });
+            _atualizarInfoArquivoAgenda();
+        }
+
+        async function trocarArquivoAgenda(modo) {
+            const wasReady = agendaInitStatus === 'ready';
+            try {
+                let handle;
+                if (modo === 'novo') {
+                    handle = await window.showSaveFilePicker({
+                        suggestedName: 'minha-agenda-contaprazo.json',
+                        types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+                    });
+                } else {
+                    [handle] = await window.showOpenFilePicker({
+                        types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }],
+                        multiple: false
+                    });
+                }
+                agendaFileHandle = handle;
+                agendaFileName = handle.name;
+                await _salvarHandleDB(handle);
+                if (modo === 'existente') {
+                    try { await _carregarDadosArquivoAgenda(); } catch(e) { prazos = []; prazosArquivados = []; }
+                } else {
+                    if (!wasReady) _migrarDeLocalStorage();
+                    const writable = await handle.createWritable();
+                    await writable.write(JSON.stringify({ versao: '1.0', prazos, prazosArquivados }, null, 2));
+                    await writable.close();
+                }
+                if (!wasReady) _limparAgendaLocalStorage();
+                agendaInitStatus = 'ready';
+                agendaFilePronto = true;
+                _ocultarTelaSetupAgenda();
+                renderizarPrazos();
+                verificarPrazosVencendo();
+                mostrarNotificacao(modo === 'novo' ? 'Arquivo da agenda criado com sucesso!' : 'Arquivo da agenda conectado!', 'sucesso');
+            } catch(e) {
+                if (e.name !== 'AbortError') {
+                    console.error('Erro ao configurar arquivo da agenda:', e);
+                    mostrarNotificacao('Não foi possível configurar o arquivo da agenda.', 'erro');
+                }
+            }
+        }
+
+        async function reconectarArquivoAgenda() {
+            if (!agendaFileHandle) return;
+            try {
+                const perm = await agendaFileHandle.requestPermission({ mode: 'readwrite' });
+                if (perm === 'granted') {
+                    await _carregarDadosArquivoAgenda();
+                    agendaInitStatus = 'ready';
+                    agendaFilePronto = true;
+                    _ocultarTelaSetupAgenda();
+                    renderizarPrazos();
+                    verificarPrazosVencendo();
+                } else {
+                    mostrarNotificacao('Permissão negada. Tente selecionar o arquivo novamente.', 'aviso');
+                }
+            } catch(e) {
+                console.error('Erro ao reconectar arquivo:', e);
+                mostrarNotificacao('Não foi possível acessar o arquivo da agenda.', 'erro');
+            }
+        }
+
+        function abrirGerenciamentoArquivoAgenda() {
+            const modalId = 'modalGerenciarArquivoAgenda';
+            let modal = document.getElementById(modalId);
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal-aviso';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
+                <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
+                    <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                    <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
+                </div>
+                <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
+            </div>`;
+            modal.classList.add('active');
+        }
+
+        function exportarCopiaArquivoAgenda() {
+            const dados = JSON.stringify({ versao: '1.0', exportadoEm: new Date().toISOString(), prazos, prazosArquivados }, null, 2);
+            const blob = new Blob([dados], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `contaprazo-agenda-${new Date().toISOString().slice(0,10)}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function desconectarArquivoAgenda() {
+            criarToast({
+                tipo: 'aviso',
+                titulo: 'Desconectar arquivo da agenda?',
+                mensagemHTML: 'Os dados serão preservados no arquivo. O app precisará ser reconectado para acessá-los.',
+                autoFechar: false,
+                botaoTexto: 'Desconectar',
+                botaoCallback: async () => {
+                    await _limparHandleDB();
+                    agendaFileHandle = null; agendaFileName = '';
+                    agendaInitStatus = 'no-file'; agendaFilePronto = false;
+                    prazos = []; prazosArquivados = [];
+                    if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+                },
+                botaoSecundarioTexto: 'Cancelar'
+            });
         }
 
         // Gerar ID único
@@ -11793,18 +12127,27 @@
                 mostrarNotificacao('Realize um cálculo primeiro antes de salvar na agenda.', 'aviso');
                 return;
             }
-
-            // Preencher modal - só título com descrição, campo descrição vazio
+            if (!agendaFilePronto) {
+                if (!('showOpenFilePicker' in window)) {
+                    mostrarNotificacao('A Minha Agenda requer Chrome ou Edge em computadores.', 'aviso');
+                } else {
+                    criarToast({
+                        tipo: 'info',
+                        titulo: 'Minha Agenda não configurada',
+                        mensagemHTML: agendaFileHandle
+                            ? `O arquivo <strong>${escapeHtml(agendaFileName)}</strong> precisa ser reconectado antes de salvar.`
+                            : 'Configure um arquivo para a agenda antes de salvar prazos.',
+                        botaoTexto: 'Configurar agora',
+                        botaoCallback: () => { trocarPagina('agenda'); },
+                        botaoSecundarioTexto: 'Cancelar'
+                    });
+                }
+                return;
+            }
             document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
-            document.getElementById('inputDescricaoPrazo').value = ''; // Deixar vazio para usuário preencher
-
-            // Abrir modal
+            document.getElementById('inputDescricaoPrazo').value = '';
             document.getElementById('modalInputTitulo').classList.add('active');
-
-            // Focar no campo de título
-            setTimeout(() => {
-                document.getElementById('inputTituloPrazo').focus();
-            }, 100);
+            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 100);
         }
 
         // Fechar modal de input
@@ -11846,7 +12189,8 @@
                     fixos: {...feriadosFixos},
                     moveis: {...feriadosMoveis},
                     personalizados: Array.from(feriadosPersonalizados.entries())
-                }
+                },
+                conjuntosMetadata: obterMetadataConjuntos()
             };
 
             prazos.push(novoPrazo);
@@ -12049,8 +12393,18 @@
 
         // Carregar e renderizar agenda
         function carregarAgenda() {
-            carregarPrazosStorage();
-            carregarArquivadosStorage();
+            if (agendaInitStatus === 'loading') {
+                const container = document.getElementById('agendaLista');
+                if (container) container.innerHTML = '<div style="text-align:center;padding:40px;color:#9ca3af;font-size:0.9rem;">Carregando...</div>';
+                const vazio = document.getElementById('agendaVazia');
+                if (vazio) vazio.style.display = 'none';
+                return;
+            }
+            if (agendaInitStatus !== 'ready') {
+                _mostrarTelaSetupAgenda();
+                return;
+            }
+            _ocultarTelaSetupAgenda();
             renderizarPrazos();
             verificarPrazosVencendo();
         }
@@ -12240,7 +12594,7 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="prazo-conteudo">
+                    <div class="prazo-conteudo"${!modoSelecao ? ` onclick="abrirDetalhes('${prazo.id}')" style="cursor:pointer;"` : ''}>
                         <div class="prazo-header">
                             <h3 class="prazo-titulo">${prazo.titulo}</h3>
                             ${badgeHTML}
@@ -12706,7 +13060,7 @@
             // Renderizar botões de ação baseado se é arquivado ou não
             const acoesContainer = document.querySelector('.modal-detalhes-acoes');
             const exportDropdownHTML = `
-                    <button class="btn btn-secondary" id="btn-exportar-prazo" onclick="toggleExportarPrazoMenu(event)" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;">
+                    <button id="btn-exportar-prazo" onclick="toggleExportarPrazoMenu(event)" style="margin-left:auto;height:32px;padding:0 12px 0 10px;border:1px solid rgba(209,250,229,0.9);border-radius:8px;background:rgba(255,255,255,0.9);color:var(--color-green-700);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;font-family:inherit;letter-spacing:0.2px;transition:all 0.18s;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                             <polyline points="16 6 12 2 8 6"/>
@@ -13992,6 +14346,7 @@
         });
 
         inicializarPerfis();
+        inicializarArquivoAgenda();
         atualizarChipTiposFeriado();
         renderizarCalendario();
         verificarMostrarBoasVindas();
