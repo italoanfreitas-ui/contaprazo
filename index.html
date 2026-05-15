@@ -3956,59 +3956,116 @@
             flex-shrink: 0;
         }
 
-        /* Filtros da Agenda */
-        .agenda-filtros {
+        /* ── Agenda Toolbar ── */
+        .agenda-toolbar {
             display: flex;
-            gap: 10px;
-            background: #f9fafb;
-            padding: 8px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
-        .filtro-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 16px;
-            border: 2px solid transparent;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #6b7280;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        /* Filter dropdown */
+        .agenda-filtro-dropdown { position: relative; }
+        .agenda-filtro-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 12px;
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.875rem; font-weight: 500; color: #374151;
+            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
+        .agenda-filtro-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+        .agenda-filtro-btn.open { border-color: var(--color-blue-500); color: var(--color-blue-500); }
+        .agenda-filtro-count {
+            background: var(--color-blue-500); color: white;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+        }
+        .agenda-filtro-btn.open .agenda-filtro-count { background: var(--color-blue-600); }
+        .agenda-filtro-menu {
+            position: absolute; top: calc(100% + 6px); left: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 200px;
+            overflow: hidden; z-index: 200;
+            animation: agendaDropIn 0.15s ease;
+        }
+        @keyframes agendaDropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .agenda-filtro-opcao {
+            width: 100%; padding: 9px 14px;
+            background: white; border: none;
+            display: flex; align-items: center; gap: 9px;
+            font-size: 0.875rem; color: #374151;
+            cursor: pointer; transition: background 0.15s; text-align: left;
+            font-family: inherit;
+        }
+        .agenda-filtro-opcao:hover { background: #f9fafb; }
+        .agenda-filtro-opcao.active { background: #eff6ff; color: var(--color-blue-600); font-weight: 600; }
+        .agenda-filtro-opcao-count {
+            margin-left: auto; font-size: 0.75rem; font-weight: 600; color: #9ca3af;
+        }
+        .agenda-filtro-opcao.active .agenda-filtro-opcao-count { color: var(--color-blue-500); }
+        .fdot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .fdot-red { background: #dc2626; }
+        .fdot-orange { background: #ea580c; }
+        .fdot-blue { background: var(--color-blue-500); }
+        .fdot-green { background: var(--color-green-600); }
 
-        .filtro-btn:hover {
-            border-color: var(--color-blue-500);
-            color: var(--color-blue-500);
-            background: #f0f9ff;
+        /* Toolbar right side */
+        .agenda-toolbar-direita {
+            display: flex; align-items: center; gap: 6px; margin-left: auto;
         }
+        .agenda-toolbar-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 11px;
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 500; color: #374151;
+            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .agenda-toolbar-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+        .agenda-toolbar-btn.active { background: var(--color-blue-500); border-color: var(--color-blue-500); color: white; }
+        .agenda-toolbar-badge {
+            background: #e5e7eb; color: #374151;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+        }
+        .agenda-toolbar-btn.active .agenda-toolbar-badge { background: rgba(255,255,255,0.25); color: white; }
+        .agenda-toolbar-btn.icon-only { padding: 7px 8px; }
 
-        .filtro-btn.active {
-            border-color: var(--color-blue-500);
-            background: var(--color-blue-500);
-            color: white;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        /* Mais dropdown */
+        .agenda-mais-wrapper { position: relative; }
+        .agenda-mais-menu {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 230px;
+            overflow: hidden; z-index: 200;
+            animation: agendaDropIn 0.15s ease;
         }
-
-        .filtro-badge {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .agenda-mais-menu button {
+            width: 100%; padding: 9px 14px;
+            background: white; border: none;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.875rem; color: #374151;
+            cursor: pointer; transition: background 0.15s; text-align: left;
+            font-family: inherit;
         }
-
-        .filtro-btn.active .filtro-badge {
-            background: rgba(255, 255, 255, 0.25);
+        .agenda-mais-menu button:hover { background: #f9fafb; }
+        .agenda-mais-menu button svg { width: 15px; height: 15px; stroke-width: 2; flex-shrink: 0; color: #6b7280; }
+        .agenda-mais-menu button.agenda-mais-destrutivo { color: #dc2626; }
+        .agenda-mais-menu button.agenda-mais-destrutivo svg { color: #dc2626; }
+        .agenda-mais-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
+        .agenda-mais-arquivo-info {
+            padding: 10px 14px 8px;
+            border-bottom: 1px solid #f3f4f6;
         }
+        .agenda-mais-arquivo-label { font-size: 0.68rem; color: #9ca3af; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 2px; }
+        .agenda-mais-arquivo-nome { font-size: 0.82rem; font-weight: 600; color: #374151; word-break: break-all; }
 
         /* Barra de Seleção Múltipla */
         .barra-selecao {
@@ -4172,7 +4229,7 @@
         }
 
         .prazo-item.modo-selecao {
-            grid-template-columns: 20px 32px 1fr auto;
+            grid-template-columns: 20px 26px 1fr auto;
         }
 
         /* Lista de Prazos Linear */
@@ -4189,11 +4246,11 @@
         .prazo-item {
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            padding: 16px 20px;
+            padding: 10px 16px;
             transition: all 0.2s;
             display: grid;
-            grid-template-columns: 32px 1fr auto;
-            gap: 16px;
+            grid-template-columns: 26px 1fr auto;
+            gap: 12px;
             align-items: center;
             cursor: default;
         }
@@ -4267,8 +4324,8 @@
         }
 
         .prazo-checkbox {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border: 2px solid #d1d5db;
             border-radius: 50%;
             cursor: pointer;
@@ -4296,8 +4353,8 @@
 
         .prazo-checkbox svg {
             display: none;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             stroke: white;
             stroke-width: 3;
         }
@@ -4306,7 +4363,7 @@
         .prazo-conteudo {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 2px;
             min-width: 0;
         }
 
@@ -4317,8 +4374,8 @@
         }
 
         .prazo-titulo {
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 600;
             color: #111827;
             margin: 0;
             word-break: break-word;
@@ -4995,11 +5052,7 @@
         }
 
         /* Botões de Gerenciamento da Agenda */
-        .agenda-acoes-gerenciamento {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
+        .agenda-acoes-gerenciamento { display: none; }
 
         /* Modal de Input de Título */
         .modal-input-titulo {
@@ -5174,16 +5227,10 @@
                 font-size: 1.5rem;
             }
 
-            .agenda-filtros {
-                gap: 6px;
-                padding: 6px;
-            }
-
-            .filtro-btn {
-                font-size: 0.8rem;
-                padding: 6px 10px;
-                min-width: 90px;
-            }
+            .agenda-toolbar { gap: 6px; }
+            .agenda-toolbar-direita { gap: 4px; }
+            .agenda-toolbar-btn { font-size: 0.75rem; padding: 6px 8px; }
+            .agenda-filtro-btn { font-size: 0.8rem; }
         }
 
     </style>
@@ -6188,48 +6235,74 @@
                 </h3>
                 <div class="section-divider"></div>
 
-                <!-- Arquivo da Agenda -->
-                <div id="agendaInfoArquivo" class="agenda-info-arquivo" onclick="abrirGerenciamentoArquivoAgenda()" style="display:none;" title="Clique para gerenciar o arquivo da agenda"></div>
                 <div id="agendaSetup" style="display:none;"></div>
 
-                <!-- Filtros -->
-                <div class="agenda-filtros">
-                    <button class="filtro-btn active" onclick="filtrarPrazos('todos')" data-filtro="todos">
-                        <span>Todos</span>
-                        <span class="filtro-badge" id="badge-todos">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('atrasados')" data-filtro="atrasados">
-                        <span>🔴 Atrasados</span>
-                        <span class="filtro-badge" id="badge-atrasados">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('vencendo')" data-filtro="vencendo">
-                        <span>🟠 Vencendo</span>
-                        <span class="filtro-badge" id="badge-vencendo">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('pendentes')" data-filtro="pendentes">
-                        <span>🔵 Pendentes</span>
-                        <span class="filtro-badge" id="badge-pendentes">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('concluidos')" data-filtro="concluidos">
-                        <span>✅ Concluídos</span>
-                        <span class="filtro-badge" id="badge-concluidos">0</span>
-                    </button>
-                    <button class="filtro-btn filtro-toggle" onclick="entrarModoSelecao()" id="btnSelecionar" title="Selecionar múltiplos prazos">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                        <span>Selecionar</span>
-                    </button>
-                    <button class="filtro-btn filtro-toggle" onclick="toggleVisualizacaoArquivados()" id="btnVerArquivados" title="Ver prazos arquivados">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
-                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                            <rect x="1" y="3" width="22" height="5"></rect>
-                            <line x1="10" y1="12" x2="14" y2="12"></line>
-                        </svg>
-                        <span id="textoVerArquivados">Ver Arquivados</span>
-                        <span class="filtro-badge" id="badge-arquivados">0</span>
-                    </button>
+                <!-- Toolbar da Agenda -->
+                <div class="agenda-toolbar" id="agendaToolbar">
+                    <!-- Filtro dropdown -->
+                    <div class="agenda-filtro-dropdown" id="agendaFiltroDropdown">
+                        <button class="agenda-filtro-btn" id="agendaFiltroBtnPrincipal" onclick="toggleFiltroDropdown(event)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                            <span id="agenda-filtro-texto">Todos</span>
+                            <span class="agenda-filtro-count" id="badge-filtro-atual">0</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="agenda-filtro-menu" id="agendaFiltroMenu" style="display:none;">
+                            <button class="agenda-filtro-opcao active" data-filtro="todos" onclick="filtrarPrazos('todos');fecharFiltroDropdown()">
+                                Todos <span class="agenda-filtro-opcao-count" id="badge-todos">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="atrasados" onclick="filtrarPrazos('atrasados');fecharFiltroDropdown()">
+                                <span class="fdot fdot-red"></span>Atrasados <span class="agenda-filtro-opcao-count" id="badge-atrasados">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="vencendo" onclick="filtrarPrazos('vencendo');fecharFiltroDropdown()">
+                                <span class="fdot fdot-orange"></span>Vencendo <span class="agenda-filtro-opcao-count" id="badge-vencendo">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="pendentes" onclick="filtrarPrazos('pendentes');fecharFiltroDropdown()">
+                                <span class="fdot fdot-blue"></span>Pendentes <span class="agenda-filtro-opcao-count" id="badge-pendentes">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="concluidos" onclick="filtrarPrazos('concluidos');fecharFiltroDropdown()">
+                                <span class="fdot fdot-green"></span>Concluídos <span class="agenda-filtro-opcao-count" id="badge-concluidos">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lado direito -->
+                    <div class="agenda-toolbar-direita">
+                        <button class="agenda-toolbar-btn" id="btnSelecionar" onclick="entrarModoSelecao()" title="Selecionar múltiplos prazos">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            Selecionar
+                        </button>
+                        <button class="agenda-toolbar-btn" id="btnVerArquivados" onclick="toggleVisualizacaoArquivados()" title="Ver prazos arquivados">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                            <span id="textoVerArquivados">Arquivados</span>
+                            <span class="agenda-toolbar-badge" id="badge-arquivados">0</span>
+                        </button>
+                        <div class="agenda-mais-wrapper" id="agendaMaisWrapper">
+                            <button class="agenda-toolbar-btn icon-only" onclick="toggleAgendaMaisMenu(event)" title="Mais opções">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                            </button>
+                            <div class="agenda-mais-menu" id="agendaMaisMenu" style="display:none;">
+                                <div class="agenda-mais-arquivo-info" id="agendaMaisArquivoInfo" style="display:none;"></div>
+                                <button onclick="arquivarConcluidos();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                                    Arquivar Concluídos
+                                </button>
+                                <button onclick="exportarAgendaJSON();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Exportar Agenda (JSON)
+                                </button>
+                                <button onclick="importarAgendaJSON();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Importar Agenda (JSON)
+                                </button>
+                                <div class="agenda-mais-sep" id="agendaMaisArquivoSep" style="display:none;"></div>
+                                <button id="agendaMaisGerenciarArquivo" onclick="abrirGerenciamentoArquivoAgenda();fecharAgendaMaisMenu()" style="display:none;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                                    Gerenciar arquivo da agenda
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Barra de Ações de Seleção Múltipla -->
@@ -6328,35 +6401,6 @@
                     <p>Calcule prazos na aba "Calculadora" e salve-os na agenda.</p>
                 </div>
 
-                <!-- Botões de gerenciamento ao final -->
-                <div class="agenda-acoes-gerenciamento">
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="exportarAgendaJSON()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Exportar Agenda
-                        </button>
-                        <button class="btn btn-primary" onclick="importarAgendaJSON()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            Importar Agenda
-                        </button>
-                        <button class="btn btn-secondary" onclick="arquivarConcluidos()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                                <rect x="1" y="3" width="22" height="5"></rect>
-                                <line x1="10" y1="12" x2="14" y2="12"></line>
-                            </svg>
-                            Arquivar Concluídos
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
         <!-- Fim Página Minha Agenda -->
@@ -11833,28 +11877,26 @@
         }
 
         function _atualizarInfoArquivoAgenda() {
-            const bar = document.getElementById('agendaInfoArquivo');
-            if (!bar) return;
+            const infoDiv = document.getElementById('agendaMaisArquivoInfo');
+            const sepDiv = document.getElementById('agendaMaisArquivoSep');
+            const gerenciarBtn = document.getElementById('agendaMaisGerenciarArquivo');
+            if (!infoDiv) return;
             if (agendaInitStatus === 'ready') {
-                bar.style.display = 'flex';
-                const totalPrazos = (prazos ? prazos.length : 0) + (prazosArquivados ? prazosArquivados.length : 0);
-                const resumoPrazos = totalPrazos === 0 ? 'Nenhum prazo salvo' : `${prazos.length} ativo${prazos.length !== 1 ? 's' : ''}${prazosArquivados.length > 0 ? `, ${prazosArquivados.length} arquivado${prazosArquivados.length !== 1 ? 's' : ''}` : ''}`;
-                bar.innerHTML = `
-                    <div class="agenda-info-arquivo-icone"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
-                    <div class="agenda-info-arquivo-corpo">
-                        <span class="agenda-info-arquivo-label">Arquivo da agenda</span>
-                        <span class="agenda-info-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</span>
-                    </div>
-                    <div class="agenda-info-arquivo-acao"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Gerenciar<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>`;
+                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">Arquivo da agenda</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</div>`;
+                infoDiv.style.display = 'block';
+                if (sepDiv) sepDiv.style.display = 'block';
+                if (gerenciarBtn) gerenciarBtn.style.display = 'flex';
             } else {
-                bar.style.display = 'none';
+                infoDiv.style.display = 'none';
+                if (sepDiv) sepDiv.style.display = 'none';
+                if (gerenciarBtn) gerenciarBtn.style.display = 'none';
             }
         }
 
         function _mostrarTelaSetupAgenda() {
             const setupDiv = document.getElementById('agendaSetup');
             if (!setupDiv) return;
-            ['#agendaInfoArquivo','#agendaPaginacao','#agendaLista','#agendaVazia','.agenda-filtros','#barraSelecao','.agenda-acoes-gerenciamento'].forEach(sel => {
+            ['#agendaToolbar','#agendaPaginacao','#agendaLista','#agendaVazia','#barraSelecao'].forEach(sel => {
                 const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
                 if (el) el.style.display = 'none';
             });
@@ -11897,7 +11939,7 @@
         function _ocultarTelaSetupAgenda() {
             const setupDiv = document.getElementById('agendaSetup');
             if (setupDiv) setupDiv.style.display = 'none';
-            ['#agendaLista','#agendaVazia','.agenda-filtros','.agenda-acoes-gerenciamento'].forEach(sel => {
+            ['#agendaLista','#agendaVazia','#agendaToolbar'].forEach(sel => {
                 const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
                 if (el) el.style.display = '';
             });
@@ -12631,28 +12673,17 @@
                             ${badgeHTML}
                         </div>
                         ${descricaoHTML}
-                        <div class="prazo-data-final-destaque">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <div class="prazo-data-final-texto">
-                                Prazo final: <strong>${dataFinalFormatada}</strong>
-                            </div>
-                        </div>
                         <div class="prazo-info-secundaria">
+                            <span class="prazo-info-secundaria-item" style="color:#374151;font-weight:500;">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dataFinalFormatada}
+                            </span>
+                            <span class="prazo-info-secundaria-separador">·</span>
                             <span class="prazo-info-secundaria-item">
                                 ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis'
                                     ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
                                     : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
-                            <span class="prazo-info-secundaria-separador">•</span>
-                            <span class="prazo-info-secundaria-item">
-                                Início: ${dataInicioFormatada}
-                            </span>
-                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">•</span>${contadorInline}` : ''}
+                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">·</span>${contadorInline}` : ''}
                         </div>
                     </div>
                     <div class="prazo-acoes">
@@ -12850,6 +12881,8 @@
             if (!event.target.closest('#btn-exportar-prazo') && !event.target.closest('#menu-exportar-prazo')) {
                 fecharMenuExportPrazo();
             }
+            if (!event.target.closest('#agendaFiltroDropdown')) fecharFiltroDropdown();
+            if (!event.target.closest('#agendaMaisWrapper')) fecharAgendaMaisMenu();
         });
 
         // Fechar menu do resultado ao fazer scroll
@@ -12880,37 +12913,40 @@
             document.getElementById('badge-pendentes').textContent = contadores.pendentes;
             document.getElementById('badge-concluidos').textContent = contadores.concluidos;
             document.getElementById('badge-arquivados').textContent = contadores.arquivados;
+            // Update main filter button count
+            const countMap = { todos: contadores.todos, atrasados: contadores.atrasados, vencendo: contadores.vencendo, pendentes: contadores.pendentes, concluidos: contadores.concluidos };
+            const badgeFiltroAtual = document.getElementById('badge-filtro-atual');
+            if (badgeFiltroAtual) badgeFiltroAtual.textContent = countMap[filtroAtual] ?? contadores.todos;
         }
 
         // Filtrar prazos
         function filtrarPrazos(filtro) {
-            // Se estiver vendo arquivados, voltar para ativos automaticamente
             if (modoVisualizacao === 'arquivados') {
                 modoVisualizacao = 'ativos';
                 const btnVerArquivados = document.getElementById('btnVerArquivados');
                 const textoBtn = document.getElementById('textoVerArquivados');
                 btnVerArquivados.classList.remove('active');
-                textoBtn.textContent = 'Ver Arquivados';
-
-                // Mostrar os filtros de status novamente
-                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
-                    btn.style.display = 'inline-flex';
-                });
+                textoBtn.textContent = 'Arquivados';
             }
 
             filtroAtual = filtro;
 
-            // Atualizar botões de filtro
-            document.querySelectorAll('.filtro-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filtro === filtro) {
-                    btn.classList.add('active');
-                }
+            // Update dropdown options active state
+            document.querySelectorAll('.agenda-filtro-opcao').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filtro === filtro);
             });
 
-            // Resetar para primeira página ao mudar filtro
+            // Update dropdown button label
+            _atualizarLabelFiltro();
+
             paginaAtual = 1;
             renderizarPrazos();
+        }
+
+        function _atualizarLabelFiltro() {
+            const labels = { todos: 'Todos', atrasados: 'Atrasados', vencendo: 'Vencendo', pendentes: 'Pendentes', concluidos: 'Concluídos' };
+            const el = document.getElementById('agenda-filtro-texto');
+            if (el) el.textContent = labels[filtroAtual] || 'Todos';
         }
 
         // Mudar página da lista
@@ -13648,6 +13684,46 @@
             mostrarNotificacao('Prazo arquivado com sucesso!', 'sucesso');
         }
 
+        // ── Agenda toolbar dropdowns ──
+        function toggleFiltroDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('agendaFiltroMenu');
+            const btn = document.getElementById('agendaFiltroBtnPrincipal');
+            const isOpen = menu.style.display !== 'none';
+            fecharTodosDropdownsAgenda();
+            if (!isOpen) {
+                menu.style.display = 'block';
+                btn.classList.add('open');
+            }
+        }
+
+        function fecharFiltroDropdown() {
+            const menu = document.getElementById('agendaFiltroMenu');
+            const btn = document.getElementById('agendaFiltroBtnPrincipal');
+            if (menu) menu.style.display = 'none';
+            if (btn) btn.classList.remove('open');
+        }
+
+        function toggleAgendaMaisMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('agendaMaisMenu');
+            const isOpen = menu.style.display !== 'none';
+            fecharTodosDropdownsAgenda();
+            if (!isOpen) {
+                menu.style.display = 'block';
+            }
+        }
+
+        function fecharAgendaMaisMenu() {
+            const menu = document.getElementById('agendaMaisMenu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        function fecharTodosDropdownsAgenda() {
+            fecharFiltroDropdown();
+            fecharAgendaMaisMenu();
+        }
+
         // ========================================
         // SISTEMA DE SELEÇÃO MÚLTIPLA
         // ========================================
@@ -13656,20 +13732,10 @@
             modoSelecao = true;
             prazosSelecionados.clear();
 
-            // Ocultar botões de filtro e arquivados
-            document.getElementById('btnSelecionar').style.display = 'none';
-            document.getElementById('btnVerArquivados').style.display = 'none';
-            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                btn.style.display = 'none';
-            });
-
-            // Mostrar barra de seleção
+            const toolbar = document.getElementById('agendaToolbar');
+            if (toolbar) toolbar.style.display = 'none';
             document.getElementById('barraSelecao').style.display = 'flex';
-
-            // Renderizar menu de ações baseado no modo de visualização
             renderizarMenuAcoesSelecao();
-
-            // Re-renderizar lista para mostrar checkboxes
             renderizarPrazos();
         }
 
@@ -13727,30 +13793,15 @@
             modoSelecao = false;
             prazosSelecionados.clear();
 
-            // Mostrar botões de filtro e arquivados novamente
-            document.getElementById('btnSelecionar').style.display = 'inline-flex';
-            document.getElementById('btnVerArquivados').style.display = 'inline-flex';
-
-            // Restaurar visibilidade dos botões de filtro baseado no modo de visualização
+            const toolbar = document.getElementById('agendaToolbar');
+            if (toolbar) toolbar.style.display = '';
+            // If in archive mode, hide filter dropdown
             if (modoVisualizacao === 'arquivados') {
-                // Se estamos vendo arquivados, ocultar filtros de status
-                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            } else {
-                // Se estamos vendo ativos, mostrar todos os filtros
-                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                    btn.style.display = 'inline-flex';
-                });
+                const fd = document.getElementById('agendaFiltroDropdown');
+                if (fd) fd.style.display = 'none';
             }
-
-            // Ocultar barra de seleção
             document.getElementById('barraSelecao').style.display = 'none';
-
-            // Fechar menu de ações se estiver aberto
             document.getElementById('menuAcoesSelecao').style.display = 'none';
-
-            // Re-renderizar lista sem checkboxes
             renderizarPrazos();
         }
 
@@ -13950,34 +14001,26 @@
         function toggleVisualizacaoArquivados() {
             const btn = document.getElementById('btnVerArquivados');
             const textoBtn = document.getElementById('textoVerArquivados');
-            const filtrosStatus = document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)');
+            const filtroDropdown = document.getElementById('agendaFiltroDropdown');
 
             if (modoVisualizacao === 'ativos') {
-                // Mudar para arquivados
                 modoVisualizacao = 'arquivados';
                 textoBtn.textContent = 'Ver Ativos';
                 btn.classList.add('active');
-                filtroAtual = 'todos'; // Resetar filtro ao mudar visualização
-
-                // Ocultar outros filtros
-                filtrosStatus.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.style.display = 'none';
-                });
+                filtroAtual = 'todos';
+                if (filtroDropdown) filtroDropdown.style.display = 'none';
             } else {
-                // Mudar para ativos
                 modoVisualizacao = 'ativos';
-                textoBtn.textContent = 'Ver Arquivados';
+                textoBtn.textContent = 'Arquivados';
                 btn.classList.remove('active');
-
-                // Mostrar outros filtros novamente
-                filtrosStatus.forEach(btn => {
-                    btn.style.display = 'inline-flex';
+                if (filtroDropdown) filtroDropdown.style.display = '';
+                document.querySelectorAll('.agenda-filtro-opcao').forEach(b => {
+                    b.classList.toggle('active', b.dataset.filtro === 'todos');
                 });
-                document.querySelector('.filtro-btn[data-filtro="todos"]').classList.add('active');
+                filtroAtual = 'todos';
+                _atualizarLabelFiltro();
             }
 
-            // Resetar para primeira página e renderizar
             paginaAtual = 1;
             renderizarPrazos();
         }
