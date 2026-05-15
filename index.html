@@ -6354,9 +6354,9 @@
                 Escolha a origem dos feriados:
             </div>
             <div class="modal-options">
-                <div class="modal-option" onclick="abrirDropdownPredefinidos()">
-                    <div class="modal-option-title">☁️ Conjuntos Pré-definidos Online</div>
-                    <div class="modal-option-desc">Baixe automaticamente conjuntos de feriados mantidos e atualizados online.</div>
+                <div class="modal-option" onclick="abrirModalImportarPerfisOnline()">
+                    <div class="modal-option-title">☁️ Conjuntos de Feriados Online</div>
+                    <div class="modal-option-desc">Importe conjuntos de feriados online e crie perfis prontos para usar na calculadora.</div>
                 </div>
                 <div class="modal-option" onclick="escolherArquivoLocal()">
                     <div class="modal-option-title">📁 Arquivo Local</div>
@@ -9354,6 +9354,8 @@
         }
 
         function abrirModalImportarPerfisOnline() {
+            // Fecha o modal de seleção de fonte caso tenha sido o caminho de entrada
+            document.getElementById('modalSelecionarFonte').classList.remove('active');
             // Remove destaque de novos conjuntos ao abrir o modal
             ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
                 const btn = document.getElementById(id);
