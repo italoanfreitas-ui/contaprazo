@@ -2589,31 +2589,32 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            border-radius: 20px;
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 500;
-            color: #475569;
+            color: #374151;
             cursor: pointer;
             transition: all 0.2s;
-            max-width: 150px;
+            max-width: 160px;
         }
 
         .perfil-pill:hover {
-            background: #cbd5e1;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
         }
 
         .perfil-pill.active {
-            background: white;
+            background: #f0fdf4;
             border-color: var(--color-green-600);
             color: var(--color-green-700);
         }
 
         .perfil-pill.unsaved {
-            background: #fef3c7;
-            border-color: #fcd34d;
+            background: #fffbeb;
+            border-color: #fbbf24;
             color: #92400e;
         }
 
@@ -5540,7 +5541,7 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                         </button>
-                        <button id="btnImportarOnlinePerfis" class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                        <button id="btnImportarOnlinePerfis" class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="8 17 12 21 16 17"></polyline>
                                 <line x1="12" y1="12" x2="12" y2="21"></line>
@@ -6006,32 +6007,28 @@
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
-                    ☁️ Conjuntos Pré-definidos Online
+                    ☁️ Conjuntos de Feriados Online
                 </h4>
                 <p style="margin-top: 12px;">
-                    Agora você pode importar conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos! Ao clicar em <strong>"Importar Feriados"</strong>, escolha a opção <strong>"Conjuntos Pré-definidos Online"</strong> para acessar:
+                    Importe conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos. Cada conjunto é transformado em um <strong>perfil de feriados</strong> pronto para uso na calculadora.
                 </p>
                 <ul style="margin-top: 8px;">
-                    <li><strong>TJBA - Tribunal de Justiça da Bahia:</strong> Calendário forense oficial com feriados e pontos facultativos</li>
+                    <li><strong>Tribunais:</strong> TJSP, TJBA, STJ, STF, TRT5, TRF1 e outros</li>
                     <li><strong>Prefeituras Municipais:</strong> Feriados municipais e pontos facultativos de cidades específicas</li>
-                    <li><strong>Outros conjuntos:</strong> Calendários atualizados para diversos órgãos e jurisdições</li>
+                    <li><strong>Novos conjuntos</strong> são adicionados periodicamente — o app avisa automaticamente quando houver novidades</li>
                 </ul>
                 <p style="margin-top: 12px; padding: 12px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>💡 Vantagem:</strong> Os conjuntos online são atualizados automaticamente conforme novos decretos e portarias são publicados. Você sempre terá acesso à versão mais recente sem precisar baixar novos arquivos!
+                    <strong>💡 Vantagem:</strong> Os conjuntos online são atualizados conforme novos decretos e portarias são publicados. Você sempre terá acesso à versão mais recente.
                 </p>
                 <p style="margin-top: 12px; font-size: 0.875rem;">
                     <strong>Como usar:</strong>
                 </p>
                 <ol style="margin-top: 8px; font-size: 0.875rem;">
-                    <li>Clique em <strong>"Importar Feriados"</strong> (disponível no menu Calculadora ou Editor de Feriados)</li>
-                    <li>Escolha <strong>"☁️ Conjuntos Pré-definidos Online"</strong></li>
-                    <li>Selecione o conjunto desejado da lista (ex: TJBA, PMVC, etc.)</li>
-                    <li>Escolha se deseja <strong>Substituir</strong> (apagar atuais) ou <strong>Mesclar</strong> (adicionar aos existentes)</li>
-                    <li>Pronto! Os feriados serão importados automaticamente</li>
+                    <li>Clique no botão <strong>☁</strong> (nuvem com seta) — disponível na seção Calculadora ou na barra de perfis do Calendário. Alternativamente, clique em <strong>"Importar Feriados"</strong> e escolha <strong>"☁️ Conjuntos de Feriados Online"</strong></li>
+                    <li>Aguarde o carregamento da lista de conjuntos disponíveis</li>
+                    <li>Marque os conjuntos desejados e clique em <strong>"Criar perfis selecionados"</strong></li>
+                    <li>Os perfis criados ficam disponíveis imediatamente no seletor da calculadora</li>
                 </ol>
-                <p style="margin-top: 12px; padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 0.875rem;">
-                    <strong>⚠️ Observação:</strong> Se você também tiver feriados personalizados específicos (ex: aniversário do setor), recomendamos escolher <strong>"Mesclar"</strong> para manter seus feriados e adicionar os do conjunto online.
-                </p>
             </div>
 
             <div class="help-section">
@@ -6397,7 +6394,7 @@
         </div>
     </div>
 
-    <!-- Modal de Boas-vindas / Importar Perfis Online -->
+    <!-- Modal de Boas-vindas / Conjuntos de Feriados Online -->
     <div class="modal" id="modalBoasVindas">
         <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
             <div class="modal-header">
@@ -9346,7 +9343,7 @@
                 btnFechar.style.display = 'none';
             } else {
                 textoEl.style.display = 'none';
-                headerEl.textContent = 'Importar Perfis Online';
+                headerEl.textContent = 'Conjuntos de Feriados Online';
                 btnNaoMostrar.style.display = 'none';
                 btnAdiar.style.display = 'none';
                 btnFechar.style.display = '';
@@ -9414,7 +9411,7 @@
 
                 criarToast({
                     tipo: 'info',
-                    titulo: plural ? `${novos.length} novos conjuntos disponíveis` : 'Novo conjunto disponível',
+                    titulo: plural ? `${novos.length} novos conjuntos de feriados online` : 'Novo conjunto de feriados online',
                     mensagemHTML: `Adicionado${plural ? 's' : ''} desde sua última visita: ${nomesHTML}.`,
                     autoFechar: 12000,
                     botaoTexto: 'Ver agora',
