@@ -13394,13 +13394,18 @@
                 let corBarra = '';
 
                 if (diasRestantes.atrasado) {
-                    labelContador = `${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'} atrasado${diasRestantes.numero > 1 ? 's' : ''}`;
+                    const n = diasRestantes.numero;
+                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
+                    labelContador = `${n} ${unid} atrasado${n > 1 ? 's' : ''}`;
                     corBarra = '#dc2626';
                 } else if (diasRestantes.hoje) {
                     labelContador = 'Vence hoje!';
                     corBarra = '#ea580c';
                 } else {
-                    labelContador = `Faltam ${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    const n = diasRestantes.numero;
+                    const verbo = n === 1 ? 'Falta' : 'Faltam';
+                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
+                    labelContador = `${verbo} ${n} ${unid}`;
                     corBarra = '#3b82f6';
                 }
 
@@ -14353,6 +14358,11 @@
 
         // Verificar prazos vencendo (ao carregar página)
         function verificarPrazosVencendo() {
+            // Não re-notificar se o toast já foi exibido nesta sessão
+            if (sessionStorage.getItem('contaprazo_toast_urgente_visto')) return;
+            // Não notificar se o usuário já está na agenda
+            if (document.getElementById('paginaAgenda')?.classList.contains('active')) return;
+
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
@@ -14397,6 +14407,7 @@
 
         // Mostrar toast de prazos urgentes/próximos
         function mostrarBannerPrazos(mensagem, tipo) {
+            sessionStorage.setItem('contaprazo_toast_urgente_visto', '1');
             criarToast({
                 tipo: tipo === 'urgente' ? 'aviso' : 'info',
                 titulo: tipo === 'urgente' ? 'Prazos Urgentes!' : 'Prazos Próximos',
@@ -15264,6 +15275,25 @@
                         delete pending[id];
                         open.classList.remove('active', 'closing');
                     }, CLOSE_MS);
+                }
+
+                /* Enter: aciona a ação primária do modal aberto */
+                if (e.key === 'Enter') {
+                    var tag = document.activeElement ? document.activeElement.tagName : '';
+                    // Não interceptar em textarea (quebra linha), nem em botão ou select
+                    if (tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT') return;
+
+                    var activeModal = document.querySelector('.modal-aviso.active, .modal-input-titulo.active');
+                    if (!activeModal) return;
+
+                    // Botão primário: btn-primary > btn-success > btn-danger (última opção)
+                    var primaryBtn = activeModal.querySelector('.btn-primary') ||
+                                     activeModal.querySelector('.btn-success') ||
+                                     activeModal.querySelector('.btn-danger');
+                    if (primaryBtn) {
+                        e.preventDefault();
+                        primaryBtn.click();
+                    }
                 }
             });
 
