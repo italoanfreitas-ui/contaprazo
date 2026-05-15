@@ -2714,6 +2714,28 @@
             height: 14px;
         }
 
+        .btn-novos-conjuntos {
+            position: relative;
+        }
+
+        .btn-novos-conjuntos::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 9px;
+            height: 9px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: novos-conjuntos-pulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes novos-conjuntos-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
+        }
+
         .perfil-btn-save {
             background: #dcfce7;
             border-color: #86efac;
@@ -5332,7 +5354,7 @@
                     <select id="perfilCalculo" class="perfil-calculo-select" style="flex:1; width:auto;" onchange="selecionarPerfilCalculo(this.value)">
                         <option value="">Nenhum (sem feriados personalizados)</option>
                     </select>
-                    <button onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online" style="flex-shrink:0; padding:0 10px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
+                    <button id="btnImportarOnlineCalculo" onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online" style="flex-shrink:0; padding:0 10px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></svg>
                     </button>
                 </div>
@@ -5502,7 +5524,7 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                         </button>
-                        <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                        <button id="btnImportarOnlinePerfis" class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="8 17 12 21 16 17"></polyline>
                                 <line x1="12" y1="12" x2="12" y2="21"></line>
@@ -7413,7 +7435,8 @@
 
         // === Confirmação de sobrescrita: painel in-place dentro de modalBoasVindas ===
 
-        let _sobrescritaPerfisPendente = null; // [checkbox] a processar ao confirmar
+        let _sobrescritaPerfisPendente = null; // [checkbox] existentes a sobrescrever ao confirmar
+        let _novosPerfisPendentes = null;     // [checkbox] novos a criar junto com a confirmação
         let _boasVindasTituloOriginal = '';   // título salvo antes de entrar no painel de sobrescrita
 
         function abrirModalConfirmarSobrescritaPerfis(existentesSnapshot) {
@@ -7443,6 +7466,7 @@
 
         function voltarViewSelecaoBoasVindas() {
             _sobrescritaPerfisPendente = null;
+            _novosPerfisPendentes = null;
             const iconSpan = document.getElementById('boasVindasIconeHeader');
             iconSpan.className = 'modal-header-icon modal-icon-blue';
             iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
@@ -7457,9 +7481,11 @@
         }
 
         function confirmarSobrescritaPerfis() {
-            const pendentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
-            if (pendentes.length > 0) _executarCriacaoPerfis(pendentes, true);
-            // dispensarBoasVindas é chamado dentro de _executarCriacaoPerfis e dispara voltarViewSelecaoBoasVindas
+            const existentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
+            const novos = _novosPerfisPendentes || [];
+            _novosPerfisPendentes = null;
+            const todos = [...existentes, ...novos];
+            if (todos.length > 0) _executarCriacaoPerfis(todos, true);
         }
 
         // === Modal de confirmação para remover feriado de conjunto online ===
@@ -9302,7 +9328,55 @@
         }
 
         function abrirModalImportarPerfisOnline() {
+            // Remove destaque de novos conjuntos ao abrir o modal
+            ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.classList.remove('btn-novos-conjuntos');
+            });
             abrirModalBoasVindas(false);
+        }
+
+        async function verificarNovosConjuntosOnline() {
+            try {
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const resp = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
+                if (!resp.ok) return;
+                const manifest = await resp.json();
+                if (!manifest.conjuntos || !Array.isArray(manifest.conjuntos)) return;
+
+                const arquivosManifest = manifest.conjuntos.map(c => c.arquivo);
+                let vistos;
+                try { vistos = JSON.parse(localStorage.getItem('contaprazo_conjuntos_vistos') || '[]'); }
+                catch (e) { vistos = []; }
+
+                const novos = manifest.conjuntos.filter(c => !vistos.includes(c.arquivo));
+
+                // Atualiza lista de conjuntos conhecidos
+                localStorage.setItem('contaprazo_conjuntos_vistos', JSON.stringify(arquivosManifest));
+
+                if (novos.length === 0) return;
+
+                // Destaca os botões de importar
+                ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.add('btn-novos-conjuntos');
+                });
+
+                const nomes = novos.map(c => `<strong>${escapeHtml(c.nome)}</strong>`).join(', ');
+                const plural = novos.length > 1;
+                criarToast({
+                    tipo: 'info',
+                    titulo: plural ? `${novos.length} novos conjuntos disponíveis` : 'Novo conjunto disponível',
+                    mensagemHTML: plural
+                        ? `Novos conjuntos de feriados online: ${nomes}.`
+                        : `Novo conjunto de feriados online: ${nomes}.`,
+                    autoFechar: 10000,
+                    botaoTexto: 'Ver agora',
+                    botaoCallback: () => abrirModalImportarPerfisOnline()
+                });
+            } catch (e) {
+                // Silencia erros de rede — verificação em segundo plano
+            }
         }
 
         function dispensarBoasVindas(tipo) {
@@ -9445,8 +9519,8 @@
             });
 
             if (existentes.length > 0 && !forceOverwrite) {
-                // Cria os novos imediatamente
-                if (novos.length > 0) _executarCriacaoPerfis(novos, false);
+                // Guarda novos para criar junto após o usuário confirmar a sobrescrita
+                _novosPerfisPendentes = novos.length > 0 ? novos.slice() : null;
 
                 // Pergunta sobre os existentes via modal (não-ignorável)
                 abrirModalConfirmarSobrescritaPerfis(existentes.slice());
@@ -13432,6 +13506,8 @@
         atualizarChipTiposFeriado();
         renderizarCalendario();
         verificarMostrarBoasVindas();
+        // Verificação em segundo plano: notifica se há novos conjuntos online desde a última visita
+        setTimeout(verificarNovosConjuntosOnline, 3500);
         atualizarTextoBotaoVisualizacao();
         atualizarTitlesBotoesNav();
         posicionarGlider();
