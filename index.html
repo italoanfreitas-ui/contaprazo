@@ -9385,6 +9385,14 @@
 
                 if (novos.length === 0) return;
 
+                // Persiste os arquivos novos para que o badge sobreviva a recargas de página
+                const pendentesAtuais = (() => {
+                    try { return JSON.parse(localStorage.getItem('contaprazo_conjuntos_novos_pendentes') || '[]'); }
+                    catch (e) { return []; }
+                })();
+                const novosPendentes = [...new Set([...pendentesAtuais, ...novos.map(c => c.arquivo)])];
+                localStorage.setItem('contaprazo_conjuntos_novos_pendentes', JSON.stringify(novosPendentes));
+
                 // Marca para badge no modal durante esta sessão
                 novos.forEach(c => _arquivosNovosNoModal.add(c.arquivo));
 
@@ -9407,8 +9415,8 @@
                 criarToast({
                     tipo: 'info',
                     titulo: plural ? `${novos.length} novos conjuntos disponíveis` : 'Novo conjunto disponível',
-                    mensagemHTML: `${plural ? 'Novos conjuntos' : 'Novo conjunto'} de feriados online: ${nomesHTML}.`,
-                    autoFechar: 6000,
+                    mensagemHTML: `Adicionado${plural ? 's' : ''} desde sua última visita: ${nomesHTML}.`,
+                    autoFechar: 12000,
                     botaoTexto: 'Ver agora',
                     botaoCallback: () => abrirModalImportarPerfisOnline(),
                     botaoSecundarioTexto: 'Ignorar'
@@ -9421,7 +9429,9 @@
         function dispensarBoasVindas(tipo) {
             voltarViewSelecaoBoasVindas();
             document.getElementById('modalBoasVindas').classList.remove('active');
-            _arquivosNovosNoModal.clear(); // badges "Novo" somem ao fechar o modal
+            // Limpa badges — o usuário abriu o modal e viu os conjuntos novos
+            _arquivosNovosNoModal.clear();
+            localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
             if (tipo === 'permanente') {
                 localStorage.setItem('contaprazo_welcome_dispensado', 'true');
             } else if (tipo === 'snooze') {
@@ -9435,6 +9445,19 @@
             checkboxes.forEach(cb => { cb.checked = selecionar; });
             const anyChecked = selecionar && checkboxes.length > 0;
             document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
+        }
+
+        // Restaura badges de novos conjuntos pendentes da sessão anterior
+        function restaurarBadgesNovosPendentes() {
+            try {
+                const pendentes = JSON.parse(localStorage.getItem('contaprazo_conjuntos_novos_pendentes') || '[]');
+                if (pendentes.length === 0) return;
+                pendentes.forEach(a => _arquivosNovosNoModal.add(a));
+                ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.add('btn-novos-conjuntos');
+                });
+            } catch (e) {}
         }
 
         // Cache de feriados pré-carregados: arquivo -> { feriados: [], conjunto: {} }
@@ -9509,7 +9532,7 @@
                         `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;transition:color 0.15s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#9ca3af'" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
                     ).join('');
                     return `
-                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
+                        <label data-arquivo="${escapeHtml(c.arquivo)}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
                             ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
                             <input type="checkbox" class="welcome-conjunto-cb"
                                 data-id2="${escapeHtml(c.id2)}"
@@ -9521,7 +9544,7 @@
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
-                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}${isNovo ? '<span class="conjunto-badge-novo">Novo</span>' : ''}</div>
+                                <div style="font-weight:500;color:#111827;font-size:14px;">${isNovo ? '<span class="conjunto-badge-novo">Novo</span> ' : ''}${escapeHtml(c.nome)}</div>
                                 <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
                                 <div style="font-size:11px;color:#9ca3af;font-style:italic;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                                     <span>Atualizado em: ${escapeHtml(c.dataAtualizacao)}</span>
@@ -9537,6 +9560,26 @@
                         const anyChecked = container.querySelectorAll('.welcome-conjunto-cb:checked').length > 0;
                         document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
                     });
+                });
+
+                // Hover-dismiss: 2 s de hover sobre o item remove o badge "Novo" daquele conjunto
+                container.querySelectorAll('label[data-arquivo]').forEach(label => {
+                    if (!_arquivosNovosNoModal.has(label.dataset.arquivo)) return;
+                    let hoverTimer = null;
+                    label.addEventListener('mouseenter', () => {
+                        hoverTimer = setTimeout(() => {
+                            const arquivo = label.dataset.arquivo;
+                            _arquivosNovosNoModal.delete(arquivo);
+                            const badge = label.querySelector('.conjunto-badge-novo');
+                            if (badge) badge.remove();
+                            if (_arquivosNovosNoModal.size > 0) {
+                                localStorage.setItem('contaprazo_conjuntos_novos_pendentes', JSON.stringify([..._arquivosNovosNoModal]));
+                            } else {
+                                localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
+                            }
+                        }, 2000);
+                    });
+                    label.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
                 });
 
             } catch (e) {
@@ -13547,6 +13590,8 @@
         atualizarChipTiposFeriado();
         renderizarCalendario();
         verificarMostrarBoasVindas();
+        // Restaura badges de sessões anteriores antes da verificação online
+        restaurarBadgesNovosPendentes();
         // Verificação em segundo plano: notifica se há novos conjuntos online desde a última visita
         setTimeout(verificarNovosConjuntosOnline, 3500);
         atualizarTextoBotaoVisualizacao();
@@ -14037,7 +14082,12 @@
                     if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
                         e.preventDefault();
                         localStorage.removeItem('contaprazo_conjuntos_vistos');
+                        localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
                         _arquivosNovosNoModal.clear();
+                        ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) btn.classList.remove('btn-novos-conjuntos');
+                        });
                         verificarNovosConjuntosOnline();
                     }
                 }
