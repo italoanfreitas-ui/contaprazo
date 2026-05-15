@@ -10527,8 +10527,12 @@
             if (!usarDiasUteis) return '';
             const conjuntos = obterMetadataConjuntos();
             if (!conjuntos || conjuntos.length === 0) return '';
+            // Só exibe conjuntos que realmente contribuíram com feriados no cálculo atual
+            const arquivosAtivos = new Set(feriadosArquivoMap.values());
+            const conjuntosAtivos = conjuntos.filter(c => arquivosAtivos.has(c.arquivo));
+            if (conjuntosAtivos.length === 0) return '';
 
-            const itensHTML = conjuntos.map(c => {
+            const itensHTML = conjuntosAtivos.map(c => {
                 const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
                 const links = obterLinksDoConjunto(c);
@@ -10551,8 +10555,14 @@
             if (prazo.tipoDias !== 'uteis') return '';
             const conjuntos = prazo.conjuntosMetadata;
             if (!conjuntos || conjuntos.length === 0) return '';
+            // Só exibe conjuntos que realmente contribuíram com feriados neste prazo
+            const arquivosUsados = new Set(
+                (prazo.detalhamentoDias || []).map(d => d.arquivo).filter(Boolean)
+            );
+            const conjuntosAtivos = conjuntos.filter(c => arquivosUsados.has(c.arquivo));
+            if (conjuntosAtivos.length === 0) return '';
 
-            const itensHTML = conjuntos.map(c => {
+            const itensHTML = conjuntosAtivos.map(c => {
                 const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
                 const links = obterLinksDoConjunto(c);
@@ -11748,11 +11758,11 @@
 
         function _abrirAgendaDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open('contaprazo-db', 1);
+                const req = indexedDB.open('contaprazo-db', 2);
                 req.onupgradeneeded = e => {
-                    if (!e.target.result.objectStoreNames.contains('handles')) {
-                        e.target.result.createObjectStore('handles');
-                    }
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+                    if (!db.objectStoreNames.contains('agenda-dados')) db.createObjectStore('agenda-dados');
                 };
                 req.onsuccess = e => resolve(e.target.result);
                 req.onerror = e => reject(e.target.error);
@@ -11840,7 +11850,7 @@
         function _agendarGravacaoAgenda() {
             if (!agendaFilePronto) return;
             clearTimeout(_agendaSaveTimer);
-            _agendaSaveTimer = setTimeout(_gravarArquivoAgenda, 600);
+            _agendaSaveTimer = setTimeout(agendaModoIDB ? _gravarDadosIDB : _gravarArquivoAgenda, 600);
         }
 
         function _limparAgendaLocalStorage() {
@@ -11859,9 +11869,79 @@
             }
         }
 
+        let agendaModoIDB = false;
+
+        async function _carregarDadosIDB() {
+            const db = await _abrirAgendaDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('agenda-dados', 'readonly');
+                const req = tx.objectStore('agenda-dados').get('dados');
+                req.onsuccess = e => {
+                    const dados = e.target.result;
+                    if (dados) {
+                        prazos = _deserializarPrazos(dados.prazos);
+                        prazosArquivados = _deserializarPrazos(dados.prazosArquivados);
+                    } else {
+                        prazos = []; prazosArquivados = [];
+                    }
+                    db.close(); resolve();
+                };
+                req.onerror = e => { db.close(); reject(e.target.error); };
+            });
+        }
+
+        async function _gravarDadosIDB() {
+            if (!agendaFilePronto) return;
+            try {
+                const db = await _abrirAgendaDB();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction('agenda-dados', 'readwrite');
+                    tx.objectStore('agenda-dados').put({ versao: '1.0', prazos, prazosArquivados }, 'dados');
+                    tx.oncomplete = () => { db.close(); resolve(); };
+                    tx.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) {
+                console.error('Erro ao gravar no IndexedDB:', e);
+                mostrarNotificacao('Erro ao salvar na agenda.', 'erro');
+            }
+        }
+
+        async function limparDadosIDB() {
+            criarToast({
+                tipo: 'aviso',
+                titulo: 'Limpar todos os dados da agenda?',
+                mensagemHTML: 'Esta ação é irreversível. Todos os prazos serão excluídos permanentemente.',
+                autoFechar: false,
+                botaoTexto: 'Limpar tudo',
+                botaoCallback: async () => {
+                    prazos = []; prazosArquivados = [];
+                    await _gravarDadosIDB();
+                    renderizarPrazos();
+                    mostrarNotificacao('Dados da agenda removidos.', 'sucesso');
+                },
+                botaoSecundarioTexto: 'Cancelar'
+            });
+        }
+
         async function inicializarArquivoAgenda() {
             if (!('showOpenFilePicker' in window)) {
-                agendaInitStatus = 'unsupported';
+                agendaModoIDB = true;
+                try {
+                    await _carregarDadosIDB();
+                    // Migrar dados do localStorage se existirem
+                    if (prazos.length === 0 && prazosArquivados.length === 0) {
+                        _migrarDeLocalStorage();
+                        if (prazos.length > 0 || prazosArquivados.length > 0) {
+                            await _gravarDadosIDB();
+                            _limparAgendaLocalStorage();
+                        }
+                    }
+                    agendaInitStatus = 'ready';
+                    agendaFilePronto = true;
+                } catch(e) {
+                    console.error('Erro ao inicializar IndexedDB:', e);
+                    agendaInitStatus = 'unsupported';
+                }
                 _atualizarInfoArquivoAgenda();
                 if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
                 return;
@@ -11901,7 +11981,9 @@
             const gerenciarBtn = document.getElementById('agendaMaisGerenciarArquivo');
             if (!infoDiv) return;
             if (agendaInitStatus === 'ready') {
-                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">Arquivo da agenda</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</div>`;
+                const label = agendaModoIDB ? 'Armazenamento no navegador' : 'Arquivo da agenda';
+                const nome = agendaModoIDB ? 'IndexedDB — dados salvos neste navegador' : agendaFileName;
+                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">${label}</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(nome)}">${escapeHtml(nome)}</div>`;
                 infoDiv.style.display = 'block';
                 if (sepDiv) sepDiv.style.display = 'block';
                 if (gerenciarBtn) gerenciarBtn.style.display = 'flex';
@@ -11924,8 +12006,8 @@
             if (agendaInitStatus === 'unsupported') {
                 html = `<div class="agenda-setup-screen">
                     <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-                    <div class="agenda-setup-titulo">Navegador não suportado</div>
-                    <div class="agenda-setup-desc">A Minha Agenda salva dados localmente usando a <strong>File System Access API</strong>, disponível apenas no <strong>Chrome</strong> e <strong>Edge</strong> em computadores (versão 86+). Em dispositivos móveis ou outros navegadores, essa funcionalidade não está disponível.</div>
+                    <div class="agenda-setup-titulo">Armazenamento indisponível</div>
+                    <div class="agenda-setup-desc">Não foi possível acessar o armazenamento local neste ambiente. Isso pode ocorrer em modo privado com restrições rígidas ou em contextos sem suporte a IndexedDB. Tente um navegador diferente ou desative restrições de armazenamento.</div>
                 </div>`;
             } else if (agendaInitStatus === 'needs-permission') {
                 html = `<div class="agenda-setup-screen">
@@ -12035,20 +12117,35 @@
                 modal.className = 'modal-aviso';
                 document.body.appendChild(modal);
             }
-            modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
-                <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
-                <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
-                <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
-                <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
-                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
-                    <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
-                    <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
-                </div>
-                <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
-            </div>`;
+            if (agendaModoIDB) {
+                modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                    <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                    <div class="modal-aviso-icon" style="background:#eff6ff;"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+                    <h3 style="margin-bottom:4px;">Armazenamento local</h3>
+                    <p style="color:#6b7280;font-size:0.82rem;margin-bottom:6px;text-align:center;">Os dados da agenda estão salvos no <strong>IndexedDB</strong> deste navegador.</p>
+                    <p style="color:#92400e;font-size:0.78rem;margin-bottom:18px;text-align:center;background:#fef3c7;padding:8px 12px;border-radius:6px;line-height:1.5;">⚠️ Dados ficam vinculados a este navegador e podem ser perdidos se o histórico/dados do site forem apagados. Faça backups regulares.</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados (JSON)</button>
+                        <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                        <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="limparDadosIDB();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Limpar todos os dados</button>
+                    </div>
+                </div>`;
+            } else {
+                modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                    <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                    <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                    <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
+                    <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
+                        <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
+                        <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                        <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
+                    </div>
+                    <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
+                </div>`;
+            }
             modal.classList.add('active');
         }
 
@@ -12287,7 +12384,12 @@
                         arquivo: feriadosArquivoMap.get(ds) || null
                     }))
                 },
-                conjuntosMetadata: obterMetadataConjuntos(),
+                conjuntosMetadata: (() => {
+                    const arquivosUsados = new Set(
+                        todosOsDias.map(d => feriadosArquivoMap.get(formatarDataCompleta(d.data))).filter(Boolean)
+                    );
+                    return obterMetadataConjuntos().filter(c => arquivosUsados.has(c.arquivo));
+                })(),
                 perfilUsado: (() => {
                     if (!perfilAtivoId) return null;
                     const p = perfisData.find(pf => pf.id === perfilAtivoId);
