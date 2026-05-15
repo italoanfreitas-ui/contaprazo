@@ -9408,7 +9408,7 @@
                     tipo: 'info',
                     titulo: plural ? `${novos.length} novos conjuntos disponíveis` : 'Novo conjunto disponível',
                     mensagemHTML: `${plural ? 'Novos conjuntos' : 'Novo conjunto'} de feriados online: ${nomesHTML}.`,
-                    autoFechar: 12000,
+                    autoFechar: 6000,
                     botaoTexto: 'Ver agora',
                     botaoCallback: () => abrirModalImportarPerfisOnline(),
                     botaoSecundarioTexto: 'Ignorar'
@@ -14031,6 +14031,17 @@
 
             /* Atalhos de teclado globais */
             document.addEventListener('keydown', function(e) {
+                /* Shift+Alt+N: simula detecção de novos conjuntos (depuração) */
+                if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey && e.key === 'N') {
+                    const tag = e.target.tagName;
+                    if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+                        e.preventDefault();
+                        localStorage.removeItem('contaprazo_conjuntos_vistos');
+                        _arquivosNovosNoModal.clear();
+                        verificarNovosConjuntosOnline();
+                    }
+                }
+
                 /* Escape: fecha o modal/aviso aberto (se permitir fechar) */
                 if (e.key === 'Escape') {
                     var open = document.querySelector(
