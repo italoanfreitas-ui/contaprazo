@@ -11288,7 +11288,10 @@
 
             const ferPers = new Set();
             if (prazo.feriadosUsados && prazo.feriadosUsados.personalizados) {
-                prazo.feriadosUsados.personalizados.forEach(([ds]) => ferPers.add(ds));
+                prazo.feriadosUsados.personalizados.forEach(p => {
+                    // Suporta formato legado [[ds, nome]] e novo {data, nome, arquivo}
+                    ferPers.add(Array.isArray(p) ? p[0] : p.data);
+                });
             }
 
             const feriadosCount = prazo.detalhamentoDias.filter(dia => {
@@ -12278,9 +12281,18 @@
                 feriadosUsados: {
                     fixos: {...feriadosFixos},
                     moveis: {...feriadosMoveis},
-                    personalizados: Array.from(feriadosPersonalizados.entries())
+                    personalizados: Array.from(feriadosPersonalizados.entries()).map(([ds, nome]) => ({
+                        data: ds,
+                        nome,
+                        arquivo: feriadosArquivoMap.get(ds) || null
+                    }))
                 },
-                conjuntosMetadata: obterMetadataConjuntos()
+                conjuntosMetadata: obterMetadataConjuntos(),
+                perfilUsado: (() => {
+                    if (!perfilAtivoId) return null;
+                    const p = perfisData.find(pf => pf.id === perfilAtivoId);
+                    return p ? { id: p.id, nome: p.nome } : null;
+                })()
             };
 
             prazos.push(novoPrazo);
