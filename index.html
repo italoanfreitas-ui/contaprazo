@@ -8376,7 +8376,10 @@
                 if (!usarDiasUteis) return '';
                 const conjuntos = obterMetadataConjuntos();
                 if (!conjuntos || conjuntos.length === 0) return '';
-                const itens = conjuntos.map(c => {
+                const arquivosAtivos = new Set(feriadosArquivoMap.values());
+                const conjuntosAtivos = conjuntos.filter(c => arquivosAtivos.has(c.arquivo));
+                if (conjuntosAtivos.length === 0) return '';
+                const itens = conjuntosAtivos.map(c => {
                     const links = obterLinksDoConjunto(c);
                     const linksHTML = links.length > 0
                         ? `<div class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</div>`
@@ -10579,14 +10582,8 @@
             if (prazo.tipoDias !== 'uteis') return '';
             const conjuntos = prazo.conjuntosMetadata;
             if (!conjuntos || conjuntos.length === 0) return '';
-            // Só exibe conjuntos que realmente contribuíram com feriados neste prazo
-            const arquivosUsados = new Set(
-                (prazo.detalhamentoDias || []).map(d => d.arquivo).filter(Boolean)
-            );
-            const conjuntosAtivos = conjuntos.filter(c => arquivosUsados.has(c.arquivo));
-            if (conjuntosAtivos.length === 0) return '';
 
-            const itensHTML = conjuntosAtivos.map(c => {
+            const itensHTML = conjuntos.map(c => {
                 const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
                 const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
                 const links = obterLinksDoConjunto(c);
@@ -11489,6 +11486,7 @@
             </div>
             ${!completo ? `<div class="info" style="margin-top:25px;border-top:2px solid #e5e7eb;padding-top:20px;"><div style="margin-bottom:12px;"><strong>Dias considerados:</strong></div><div style="line-height:36px;text-align:left;">${diasVisuaisHTML}</div><div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div></div>` : ''}
             ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+            ${(d.isUteis && prazo.perfilUsado) ? `<p style="font-size:11px;color:#9ca3af;margin:4px 0 0;display:flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Perfil de feriados: <strong style="color:#6b7280;">${escapeHtml(prazo.perfilUsado.nome)}</strong></p>` : ''}
         </div>
     </div>
     ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}</div>` : ''}
@@ -11592,6 +11590,7 @@
             </div>
             ${!completo ? `<div style="line-height:36px;text-align:left;margin-bottom:10px;">${diasVisuaisHTML}</div><div style="padding-top:10px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div>` : ''}
             ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+            ${(d.isUteis && prazo.perfilUsado) ? `<p style="font-size:11px;color:#9ca3af;margin:4px 0 0;display:flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Perfil de feriados: <strong style="color:#6b7280;">${escapeHtml(prazo.perfilUsado.nome)}</strong></p>` : ''}
         </div>
     </div>
     ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${listaHTML}</div>` : ''}
@@ -12527,10 +12526,9 @@
                     }))
                 },
                 conjuntosMetadata: (() => {
-                    const arquivosUsados = new Set(
-                        todosOsDias.map(d => feriadosArquivoMap.get(formatarDataCompleta(d.data))).filter(Boolean)
-                    );
-                    return obterMetadataConjuntos().filter(c => arquivosUsados.has(c.arquivo));
+                    const arquivosAtivos = new Set(feriadosArquivoMap.values());
+                    if (arquivosAtivos.size === 0) return [];
+                    return obterMetadataConjuntos().filter(c => arquivosAtivos.has(c.arquivo));
                 })(),
                 perfilUsado: (() => {
                     if (!perfilAtivoId) return null;
@@ -13379,6 +13377,7 @@
                     </div>
                     ${prazo.tipoDias === 'uteis' ? '<p style="font-size:0.78em; color:#9ca3af; margin:4px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
                     ${statusHTML}
+                    ${(prazo.tipoDias === 'uteis' && prazo.perfilUsado) ? `<div class="resultado-info" style="font-size:0.82em;color:#6b7280;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg><span>Perfil de feriados: <strong style="color:#374151;">${escapeHtml(prazo.perfilUsado.nome)}</strong></span></div>` : ''}
 
                     <div class="detalhamento" style="margin-top: 12px;">
                         <h3>
