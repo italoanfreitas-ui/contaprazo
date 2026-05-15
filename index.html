@@ -2589,31 +2589,32 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 12px;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            border-radius: 20px;
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 500;
-            color: #475569;
+            color: #374151;
             cursor: pointer;
             transition: all 0.2s;
-            max-width: 150px;
+            max-width: 160px;
         }
 
         .perfil-pill:hover {
-            background: #cbd5e1;
+            background: #f1f5f9;
+            border-color: #cbd5e1;
         }
 
         .perfil-pill.active {
-            background: white;
+            background: #f0fdf4;
             border-color: var(--color-green-600);
             color: var(--color-green-700);
         }
 
         .perfil-pill.unsaved {
-            background: #fef3c7;
-            border-color: #fcd34d;
+            background: #fffbeb;
+            border-color: #fbbf24;
             color: #92400e;
         }
 
@@ -2712,6 +2713,44 @@
         .perfil-btn svg {
             width: 14px;
             height: 14px;
+        }
+
+        .btn-novos-conjuntos {
+            position: relative;
+        }
+
+        .btn-novos-conjuntos::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 9px;
+            height: 9px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: novos-conjuntos-pulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes novos-conjuntos-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
+        }
+
+        .conjunto-badge-novo {
+            display: inline-flex;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 5px;
+            vertical-align: middle;
+            white-space: nowrap;
         }
 
         .perfil-btn-save {
@@ -3917,59 +3956,116 @@
             flex-shrink: 0;
         }
 
-        /* Filtros da Agenda */
-        .agenda-filtros {
+        /* ── Agenda Toolbar ── */
+        .agenda-toolbar {
             display: flex;
-            gap: 10px;
-            background: #f9fafb;
-            padding: 8px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
-        .filtro-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 16px;
-            border: 2px solid transparent;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #6b7280;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        /* Filter dropdown */
+        .agenda-filtro-dropdown { position: relative; }
+        .agenda-filtro-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 12px;
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.875rem; font-weight: 500; color: #374151;
+            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
+        .agenda-filtro-btn:hover { border-color: #d1d5db; background: #f9fafb; }
+        .agenda-filtro-btn.open { border-color: var(--color-blue-500); color: var(--color-blue-500); }
+        .agenda-filtro-count {
+            background: var(--color-blue-500); color: white;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+        }
+        .agenda-filtro-btn.open .agenda-filtro-count { background: var(--color-blue-600); }
+        .agenda-filtro-menu {
+            position: absolute; top: calc(100% + 6px); left: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 200px;
+            overflow: hidden; z-index: 200;
+            animation: agendaDropIn 0.15s ease;
+        }
+        @keyframes agendaDropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .agenda-filtro-opcao {
+            width: 100%; padding: 9px 14px;
+            background: white; border: none;
+            display: flex; align-items: center; gap: 9px;
+            font-size: 0.875rem; color: #374151;
+            cursor: pointer; transition: background 0.15s; text-align: left;
+            font-family: inherit;
+        }
+        .agenda-filtro-opcao:hover { background: #f9fafb; }
+        .agenda-filtro-opcao.active { background: #eff6ff; color: var(--color-blue-600); font-weight: 600; }
+        .agenda-filtro-opcao-count {
+            margin-left: auto; font-size: 0.75rem; font-weight: 600; color: #9ca3af;
+        }
+        .agenda-filtro-opcao.active .agenda-filtro-opcao-count { color: var(--color-blue-500); }
+        .fdot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .fdot-red { background: #dc2626; }
+        .fdot-orange { background: #ea580c; }
+        .fdot-blue { background: var(--color-blue-500); }
+        .fdot-green { background: var(--color-green-600); }
 
-        .filtro-btn:hover {
-            border-color: var(--color-blue-500);
-            color: var(--color-blue-500);
-            background: #f0f9ff;
+        /* Toolbar right side */
+        .agenda-toolbar-direita {
+            display: flex; align-items: center; gap: 6px; margin-left: auto;
         }
+        .agenda-toolbar-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 11px;
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 500; color: #374151;
+            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .agenda-toolbar-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+        .agenda-toolbar-btn.active { background: var(--color-blue-500); border-color: var(--color-blue-500); color: white; }
+        .agenda-toolbar-badge {
+            background: #e5e7eb; color: #374151;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+        }
+        .agenda-toolbar-btn.active .agenda-toolbar-badge { background: rgba(255,255,255,0.25); color: white; }
+        .agenda-toolbar-btn.icon-only { padding: 7px 8px; }
 
-        .filtro-btn.active {
-            border-color: var(--color-blue-500);
-            background: var(--color-blue-500);
-            color: white;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        /* Mais dropdown */
+        .agenda-mais-wrapper { position: relative; }
+        .agenda-mais-menu {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 230px;
+            overflow: hidden; z-index: 200;
+            animation: agendaDropIn 0.15s ease;
         }
-
-        .filtro-badge {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .agenda-mais-menu button {
+            width: 100%; padding: 9px 14px;
+            background: white; border: none;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.875rem; color: #374151;
+            cursor: pointer; transition: background 0.15s; text-align: left;
+            font-family: inherit;
         }
-
-        .filtro-btn.active .filtro-badge {
-            background: rgba(255, 255, 255, 0.25);
+        .agenda-mais-menu button:hover { background: #f9fafb; }
+        .agenda-mais-menu button svg { width: 15px; height: 15px; stroke-width: 2; flex-shrink: 0; color: #6b7280; }
+        .agenda-mais-menu button.agenda-mais-destrutivo { color: #dc2626; }
+        .agenda-mais-menu button.agenda-mais-destrutivo svg { color: #dc2626; }
+        .agenda-mais-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
+        .agenda-mais-arquivo-info {
+            padding: 10px 14px 8px;
+            border-bottom: 1px solid #f3f4f6;
         }
+        .agenda-mais-arquivo-label { font-size: 0.68rem; color: #9ca3af; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 2px; }
+        .agenda-mais-arquivo-nome { font-size: 0.82rem; font-weight: 600; color: #374151; word-break: break-all; }
 
         /* Barra de Seleção Múltipla */
         .barra-selecao {
@@ -4084,6 +4180,23 @@
             stroke-width: 2;
         }
 
+        @media (max-width: 560px) {
+            .barra-selecao {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px 14px;
+            }
+            .barra-selecao-acoes {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .btn-selecao-cancelar {
+                margin-left: auto;
+            }
+        }
+
         /* Checkbox de Seleção no Card */
         .checkbox-selecao {
             width: 20px;
@@ -4116,7 +4229,7 @@
         }
 
         .prazo-item.modo-selecao {
-            grid-template-columns: 20px 32px 1fr auto;
+            grid-template-columns: 20px 26px 1fr auto;
         }
 
         /* Lista de Prazos Linear */
@@ -4133,11 +4246,11 @@
         .prazo-item {
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            padding: 16px 20px;
+            padding: 10px 16px;
             transition: all 0.2s;
             display: grid;
-            grid-template-columns: 32px 1fr auto;
-            gap: 16px;
+            grid-template-columns: 26px 1fr auto;
+            gap: 12px;
             align-items: center;
             cursor: default;
         }
@@ -4211,16 +4324,17 @@
         }
 
         .prazo-checkbox {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border: 2px solid #d1d5db;
-            border-radius: 5px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
             background: white;
+            flex-shrink: 0;
         }
 
         .prazo-checkbox:hover {
@@ -4239,8 +4353,8 @@
 
         .prazo-checkbox svg {
             display: none;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             stroke: white;
             stroke-width: 3;
         }
@@ -4249,7 +4363,7 @@
         .prazo-conteudo {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 2px;
             min-width: 0;
         }
 
@@ -4260,8 +4374,8 @@
         }
 
         .prazo-titulo {
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 600;
             color: #111827;
             margin: 0;
             word-break: break-word;
@@ -4741,6 +4855,32 @@
             flex-shrink: 0;
         }
 
+        /* ── Arquivo da Agenda ── */
+        .agenda-info-arquivo {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px;
+            background: linear-gradient(to right, #f0fdf4, #f7fef9);
+            border: 1px solid #bbf7d0; border-radius: 10px;
+            cursor: pointer; transition: all 0.18s; user-select: none; margin-bottom: 14px;
+        }
+        .agenda-info-arquivo:hover { background: linear-gradient(to right, #dcfce7, #f0fdf4); border-color: #86efac; box-shadow: 0 2px 8px rgba(22,163,74,0.09); }
+        .agenda-info-arquivo-icone { flex-shrink: 0; color: #16a34a; display: flex; align-items: center; }
+        .agenda-info-arquivo-corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+        .agenda-info-arquivo-label { font-size: 0.68rem; color: #6b7280; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+        .agenda-info-arquivo-nome { font-weight: 600; font-size: 0.85rem; color: #166534; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .agenda-info-arquivo-acao { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; color: #16a34a; padding: 4px 10px; background: rgba(22,163,74,0.1); border-radius: 6px; white-space: nowrap; transition: background 0.18s; }
+        .agenda-info-arquivo:hover .agenda-info-arquivo-acao { background: rgba(22,163,74,0.18); }
+        .agenda-setup-screen { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; text-align: center; }
+        .agenda-setup-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #16a34a; }
+        .agenda-setup-titulo { font-size: 1.15rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+        .agenda-setup-desc { font-size: 0.9rem; color: #6b7280; max-width: 420px; line-height: 1.6; margin-bottom: 24px; }
+        .agenda-setup-acoes { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .agenda-setup-btn-primario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+        .agenda-setup-btn-primario:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,0.3); }
+        .agenda-setup-btn-secundario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+        .agenda-setup-btn-secundario:hover { background: #f9fafb; border-color: #9ca3af; }
+        .agenda-setup-nota { font-size: 0.78rem; color: #9ca3af; margin-top: 16px; max-width: 380px; line-height: 1.5; }
+
         .modal-fechar {
             background: rgba(0, 0, 0, 0.05);
             border: none;
@@ -4912,11 +5052,7 @@
         }
 
         /* Botões de Gerenciamento da Agenda */
-        .agenda-acoes-gerenciamento {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-        }
+        .agenda-acoes-gerenciamento { display: none; }
 
         /* Modal de Input de Título */
         .modal-input-titulo {
@@ -5091,16 +5227,10 @@
                 font-size: 1.5rem;
             }
 
-            .agenda-filtros {
-                gap: 6px;
-                padding: 6px;
-            }
-
-            .filtro-btn {
-                font-size: 0.8rem;
-                padding: 6px 10px;
-                min-width: 90px;
-            }
+            .agenda-toolbar { gap: 6px; }
+            .agenda-toolbar-direita { gap: 4px; }
+            .agenda-toolbar-btn { font-size: 0.75rem; padding: 6px 8px; }
+            .agenda-filtro-btn { font-size: 0.8rem; }
         }
 
     </style>
@@ -5332,7 +5462,7 @@
                     <select id="perfilCalculo" class="perfil-calculo-select" style="flex:1; width:auto;" onchange="selecionarPerfilCalculo(this.value)">
                         <option value="">Nenhum (sem feriados personalizados)</option>
                     </select>
-                    <button onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online" style="flex-shrink:0; padding:0 10px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
+                    <button id="btnImportarOnlineCalculo" onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online" style="flex-shrink:0; padding:0 10px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line></svg>
                     </button>
                 </div>
@@ -5502,7 +5632,7 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                         </button>
-                        <button class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar perfis de conjuntos online">
+                        <button id="btnImportarOnlinePerfis" class="perfil-btn" onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="8 17 12 21 16 17"></polyline>
                                 <line x1="12" y1="12" x2="12" y2="21"></line>
@@ -5968,32 +6098,28 @@
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
-                    ☁️ Conjuntos Pré-definidos Online
+                    ☁️ Conjuntos de Feriados Online
                 </h4>
                 <p style="margin-top: 12px;">
-                    Agora você pode importar conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos! Ao clicar em <strong>"Importar Feriados"</strong>, escolha a opção <strong>"Conjuntos Pré-definidos Online"</strong> para acessar:
+                    Importe conjuntos de feriados pré-configurados diretamente online, sem precisar baixar ou compartilhar arquivos. Cada conjunto é transformado em um <strong>perfil de feriados</strong> pronto para uso na calculadora.
                 </p>
                 <ul style="margin-top: 8px;">
-                    <li><strong>TJBA - Tribunal de Justiça da Bahia:</strong> Calendário forense oficial com feriados e pontos facultativos</li>
+                    <li><strong>Tribunais:</strong> TJSP, TJBA, STJ, STF, TRT5, TRF1 e outros</li>
                     <li><strong>Prefeituras Municipais:</strong> Feriados municipais e pontos facultativos de cidades específicas</li>
-                    <li><strong>Outros conjuntos:</strong> Calendários atualizados para diversos órgãos e jurisdições</li>
+                    <li><strong>Novos conjuntos</strong> são adicionados periodicamente — o app avisa automaticamente quando houver novidades</li>
                 </ul>
                 <p style="margin-top: 12px; padding: 12px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 4px; font-size: 0.9rem;">
-                    <strong>💡 Vantagem:</strong> Os conjuntos online são atualizados automaticamente conforme novos decretos e portarias são publicados. Você sempre terá acesso à versão mais recente sem precisar baixar novos arquivos!
+                    <strong>💡 Vantagem:</strong> Os conjuntos online são atualizados conforme novos decretos e portarias são publicados. Você sempre terá acesso à versão mais recente.
                 </p>
                 <p style="margin-top: 12px; font-size: 0.875rem;">
                     <strong>Como usar:</strong>
                 </p>
                 <ol style="margin-top: 8px; font-size: 0.875rem;">
-                    <li>Clique em <strong>"Importar Feriados"</strong> (disponível no menu Calculadora ou Editor de Feriados)</li>
-                    <li>Escolha <strong>"☁️ Conjuntos Pré-definidos Online"</strong></li>
-                    <li>Selecione o conjunto desejado da lista (ex: TJBA, PMVC, etc.)</li>
-                    <li>Escolha se deseja <strong>Substituir</strong> (apagar atuais) ou <strong>Mesclar</strong> (adicionar aos existentes)</li>
-                    <li>Pronto! Os feriados serão importados automaticamente</li>
+                    <li>Clique no botão <strong>☁</strong> (nuvem com seta) — disponível na seção Calculadora ou na barra de perfis do Calendário. Alternativamente, clique em <strong>"Importar Feriados"</strong> e escolha <strong>"☁️ Conjuntos de Feriados Online"</strong></li>
+                    <li>Aguarde o carregamento da lista de conjuntos disponíveis</li>
+                    <li>Marque os conjuntos desejados e clique em <strong>"Criar perfis selecionados"</strong></li>
+                    <li>Os perfis criados ficam disponíveis imediatamente no seletor da calculadora</li>
                 </ol>
-                <p style="margin-top: 12px; padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 0.875rem;">
-                    <strong>⚠️ Observação:</strong> Se você também tiver feriados personalizados específicos (ex: aniversário do setor), recomendamos escolher <strong>"Mesclar"</strong> para manter seus feriados e adicionar os do conjunto online.
-                </p>
             </div>
 
             <div class="help-section">
@@ -6109,44 +6235,74 @@
                 </h3>
                 <div class="section-divider"></div>
 
-                <!-- Filtros -->
-                <div class="agenda-filtros">
-                    <button class="filtro-btn active" onclick="filtrarPrazos('todos')" data-filtro="todos">
-                        <span>Todos</span>
-                        <span class="filtro-badge" id="badge-todos">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('atrasados')" data-filtro="atrasados">
-                        <span>🔴 Atrasados</span>
-                        <span class="filtro-badge" id="badge-atrasados">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('vencendo')" data-filtro="vencendo">
-                        <span>🟠 Vencendo</span>
-                        <span class="filtro-badge" id="badge-vencendo">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('pendentes')" data-filtro="pendentes">
-                        <span>🔵 Pendentes</span>
-                        <span class="filtro-badge" id="badge-pendentes">0</span>
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarPrazos('concluidos')" data-filtro="concluidos">
-                        <span>✅ Concluídos</span>
-                        <span class="filtro-badge" id="badge-concluidos">0</span>
-                    </button>
-                    <button class="filtro-btn filtro-toggle" onclick="entrarModoSelecao()" id="btnSelecionar" title="Selecionar múltiplos prazos">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                        <span>Selecionar</span>
-                    </button>
-                    <button class="filtro-btn filtro-toggle" onclick="toggleVisualizacaoArquivados()" id="btnVerArquivados" title="Ver prazos arquivados">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
-                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                            <rect x="1" y="3" width="22" height="5"></rect>
-                            <line x1="10" y1="12" x2="14" y2="12"></line>
-                        </svg>
-                        <span id="textoVerArquivados">Ver Arquivados</span>
-                        <span class="filtro-badge" id="badge-arquivados">0</span>
-                    </button>
+                <div id="agendaSetup" style="display:none;"></div>
+
+                <!-- Toolbar da Agenda -->
+                <div class="agenda-toolbar" id="agendaToolbar">
+                    <!-- Filtro dropdown -->
+                    <div class="agenda-filtro-dropdown" id="agendaFiltroDropdown">
+                        <button class="agenda-filtro-btn" id="agendaFiltroBtnPrincipal" onclick="toggleFiltroDropdown(event)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                            <span id="agenda-filtro-texto">Todos</span>
+                            <span class="agenda-filtro-count" id="badge-filtro-atual">0</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="agenda-filtro-menu" id="agendaFiltroMenu" style="display:none;">
+                            <button class="agenda-filtro-opcao active" data-filtro="todos" onclick="filtrarPrazos('todos');fecharFiltroDropdown()">
+                                Todos <span class="agenda-filtro-opcao-count" id="badge-todos">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="atrasados" onclick="filtrarPrazos('atrasados');fecharFiltroDropdown()">
+                                <span class="fdot fdot-red"></span>Atrasados <span class="agenda-filtro-opcao-count" id="badge-atrasados">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="vencendo" onclick="filtrarPrazos('vencendo');fecharFiltroDropdown()">
+                                <span class="fdot fdot-orange"></span>Vencendo <span class="agenda-filtro-opcao-count" id="badge-vencendo">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="pendentes" onclick="filtrarPrazos('pendentes');fecharFiltroDropdown()">
+                                <span class="fdot fdot-blue"></span>Pendentes <span class="agenda-filtro-opcao-count" id="badge-pendentes">0</span>
+                            </button>
+                            <button class="agenda-filtro-opcao" data-filtro="concluidos" onclick="filtrarPrazos('concluidos');fecharFiltroDropdown()">
+                                <span class="fdot fdot-green"></span>Concluídos <span class="agenda-filtro-opcao-count" id="badge-concluidos">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lado direito -->
+                    <div class="agenda-toolbar-direita">
+                        <button class="agenda-toolbar-btn" id="btnSelecionar" onclick="entrarModoSelecao()" title="Selecionar múltiplos prazos">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            Selecionar
+                        </button>
+                        <button class="agenda-toolbar-btn" id="btnVerArquivados" onclick="toggleVisualizacaoArquivados()" title="Ver prazos arquivados">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                            <span id="textoVerArquivados">Arquivados</span>
+                            <span class="agenda-toolbar-badge" id="badge-arquivados">0</span>
+                        </button>
+                        <div class="agenda-mais-wrapper" id="agendaMaisWrapper">
+                            <button class="agenda-toolbar-btn icon-only" onclick="toggleAgendaMaisMenu(event)" title="Mais opções">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                            </button>
+                            <div class="agenda-mais-menu" id="agendaMaisMenu" style="display:none;">
+                                <div class="agenda-mais-arquivo-info" id="agendaMaisArquivoInfo" style="display:none;"></div>
+                                <button onclick="arquivarConcluidos();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                                    Arquivar Concluídos
+                                </button>
+                                <button onclick="exportarAgendaJSON();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    Exportar Agenda (JSON)
+                                </button>
+                                <button onclick="importarAgendaJSON();fecharAgendaMaisMenu()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    Importar Agenda (JSON)
+                                </button>
+                                <div class="agenda-mais-sep" id="agendaMaisArquivoSep" style="display:none;"></div>
+                                <button id="agendaMaisGerenciarArquivo" onclick="abrirGerenciamentoArquivoAgenda();fecharAgendaMaisMenu()" style="display:none;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                                    Gerenciar arquivo da agenda
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Barra de Ações de Seleção Múltipla -->
@@ -6245,35 +6401,6 @@
                     <p>Calcule prazos na aba "Calculadora" e salve-os na agenda.</p>
                 </div>
 
-                <!-- Botões de gerenciamento ao final -->
-                <div class="agenda-acoes-gerenciamento">
-                    <div class="btn-group">
-                        <button class="btn btn-success" onclick="exportarAgendaJSON()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Exportar Agenda
-                        </button>
-                        <button class="btn btn-primary" onclick="importarAgendaJSON()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            Importar Agenda
-                        </button>
-                        <button class="btn btn-secondary" onclick="arquivarConcluidos()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                                <rect x="1" y="3" width="22" height="5"></rect>
-                                <line x1="10" y1="12" x2="14" y2="12"></line>
-                            </svg>
-                            Arquivar Concluídos
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
         <!-- Fim Página Minha Agenda -->
@@ -6291,7 +6418,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.8 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.9 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -6319,9 +6446,9 @@
                 Escolha a origem dos feriados:
             </div>
             <div class="modal-options">
-                <div class="modal-option" onclick="abrirDropdownPredefinidos()">
-                    <div class="modal-option-title">☁️ Conjuntos Pré-definidos Online</div>
-                    <div class="modal-option-desc">Baixe automaticamente conjuntos de feriados mantidos e atualizados online.</div>
+                <div class="modal-option" onclick="abrirModalImportarPerfisOnline()">
+                    <div class="modal-option-title">☁️ Conjuntos de Feriados Online</div>
+                    <div class="modal-option-desc">Importe conjuntos de feriados online e crie perfis prontos para usar na calculadora.</div>
                 </div>
                 <div class="modal-option" onclick="escolherArquivoLocal()">
                     <div class="modal-option-title">📁 Arquivo Local</div>
@@ -6359,7 +6486,7 @@
         </div>
     </div>
 
-    <!-- Modal de Boas-vindas / Importar Perfis Online -->
+    <!-- Modal de Boas-vindas / Conjuntos de Feriados Online -->
     <div class="modal" id="modalBoasVindas">
         <div class="modal-content" style="max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
             <div class="modal-header">
@@ -7413,24 +7540,38 @@
 
         // === Confirmação de sobrescrita: painel in-place dentro de modalBoasVindas ===
 
-        let _sobrescritaPerfisPendente = null; // [checkbox] a processar ao confirmar
+        let _sobrescritaPerfisPendente = null; // [checkbox] existentes a sobrescrever ao confirmar
+        let _novosPerfisPendentes = null;     // [checkbox] novos a criar junto com a confirmação
+        let _arquivosNovosNoModal = new Set(); // arquivos detectados como novos na sessão atual (para badge no modal)
         let _boasVindasTituloOriginal = '';   // título salvo antes de entrar no painel de sobrescrita
 
         function abrirModalConfirmarSobrescritaPerfis(existentesSnapshot) {
             _sobrescritaPerfisPendente = existentesSnapshot;
             _boasVindasTituloOriginal = document.getElementById('boasVindasHeader').textContent;
-            const total = existentesSnapshot.length;
+            const totalExistentes = existentesSnapshot.length;
+            const totalNovos = (_novosPerfisPendentes || []).length;
+            const totalSelecionados = totalExistentes + totalNovos;
             const nomes = existentesSnapshot
                 .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
                 .join(', ');
-            document.getElementById('sobrescritaCorpo').innerHTML =
-                `<p style="margin:0 0 6px;">${total === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${total === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${total === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+
+            let corpoHTML = `<p style="margin:0 0 6px;">${totalExistentes === 1 ? 'O perfil' : 'Os perfis'} ${nomes} ${totalExistentes === 1 ? 'já existe' : 'já existem'} na sua lista. Deseja substituí-${totalExistentes === 1 ? 'lo' : 'los'} pelos dados online mais recentes?</p>`;
+            if (totalNovos > 0) {
+                const nomesNovos = (_novosPerfisPendentes || [])
+                    .map(cb => `<strong>${escapeHtml((cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL))}</strong>`)
+                    .join(', ');
+                corpoHTML += `<p style="margin:6px 0 0;font-size:13px;color:#6b7280;">${totalNovos === 1 ? `O perfil ${nomesNovos} é novo e será criado normalmente.` : `Os perfis ${nomesNovos} são novos e serão criados normalmente.`}</p>`;
+            }
+            document.getElementById('sobrescritaCorpo').innerHTML = corpoHTML;
 
             const iconSpan = document.getElementById('boasVindasIconeHeader');
             iconSpan.className = 'modal-header-icon modal-icon-amber';
             iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+            const tituloBase = totalExistentes === 1 ? '1 perfil já existe' : `${totalExistentes} perfis já existem`;
             document.getElementById('boasVindasHeader').textContent =
-                total === 1 ? 'Perfil já existe' : `${total} perfis já existem`;
+                totalSelecionados > totalExistentes
+                    ? `${tituloBase} (de ${totalSelecionados} selecionados)`
+                    : tituloBase;
             document.getElementById('boasVindasCloseBtnHeader').style.display = 'none';
             document.getElementById('modalBoasVindas').setAttribute('data-no-backdrop-close', 'true');
 
@@ -7443,6 +7584,7 @@
 
         function voltarViewSelecaoBoasVindas() {
             _sobrescritaPerfisPendente = null;
+            _novosPerfisPendentes = null;
             const iconSpan = document.getElementById('boasVindasIconeHeader');
             iconSpan.className = 'modal-header-icon modal-icon-blue';
             iconSpan.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
@@ -7457,9 +7599,11 @@
         }
 
         function confirmarSobrescritaPerfis() {
-            const pendentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
-            if (pendentes.length > 0) _executarCriacaoPerfis(pendentes, true);
-            // dispensarBoasVindas é chamado dentro de _executarCriacaoPerfis e dispara voltarViewSelecaoBoasVindas
+            const existentes = (_sobrescritaPerfisPendente || []).filter(cb => cb.checked);
+            const novos = _novosPerfisPendentes || [];
+            _novosPerfisPendentes = null;
+            const todos = [...existentes, ...novos];
+            if (todos.length > 0) _executarCriacaoPerfis(todos, true);
         }
 
         // === Modal de confirmação para remover feriado de conjunto online ===
@@ -7513,6 +7657,13 @@
         // ========================================
         let prazos = []; // Array de prazos salvos
         let prazosArquivados = []; // Array de prazos arquivados
+
+        // ── Arquivo da Agenda ──
+        let agendaFileHandle = null;
+        let agendaFileName = '';
+        let agendaFilePronto = false;
+        let agendaInitStatus = 'loading'; // 'loading'|'ready'|'no-file'|'needs-permission'|'unsupported'
+        let _agendaSaveTimer = null;
         let modoVisualizacao = 'ativos'; // 'ativos' ou 'arquivados'
         let filtroAtual = 'todos'; // Filtro ativo
         let prazoEmEdicao = null; // ID do prazo sendo editado
@@ -7594,6 +7745,20 @@
             if (links.length === 0) return null;
             if (links.length === 1) return links[0].url;
             // Múltiplos links: seleciona pelo campo 'ate' (primeiro cujo 'ate' >= data do feriado)
+            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
+            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
+            return (match || sorted[sorted.length - 1]).url;
+        }
+
+        // Versão que usa o arquivo salvo no dia + conjuntosMetadata do prazo (sem depender de estado global)
+        function _obterLinkFeriadoDoPrazo(dia, conjuntosMetadata) {
+            if (!dia.arquivo || !conjuntosMetadata) return null;
+            const conjunto = conjuntosMetadata.find(c => c.arquivo === dia.arquivo);
+            if (!conjunto) return null;
+            const links = obterLinksDoConjunto(conjunto);
+            if (links.length === 0) return null;
+            if (links.length === 1) return links[0].url;
+            const dataStr = formatarDataCompleta(dia.data);
             const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
             const match = sorted.find(l => !l.ate || l.ate >= dataStr);
             return (match || sorted[sorted.length - 1]).url;
@@ -7960,7 +8125,7 @@
             mostrarAvisoRecalculo();
         }
 
-        function renderTimelineDetalhamento(diasArray) {
+        function renderTimelineDetalhamento(diasArray, conjuntosMetadata) {
             const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
             const weekdays = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
@@ -7998,8 +8163,10 @@
                     badge = '✖';
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
-                    const linkFer = obterLinkFeriado(dia.data);
-                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
+                    const linkFer = conjuntosMetadata
+                        ? _obterLinkFeriadoDoPrazo(dia, conjuntosMetadata)
+                        : obterLinkFeriado(dia.data);
+                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !dia.arquivo && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
                         ? 'Feriado/Ponto Facultativo personalizado'
                         : nomeFer;
                     const descText = `${nomeFerDisplay} — suspensão de prazo.`;
@@ -9291,7 +9458,7 @@
                 btnFechar.style.display = 'none';
             } else {
                 textoEl.style.display = 'none';
-                headerEl.textContent = 'Importar Perfis Online';
+                headerEl.textContent = 'Conjuntos de Feriados Online';
                 btnNaoMostrar.style.display = 'none';
                 btnAdiar.style.display = 'none';
                 btnFechar.style.display = '';
@@ -9302,12 +9469,83 @@
         }
 
         function abrirModalImportarPerfisOnline() {
+            // Fecha o modal de seleção de fonte caso tenha sido o caminho de entrada
+            document.getElementById('modalSelecionarFonte').classList.remove('active');
+            // Remove destaque de novos conjuntos ao abrir o modal
+            ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.classList.remove('btn-novos-conjuntos');
+            });
             abrirModalBoasVindas(false);
+        }
+
+        async function verificarNovosConjuntosOnline() {
+            try {
+                const manifestUrl = adicionarCacheBusting(`${GITHUB_RAW_BASE_URL}/manifest.json`);
+                const resp = await fetch(manifestUrl, { signal: AbortSignal.timeout(12000) });
+                if (!resp.ok) return;
+                const manifest = await resp.json();
+                if (!manifest.conjuntos || !Array.isArray(manifest.conjuntos)) return;
+
+                const arquivosManifest = manifest.conjuntos.map(c => c.arquivo);
+                let vistos;
+                try { vistos = JSON.parse(localStorage.getItem('contaprazo_conjuntos_vistos') || '[]'); }
+                catch (e) { vistos = []; }
+
+                const novos = manifest.conjuntos.filter(c => !vistos.includes(c.arquivo));
+
+                // Atualiza lista de conjuntos conhecidos
+                localStorage.setItem('contaprazo_conjuntos_vistos', JSON.stringify(arquivosManifest));
+
+                if (novos.length === 0) return;
+
+                // Persiste os arquivos novos para que o badge sobreviva a recargas de página
+                const pendentesAtuais = (() => {
+                    try { return JSON.parse(localStorage.getItem('contaprazo_conjuntos_novos_pendentes') || '[]'); }
+                    catch (e) { return []; }
+                })();
+                const novosPendentes = [...new Set([...pendentesAtuais, ...novos.map(c => c.arquivo)])];
+                localStorage.setItem('contaprazo_conjuntos_novos_pendentes', JSON.stringify(novosPendentes));
+
+                // Marca para badge no modal durante esta sessão
+                novos.forEach(c => _arquivosNovosNoModal.add(c.arquivo));
+
+                // Destaca os botões de importar
+                ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.add('btn-novos-conjuntos');
+                });
+
+                // Toast resumido: mostra no máximo 2 nomes, depois "+ N mais"
+                const MAX_NOMES_TOAST = 2;
+                const plural = novos.length > 1;
+                const nomesExibidos = novos.slice(0, MAX_NOMES_TOAST)
+                    .map(c => `<strong>${escapeHtml(c.nome)}</strong>`).join(', ');
+                const resto = novos.length - MAX_NOMES_TOAST;
+                const nomesHTML = resto > 0
+                    ? `${nomesExibidos} e mais ${resto}`
+                    : nomesExibidos;
+
+                criarToast({
+                    tipo: 'info',
+                    titulo: plural ? `${novos.length} novos conjuntos de feriados online` : 'Novo conjunto de feriados online',
+                    mensagemHTML: `Adicionado${plural ? 's' : ''} desde sua última visita: ${nomesHTML}.`,
+                    autoFechar: 12000,
+                    botaoTexto: 'Ver agora',
+                    botaoCallback: () => abrirModalImportarPerfisOnline(),
+                    botaoSecundarioTexto: 'Ignorar'
+                });
+            } catch (e) {
+                // Silencia erros de rede — verificação em segundo plano
+            }
         }
 
         function dispensarBoasVindas(tipo) {
             voltarViewSelecaoBoasVindas();
             document.getElementById('modalBoasVindas').classList.remove('active');
+            // Limpa badges — o usuário abriu o modal e viu os conjuntos novos
+            _arquivosNovosNoModal.clear();
+            localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
             if (tipo === 'permanente') {
                 localStorage.setItem('contaprazo_welcome_dispensado', 'true');
             } else if (tipo === 'snooze') {
@@ -9321,6 +9559,19 @@
             checkboxes.forEach(cb => { cb.checked = selecionar; });
             const anyChecked = selecionar && checkboxes.length > 0;
             document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
+        }
+
+        // Restaura badges de novos conjuntos pendentes da sessão anterior
+        function restaurarBadgesNovosPendentes() {
+            try {
+                const pendentes = JSON.parse(localStorage.getItem('contaprazo_conjuntos_novos_pendentes') || '[]');
+                if (pendentes.length === 0) return;
+                pendentes.forEach(a => _arquivosNovosNoModal.add(a));
+                ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.add('btn-novos-conjuntos');
+                });
+            } catch (e) {}
         }
 
         // Cache de feriados pré-carregados: arquivo -> { feriados: [], conjunto: {} }
@@ -9389,12 +9640,13 @@
                 // 4. Renderiza a lista
                 container.innerHTML = conjuntos.map(c => {
                     const ok = !!_feriadosCarregados[c.arquivo];
+                    const isNovo = _arquivosNovosNoModal.has(c.arquivo);
                     const linksConj = obterLinksDoConjunto(c);
                     const linksWelcomeHTML = linksConj.map(l =>
                         `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;transition:color 0.15s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#9ca3af'" onclick="event.stopPropagation()">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`
                     ).join('');
                     return `
-                        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
+                        <label data-arquivo="${escapeHtml(c.arquivo)}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;transition:background 0.15s;cursor:${ok ? 'pointer' : 'default'};${ok ? '' : 'opacity:0.55;'}"
                             ${ok ? `onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''"` : ''}>
                             <input type="checkbox" class="welcome-conjunto-cb"
                                 data-id2="${escapeHtml(c.id2)}"
@@ -9406,7 +9658,7 @@
                                 style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:#3b82f6;"
                                 ${ok ? '' : 'disabled'}>
                             <div>
-                                <div style="font-weight:500;color:#111827;font-size:14px;">${escapeHtml(c.nome)}</div>
+                                <div style="font-weight:500;color:#111827;font-size:14px;">${isNovo ? '<span class="conjunto-badge-novo">Novo</span> ' : ''}${escapeHtml(c.nome)}</div>
                                 <div style="font-size:12px;color:#6b7280;margin-top:2px;">${escapeHtml(c.descricao || '')}${!ok ? ' <span style="color:#dc2626;">· indisponível</span>' : ''}</div>
                                 <div style="font-size:11px;color:#9ca3af;font-style:italic;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                                     <span>Atualizado em: ${escapeHtml(c.dataAtualizacao)}</span>
@@ -9422,6 +9674,26 @@
                         const anyChecked = container.querySelectorAll('.welcome-conjunto-cb:checked').length > 0;
                         document.getElementById('btnCriarPerfisSelecionados').disabled = !anyChecked;
                     });
+                });
+
+                // Hover-dismiss: 2 s de hover sobre o item remove o badge "Novo" daquele conjunto
+                container.querySelectorAll('label[data-arquivo]').forEach(label => {
+                    if (!_arquivosNovosNoModal.has(label.dataset.arquivo)) return;
+                    let hoverTimer = null;
+                    label.addEventListener('mouseenter', () => {
+                        hoverTimer = setTimeout(() => {
+                            const arquivo = label.dataset.arquivo;
+                            _arquivosNovosNoModal.delete(arquivo);
+                            const badge = label.querySelector('.conjunto-badge-novo');
+                            if (badge) badge.remove();
+                            if (_arquivosNovosNoModal.size > 0) {
+                                localStorage.setItem('contaprazo_conjuntos_novos_pendentes', JSON.stringify([..._arquivosNovosNoModal]));
+                            } else {
+                                localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
+                            }
+                        }, 2000);
+                    });
+                    label.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
                 });
 
             } catch (e) {
@@ -9445,8 +9717,8 @@
             });
 
             if (existentes.length > 0 && !forceOverwrite) {
-                // Cria os novos imediatamente
-                if (novos.length > 0) _executarCriacaoPerfis(novos, false);
+                // Guarda novos para criar junto após o usuário confirmar a sobrescrita
+                _novosPerfisPendentes = novos.length > 0 ? novos.slice() : null;
 
                 // Pergunta sobre os existentes via modal (não-ignorável)
                 abrirModalConfirmarSobrescritaPerfis(existentes.slice());
@@ -10275,6 +10547,29 @@
             `;
         }
 
+        function _gerarHTMLConjuntosNotaPrazo(prazo, contexto) {
+            if (prazo.tipoDias !== 'uteis') return '';
+            const conjuntos = prazo.conjuntosMetadata;
+            if (!conjuntos || conjuntos.length === 0) return '';
+
+            const itensHTML = conjuntos.map(c => {
+                const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
+                const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
+                const links = obterLinksDoConjunto(c);
+                const linksHTML = contexto === 'print' && links.length > 0
+                    ? ' ' + links.map(l => `<a href="${escapeHtml(l.url)}" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;font-size:11px;" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join(' · ')
+                    : '';
+                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linksHTML}</div>`;
+            }).join('');
+
+            return `
+                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
+                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
+                    ${itensHTML}
+                </div>
+            `;
+        }
+
         /**
          * Gera o cabeçalho HTML padronizado para exports PDF/PNG
          * @param {Object} params - Parâmetros do cabeçalho
@@ -10979,6 +11274,376 @@
             });
         }
 
+        // ==================== EXPORTAÇÃO DE PRAZOS DA AGENDA ====================
+
+        function _dadosPrazoExport(prazo) {
+            const isUteis = prazo.tipoDias === 'uteis';
+            const dfObj = prazo.dataFinal;
+            const diaNum = dfObj.getDate();
+            const mesNome = dfObj.toLocaleDateString('pt-BR', { month: 'long' });
+            const ano = dfObj.getFullYear();
+            const diaSem = dfObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const dtInicioChip = prazo.dataInicio.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+            const tipoDiasLabel = isUteis ? 'Úteis' : 'Corridos';
+
+            const ferPers = new Set();
+            if (prazo.feriadosUsados && prazo.feriadosUsados.personalizados) {
+                prazo.feriadosUsados.personalizados.forEach(([ds]) => ferPers.add(ds));
+            }
+
+            const feriadosCount = prazo.detalhamentoDias.filter(dia => {
+                if (isUteis) return !dia.contado && dia.motivo !== 'Final de Semana';
+                const dashIdx = dia.motivo.indexOf(' - ');
+                if (dashIdx === -1) return false;
+                return dia.motivo.slice(dashIdx + 3) !== 'Final de Semana';
+            }).length;
+
+            const descricaoHTML = prazo.descricao
+                ? `<div class="header-titulo">${escapeHtml(prazo.descricao)}</div>`
+                : '';
+
+            const titulo = sanitizarTituloPDF(prazo.titulo);
+            const nomeArquivo = sanitizarNomeArquivo(prazo.titulo);
+
+            return { isUteis, dfObj, diaNum, mesNome, ano, diaSem, dtInicioChip, tipoDiasLabel, ferPers, feriadosCount, descricaoHTML, titulo, nomeArquivo };
+        }
+
+        function _diasVisuaisHTMLPrazo(prazo, ferPers, isUteis) {
+            const dias = prazo.detalhamentoDias;
+            let html = '';
+
+            if (isUteis) {
+                const dInicio = prazo.dataInicio;
+                const mes = dInicio.toLocaleDateString('pt-BR', { month: 'short' });
+                html += `<span style="font-size:10px;color:#6b7280;font-weight:600;margin-right:5px;display:inline-block;text-transform:uppercase;">${mes}</span>`;
+                html += `<div style="display:inline-block;width:28px;height:28px;background:#18181b;border-radius:4px;text-align:center;line-height:28px;font-size:12px;font-weight:600;color:#ffffff;margin:2px;">${dInicio.getDate()}</div>`;
+            }
+
+            dias.forEach((dia, index) => {
+                const dNum = dia.data.getDate();
+                const isInicio = !isUteis && index === 0;
+                const isFinal = index === dias.length - 1;
+
+                let cor = '#bfdbfe', textoCor = '#1e40af';
+
+                if (isInicio) {
+                    cor = '#18181b'; textoCor = '#ffffff';
+                } else if (isFinal) {
+                    cor = '#6366f1'; textoCor = '#ffffff';
+                } else if (!dia.contado) {
+                    const ds = `${dia.data.getFullYear()}-${String(dia.data.getMonth()+1).padStart(2,'0')}-${String(dia.data.getDate()).padStart(2,'0')}`;
+                    if (ferPers.has(ds)) {
+                        cor = '#e9d5ff'; textoCor = '#6b21a8';
+                    } else if (dia.motivo === 'Final de Semana' || dia.motivo.startsWith('Final de Semana e ')) {
+                        cor = '#d4d4d8'; textoCor = '#52525b';
+                    } else {
+                        cor = '#fecdd3'; textoCor = '#9f1239';
+                    }
+                }
+
+                let mesIndicador = '';
+                let mostrarMes;
+                if (isUteis && index === 0) {
+                    mostrarMes = dia.data.getMonth() !== prazo.dataInicio.getMonth() || dia.data.getFullYear() !== prazo.dataInicio.getFullYear();
+                } else {
+                    mostrarMes = index === 0 || dia.data.getMonth() !== dias[index-1].data.getMonth();
+                }
+                if (mostrarMes) {
+                    const mes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
+                    mesIndicador = `<span style="font-size:10px;color:#6b7280;font-weight:600;margin-right:5px;display:inline-block;text-transform:uppercase;">${mes}</span>`;
+                }
+
+                html += `${mesIndicador}<div style="display:inline-block;width:28px;height:28px;background:${cor};border-radius:4px;text-align:center;line-height:28px;font-size:12px;font-weight:600;color:${textoCor};margin:2px;">${dNum}</div>`;
+            });
+
+            return html;
+        }
+
+        function _exportarPrazoAgendaPDF(prazo, completo) {
+            const d = _dadosPrazoExport(prazo);
+            const diasVisuaisHTML = completo ? '' : _diasVisuaisHTMLPrazo(prazo, d.ferPers, d.isUteis);
+
+            const estilosCompleto = completo ? `
+        .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
+        h3 { color: #374151; font-size: 18px; margin-bottom: 20px; }
+        .timeline-item { display: flex; align-items: stretch; gap: 12px; }
+        .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
+        .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; }
+        .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
+        .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
+        .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
+        .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
+        .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+        .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+        .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
+        .timeline-link-pill { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 700; text-decoration: none; }
+        .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
+        .timeline-item-contado .timeline-badge, .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
+        .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
+        .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
+        .timeline-item-feriado .timeline-desc { color: #a50606; }
+        .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
+        a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }` : '';
+
+            const tituloDoc = d.titulo ? `ContaPrazo - ${d.titulo}` : 'Prazo - ContaPrazo';
+
+            const htmlContent = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>${tituloDoc}</title>
+    <style>
+        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: #fff; }
+        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
+        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
+        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; }
+        .brand-name { display: flex; align-items: center; line-height: 1; }
+        .brand-conta { color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
+        .brand-prazo { color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
+        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0 0 0 2px; line-height: 1; display: inline-flex; align-items: center; }
+        .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
+        .header { background: #f0fdf4; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
+        .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+        .header-body { padding: 24px 28px 20px; }
+        .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+        .header-titulo-main { font-size: 16px; font-weight: 700; color: #111827; line-height: 1.3; margin-bottom: 6px; }
+        .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
+        .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+        .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+        .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+        .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+        .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
+        .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        .info { margin: 15px 0; font-size: 16px; }
+        @media print { body { padding: 15px; } .no-print { display: none; } }
+        ${estilosCompleto}
+    </style>
+</head>
+<body>
+    <div class="brand-header">
+        <div class="logo-cp">CP</div>
+        <div class="brand-title">
+            <div class="brand-name">
+                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
+            </div>
+            <span class="brand-separator">|</span>
+            <span class="brand-subtitle">Calculadora de Prazos</span>
+        </div>
+        <a href="https://contaprazo.netlify.app/" style="margin-left:auto;font-size:0.72rem;color:#b0b7c3;text-decoration:none;letter-spacing:0.01em;">contaprazo.netlify.app</a>
+    </div>
+    <div class="header">
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Salvo</div>
+            <div class="header-titulo-main">${escapeHtml(prazo.titulo)}</div>
+            ${d.descricaoHTML}
+            <div class="header-date">${d.diaNum} de ${d.mesNome} de ${d.ano}</div>
+            <div class="header-weekday">${d.diaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip">
+                    <div class="chip-label">Data de início${d.isUteis ? ' *' : ''}</div>
+                    <div class="chip-value">${d.dtInicioChip}</div>
+                </div>
+                <div class="header-chip">
+                    <div class="chip-label">Dias contados</div>
+                    <div class="chip-value">${prazo.diasSolicitados} dias ${d.tipoDiasLabel.toLowerCase()}</div>
+                </div>
+                ${d.feriadosCount > 0 ? `<div class="header-chip" style="border-color:#fed7aa;"><div class="chip-label" style="color:#ea580c;">${d.isUteis ? 'Feriados pulados' : 'Feriados no período'}</div><div class="chip-value" style="color:#c2410c;">${d.feriadosCount}</div></div>` : ''}
+            </div>
+            ${!completo ? `<div class="info" style="margin-top:25px;border-top:2px solid #e5e7eb;padding-top:20px;"><div style="margin-bottom:12px;"><strong>Dias considerados:</strong></div><div style="line-height:36px;text-align:left;">${diasVisuaisHTML}</div><div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div></div>` : ''}
+            ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
+    </div>
+    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}</div>` : ''}
+    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'print')}
+    <div class="no-print" style="text-align:center;margin-top:28px;padding:18px;background:#fef3c7;border-radius:8px;">
+        <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
+        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
+        <button onclick="window.print()" style="margin-top:14px;padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🖨️ Imprimir / Salvar como PDF</button>
+    </div>
+</body>
+</html>`;
+
+            const popup = window.open('', '_blank', 'width=900,height=700');
+            if (popup) {
+                popup.document.write(htmlContent);
+                popup.document.close();
+                setTimeout(() => popup.print(), 500);
+            } else {
+                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site.', 'aviso');
+            }
+        }
+
+        function _exportarPrazoAgendaPNG(prazo, completo) {
+            if (typeof htmlToImage === 'undefined') {
+                mostrarNotificacao('Exportação de imagem não disponível (verifique sua conexão).', 'aviso');
+                return;
+            }
+
+            const d = _dadosPrazoExport(prazo);
+            const diasVisuaisHTML = completo ? '' : _diasVisuaisHTMLPrazo(prazo, d.ferPers, d.isUteis);
+            const listaHTML = completo ? renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata) : '';
+
+            const exportCSS = `
+    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; line-height: normal; }
+    .export-wrapper .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+    .export-wrapper .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
+    .export-wrapper .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
+    .export-wrapper .brand-name { display: flex; align-items: center; line-height: 1; background: transparent !important; }
+    .export-wrapper .brand-conta { color: #3b82f6 !important; -webkit-text-fill-color: #3b82f6 !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
+    .export-wrapper .brand-prazo { color: #16a34a !important; -webkit-text-fill-color: #16a34a !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
+    .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
+    .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
+    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
+    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+    .export-wrapper .header-body { padding: 26px 30px 22px; }
+    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
+    .export-wrapper .header-titulo-main { font-size: 16px; font-weight: 700; color: #111827; line-height: 1.3; margin-bottom: 6px; }
+    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
+    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
+    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
+    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
+    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+    ${completo ? `
+    .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
+    .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 20px 0; }
+    .export-wrapper .timeline-item { display: flex; align-items: stretch; gap: 12px; }
+    .export-wrapper .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
+    .export-wrapper .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; line-height: 1; }
+    .export-wrapper .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
+    .export-wrapper .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
+    .export-wrapper .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
+    .export-wrapper .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
+    .export-wrapper .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
+    .export-wrapper .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
+    .export-wrapper .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; line-height: 1; }
+    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
+    .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
+    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
+    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
+    .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
+    .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
+    .export-wrapper .timeline-link-pill { display: none !important; }
+    .export-wrapper a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }` : ''}`;
+
+            const htmlContent = `<div class="export-wrapper">
+    <div class="brand-header">
+        <div class="logo-cp">CP</div>
+        <div class="brand-title">
+            <div class="brand-name">
+                <span class="brand-conta" style="background:none;-webkit-text-fill-color:#3b82f6;color:#3b82f6;">Conta</span><span class="brand-prazo" style="background:none;-webkit-text-fill-color:#16a34a;color:#16a34a;">Prazo</span>
+            </div>
+            <span class="brand-separator">|</span>
+            <span class="brand-subtitle">Calculadora de Prazos</span>
+        </div>
+        <a href="https://contaprazo.netlify.app/" style="margin-left:auto;font-size:0.72rem;color:#b0b7c3;text-decoration:none;letter-spacing:0.01em;">contaprazo.netlify.app</a>
+    </div>
+    <div class="header">
+        <div class="header-accent"></div>
+        <div class="header-body">
+            <div class="header-label">&#128197; Prazo Salvo</div>
+            <div class="header-titulo-main">${escapeHtml(prazo.titulo)}</div>
+            ${d.descricaoHTML}
+            <div class="header-date">${d.diaNum} de ${d.mesNome} de ${d.ano}</div>
+            <div class="header-weekday">${d.diaSem}</div>
+            <div class="header-chips">
+                <div class="header-chip"><div class="chip-label">Data de início${d.isUteis ? ' *' : ''}</div><div class="chip-value">${d.dtInicioChip}</div></div>
+                <div class="header-chip"><div class="chip-label">Dias contados</div><div class="chip-value">${prazo.diasSolicitados} dias ${d.tipoDiasLabel.toLowerCase()}</div></div>
+                ${d.feriadosCount > 0 ? `<div class="header-chip" style="border-color:#fed7aa;"><div class="chip-label" style="color:#ea580c;">${d.isUteis ? 'Feriados pulados' : 'Feriados no período'}</div><div class="chip-value" style="color:#c2410c;">${d.feriadosCount}</div></div>` : ''}
+            </div>
+            ${!completo ? `<div style="line-height:36px;text-align:left;margin-bottom:10px;">${diasVisuaisHTML}</div><div style="padding-top:10px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div>` : ''}
+            ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
+        </div>
+    </div>
+    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${listaHTML}</div>` : ''}
+    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'image')}
+</div>`;
+
+            const exportStyleEl = document.createElement('style');
+            exportStyleEl.id = 'export-agenda-style';
+            exportStyleEl.textContent = exportCSS;
+            document.head.appendChild(exportStyleEl);
+
+            const portal = document.createElement('div');
+            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
+            const container = document.createElement('div');
+            container.style.width = '900px';
+            container.innerHTML = htmlContent;
+            portal.appendChild(container);
+            document.body.appendChild(portal);
+
+            const cleanup = () => {
+                if (document.head.contains(exportStyleEl)) document.head.removeChild(exportStyleEl);
+                if (document.body.contains(portal)) document.body.removeChild(portal);
+            };
+
+            htmlToImage.toBlob(container, {
+                pixelRatio: 2,
+                backgroundColor: '#ffffff',
+                width: 900
+            }).then(blob => {
+                cleanup();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const prefixo = sanitizarNomeArquivo(prazo.titulo);
+                const sufixo = completo ? 'completo' : 'resumo';
+                link.download = prefixo ? `${prefixo}-contaprazo-${sufixo}.png` : `contaprazo-${sufixo}-${Date.now()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+            }).catch(error => {
+                cleanup();
+                console.error('Erro ao gerar imagem:', error);
+                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
+            });
+        }
+
+        function exportarPrazoAgenda(tipo, formato) {
+            if (!prazoEmEdicao) return;
+            let prazo = prazos.find(p => p.id === prazoEmEdicao);
+            if (!prazo) prazo = prazosArquivados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) return;
+            fecharMenuExportPrazo();
+            const completo = formato === 'completo';
+            if (tipo === 'pdf') {
+                _exportarPrazoAgendaPDF(prazo, completo);
+            } else {
+                _exportarPrazoAgendaPNG(prazo, completo);
+            }
+        }
+
+        function toggleExportarPrazoMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('menu-exportar-prazo');
+            if (!menu) return;
+            const wasActive = menu.classList.contains('active');
+            menu.classList.toggle('active', !wasActive);
+            if (!wasActive) {
+                setTimeout(() => {
+                    const btn = document.getElementById('btn-exportar-prazo');
+                    if (!btn || !menu) return;
+                    const br = btn.getBoundingClientRect();
+                    const mr = menu.getBoundingClientRect();
+                    const vw = window.innerWidth, vh = window.innerHeight;
+                    let left = br.right - mr.width;
+                    if (left < 10) left = br.left;
+                    if (left + mr.width > vw - 10) left = vw - mr.width - 10;
+                    let top = br.bottom + 6;
+                    if (top + mr.height > vh - 10) top = br.top - mr.height - 6;
+                    if (top < 10) top = 10;
+                    menu.style.left = `${left}px`;
+                    menu.style.top = `${top}px`;
+                }, 0);
+            }
+        }
+
+        function fecharMenuExportPrazo() {
+            const menu = document.getElementById('menu-exportar-prazo');
+            if (menu) menu.classList.remove('active');
+        }
+
         function baixarCalculadora() {
             const htmlCompleto = document.documentElement.outerHTML;
             const blob = new Blob([htmlCompleto], { type: 'text/html' });
@@ -11061,73 +11726,356 @@
 
         // Carregar prazos do localStorage
         function carregarPrazosStorage() {
-            const prazosStorage = localStorage.getItem('agendaPrazos');
-            if (prazosStorage) {
-                try {
-                    prazos = JSON.parse(prazosStorage);
-                    // Converter strings de data de volta para objetos Date
-                    prazos = prazos.map(prazo => ({
-                        ...prazo,
-                        dataInicio: new Date(prazo.dataInicio),
-                        dataFinal: new Date(prazo.dataFinal),
-                        dataCriacao: new Date(prazo.dataCriacao),
-                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                            ...dia,
-                            data: new Date(dia.data)
-                        }))
-                    }));
-                } catch (error) {
-                    console.error('Erro ao carregar prazos:', error);
-                    prazos = [];
-                }
-            }
+            // Dados carregados do arquivo via inicializarArquivoAgenda()
         }
 
-        // Salvar prazos no localStorage
         function salvarPrazosStorage() {
+            _agendarGravacaoAgenda();
+        }
+
+        function carregarArquivadosStorage() {
+            // Dados carregados do arquivo via inicializarArquivoAgenda()
+        }
+
+        function salvarArquivadosStorage() {
+            _agendarGravacaoAgenda();
+        }
+
+        // ==================== ARQUIVO DA AGENDA ====================
+
+        function _abrirAgendaDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('contaprazo-db', 1);
+                req.onupgradeneeded = e => {
+                    if (!e.target.result.objectStoreNames.contains('handles')) {
+                        e.target.result.createObjectStore('handles');
+                    }
+                };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        async function _salvarHandleDB(handle) {
+            const db = await _abrirAgendaDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readwrite');
+                tx.objectStore('handles').put(handle, 'agenda');
+                tx.oncomplete = () => { db.close(); resolve(); };
+                tx.onerror = e => { db.close(); reject(e.target.error); };
+            });
+        }
+
+        async function _recuperarHandleDB() {
             try {
-                localStorage.setItem('agendaPrazos', JSON.stringify(prazos));
-            } catch (error) {
-                console.error('Erro ao salvar prazos:', error);
-                mostrarNotificacao('Erro ao salvar prazos. Verifique o espaço disponível.', 'erro');
+                const db = await _abrirAgendaDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction('handles', 'readonly');
+                    const req = tx.objectStore('handles').get('agenda');
+                    req.onsuccess = e => { db.close(); resolve(e.target.result || null); };
+                    req.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) { return null; }
+        }
+
+        async function _limparHandleDB() {
+            try {
+                const db = await _abrirAgendaDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction('handles', 'readwrite');
+                    tx.objectStore('handles').delete('agenda');
+                    tx.oncomplete = () => { db.close(); resolve(); };
+                    tx.onerror = e => { db.close(); reject(e.target.error); };
+                });
+            } catch(e) {}
+        }
+
+        function _deserializarPrazos(arr) {
+            return (arr || []).map(p => ({
+                ...p,
+                dataInicio: new Date(p.dataInicio),
+                dataFinal: new Date(p.dataFinal),
+                dataCriacao: new Date(p.dataCriacao),
+                dataConclusao: p.dataConclusao ? new Date(p.dataConclusao) : null,
+                dataArquivamento: p.dataArquivamento ? new Date(p.dataArquivamento) : null,
+                detalhamentoDias: (p.detalhamentoDias || []).map(d => ({ ...d, data: new Date(d.data) }))
+            }));
+        }
+
+        async function _carregarDadosArquivoAgenda() {
+            const file = await agendaFileHandle.getFile();
+            const text = await file.text();
+            if (!text.trim()) { prazos = []; prazosArquivados = []; return; }
+            try {
+                const dados = JSON.parse(text);
+                prazos = _deserializarPrazos(dados.prazos);
+                prazosArquivados = _deserializarPrazos(dados.prazosArquivados);
+            } catch(e) {
+                mostrarNotificacao('O arquivo da agenda está corrompido. Os dados foram reiniciados.', 'aviso');
+                prazos = []; prazosArquivados = [];
             }
         }
 
-        // Carregar prazos arquivados do localStorage
-        function carregarArquivadosStorage() {
-            const arquivadosStorage = localStorage.getItem('agendaPrazosArquivados');
-            if (arquivadosStorage) {
-                try {
-                    prazosArquivados = JSON.parse(arquivadosStorage);
-                    // Converter strings de data de volta para objetos Date
-                    prazosArquivados = prazosArquivados.map(prazo => ({
-                        ...prazo,
-                        dataInicio: new Date(prazo.dataInicio),
-                        dataFinal: new Date(prazo.dataFinal),
-                        dataCriacao: new Date(prazo.dataCriacao),
-                        dataConclusao: prazo.dataConclusao ? new Date(prazo.dataConclusao) : null,
-                        dataArquivamento: prazo.dataArquivamento ? new Date(prazo.dataArquivamento) : null,
-                        detalhamentoDias: prazo.detalhamentoDias.map(dia => ({
-                            ...dia,
-                            data: new Date(dia.data)
-                        }))
-                    }));
-                } catch (error) {
-                    console.error('Erro ao carregar arquivados:', error);
-                    prazosArquivados = [];
+        async function _gravarArquivoAgenda() {
+            if (!agendaFilePronto || !agendaFileHandle) return;
+            try {
+                const writable = await agendaFileHandle.createWritable();
+                await writable.write(JSON.stringify({ versao: '1.0', prazos, prazosArquivados }, null, 2));
+                await writable.close();
+            } catch(e) {
+                console.error('Erro ao gravar arquivo da agenda:', e);
+                if (e.name === 'NotAllowedError' || e.name === 'SecurityError') {
+                    agendaFilePronto = false;
+                    agendaInitStatus = 'needs-permission';
+                    _atualizarInfoArquivoAgenda();
+                } else {
+                    mostrarNotificacao('Erro ao salvar na agenda. Verifique se o arquivo está acessível.', 'erro');
                 }
             }
         }
 
-        // Salvar prazos arquivados no localStorage
-        function salvarArquivadosStorage() {
-            try {
-                localStorage.setItem('agendaPrazosArquivados', JSON.stringify(prazosArquivados));
-            } catch (error) {
-                console.error('Erro ao salvar arquivados:', error);
-                mostrarNotificacao('Erro ao salvar arquivados. Verifique o espaço disponível.', 'erro');
+        function _agendarGravacaoAgenda() {
+            if (!agendaFilePronto) return;
+            clearTimeout(_agendaSaveTimer);
+            _agendaSaveTimer = setTimeout(_gravarArquivoAgenda, 600);
+        }
+
+        function _limparAgendaLocalStorage() {
+            localStorage.removeItem('agendaPrazos');
+            localStorage.removeItem('agendaPrazosArquivados');
+        }
+
+        function _migrarDeLocalStorage() {
+            const stored = localStorage.getItem('agendaPrazos');
+            const storedArq = localStorage.getItem('agendaPrazosArquivados');
+            if (stored) {
+                try { prazos = _deserializarPrazos(JSON.parse(stored)); } catch(e) { prazos = []; }
             }
+            if (storedArq) {
+                try { prazosArquivados = _deserializarPrazos(JSON.parse(storedArq)); } catch(e) { prazosArquivados = []; }
+            }
+        }
+
+        async function inicializarArquivoAgenda() {
+            if (!('showOpenFilePicker' in window)) {
+                agendaInitStatus = 'unsupported';
+                _atualizarInfoArquivoAgenda();
+                if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+                return;
+            }
+            try {
+                const handle = await _recuperarHandleDB();
+                if (!handle) {
+                    agendaInitStatus = 'no-file';
+                } else {
+                    agendaFileHandle = handle;
+                    agendaFileName = handle.name;
+                    const perm = await handle.queryPermission({ mode: 'readwrite' });
+                    if (perm === 'granted') {
+                        try {
+                            await _carregarDadosArquivoAgenda();
+                            agendaInitStatus = 'ready';
+                            agendaFilePronto = true;
+                        } catch(e) {
+                            console.error('Erro ao carregar arquivo da agenda:', e);
+                            agendaInitStatus = 'needs-permission';
+                        }
+                    } else {
+                        agendaInitStatus = 'needs-permission';
+                    }
+                }
+            } catch(e) {
+                console.error('Erro ao inicializar arquivo da agenda:', e);
+                agendaInitStatus = 'no-file';
+            }
+            _atualizarInfoArquivoAgenda();
+            if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+        }
+
+        function _atualizarInfoArquivoAgenda() {
+            const infoDiv = document.getElementById('agendaMaisArquivoInfo');
+            const sepDiv = document.getElementById('agendaMaisArquivoSep');
+            const gerenciarBtn = document.getElementById('agendaMaisGerenciarArquivo');
+            if (!infoDiv) return;
+            if (agendaInitStatus === 'ready') {
+                infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">Arquivo da agenda</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(agendaFileName)}">${escapeHtml(agendaFileName)}</div>`;
+                infoDiv.style.display = 'block';
+                if (sepDiv) sepDiv.style.display = 'block';
+                if (gerenciarBtn) gerenciarBtn.style.display = 'flex';
+            } else {
+                infoDiv.style.display = 'none';
+                if (sepDiv) sepDiv.style.display = 'none';
+                if (gerenciarBtn) gerenciarBtn.style.display = 'none';
+            }
+        }
+
+        function _mostrarTelaSetupAgenda() {
+            const setupDiv = document.getElementById('agendaSetup');
+            if (!setupDiv) return;
+            ['#agendaToolbar','#agendaPaginacao','#agendaLista','#agendaVazia','#barraSelecao'].forEach(sel => {
+                const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
+                if (el) el.style.display = 'none';
+            });
+
+            let html = '';
+            if (agendaInitStatus === 'unsupported') {
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+                    <div class="agenda-setup-titulo">Navegador não suportado</div>
+                    <div class="agenda-setup-desc">A Minha Agenda salva dados localmente usando a <strong>File System Access API</strong>, disponível apenas no <strong>Chrome</strong> e <strong>Edge</strong> em computadores (versão 86+). Em dispositivos móveis ou outros navegadores, essa funcionalidade não está disponível.</div>
+                </div>`;
+            } else if (agendaInitStatus === 'needs-permission') {
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                    <div class="agenda-setup-titulo">Permissão necessária</div>
+                    <div class="agenda-setup-desc">O arquivo <strong>${escapeHtml(agendaFileName)}</strong> foi encontrado, mas o navegador precisa de sua confirmação para acessá-lo nesta sessão.</div>
+                    <div class="agenda-setup-acoes">
+                        <button class="agenda-setup-btn-primario" onclick="reconectarArquivoAgenda()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>Reconectar ao arquivo</button>
+                        <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')">Selecionar outro arquivo</button>
+                    </div>
+                    <div class="agenda-setup-nota">O navegador exige essa confirmação por segurança. Seu arquivo não foi perdido.</div>
+                </div>`;
+            } else {
+                const temDadosLS = !!(localStorage.getItem('agendaPrazos') || localStorage.getItem('agendaPrazosArquivados'));
+                html = `<div class="agenda-setup-screen">
+                    <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                    <div class="agenda-setup-titulo">Configure o arquivo da sua agenda</div>
+                    <div class="agenda-setup-desc">A Minha Agenda salva prazos diretamente em um arquivo JSON no seu computador, sem depender do armazenamento do navegador.${temDadosLS ? '<br><br><strong style="color:#92400e;">&#9888;&#65039; Dados anteriores encontrados</strong> — serão migrados automaticamente para o arquivo escolhido.' : ''}</div>
+                    <div class="agenda-setup-acoes">
+                        <button class="agenda-setup-btn-primario" onclick="trocarArquivoAgenda('novo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo</button>
+                        <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Abrir arquivo existente</button>
+                    </div>
+                    <div class="agenda-setup-nota">O arquivo ficará onde você escolher. O app precisa de permissão de leitura e escrita. Nenhum dado é enviado à nuvem.</div>
+                </div>`;
+            }
+            setupDiv.innerHTML = html;
+            setupDiv.style.display = 'block';
+        }
+
+        function _ocultarTelaSetupAgenda() {
+            const setupDiv = document.getElementById('agendaSetup');
+            if (setupDiv) setupDiv.style.display = 'none';
+            ['#agendaLista','#agendaVazia','#agendaToolbar'].forEach(sel => {
+                const el = sel.startsWith('#') ? document.getElementById(sel.slice(1)) : document.querySelector(sel);
+                if (el) el.style.display = '';
+            });
+            _atualizarInfoArquivoAgenda();
+        }
+
+        async function trocarArquivoAgenda(modo) {
+            const wasReady = agendaInitStatus === 'ready';
+            try {
+                let handle;
+                if (modo === 'novo') {
+                    handle = await window.showSaveFilePicker({
+                        suggestedName: 'minha-agenda-contaprazo.json',
+                        types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }]
+                    });
+                } else {
+                    [handle] = await window.showOpenFilePicker({
+                        types: [{ description: 'Arquivo JSON', accept: { 'application/json': ['.json'] } }],
+                        multiple: false
+                    });
+                }
+                agendaFileHandle = handle;
+                agendaFileName = handle.name;
+                await _salvarHandleDB(handle);
+                if (modo === 'existente') {
+                    try { await _carregarDadosArquivoAgenda(); } catch(e) { prazos = []; prazosArquivados = []; }
+                } else {
+                    if (!wasReady) _migrarDeLocalStorage();
+                    const writable = await handle.createWritable();
+                    await writable.write(JSON.stringify({ versao: '1.0', prazos, prazosArquivados }, null, 2));
+                    await writable.close();
+                }
+                if (!wasReady) _limparAgendaLocalStorage();
+                agendaInitStatus = 'ready';
+                agendaFilePronto = true;
+                _ocultarTelaSetupAgenda();
+                renderizarPrazos();
+                verificarPrazosVencendo();
+                mostrarNotificacao(modo === 'novo' ? 'Arquivo da agenda criado com sucesso!' : 'Arquivo da agenda conectado!', 'sucesso');
+            } catch(e) {
+                if (e.name !== 'AbortError') {
+                    console.error('Erro ao configurar arquivo da agenda:', e);
+                    mostrarNotificacao('Não foi possível configurar o arquivo da agenda.', 'erro');
+                }
+            }
+        }
+
+        async function reconectarArquivoAgenda() {
+            if (!agendaFileHandle) return;
+            try {
+                const perm = await agendaFileHandle.requestPermission({ mode: 'readwrite' });
+                if (perm === 'granted') {
+                    await _carregarDadosArquivoAgenda();
+                    agendaInitStatus = 'ready';
+                    agendaFilePronto = true;
+                    _ocultarTelaSetupAgenda();
+                    renderizarPrazos();
+                    verificarPrazosVencendo();
+                } else {
+                    mostrarNotificacao('Permissão negada. Tente selecionar o arquivo novamente.', 'aviso');
+                }
+            } catch(e) {
+                console.error('Erro ao reconectar arquivo:', e);
+                mostrarNotificacao('Não foi possível acessar o arquivo da agenda.', 'erro');
+            }
+        }
+
+        function abrirGerenciamentoArquivoAgenda() {
+            const modalId = 'modalGerenciarArquivoAgenda';
+            let modal = document.getElementById(modalId);
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal-aviso';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `<div class="modal-aviso-content" style="max-width:420px;">
+                <button class="modal-close-btn modal-close-btn-abs" onclick="document.getElementById('${modalId}').classList.remove('active')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
+                <div class="modal-aviso-icon" style="background:#f0fdf4;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
+                <h3 style="margin-bottom:4px;">Arquivo da Agenda</h3>
+                <p style="color:#6b7280;font-size:0.85rem;margin-bottom:20px;word-break:break-all;text-align:center;">${escapeHtml(agendaFileName)}</p>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('existente');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Selecionar outro arquivo</button>
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="trocarArquivoAgenda('novo');document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo (copia dados atuais)</button>
+                    <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Baixar cópia dos dados</button>
+                    <hr style="border:none;border-top:1px solid #f3f4f6;margin:4px 0;">
+                    <button class="btn" style="justify-content:flex-start;gap:10px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;" onclick="desconectarArquivoAgenda();document.getElementById('${modalId}').classList.remove('active');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desconectar arquivo</button>
+                </div>
+                <p style="font-size:0.75rem;color:#9ca3af;margin-top:14px;line-height:1.5;text-align:center;">Para renomear ou mover o arquivo, use o explorador de arquivos do seu SO e selecione-o novamente aqui.</p>
+            </div>`;
+            modal.classList.add('active');
+        }
+
+        function exportarCopiaArquivoAgenda() {
+            const dados = JSON.stringify({ versao: '1.0', exportadoEm: new Date().toISOString(), prazos, prazosArquivados }, null, 2);
+            const blob = new Blob([dados], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `contaprazo-agenda-${new Date().toISOString().slice(0,10)}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function desconectarArquivoAgenda() {
+            criarToast({
+                tipo: 'aviso',
+                titulo: 'Desconectar arquivo da agenda?',
+                mensagemHTML: 'Os dados serão preservados no arquivo. O app precisará ser reconectado para acessá-los.',
+                autoFechar: false,
+                botaoTexto: 'Desconectar',
+                botaoCallback: async () => {
+                    await _limparHandleDB();
+                    agendaFileHandle = null; agendaFileName = '';
+                    agendaInitStatus = 'no-file'; agendaFilePronto = false;
+                    prazos = []; prazosArquivados = [];
+                    if (document.getElementById('paginaAgenda')?.classList.contains('active')) carregarAgenda();
+                },
+                botaoSecundarioTexto: 'Cancelar'
+            });
         }
 
         // Gerar ID único
@@ -11268,18 +12216,27 @@
                 mostrarNotificacao('Realize um cálculo primeiro antes de salvar na agenda.', 'aviso');
                 return;
             }
-
-            // Preencher modal - só título com descrição, campo descrição vazio
+            if (!agendaFilePronto) {
+                if (!('showOpenFilePicker' in window)) {
+                    mostrarNotificacao('A Minha Agenda requer Chrome ou Edge em computadores.', 'aviso');
+                } else {
+                    criarToast({
+                        tipo: 'info',
+                        titulo: 'Minha Agenda não configurada',
+                        mensagemHTML: agendaFileHandle
+                            ? `O arquivo <strong>${escapeHtml(agendaFileName)}</strong> precisa ser reconectado antes de salvar.`
+                            : 'Configure um arquivo para a agenda antes de salvar prazos.',
+                        botaoTexto: 'Configurar agora',
+                        botaoCallback: () => { trocarPagina('agenda'); },
+                        botaoSecundarioTexto: 'Cancelar'
+                    });
+                }
+                return;
+            }
             document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
-            document.getElementById('inputDescricaoPrazo').value = ''; // Deixar vazio para usuário preencher
-
-            // Abrir modal
+            document.getElementById('inputDescricaoPrazo').value = '';
             document.getElementById('modalInputTitulo').classList.add('active');
-
-            // Focar no campo de título
-            setTimeout(() => {
-                document.getElementById('inputTituloPrazo').focus();
-            }, 100);
+            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 100);
         }
 
         // Fechar modal de input
@@ -11315,13 +12272,15 @@
                     data: new Date(dia.data),
                     contado: dia.contado,
                     motivo: dia.motivo,
-                    numero: dia.numero
+                    numero: dia.numero,
+                    arquivo: feriadosArquivoMap.get(formatarDataCompleta(dia.data)) || null
                 })),
                 feriadosUsados: {
                     fixos: {...feriadosFixos},
                     moveis: {...feriadosMoveis},
                     personalizados: Array.from(feriadosPersonalizados.entries())
-                }
+                },
+                conjuntosMetadata: obterMetadataConjuntos()
             };
 
             prazos.push(novoPrazo);
@@ -11524,8 +12483,18 @@
 
         // Carregar e renderizar agenda
         function carregarAgenda() {
-            carregarPrazosStorage();
-            carregarArquivadosStorage();
+            if (agendaInitStatus === 'loading') {
+                const container = document.getElementById('agendaLista');
+                if (container) container.innerHTML = '<div style="text-align:center;padding:40px;color:#9ca3af;font-size:0.9rem;">Carregando...</div>';
+                const vazio = document.getElementById('agendaVazia');
+                if (vazio) vazio.style.display = 'none';
+                return;
+            }
+            if (agendaInitStatus !== 'ready') {
+                _mostrarTelaSetupAgenda();
+                return;
+            }
+            _ocultarTelaSetupAgenda();
             renderizarPrazos();
             verificarPrazosVencendo();
         }
@@ -11709,40 +12678,29 @@
                 <div class="prazo-item ${classeFundo} ${modoSelecao ? 'modo-selecao' : ''}" data-id="${prazo.id}">
                     ${checkboxSelecaoHTML}
                     <div class="prazo-checkbox-wrapper">
-                        <div class="prazo-checkbox ${checked} ${isArquivado || modoSelecao ? 'disabled' : ''}" ${isArquivado || modoSelecao ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado || modoSelecao ? 'cursor: not-allowed; opacity: 0.5;' : ''}">
+                        <div class="prazo-checkbox ${checked} ${isArquivado || modoSelecao ? 'disabled' : ''}" ${isArquivado || modoSelecao ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado || modoSelecao ? 'cursor: not-allowed; opacity: 0.5;' : ''}" title="${isArquivado ? 'Prazo arquivado' : (checked ? 'Desmarcar conclusão' : 'Marcar como concluído')}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
                     </div>
-                    <div class="prazo-conteudo">
+                    <div class="prazo-conteudo"${!modoSelecao ? ` onclick="abrirDetalhes('${prazo.id}')" style="cursor:pointer;"` : ''}>
                         <div class="prazo-header">
                             <h3 class="prazo-titulo">${prazo.titulo}</h3>
                             ${badgeHTML}
                         </div>
                         ${descricaoHTML}
-                        <div class="prazo-data-final-destaque">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <div class="prazo-data-final-texto">
-                                Prazo final: <strong>${dataFinalFormatada}</strong>
-                            </div>
-                        </div>
                         <div class="prazo-info-secundaria">
+                            <span class="prazo-info-secundaria-item" style="color:#374151;font-weight:500;">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dataFinalFormatada}
+                            </span>
+                            <span class="prazo-info-secundaria-separador">·</span>
                             <span class="prazo-info-secundaria-item">
                                 ${prazo.diasSolicitados} ${prazo.tipoDias === 'uteis'
                                     ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
                                     : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
-                            <span class="prazo-info-secundaria-separador">•</span>
-                            <span class="prazo-info-secundaria-item">
-                                Início: ${dataInicioFormatada}
-                            </span>
-                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">•</span>${contadorInline}` : ''}
+                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">·</span>${contadorInline}` : ''}
                         </div>
                     </div>
                     <div class="prazo-acoes">
@@ -11937,6 +12895,11 @@
             if (!event.target.closest('#btn-resultado-menu') && !event.target.closest('#menu-resultado')) {
                 fecharMenuResultado();
             }
+            if (!event.target.closest('#btn-exportar-prazo') && !event.target.closest('#menu-exportar-prazo')) {
+                fecharMenuExportPrazo();
+            }
+            if (!event.target.closest('#agendaFiltroDropdown')) fecharFiltroDropdown();
+            if (!event.target.closest('#agendaMaisWrapper')) fecharAgendaMaisMenu();
         });
 
         // Fechar menu do resultado ao fazer scroll
@@ -11967,37 +12930,40 @@
             document.getElementById('badge-pendentes').textContent = contadores.pendentes;
             document.getElementById('badge-concluidos').textContent = contadores.concluidos;
             document.getElementById('badge-arquivados').textContent = contadores.arquivados;
+            // Update main filter button count
+            const countMap = { todos: contadores.todos, atrasados: contadores.atrasados, vencendo: contadores.vencendo, pendentes: contadores.pendentes, concluidos: contadores.concluidos };
+            const badgeFiltroAtual = document.getElementById('badge-filtro-atual');
+            if (badgeFiltroAtual) badgeFiltroAtual.textContent = countMap[filtroAtual] ?? contadores.todos;
         }
 
         // Filtrar prazos
         function filtrarPrazos(filtro) {
-            // Se estiver vendo arquivados, voltar para ativos automaticamente
             if (modoVisualizacao === 'arquivados') {
                 modoVisualizacao = 'ativos';
                 const btnVerArquivados = document.getElementById('btnVerArquivados');
                 const textoBtn = document.getElementById('textoVerArquivados');
                 btnVerArquivados.classList.remove('active');
-                textoBtn.textContent = 'Ver Arquivados';
-
-                // Mostrar os filtros de status novamente
-                document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)').forEach(btn => {
-                    btn.style.display = 'inline-flex';
-                });
+                textoBtn.textContent = 'Arquivados';
             }
 
             filtroAtual = filtro;
 
-            // Atualizar botões de filtro
-            document.querySelectorAll('.filtro-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.filtro === filtro) {
-                    btn.classList.add('active');
-                }
+            // Update dropdown options active state
+            document.querySelectorAll('.agenda-filtro-opcao').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filtro === filtro);
             });
 
-            // Resetar para primeira página ao mudar filtro
+            // Update dropdown button label
+            _atualizarLabelFiltro();
+
             paginaAtual = 1;
             renderizarPrazos();
+        }
+
+        function _atualizarLabelFiltro() {
+            const labels = { todos: 'Todos', atrasados: 'Atrasados', vencendo: 'Vencendo', pendentes: 'Pendentes', concluidos: 'Concluídos' };
+            const el = document.getElementById('agenda-filtro-texto');
+            if (el) el.textContent = labels[filtroAtual] || 'Todos';
         }
 
         // Mudar página da lista
@@ -12168,7 +13134,7 @@
                             </svg>
                             Detalhamento (Auditoria)
                         </h3>
-                        ${renderTimelineDetalhamento(prazo.detalhamentoDias)}
+                        ${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}
                     </div>
                 </div>
             `;
@@ -12177,6 +13143,38 @@
 
             // Renderizar botões de ação baseado se é arquivado ou não
             const acoesContainer = document.querySelector('.modal-detalhes-acoes');
+            const exportDropdownHTML = `
+                    <button class="btn btn-secondary" id="btn-exportar-prazo" onclick="toggleExportarPrazoMenu(event)" style="margin-left:auto;color:var(--color-green-700);display:inline-flex;align-items:center;gap:6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                            <polyline points="16 6 12 2 8 6"/>
+                            <line x1="12" y1="2" x2="12" y2="15"/>
+                        </svg>
+                        Exportar
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:1px;">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div id="menu-exportar-prazo" class="resultado-hero-dropdown">
+                        <button class="resultado-menu-item menu-pdf" onclick="exportarPrazoAgenda('pdf','resumido')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            PDF Resumido
+                        </button>
+                        <button class="resultado-menu-item menu-pdf" onclick="exportarPrazoAgenda('pdf','completo')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            PDF Completo
+                        </button>
+                        <hr class="resultado-menu-sep">
+                        <button class="resultado-menu-item menu-png" onclick="exportarPrazoAgenda('png','resumido')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            PNG Resumido
+                        </button>
+                        <button class="resultado-menu-item menu-png" onclick="exportarPrazoAgenda('png','completo')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="21" y1="3" x2="3" y2="21"/></svg>
+                            PNG Completo
+                        </button>
+                    </div>`;
+
             if (isArquivado) {
                 // Versão limitada para arquivados
                 acoesContainer.innerHTML = `
@@ -12195,6 +13193,7 @@
                         </svg>
                         Excluir
                     </button>
+                    ${exportDropdownHTML}
                 `;
             } else {
                 // Versão completa para ativos
@@ -12219,6 +13218,7 @@
                         </svg>
                         Excluir
                     </button>
+                    ${exportDropdownHTML}
                 `;
             }
 
@@ -12234,6 +13234,7 @@
         // Fechar modal de detalhes
         function fecharModalDetalhes() {
             document.getElementById('modalDetalhesPrazo').classList.remove('active');
+            fecharMenuExportPrazo();
             prazoEmEdicao = null;
         }
 
@@ -12700,6 +13701,46 @@
             mostrarNotificacao('Prazo arquivado com sucesso!', 'sucesso');
         }
 
+        // ── Agenda toolbar dropdowns ──
+        function toggleFiltroDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('agendaFiltroMenu');
+            const btn = document.getElementById('agendaFiltroBtnPrincipal');
+            const isOpen = menu.style.display !== 'none';
+            fecharTodosDropdownsAgenda();
+            if (!isOpen) {
+                menu.style.display = 'block';
+                btn.classList.add('open');
+            }
+        }
+
+        function fecharFiltroDropdown() {
+            const menu = document.getElementById('agendaFiltroMenu');
+            const btn = document.getElementById('agendaFiltroBtnPrincipal');
+            if (menu) menu.style.display = 'none';
+            if (btn) btn.classList.remove('open');
+        }
+
+        function toggleAgendaMaisMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('agendaMaisMenu');
+            const isOpen = menu.style.display !== 'none';
+            fecharTodosDropdownsAgenda();
+            if (!isOpen) {
+                menu.style.display = 'block';
+            }
+        }
+
+        function fecharAgendaMaisMenu() {
+            const menu = document.getElementById('agendaMaisMenu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        function fecharTodosDropdownsAgenda() {
+            fecharFiltroDropdown();
+            fecharAgendaMaisMenu();
+        }
+
         // ========================================
         // SISTEMA DE SELEÇÃO MÚLTIPLA
         // ========================================
@@ -12708,20 +13749,10 @@
             modoSelecao = true;
             prazosSelecionados.clear();
 
-            // Ocultar botões de filtro e arquivados
-            document.getElementById('btnSelecionar').style.display = 'none';
-            document.getElementById('btnVerArquivados').style.display = 'none';
-            document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                btn.style.display = 'none';
-            });
-
-            // Mostrar barra de seleção
+            const toolbar = document.getElementById('agendaToolbar');
+            if (toolbar) toolbar.style.display = 'none';
             document.getElementById('barraSelecao').style.display = 'flex';
-
-            // Renderizar menu de ações baseado no modo de visualização
             renderizarMenuAcoesSelecao();
-
-            // Re-renderizar lista para mostrar checkboxes
             renderizarPrazos();
         }
 
@@ -12779,30 +13810,15 @@
             modoSelecao = false;
             prazosSelecionados.clear();
 
-            // Mostrar botões de filtro e arquivados novamente
-            document.getElementById('btnSelecionar').style.display = 'inline-flex';
-            document.getElementById('btnVerArquivados').style.display = 'inline-flex';
-
-            // Restaurar visibilidade dos botões de filtro baseado no modo de visualização
+            const toolbar = document.getElementById('agendaToolbar');
+            if (toolbar) toolbar.style.display = '';
+            // If in archive mode, hide filter dropdown
             if (modoVisualizacao === 'arquivados') {
-                // Se estamos vendo arquivados, ocultar filtros de status
-                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                    btn.style.display = 'none';
-                });
-            } else {
-                // Se estamos vendo ativos, mostrar todos os filtros
-                document.querySelectorAll('.filtro-btn[data-filtro]').forEach(btn => {
-                    btn.style.display = 'inline-flex';
-                });
+                const fd = document.getElementById('agendaFiltroDropdown');
+                if (fd) fd.style.display = 'none';
             }
-
-            // Ocultar barra de seleção
             document.getElementById('barraSelecao').style.display = 'none';
-
-            // Fechar menu de ações se estiver aberto
             document.getElementById('menuAcoesSelecao').style.display = 'none';
-
-            // Re-renderizar lista sem checkboxes
             renderizarPrazos();
         }
 
@@ -13002,34 +14018,26 @@
         function toggleVisualizacaoArquivados() {
             const btn = document.getElementById('btnVerArquivados');
             const textoBtn = document.getElementById('textoVerArquivados');
-            const filtrosStatus = document.querySelectorAll('.filtro-btn:not(#btnVerArquivados)');
+            const filtroDropdown = document.getElementById('agendaFiltroDropdown');
 
             if (modoVisualizacao === 'ativos') {
-                // Mudar para arquivados
                 modoVisualizacao = 'arquivados';
                 textoBtn.textContent = 'Ver Ativos';
                 btn.classList.add('active');
-                filtroAtual = 'todos'; // Resetar filtro ao mudar visualização
-
-                // Ocultar outros filtros
-                filtrosStatus.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.style.display = 'none';
-                });
+                filtroAtual = 'todos';
+                if (filtroDropdown) filtroDropdown.style.display = 'none';
             } else {
-                // Mudar para ativos
                 modoVisualizacao = 'ativos';
-                textoBtn.textContent = 'Ver Arquivados';
+                textoBtn.textContent = 'Arquivados';
                 btn.classList.remove('active');
-
-                // Mostrar outros filtros novamente
-                filtrosStatus.forEach(btn => {
-                    btn.style.display = 'inline-flex';
+                if (filtroDropdown) filtroDropdown.style.display = '';
+                document.querySelectorAll('.agenda-filtro-opcao').forEach(b => {
+                    b.classList.toggle('active', b.dataset.filtro === 'todos');
                 });
-                document.querySelector('.filtro-btn[data-filtro="todos"]').classList.add('active');
+                filtroAtual = 'todos';
+                _atualizarLabelFiltro();
             }
 
-            // Resetar para primeira página e renderizar
             paginaAtual = 1;
             renderizarPrazos();
         }
@@ -13429,9 +14437,14 @@
         });
 
         inicializarPerfis();
+        inicializarArquivoAgenda();
         atualizarChipTiposFeriado();
         renderizarCalendario();
         verificarMostrarBoasVindas();
+        // Restaura badges de sessões anteriores antes da verificação online
+        restaurarBadgesNovosPendentes();
+        // Verificação em segundo plano: notifica se há novos conjuntos online desde a última visita
+        setTimeout(verificarNovosConjuntosOnline, 3500);
         atualizarTextoBotaoVisualizacao();
         atualizarTitlesBotoesNav();
         posicionarGlider();
@@ -13914,6 +14927,22 @@
 
             /* Atalhos de teclado globais */
             document.addEventListener('keydown', function(e) {
+                /* Shift+Alt+N: simula detecção de novos conjuntos (depuração) */
+                if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey && e.key === 'N') {
+                    const tag = e.target.tagName;
+                    if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+                        e.preventDefault();
+                        localStorage.removeItem('contaprazo_conjuntos_vistos');
+                        localStorage.removeItem('contaprazo_conjuntos_novos_pendentes');
+                        _arquivosNovosNoModal.clear();
+                        ['btnImportarOnlineCalculo', 'btnImportarOnlinePerfis'].forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) btn.classList.remove('btn-novos-conjuntos');
+                        });
+                        verificarNovosConjuntosOnline();
+                    }
+                }
+
                 /* Escape: fecha o modal/aviso aberto (se permitir fechar) */
                 if (e.key === 'Escape') {
                     var open = document.querySelector(
