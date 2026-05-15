@@ -4070,12 +4070,13 @@
         /* Barra de Seleção Múltipla */
         .barra-selecao {
             background: linear-gradient(135deg, var(--color-blue-500), var(--color-blue-600));
-            padding: 12px 20px;
+            padding: 10px 16px;
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             animation: slideDown 0.3s ease-out;
         }
@@ -4093,14 +4094,21 @@
 
         .barra-selecao-info {
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
+            flex: 1;
+            white-space: nowrap;
         }
 
         .barra-selecao-acoes {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
+            flex: 1;
+            flex-wrap: nowrap;
+        }
+
+        .barra-selecao-acoes-wrapper {
             position: relative;
         }
 
@@ -4108,7 +4116,7 @@
             width: 1px;
             height: 24px;
             background: rgba(255, 255, 255, 0.3);
-            margin: 0 4px;
+            flex-shrink: 0;
         }
 
         .btn-selecao {
@@ -4134,6 +4142,8 @@
         .btn-selecao-cancelar {
             background: rgba(239, 68, 68, 0.2);
             border-color: rgba(239, 68, 68, 0.4);
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .btn-selecao-cancelar:hover {
@@ -4144,7 +4154,7 @@
         .menu-acoes-selecao {
             position: absolute;
             top: 100%;
-            right: 60px;
+            left: 0;
             margin-top: 8px;
             background: white;
             border-radius: 8px;
@@ -4182,18 +4192,22 @@
 
         @media (max-width: 560px) {
             .barra-selecao {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
                 padding: 10px 14px;
+                row-gap: 8px;
+                column-gap: 6px;
             }
-            .barra-selecao-acoes {
-                width: 100%;
-                flex-wrap: wrap;
-                gap: 6px;
+            .barra-selecao-info {
+                flex: 1 1 auto;
+                order: 1;
             }
             .btn-selecao-cancelar {
-                margin-left: auto;
+                order: 2;
+                margin-left: 0;
+            }
+            .barra-selecao-acoes {
+                order: 3;
+                flex: 0 0 100%;
+                flex-wrap: nowrap;
             }
         }
 
@@ -4251,7 +4265,7 @@
             display: grid;
             grid-template-columns: 26px 1fr auto;
             gap: 12px;
-            align-items: center;
+            align-items: start;
             cursor: default;
         }
 
@@ -4319,8 +4333,9 @@
         /* Checkbox customizado */
         .prazo-checkbox-wrapper {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
+            padding-top: 2px;
         }
 
         .prazo-checkbox {
@@ -4460,6 +4475,19 @@
             color: #065f46;
         }
 
+        /* Badges em fundos coloridos — garantir contraste */
+        .prazo-item-vence-hoje .badge-vencendo {
+            background: rgba(255,255,255,0.75);
+            color: #7c2d12;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .prazo-item-atrasado .badge-atrasado {
+            background: rgba(255,255,255,0.6);
+            color: #7f1d1d;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
         /* Informações secundárias */
         .prazo-info-secundaria {
             display: flex;
@@ -4572,11 +4600,33 @@
             font-weight: 700;
         }
 
+        /* Countdown como linha dedicada abaixo da meta */
+        .prazo-countdown {
+            margin-top: 5px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1;
+        }
+
+        .prazo-countdown.atrasado  { color: #dc2626; }
+        .prazo-countdown.vencendo  { color: #c2410c; }
+        .prazo-countdown.vence-hoje { color: #ea580c; }
+        .prazo-countdown.pendente  { color: var(--color-blue-500); font-weight: 500; }
+        .prazo-countdown.concluido { color: var(--color-green-600); font-weight: 500; }
+
+        /* Contraste em fundos coloridos */
+        .prazo-item-atrasado .prazo-countdown.atrasado   { color: #7f1d1d; }
+        .prazo-item-vence-hoje .prazo-countdown.vence-hoje { color: #431407; }
+        .prazo-item-vencendo .prazo-countdown.vencendo   { color: #9a3412; }
+
         /* Botões de ação (menu três pontos) */
         .prazo-acoes {
             position: relative;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .prazo-menu-btn {
@@ -6332,39 +6382,42 @@
                             Nenhum
                         </button>
                         <div class="barra-selecao-divider"></div>
-                        <button class="btn-selecao btn-selecao-acoes" onclick="toggleMenuAcoesSelecao()">
-                            Ações
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div id="menuAcoesSelecao" class="menu-acoes-selecao" style="display: none;">
-                            <button onclick="marcarSelecionadosConcluidos()">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
+                        <div class="barra-selecao-acoes-wrapper">
+                            <button class="btn-selecao btn-selecao-acoes" onclick="toggleMenuAcoesSelecao()">
+                                Ações
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
-                                Marcar como Concluídos
                             </button>
-                            <button onclick="arquivarSelecionados()">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                                    <rect x="1" y="3" width="22" height="5"></rect>
-                                    <line x1="10" y1="12" x2="14" y2="12"></line>
-                                </svg>
-                                Arquivar Selecionados
-                            </button>
-                            <button onclick="excluirSelecionados()" style="color: #dc2626;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                                Excluir Selecionados
-                            </button>
+                            <div id="menuAcoesSelecao" class="menu-acoes-selecao" style="display: none;">
+                                <button onclick="marcarSelecionadosConcluidos()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Marcar como Concluídos
+                                </button>
+                                <button onclick="arquivarSelecionados()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                        <rect x="1" y="3" width="22" height="5"></rect>
+                                        <line x1="10" y1="12" x2="14" y2="12"></line>
+                                    </svg>
+                                    Arquivar Selecionados
+                                </button>
+                                <button onclick="excluirSelecionados()" style="color: #dc2626;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    Excluir Selecionados
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn-selecao btn-selecao-cancelar" onclick="sairModoSelecao()">
-                            ✕ Cancelar
-                        </button>
                     </div>
+                    <button class="btn-selecao btn-selecao-cancelar" onclick="sairModoSelecao()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Cancelar
+                    </button>
                 </div>
 
                 <!-- Paginação -->
@@ -12889,30 +12942,25 @@
                 badgeHTML = '<span class="prazo-badge badge-concluido">Concluído</span>';
             }
 
-            // Contador inline (Opção A) - sem caixa, apenas texto destacado
-            let contadorInline = '';
+            // Countdown como elemento dedicado (linha própria abaixo da meta)
+            let countdownChip = '';
             if (prazo.status === 'concluido') {
                 const dataConc = prazo.dataConclusao ? new Date(prazo.dataConclusao).toLocaleDateString('pt-BR') : '';
-                contadorInline = `<span class="prazo-contador-inline concluido">Concluído em ${dataConc}</span>`;
+                countdownChip = `<div class="prazo-countdown concluido">Concluído em ${dataConc}</div>`;
+            } else if (diasRestantes.atrasado) {
+                const textoTipo = diasRestantes.tipo === 'uteis'
+                    ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                    : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                countdownChip = `<div class="prazo-countdown atrasado">Atrasado há ${diasRestantes.numero} ${textoTipo}</div>`;
+            } else if (diasRestantes.hoje) {
+                countdownChip = `<div class="prazo-countdown vence-hoje">VENCE HOJE</div>`;
             } else {
-                if (diasRestantes.atrasado) {
-                    // Atrasado: mostrar negativo em vermelho (com concordância)
-                    const textoTipo = diasRestantes.tipo === 'uteis'
-                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
-                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
-                    contadorInline = `<span class="prazo-contador-inline atrasado">Atrasado há <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
-                } else if (diasRestantes.hoje) {
-                    // Vence hoje: texto chamativo
-                    contadorInline = `<span class="prazo-contador-inline vence-hoje"><strong>VENCE HOJE</strong></span>`;
-                } else {
-                    // Pendente ou vencendo: mostrar positivo (com concordância)
-                    const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
-                    const textoTipo = diasRestantes.tipo === 'uteis'
-                        ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
-                        : (diasRestantes.numero === 1 ? 'dia' : 'dias');
-                    const verbo = diasRestantes.numero === 1 ? 'Falta' : 'Faltam';
-                    contadorInline = `<span class="prazo-contador-inline ${classe}">${verbo} <strong>${diasRestantes.numero}</strong> ${textoTipo}</span>`;
-                }
+                const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
+                const textoTipo = diasRestantes.tipo === 'uteis'
+                    ? (diasRestantes.numero === 1 ? 'dia útil' : 'dias úteis')
+                    : (diasRestantes.numero === 1 ? 'dia' : 'dias');
+                const verbo = diasRestantes.numero === 1 ? 'Falta' : 'Faltam';
+                countdownChip = `<div class="prazo-countdown ${classe}">${verbo} ${diasRestantes.numero} ${textoTipo}</div>`;
             }
 
             // Formatações
@@ -12954,8 +13002,8 @@
                                     ? (prazo.diasSolicitados === 1 ? 'dia útil' : 'dias úteis')
                                     : (prazo.diasSolicitados === 1 ? 'dia corrido' : 'dias corridos')}
                             </span>
-                            ${contadorInline ? `<span class="prazo-info-secundaria-separador">·</span>${contadorInline}` : ''}
                         </div>
+                        ${countdownChip}
                     </div>
                     <div class="prazo-acoes">
                         <button class="prazo-menu-btn" onclick="toggleMenuPrazo(event, '${prazo.id}')" title="Ações">
@@ -13346,13 +13394,18 @@
                 let corBarra = '';
 
                 if (diasRestantes.atrasado) {
-                    labelContador = `${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'} atrasado${diasRestantes.numero > 1 ? 's' : ''}`;
+                    const n = diasRestantes.numero;
+                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
+                    labelContador = `${n} ${unid} atrasado${n > 1 ? 's' : ''}`;
                     corBarra = '#dc2626';
                 } else if (diasRestantes.hoje) {
                     labelContador = 'Vence hoje!';
                     corBarra = '#ea580c';
                 } else {
-                    labelContador = `Faltam ${diasRestantes.numero} ${diasRestantes.tipo === 'uteis' ? 'dias úteis' : 'dias'}`;
+                    const n = diasRestantes.numero;
+                    const verbo = n === 1 ? 'Falta' : 'Faltam';
+                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
+                    labelContador = `${verbo} ${n} ${unid}`;
                     corBarra = '#3b82f6';
                 }
 
@@ -13507,10 +13560,14 @@
             if (!prazo) return;
 
             prazoEmEdicao = id;
+            // Armazena também no dataset para sobreviver ao scheduleClose assíncrono
+            // que zera prazoEmEdicao quando fecharModalDetalhes é chamado com animação
+            const modalEditar = document.getElementById('modalEditarPrazo');
+            modalEditar.dataset.prazoId = id;
 
             document.getElementById('editTitulo').value = prazo.titulo;
             document.getElementById('editDescricao').value = prazo.descricao || '';
-            document.getElementById('modalEditarPrazo').classList.add('active');
+            modalEditar.classList.add('active');
         }
 
         // Editar prazo do modal de detalhes
@@ -13530,7 +13587,9 @@
 
         // Salvar edição
         function salvarEdicao() {
-            if (!prazoEmEdicao) return;
+            const id = prazoEmEdicao || document.getElementById('modalEditarPrazo')?.dataset.prazoId;
+            if (!id) return;
+            prazoEmEdicao = id;
 
             const prazo = prazos.find(p => p.id === prazoEmEdicao);
             if (!prazo) return;
@@ -14299,6 +14358,11 @@
 
         // Verificar prazos vencendo (ao carregar página)
         function verificarPrazosVencendo() {
+            // Não re-notificar se o toast já foi exibido nesta sessão
+            if (sessionStorage.getItem('contaprazo_toast_urgente_visto')) return;
+            // Não notificar se o usuário já está na agenda
+            if (document.getElementById('paginaAgenda')?.classList.contains('active')) return;
+
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
@@ -14343,6 +14407,7 @@
 
         // Mostrar toast de prazos urgentes/próximos
         function mostrarBannerPrazos(mensagem, tipo) {
+            sessionStorage.setItem('contaprazo_toast_urgente_visto', '1');
             criarToast({
                 tipo: tipo === 'urgente' ? 'aviso' : 'info',
                 titulo: tipo === 'urgente' ? 'Prazos Urgentes!' : 'Prazos Próximos',
@@ -15210,6 +15275,25 @@
                         delete pending[id];
                         open.classList.remove('active', 'closing');
                     }, CLOSE_MS);
+                }
+
+                /* Enter: aciona a ação primária do modal aberto */
+                if (e.key === 'Enter') {
+                    var tag = document.activeElement ? document.activeElement.tagName : '';
+                    // Não interceptar em textarea (quebra linha), nem em botão ou select
+                    if (tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT') return;
+
+                    var activeModal = document.querySelector('.modal-aviso.active, .modal-input-titulo.active');
+                    if (!activeModal) return;
+
+                    // Botão primário: btn-primary > btn-success > btn-danger (última opção)
+                    var primaryBtn = activeModal.querySelector('.btn-primary') ||
+                                     activeModal.querySelector('.btn-success') ||
+                                     activeModal.querySelector('.btn-danger');
+                    if (primaryBtn) {
+                        e.preventDefault();
+                        primaryBtn.click();
+                    }
                 }
             });
 
