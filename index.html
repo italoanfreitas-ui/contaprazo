@@ -7750,6 +7750,20 @@
             return (match || sorted[sorted.length - 1]).url;
         }
 
+        // Versão que usa o arquivo salvo no dia + conjuntosMetadata do prazo (sem depender de estado global)
+        function _obterLinkFeriadoDoPrazo(dia, conjuntosMetadata) {
+            if (!dia.arquivo || !conjuntosMetadata) return null;
+            const conjunto = conjuntosMetadata.find(c => c.arquivo === dia.arquivo);
+            if (!conjunto) return null;
+            const links = obterLinksDoConjunto(conjunto);
+            if (links.length === 0) return null;
+            if (links.length === 1) return links[0].url;
+            const dataStr = formatarDataCompleta(dia.data);
+            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
+            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
+            return (match || sorted[sorted.length - 1]).url;
+        }
+
         // Obtém nome de feriado de todas as fontes possíveis
         function obterNomeFeriado(data) {
             const dataStr = formatarData(data);
@@ -8111,7 +8125,7 @@
             mostrarAvisoRecalculo();
         }
 
-        function renderTimelineDetalhamento(diasArray) {
+        function renderTimelineDetalhamento(diasArray, conjuntosMetadata) {
             const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
             const weekdays = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
@@ -8149,8 +8163,10 @@
                     badge = '✖';
                     const ehTambemFds = dia.motivo.startsWith('Final de Semana e ');
                     const nomeFer = ehTambemFds ? dia.motivo.replace('Final de Semana e ', '') : dia.motivo;
-                    const linkFer = obterLinkFeriado(dia.data);
-                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
+                    const linkFer = conjuntosMetadata
+                        ? _obterLinkFeriadoDoPrazo(dia, conjuntosMetadata)
+                        : obterLinkFeriado(dia.data);
+                    const nomeFerDisplay = (nomeFer === 'Feriado/Ponto Facultativo' && !dia.arquivo && !feriadosArquivoMap.has(formatarDataCompleta(dia.data)))
                         ? 'Feriado/Ponto Facultativo personalizado'
                         : nomeFer;
                     const descText = `${nomeFerDisplay} — suspensão de prazo.`;
@@ -11438,7 +11454,7 @@
             ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
         </div>
     </div>
-    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias)}</div>` : ''}
+    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}</div>` : ''}
     ${_gerarHTMLConjuntosNotaPrazo(prazo, 'print')}
     <div class="no-print" style="text-align:center;margin-top:28px;padding:18px;background:#fef3c7;border-radius:8px;">
         <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
@@ -11466,7 +11482,7 @@
 
             const d = _dadosPrazoExport(prazo);
             const diasVisuaisHTML = completo ? '' : _diasVisuaisHTMLPrazo(prazo, d.ferPers, d.isUteis);
-            const listaHTML = completo ? renderTimelineDetalhamento(prazo.detalhamentoDias) : '';
+            const listaHTML = completo ? renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata) : '';
 
             const exportCSS = `
     .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; line-height: normal; }
@@ -12256,7 +12272,8 @@
                     data: new Date(dia.data),
                     contado: dia.contado,
                     motivo: dia.motivo,
-                    numero: dia.numero
+                    numero: dia.numero,
+                    arquivo: feriadosArquivoMap.get(formatarDataCompleta(dia.data)) || null
                 })),
                 feriadosUsados: {
                     fixos: {...feriadosFixos},
@@ -13117,7 +13134,7 @@
                             </svg>
                             Detalhamento (Auditoria)
                         </h3>
-                        ${renderTimelineDetalhamento(prazo.detalhamentoDias)}
+                        ${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}
                     </div>
                 </div>
             `;
