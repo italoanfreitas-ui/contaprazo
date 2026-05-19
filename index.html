@@ -4197,17 +4197,18 @@
                 column-gap: 6px;
             }
             .barra-selecao-info {
-                flex: 0 0 auto;
+                flex: 0 0 100%;
                 order: 1;
+            }
+            .barra-selecao-acoes {
+                order: 2;
+                flex: 0 0 auto;
+                flex-wrap: nowrap;
             }
             .btn-selecao-cancelar {
                 order: 2;
                 margin-left: auto;
-            }
-            .barra-selecao-acoes {
-                order: 3;
-                flex: 0 0 100%;
-                flex-wrap: nowrap;
+                flex-shrink: 0;
             }
         }
 
