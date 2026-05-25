@@ -5330,6 +5330,13 @@
                 text-align: center;
                 justify-content: center;
             }
+
+            /* Toolbar icon-only: hide text labels so everything fits in one row */
+            .agenda-toolbar { gap: 6px; flex-wrap: nowrap; }
+            .agenda-toolbar-direita { gap: 4px; }
+            #ordenacaoTexto,
+            #textoVerArquivados,
+            .agenda-toolbar-btn .btn-label { display: none; }
         }
 
         @media (max-width: 480px) {
@@ -5341,14 +5348,8 @@
                 font-size: 1.5rem;
             }
 
-            .agenda-toolbar { gap: 6px; flex-wrap: nowrap; }
-            .agenda-toolbar-direita { gap: 4px; }
             .agenda-toolbar-btn { font-size: 0.75rem; padding: 7px 9px; }
             .agenda-filtro-btn { font-size: 0.85rem; }
-            /* Icon-only on mobile: hide text labels to keep everything on one row */
-            #ordenacaoTexto,
-            #textoVerArquivados,
-            .agenda-toolbar-btn .btn-label { display: none; }
         }
 
     </style>
