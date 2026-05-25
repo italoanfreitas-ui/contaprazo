@@ -5341,10 +5341,14 @@
                 font-size: 1.5rem;
             }
 
-            .agenda-toolbar { gap: 6px; }
+            .agenda-toolbar { gap: 6px; flex-wrap: nowrap; }
             .agenda-toolbar-direita { gap: 4px; }
-            .agenda-toolbar-btn { font-size: 0.75rem; padding: 6px 8px; }
-            .agenda-filtro-btn { font-size: 0.8rem; }
+            .agenda-toolbar-btn { font-size: 0.75rem; padding: 7px 9px; }
+            .agenda-filtro-btn { font-size: 0.85rem; }
+            /* Icon-only on mobile: hide text labels to keep everything on one row */
+            #ordenacaoTexto,
+            #textoVerArquivados,
+            .agenda-toolbar-btn .btn-label { display: none; }
         }
 
     </style>
@@ -6432,7 +6436,7 @@
                         </div>
                         <button class="agenda-toolbar-btn" id="btnSelecionar" onclick="entrarModoSelecao()" title="Selecionar múltiplos prazos">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                            Selecionar
+                            <span class="btn-label">Selecionar</span>
                         </button>
                         <button class="agenda-toolbar-btn" id="btnVerArquivados" onclick="toggleVisualizacaoArquivados()" title="Ver prazos arquivados">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
