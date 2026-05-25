@@ -4628,7 +4628,22 @@
             position: relative;
             display: flex;
             align-items: flex-start;
+            gap: 2px;
         }
+
+        .prazo-estrela-btn {
+            width: 28px; height: 28px;
+            border: none; background: transparent; padding: 0;
+            cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #d1d5db;
+            transition: color 0.15s, transform 0.15s;
+            opacity: 0;
+        }
+        .prazo-estrela-btn.importante { color: #f59e0b; opacity: 1; }
+        .prazo-item:hover .prazo-estrela-btn { opacity: 1; }
+        .prazo-estrela-btn:hover { color: #f59e0b; transform: scale(1.2); }
+        .prazo-estrela-btn svg { width: 15px; height: 15px; }
 
         .prazo-menu-btn {
             width: 32px;
@@ -5267,6 +5282,7 @@
                 grid-column: 2;
                 justify-content: flex-end;
             }
+            .prazo-estrela-btn { opacity: 1; }
 
             .filtro-btn {
                 min-width: 100px;
@@ -7773,7 +7789,8 @@
         let modoSelecao = false; // Modo de seleção múltipla ativo
         let prazosSelecionados = new Set(); // IDs dos prazos selecionados
         let concluidosColapsados = true; // Seção de concluídos começa colapsada
-        let ordenacaoAtual = { modo: 'status', direcao: 'asc' }; // Ordenação padrão
+        const _ordenacaoSalva = (() => { try { return JSON.parse(localStorage.getItem('contaprazo_ordenacao_agenda') || 'null'); } catch(e) { return null; } })();
+        let ordenacaoAtual = (_ordenacaoSalva && _ordenacaoSalva.modo) ? _ordenacaoSalva : { modo: 'status', direcao: 'asc' };
 
         // ========================================
         // CONSTANTES
@@ -12851,6 +12868,8 @@
             const { modo, direcao } = ordenacaoAtual;
             const mult = direcao === 'asc' ? 1 : -1;
             return [...lista].sort((a, b) => {
+                // Importantes sempre ao topo, independente da ordenação
+                if (!!a.importante !== !!b.importante) return a.importante ? -1 : 1;
                 switch (modo) {
                     case 'status': {
                         const ordem = { atrasado: 1, vencendo: 2, pendente: 3, concluido: 4 };
@@ -13069,6 +13088,11 @@
                         ${countdownChip}
                     </div>
                     <div class="prazo-acoes">
+                        <button class="prazo-estrela-btn ${prazo.importante ? 'importante' : ''}" onclick="toggleImportante(event,'${prazo.id}')" title="${prazo.importante ? 'Remover dos importantes' : 'Marcar como importante'}">
+                            <svg viewBox="0 0 24 24" fill="${prazo.importante ? '#f59e0b' : 'none'}" stroke="${prazo.importante ? '#f59e0b' : 'currentColor'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </button>
                         <button class="prazo-menu-btn" onclick="toggleMenuPrazo(event, '${prazo.id}')" title="Ações">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="1"></circle>
@@ -13341,6 +13365,17 @@
             renderizarPrazos();
             // Scroll suave para o topo da lista
             document.getElementById('agendaLista').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Toggle importante (estrela)
+        function toggleImportante(event, id) {
+            event.stopPropagation();
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            const prazo = fonteDados.find(p => p.id === id);
+            if (!prazo) return;
+            prazo.importante = !prazo.importante;
+            salvarPrazosStorage();
+            renderizarPrazos();
         }
 
         // Toggle concluído
@@ -14123,6 +14158,7 @@
 
         function setOrdenacao(modo) {
             ordenacaoAtual.modo = modo;
+            localStorage.setItem('contaprazo_ordenacao_agenda', JSON.stringify(ordenacaoAtual));
             document.querySelectorAll('.agenda-ordenacao-opcao').forEach(btn => {
                 btn.classList.toggle('ativo', btn.dataset.modo === modo);
             });
@@ -14132,10 +14168,23 @@
 
         function setDirecaoOrdenacao(dir) {
             ordenacaoAtual.direcao = dir;
+            localStorage.setItem('contaprazo_ordenacao_agenda', JSON.stringify(ordenacaoAtual));
             document.getElementById('btnDirAsc').classList.toggle('ativo', dir === 'asc');
             document.getElementById('btnDirDesc').classList.toggle('ativo', dir === 'desc');
             atualizarBtnOrdenacao();
             renderizarPrazos();
+        }
+
+        function _restaurarOrdenacaoUI() {
+            const { modo, direcao } = ordenacaoAtual;
+            document.querySelectorAll('.agenda-ordenacao-opcao').forEach(btn => {
+                btn.classList.toggle('ativo', btn.dataset.modo === modo);
+            });
+            const btnAsc = document.getElementById('btnDirAsc');
+            const btnDesc = document.getElementById('btnDirDesc');
+            if (btnAsc) btnAsc.classList.toggle('ativo', direcao === 'asc');
+            if (btnDesc) btnDesc.classList.toggle('ativo', direcao === 'desc');
+            atualizarBtnOrdenacao();
         }
 
         function atualizarBtnOrdenacao() {
@@ -14836,6 +14885,7 @@
 
         inicializarPerfis();
         inicializarArquivoAgenda();
+        _restaurarOrdenacaoUI();
         atualizarChipTiposFeriado();
         renderizarCalendario();
         verificarMostrarBoasVindas();
