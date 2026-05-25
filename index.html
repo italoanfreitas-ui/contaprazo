@@ -6371,6 +6371,9 @@
                             <button class="agenda-filtro-opcao" data-filtro="concluidos" onclick="filtrarPrazos('concluidos');fecharFiltroDropdown()">
                                 <span class="fdot fdot-green"></span>Concluídos <span class="agenda-filtro-opcao-count" id="badge-concluidos">0</span>
                             </button>
+                            <button class="agenda-filtro-opcao" data-filtro="importantes" onclick="filtrarPrazos('importantes');fecharFiltroDropdown()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:#f59e0b;flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Importantes <span class="agenda-filtro-opcao-count" id="badge-importantes">0</span>
+                            </button>
                         </div>
                     </div>
 
@@ -12931,6 +12934,7 @@
             // Filtrar
             const prazosFiltrados = fonteDados.filter(prazo => {
                 if (filtroAtual === 'todos') return true;
+                if (filtroAtual === 'importantes') return !!prazo.importante;
                 return prazo.statusCalculado === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
             });
 
@@ -13300,6 +13304,7 @@
                 vencendo: 0,
                 pendentes: 0,
                 concluidos: 0,
+                importantes: 0,
                 arquivados: prazosArquivados.length
             };
 
@@ -13309,6 +13314,7 @@
                 else if (status === 'vencendo') contadores.vencendo++;
                 else if (status === 'pendente') contadores.pendentes++;
                 else if (status === 'concluido') contadores.concluidos++;
+                if (prazo.importante) contadores.importantes++;
             });
 
             document.getElementById('badge-todos').textContent = contadores.todos;
@@ -13316,9 +13322,10 @@
             document.getElementById('badge-vencendo').textContent = contadores.vencendo;
             document.getElementById('badge-pendentes').textContent = contadores.pendentes;
             document.getElementById('badge-concluidos').textContent = contadores.concluidos;
+            document.getElementById('badge-importantes').textContent = contadores.importantes;
             document.getElementById('badge-arquivados').textContent = contadores.arquivados;
             // Update main filter button count
-            const countMap = { todos: contadores.todos, atrasados: contadores.atrasados, vencendo: contadores.vencendo, pendentes: contadores.pendentes, concluidos: contadores.concluidos };
+            const countMap = { todos: contadores.todos, atrasados: contadores.atrasados, vencendo: contadores.vencendo, pendentes: contadores.pendentes, concluidos: contadores.concluidos, importantes: contadores.importantes };
             const badgeFiltroAtual = document.getElementById('badge-filtro-atual');
             if (badgeFiltroAtual) badgeFiltroAtual.textContent = countMap[filtroAtual] ?? contadores.todos;
         }
@@ -13348,7 +13355,7 @@
         }
 
         function _atualizarLabelFiltro() {
-            const labels = { todos: 'Todos', atrasados: 'Atrasados', vencendo: 'Vencendo', pendentes: 'Pendentes', concluidos: 'Concluídos' };
+            const labels = { todos: 'Todos', atrasados: 'Atrasados', vencendo: 'Vencendo', pendentes: 'Pendentes', concluidos: 'Concluídos', importantes: 'Importantes' };
             const el = document.getElementById('agenda-filtro-texto');
             if (el) el.textContent = labels[filtroAtual] || 'Todos';
         }
@@ -13520,8 +13527,15 @@
                 `;
             }
 
+            const importanteHTML = prazo.importante ? `
+                    <div class="resultado-info" style="display:flex;align-items:center;gap:6px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:8px 10px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span style="color:#92400e;font-weight:600;">Marcado como importante</span>
+                    </div>` : '';
+
             const html = `
                 <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
+                    ${importanteHTML}
                     ${descricaoHTML}
                     <div class="resultado-info">
                         <strong>Data de Início:</strong> ${dataInicioFormatada}${prazo.tipoDias === 'uteis' ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}
@@ -14301,6 +14315,7 @@
             const prazosFiltrados = fonteDados.filter(prazo => {
                 const status = calcularStatus(prazo);
                 if (filtroAtual === 'todos') return true;
+                if (filtroAtual === 'importantes') return !!prazo.importante;
                 return status === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
             });
 
