@@ -4385,8 +4385,8 @@
 
         .prazo-header {
             display: flex;
-            align-items: baseline;
-            gap: 10px;
+            align-items: center;
+            gap: 6px;
         }
 
         .prazo-titulo {
@@ -4628,22 +4628,19 @@
             position: relative;
             display: flex;
             align-items: flex-start;
-            gap: 2px;
         }
 
         .prazo-estrela-btn {
-            width: 28px; height: 28px;
+            width: 20px; height: 20px;
             border: none; background: transparent; padding: 0;
             cursor: pointer; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            color: #d1d5db;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #bbb;
             transition: color 0.15s, transform 0.15s;
-            opacity: 0;
         }
-        .prazo-estrela-btn.importante { color: #f59e0b; opacity: 1; }
-        .prazo-item:hover .prazo-estrela-btn { opacity: 1; }
+        .prazo-estrela-btn.importante { color: #f59e0b; }
         .prazo-estrela-btn:hover { color: #f59e0b; transform: scale(1.2); }
-        .prazo-estrela-btn svg { width: 15px; height: 15px; }
+        .prazo-estrela-btn svg { width: 13px; height: 13px; }
 
         .prazo-menu-btn {
             width: 32px;
@@ -5282,7 +5279,6 @@
                 grid-column: 2;
                 justify-content: flex-end;
             }
-            .prazo-estrela-btn { opacity: 1; }
 
             .filtro-btn {
                 min-width: 100px;
@@ -13071,6 +13067,9 @@
                     <div class="prazo-conteudo"${!modoSelecao ? ` onclick="abrirDetalhes('${prazo.id}')" style="cursor:pointer;"` : ''}>
                         <div class="prazo-header">
                             <h3 class="prazo-titulo">${prazo.titulo}</h3>
+                            <button class="prazo-estrela-btn ${prazo.importante ? 'importante' : ''}" onclick="toggleImportante(event,'${prazo.id}')" title="${prazo.importante ? 'Remover dos importantes' : 'Marcar como importante'}">
+                                <svg viewBox="0 0 24 24" fill="${prazo.importante ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            </button>
                             ${badgeHTML}
                         </div>
                         ${descricaoHTML}
@@ -13088,11 +13087,6 @@
                         ${countdownChip}
                     </div>
                     <div class="prazo-acoes">
-                        <button class="prazo-estrela-btn ${prazo.importante ? 'importante' : ''}" onclick="toggleImportante(event,'${prazo.id}')" title="${prazo.importante ? 'Remover dos importantes' : 'Marcar como importante'}">
-                            <svg viewBox="0 0 24 24" fill="${prazo.importante ? '#f59e0b' : 'none'}" stroke="${prazo.importante ? '#f59e0b' : 'currentColor'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                            </svg>
-                        </button>
                         <button class="prazo-menu-btn" onclick="toggleMenuPrazo(event, '${prazo.id}')" title="Ações">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="1"></circle>
