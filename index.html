@@ -4038,6 +4038,70 @@
         .agenda-toolbar-btn.active .agenda-toolbar-badge { background: rgba(255,255,255,0.25); color: white; }
         .agenda-toolbar-btn.icon-only { padding: 7px 8px; }
 
+        /* Ordenação dropdown */
+        .agenda-ordenacao-wrapper { position: relative; }
+        .agenda-ordenacao-menu {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            background: white; border: 1px solid #e5e7eb; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 220px;
+            overflow: hidden; z-index: 200;
+            animation: agendaDropIn 0.15s ease;
+        }
+        .agenda-ordenacao-grupo-label {
+            padding: 8px 14px 4px;
+            font-size: 0.68rem; color: #9ca3af; font-weight: 600;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .agenda-ordenacao-opcao {
+            width: 100%; padding: 8px 14px;
+            background: white; border: none;
+            display: flex; align-items: center; gap: 9px;
+            font-size: 0.875rem; color: #374151;
+            cursor: pointer; transition: background 0.15s; text-align: left;
+            font-family: inherit;
+        }
+        .agenda-ordenacao-opcao:hover { background: #f9fafb; }
+        .agenda-ordenacao-opcao.ativo { background: #eff6ff; color: var(--color-blue-600); font-weight: 600; }
+        .agenda-ordenacao-opcao.ativo svg { stroke: var(--color-blue-600); }
+        .agenda-ordenacao-opcao svg { width: 14px; height: 14px; stroke-width: 2; flex-shrink: 0; color: #9ca3af; }
+        .agenda-ordenacao-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
+        .agenda-ordenacao-dir {
+            display: flex; gap: 0; padding: 8px 14px 10px;
+        }
+        .agenda-ordenacao-dir-btn {
+            flex: 1; padding: 5px 10px; background: #f3f4f6; border: 1px solid #e5e7eb;
+            font-size: 0.8rem; font-weight: 500; color: #6b7280;
+            cursor: pointer; transition: all 0.15s; font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .agenda-ordenacao-dir-btn:first-child { border-radius: 6px 0 0 6px; border-right: none; }
+        .agenda-ordenacao-dir-btn:last-child { border-radius: 0 6px 6px 0; }
+        .agenda-ordenacao-dir-btn.ativo { background: var(--color-blue-500); border-color: var(--color-blue-500); color: white; }
+        .agenda-ordenacao-dir-btn svg { width: 12px; height: 12px; }
+
+        /* Seção colapsável de Concluídos */
+        .concluidos-section-header {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 16px; cursor: pointer;
+            background: #f8fafc; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+            font-size: 0.82rem; font-weight: 600; color: #6b7280;
+            user-select: none; transition: background 0.15s;
+        }
+        .concluidos-section-header:hover { background: #f1f5f9; color: #374151; }
+        .concluidos-section-chevron {
+            width: 14px; height: 14px; flex-shrink: 0;
+            transition: transform 0.2s ease;
+            transform: rotate(-90deg);
+        }
+        .concluidos-section-header.expandido .concluidos-section-chevron {
+            transform: rotate(0deg);
+        }
+        .concluidos-section-count {
+            background: #d1fae5; color: #065f46;
+            padding: 1px 7px; border-radius: 10px;
+            font-size: 0.72rem; font-weight: 700;
+        }
+
         /* Mais dropdown */
         .agenda-mais-wrapper { position: relative; }
         .agenda-mais-menu {
@@ -4332,13 +4396,11 @@
         }
 
         .prazo-item.concluido {
-            opacity: 0.65;
-            background: #fafafa;
+            opacity: 0.72;
         }
 
         .prazo-item.concluido:hover {
-            opacity: 0.8;
-            background: #f5f5f5;
+            opacity: 0.9;
         }
 
         /* Checkbox customizado */
@@ -4857,11 +4919,17 @@
             color: transparent;
             margin: 0;
             letter-spacing: -0.02em;
+            flex: 1;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .modal-detalhes-fechar {
             width: 32px;
             height: 32px;
+            min-width: 32px;
+            min-height: 32px;
             border: none;
             background: rgba(0, 0, 0, 0.05);
             border-radius: 50%;
@@ -4871,6 +4939,7 @@
             justify-content: center;
             transition: all 0.2s;
             color: #6b7280;
+            flex-shrink: 0;
         }
 
         .modal-detalhes-fechar:hover {
@@ -6367,6 +6436,44 @@
 
                     <!-- Lado direito -->
                     <div class="agenda-toolbar-direita">
+                        <!-- Ordenação dropdown -->
+                        <div class="agenda-ordenacao-wrapper" id="agendaOrdenacaoWrapper">
+                            <button class="agenda-toolbar-btn" id="btnOrdenacao" onclick="toggleOrdenacaoMenu(event)" title="Ordenar lista">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                <span id="ordenacaoTexto">Ordenar</span>
+                            </button>
+                            <div class="agenda-ordenacao-menu" id="agendaOrdenacaoMenu" style="display:none;">
+                                <div class="agenda-ordenacao-grupo-label">Ordenar por</div>
+                                <button class="agenda-ordenacao-opcao ativo" data-modo="status" onclick="setOrdenacao('status')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    Por status (padrão)
+                                </button>
+                                <button class="agenda-ordenacao-opcao" data-modo="prazo" onclick="setOrdenacao('prazo')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    Prazo mais próximo
+                                </button>
+                                <button class="agenda-ordenacao-opcao" data-modo="alfabetico" onclick="setOrdenacao('alfabetico')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                                    Ordem alfabética
+                                </button>
+                                <button class="agenda-ordenacao-opcao" data-modo="criacao" onclick="setOrdenacao('criacao')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    Data de criação
+                                </button>
+                                <div class="agenda-ordenacao-sep"></div>
+                                <div class="agenda-ordenacao-grupo-label">Direção</div>
+                                <div class="agenda-ordenacao-dir">
+                                    <button class="agenda-ordenacao-dir-btn ativo" id="btnDirAsc" onclick="setDirecaoOrdenacao('asc')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                                        Crescente
+                                    </button>
+                                    <button class="agenda-ordenacao-dir-btn" id="btnDirDesc" onclick="setDirecaoOrdenacao('desc')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                                        Decrescente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <button class="agenda-toolbar-btn" id="btnSelecionar" onclick="entrarModoSelecao()" title="Selecionar múltiplos prazos">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                             Selecionar
@@ -7776,6 +7883,8 @@
         const DIAS_PARA_ARQUIVAR = 90; // Dias após conclusão para arquivar automaticamente
         let modoSelecao = false; // Modo de seleção múltipla ativo
         let prazosSelecionados = new Set(); // IDs dos prazos selecionados
+        let concluidosColapsados = true; // Seção de concluídos começa colapsada
+        let ordenacaoAtual = { modo: 'status', direcao: 'asc' }; // Ordenação padrão
 
         // ========================================
         // CONSTANTES
@@ -12849,104 +12958,127 @@
         }
 
         // Renderizar lista de prazos
+        function sortarPrazos(lista) {
+            const { modo, direcao } = ordenacaoAtual;
+            const mult = direcao === 'asc' ? 1 : -1;
+            return [...lista].sort((a, b) => {
+                switch (modo) {
+                    case 'status': {
+                        const ordem = { atrasado: 1, vencendo: 2, pendente: 3, concluido: 4 };
+                        const sA = a.status === 'concluido' ? 'concluido' : a.statusCalculado;
+                        const sB = b.status === 'concluido' ? 'concluido' : b.statusCalculado;
+                        const oA = ordem[sA] || 5, oB = ordem[sB] || 5;
+                        if (oA !== oB) return (oA - oB) * mult;
+                        return (new Date(a.dataFinal) - new Date(b.dataFinal)) * mult;
+                    }
+                    case 'alfabetico':
+                        return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR') * mult;
+                    case 'prazo':
+                        return (new Date(a.dataFinal) - new Date(b.dataFinal)) * mult;
+                    case 'criacao': {
+                        const dA = new Date(a.dataCriacao || a.criadoEm || 0);
+                        const dB = new Date(b.dataCriacao || b.criadoEm || 0);
+                        return (dA - dB) * mult;
+                    }
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function _aplicarPaginacao(container, paginacao, itens) {
+            const total = itens.length;
+            const totalPaginas = Math.ceil(total / ITENS_POR_PAGINA);
+            if (paginaAtual > totalPaginas && totalPaginas > 0) paginaAtual = totalPaginas;
+            if (paginaAtual < 1) paginaAtual = 1;
+            if (total > ITENS_POR_PAGINA) {
+                paginacao.style.display = 'flex';
+                const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+                const fim = inicio + ITENS_POR_PAGINA;
+                document.getElementById('paginacaoMostrando').textContent = `${inicio + 1}-${Math.min(fim, total)}`;
+                document.getElementById('paginacaoTotal').textContent = total;
+                document.getElementById('paginacaoNumero').textContent = paginaAtual;
+                document.getElementById('paginacaoPaginas').textContent = totalPaginas;
+                const btnAnt = document.getElementById('btnPaginaAnterior');
+                const btnProx = document.getElementById('btnProximaPagina');
+                btnAnt.disabled = paginaAtual <= 1;
+                btnAnt.style.opacity = paginaAtual <= 1 ? '0.5' : '1';
+                btnAnt.style.cursor = paginaAtual <= 1 ? 'not-allowed' : 'pointer';
+                btnProx.disabled = paginaAtual >= totalPaginas;
+                btnProx.style.opacity = paginaAtual >= totalPaginas ? '0.5' : '1';
+                btnProx.style.cursor = paginaAtual >= totalPaginas ? 'not-allowed' : 'pointer';
+                return itens.slice(inicio, fim);
+            } else {
+                paginacao.style.display = 'none';
+                return itens;
+            }
+        }
+
         function renderizarPrazos() {
             const container = document.getElementById('agendaLista');
             const vazio = document.getElementById('agendaVazia');
             const paginacao = document.getElementById('agendaPaginacao');
 
-            // Selecionar fonte de dados baseado no modo de visualização
             const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
 
-            // Filtrar prazos
-            let prazosFiltrados = fonteDados.filter(prazo => {
-                const status = calcularStatus(prazo);
-                prazo.statusCalculado = status; // Armazenar status calculado
+            // Calcular status de todos
+            fonteDados.forEach(prazo => { prazo.statusCalculado = calcularStatus(prazo); });
 
+            // Filtrar
+            const prazosFiltrados = fonteDados.filter(prazo => {
                 if (filtroAtual === 'todos') return true;
-                return status === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
+                return prazo.statusCalculado === filtroAtual || (filtroAtual === 'concluidos' && prazo.status === 'concluido');
             });
 
-            // Ordenar: atrasados primeiro, depois vencendo, depois pendentes, concluídos por último
-            const ordemStatus = { atrasado: 1, vencendo: 2, pendente: 3, concluido: 4 };
-            prazosFiltrados.sort((a, b) => {
-                const statusA = a.status === 'concluido' ? 'concluido' : a.statusCalculado;
-                const statusB = b.status === 'concluido' ? 'concluido' : b.statusCalculado;
-                const ordemA = ordemStatus[statusA] || 5;
-                const ordemB = ordemStatus[statusB] || 5;
-                if (ordemA !== ordemB) return ordemA - ordemB;
-                return b.dataFinal - a.dataFinal; // Mais próximo primeiro
-            });
-
-            // Atualizar badges de contadores
+            // Atualizar badges
             atualizarBadgesFiltros();
 
-            // Calcular paginação
-            const totalItens = prazosFiltrados.length;
-            const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
+            // Agrupamento de concluídos apenas no filtro "todos" em modo ativo
+            const usarAgrupamento = filtroAtual === 'todos' && modoVisualizacao !== 'arquivados';
 
-            // Ajustar página atual se estiver fora do limite
-            if (paginaAtual > totalPaginas && totalPaginas > 0) {
-                paginaAtual = totalPaginas;
-            }
-            if (paginaAtual < 1) {
-                paginaAtual = 1;
-            }
+            if (usarAgrupamento) {
+                const ativos = sortarPrazos(prazosFiltrados.filter(p => p.status !== 'concluido'));
+                const concluidos = sortarPrazos(prazosFiltrados.filter(p => p.status === 'concluido'));
+                const total = ativos.length + concluidos.length;
 
-            // Renderizar
-            if (totalItens === 0) {
-                container.innerHTML = '';
-                vazio.style.display = 'block';
-                paginacao.style.display = 'none';
-            } else {
-                vazio.style.display = 'none';
-
-                // Mostrar paginação apenas se houver mais de ITENS_POR_PAGINA itens
-                if (totalItens > ITENS_POR_PAGINA) {
-                    paginacao.style.display = 'flex';
-
-                    // Calcular início e fim da página atual
-                    const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
-                    const fim = inicio + ITENS_POR_PAGINA;
-                    const prazosNaPagina = prazosFiltrados.slice(inicio, fim);
-
-                    // Atualizar informações da paginação
-                    document.getElementById('paginacaoMostrando').textContent =
-                        `${inicio + 1}-${Math.min(fim, totalItens)}`;
-                    document.getElementById('paginacaoTotal').textContent = totalItens;
-                    document.getElementById('paginacaoNumero').textContent = paginaAtual;
-                    document.getElementById('paginacaoPaginas').textContent = totalPaginas;
-
-                    // Habilitar/desabilitar botões de navegação
-                    const btnAnterior = document.getElementById('btnPaginaAnterior');
-                    const btnProxima = document.getElementById('btnProximaPagina');
-
-                    if (paginaAtual <= 1) {
-                        btnAnterior.disabled = true;
-                        btnAnterior.style.opacity = '0.5';
-                        btnAnterior.style.cursor = 'not-allowed';
-                    } else {
-                        btnAnterior.disabled = false;
-                        btnAnterior.style.opacity = '1';
-                        btnAnterior.style.cursor = 'pointer';
-                    }
-
-                    if (paginaAtual >= totalPaginas) {
-                        btnProxima.disabled = true;
-                        btnProxima.style.opacity = '0.5';
-                        btnProxima.style.cursor = 'not-allowed';
-                    } else {
-                        btnProxima.disabled = false;
-                        btnProxima.style.opacity = '1';
-                        btnProxima.style.cursor = 'pointer';
-                    }
-
-                    // Renderizar apenas os itens da página atual
-                    container.innerHTML = prazosNaPagina.map(prazo => renderizarItemPrazo(prazo)).join('');
-                } else {
-                    // Menos de ITENS_POR_PAGINA itens - ocultar paginação
+                if (total === 0) {
+                    container.innerHTML = '';
+                    vazio.style.display = 'block';
                     paginacao.style.display = 'none';
-                    container.innerHTML = prazosFiltrados.map(prazo => renderizarItemPrazo(prazo)).join('');
+                    return;
                 }
+
+                vazio.style.display = 'none';
+                const paginados = _aplicarPaginacao(container, paginacao, ativos);
+                let html = paginados.map(p => renderizarItemPrazo(p)).join('');
+
+                if (concluidos.length > 0) {
+                    const expandido = !concluidosColapsados;
+                    html += `<div class="concluidos-section-header${expandido ? ' expandido' : ''}" onclick="toggleConcluidosSecao()">
+                        <svg class="concluidos-section-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        Concluída
+                        <span class="concluidos-section-count">${concluidos.length}</span>
+                    </div>`;
+                    if (expandido) {
+                        html += concluidos.map(p => renderizarItemPrazo(p)).join('');
+                    }
+                }
+
+                container.innerHTML = html;
+            } else {
+                const ordenados = sortarPrazos(prazosFiltrados);
+                const total = ordenados.length;
+
+                if (total === 0) {
+                    container.innerHTML = '';
+                    vazio.style.display = 'block';
+                    paginacao.style.display = 'none';
+                    return;
+                }
+
+                vazio.style.display = 'none';
+                const paginados = _aplicarPaginacao(container, paginacao, ordenados);
+                container.innerHTML = paginados.map(p => renderizarItemPrazo(p)).join('');
             }
         }
 
@@ -13019,7 +13151,7 @@
             ` : '';
 
             return `
-                <div class="prazo-item ${classeFundo} ${modoSelecao ? 'modo-selecao' : ''}" data-id="${prazo.id}">
+                <div class="prazo-item ${classeFundo} ${status === 'concluido' ? 'concluido' : ''} ${modoSelecao ? 'modo-selecao' : ''}" data-id="${prazo.id}">
                     ${checkboxSelecaoHTML}
                     <div class="prazo-checkbox-wrapper">
                         <div class="prazo-checkbox ${checked} ${isArquivado || modoSelecao ? 'disabled' : ''}" ${isArquivado || modoSelecao ? '' : `onclick="toggleConcluido('${prazo.id}')"`} style="${isArquivado || modoSelecao ? 'cursor: not-allowed; opacity: 0.5;' : ''}" title="${isArquivado ? 'Prazo arquivado' : (checked ? 'Desmarcar conclusão' : 'Marcar como concluído')}">
@@ -13244,6 +13376,7 @@
             }
             if (!event.target.closest('#agendaFiltroDropdown')) fecharFiltroDropdown();
             if (!event.target.closest('#agendaMaisWrapper')) fecharAgendaMaisMenu();
+            if (!event.target.closest('#agendaOrdenacaoWrapper')) fecharOrdenacaoMenu();
         });
 
         // Fechar menu do resultado ao fazer scroll
@@ -14078,6 +14211,48 @@
             }
         }
 
+        function toggleConcluidosSecao() {
+            concluidosColapsados = !concluidosColapsados;
+            renderizarPrazos();
+        }
+
+        function toggleOrdenacaoMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('agendaOrdenacaoMenu');
+            const isOpen = menu.style.display !== 'none';
+            fecharTodosDropdownsAgenda();
+            if (!isOpen) menu.style.display = 'block';
+        }
+
+        function fecharOrdenacaoMenu() {
+            const menu = document.getElementById('agendaOrdenacaoMenu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        function setOrdenacao(modo) {
+            ordenacaoAtual.modo = modo;
+            document.querySelectorAll('.agenda-ordenacao-opcao').forEach(btn => {
+                btn.classList.toggle('ativo', btn.dataset.modo === modo);
+            });
+            atualizarBtnOrdenacao();
+            renderizarPrazos();
+        }
+
+        function setDirecaoOrdenacao(dir) {
+            ordenacaoAtual.direcao = dir;
+            document.getElementById('btnDirAsc').classList.toggle('ativo', dir === 'asc');
+            document.getElementById('btnDirDesc').classList.toggle('ativo', dir === 'desc');
+            atualizarBtnOrdenacao();
+            renderizarPrazos();
+        }
+
+        function atualizarBtnOrdenacao() {
+            const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'A–Z', criacao: 'Criação' };
+            const seta = ordenacaoAtual.direcao === 'asc' ? ' ↑' : ' ↓';
+            const el = document.getElementById('ordenacaoTexto');
+            if (el) el.textContent = (labels[ordenacaoAtual.modo] || 'Ordenar') + seta;
+        }
+
         function fecharFiltroDropdown() {
             const menu = document.getElementById('agendaFiltroMenu');
             const btn = document.getElementById('agendaFiltroBtnPrincipal');
@@ -14103,6 +14278,7 @@
         function fecharTodosDropdownsAgenda() {
             fecharFiltroDropdown();
             fecharAgendaMaisMenu();
+            fecharOrdenacaoMenu();
         }
 
         // ========================================
