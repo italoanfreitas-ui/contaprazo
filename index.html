@@ -4888,6 +4888,19 @@
             color: #111827;
         }
 
+        .modal-estrela-btn {
+            width: 30px; height: 30px;
+            min-width: 30px;
+            border: none; background: transparent; padding: 0;
+            cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #ccc;
+            transition: color 0.15s, transform 0.15s;
+        }
+        .modal-estrela-btn.importante { color: #f59e0b; }
+        .modal-estrela-btn:hover { color: #f59e0b; transform: scale(1.15); }
+        .modal-estrela-btn svg { width: 18px; height: 18px; }
+
         .modal-detalhes-body {
             padding: 1.2rem 1.6rem;
             overflow-y: auto;
@@ -13368,7 +13381,7 @@
             document.getElementById('agendaLista').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Toggle importante (estrela)
+        // Toggle importante (estrela) — a partir da lista
         function toggleImportante(event, id) {
             event.stopPropagation();
             const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
@@ -13377,6 +13390,24 @@
             prazo.importante = !prazo.importante;
             salvarPrazosStorage();
             renderizarPrazos();
+        }
+
+        // Toggle importante (estrela) — a partir do modal de detalhes
+        function toggleImportanteModal() {
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            const prazo = fonteDados.find(p => p.id === prazoEmEdicao);
+            if (!prazo) return;
+            prazo.importante = !prazo.importante;
+            salvarPrazosStorage();
+            renderizarPrazos();
+            // Atualizar estrela no modal sem fechar
+            const btn = document.getElementById('modalEstrelaBtnPrazo');
+            if (btn) {
+                btn.classList.toggle('importante', !!prazo.importante);
+                const svgEl = btn.querySelector('svg');
+                if (svgEl) svgEl.setAttribute('fill', prazo.importante ? 'currentColor' : 'none');
+                btn.title = prazo.importante ? 'Remover dos importantes' : 'Marcar como importante';
+            }
         }
 
         // Toggle concluído
@@ -13527,15 +13558,17 @@
                 `;
             }
 
-            const importanteHTML = prazo.importante ? `
-                    <div class="resultado-info" style="display:flex;align-items:center;gap:6px;background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:8px 10px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        <span style="color:#92400e;font-weight:600;">Marcado como importante</span>
-                    </div>` : '';
+            // Atualizar estrela no header do modal
+            const modalEstrelaBtnPrazo = document.getElementById('modalEstrelaBtnPrazo');
+            if (modalEstrelaBtnPrazo) {
+                modalEstrelaBtnPrazo.classList.toggle('importante', !!prazo.importante);
+                const svgEl = modalEstrelaBtnPrazo.querySelector('svg');
+                if (svgEl) svgEl.setAttribute('fill', prazo.importante ? 'currentColor' : 'none');
+                modalEstrelaBtnPrazo.title = prazo.importante ? 'Remover dos importantes' : 'Marcar como importante';
+            }
 
             const html = `
                 <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
-                    ${importanteHTML}
                     ${descricaoHTML}
                     <div class="resultado-info">
                         <strong>Data de Início:</strong> ${dataInicioFormatada}${prazo.tipoDias === 'uteis' ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}
@@ -15158,6 +15191,9 @@
     <div id="modalDetalhesPrazo" class="modal-detalhes">
         <div class="modal-detalhes-content">
             <div class="modal-detalhes-header">
+                <button class="modal-estrela-btn" id="modalEstrelaBtnPrazo" onclick="toggleImportanteModal()" title="Marcar como importante">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </button>
                 <h2 class="modal-detalhes-titulo" id="modalDetalhesTitulo">Detalhes do Prazo</h2>
                 <button class="modal-detalhes-fechar" onclick="fecharModalDetalhes()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
