@@ -3963,7 +3963,7 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 16px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         /* Filter dropdown */
@@ -5331,8 +5331,11 @@
                 justify-content: center;
             }
 
-            /* Toolbar icon-only: hide text labels so everything fits in one row */
-            .agenda-toolbar { gap: 6px; flex-wrap: nowrap; }
+        }
+
+        /* Toolbar: icon-only below 900px so the single row never wraps */
+        @media (max-width: 900px) {
+            .agenda-toolbar { gap: 6px; }
             .agenda-toolbar-direita { gap: 4px; }
             #ordenacaoTexto,
             #textoVerArquivados,
