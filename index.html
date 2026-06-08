@@ -7872,6 +7872,34 @@
             return [];
         }
 
+        // Verifica se dataStr (YYYY-MM-DD) está coberta pelo array 'datas' de um link.
+        // Cada entrada pode ser uma string (data exata) ou {de, ate} (intervalo fechado).
+        function _linkCobertoPorDatas(link, dataStr) {
+            if (!Array.isArray(link.datas) || link.datas.length === 0) return false;
+            return link.datas.some(entrada => {
+                if (typeof entrada === 'string') return entrada === dataStr;
+                if (entrada && typeof entrada === 'object') {
+                    const de = entrada.de || '0000-01-01';
+                    const ate = entrada.ate || '9999-12-31';
+                    return dataStr >= de && dataStr <= ate;
+                }
+                return false;
+            });
+        }
+
+        // Lógica central de seleção de link para uma data: prioriza 'datas', cai em 'ate'.
+        function _selecionarLink(links, dataStr) {
+            if (links.length === 0) return null;
+            if (links.length === 1) return links[0].url;
+            // 1ª prioridade: link com 'datas' que cobre explicitamente esta data
+            const porDatas = links.find(l => _linkCobertoPorDatas(l, dataStr));
+            if (porDatas) return porDatas.url;
+            // 2ª prioridade: comportamento legado via 'ate'
+            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
+            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
+            return (match || sorted[sorted.length - 1]).url;
+        }
+
         function obterLinkFeriado(data) {
             const dataStr = formatarDataCompleta(data);
             const arquivo = feriadosArquivoMap.get(dataStr);
@@ -7879,12 +7907,7 @@
             const conjunto = obterMetadataConjuntos().find(c => c.arquivo === arquivo);
             if (!conjunto) return null;
             const links = obterLinksDoConjunto(conjunto);
-            if (links.length === 0) return null;
-            if (links.length === 1) return links[0].url;
-            // Múltiplos links: seleciona pelo campo 'ate' (primeiro cujo 'ate' >= data do feriado)
-            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
-            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
-            return (match || sorted[sorted.length - 1]).url;
+            return _selecionarLink(links, dataStr);
         }
 
         // Versão que usa o arquivo salvo no dia + conjuntosMetadata do prazo (sem depender de estado global)
@@ -7893,12 +7916,8 @@
             const conjunto = conjuntosMetadata.find(c => c.arquivo === dia.arquivo);
             if (!conjunto) return null;
             const links = obterLinksDoConjunto(conjunto);
-            if (links.length === 0) return null;
-            if (links.length === 1) return links[0].url;
             const dataStr = formatarDataCompleta(dia.data);
-            const sorted = [...links].sort((a, b) => (a.ate || '9999-12-31').localeCompare(b.ate || '9999-12-31'));
-            const match = sorted.find(l => !l.ate || l.ate >= dataStr);
-            return (match || sorted[sorted.length - 1]).url;
+            return _selecionarLink(links, dataStr);
         }
 
         // Obtém nome de feriado de todas as fontes possíveis
