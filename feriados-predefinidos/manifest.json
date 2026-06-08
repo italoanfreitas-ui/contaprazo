@@ -6,15 +6,20 @@
       "id2": "PMVC 2026",
       "arquivo": "PMVC-2026.json",
       "nome": "PMVC - Prefeitura Municipal de Vitória da Conquista (2026)",
-      "descricao": "Suspensões conforme Decreto Municipal nº 24.007, de 26 de novembro de 2025 - Calendário oficial de feriados",
-      "dataAtualizacao": "18-12-2025",
+      "descricao": "Suspensões conforme Decretos Municipais nº 24.007/2025 (Calendário oficial de feriados) e nº 24.279/2026 (São João)",
+      "dataAtualizacao": "08-06-2026",
       "ano": "2026",
       "links": [
         {
           "url": "https://dom.pmvc.ba.gov.br/diarios/previsualizar/OV6M9ljG/54",
           "rotulo": "Decreto Municipal nº 24.007/2025",
           "ate": "2026-12-31"
-        }
+        },
+        {
+          "url": "https://dom.pmvc.ba.gov.br/diarios/previsualizar/Yad0GEam/34",
+          "rotulo": "Decreto Municipal nº 24.279/2026",
+          "datas": "2026-06-22", "2026-06-23"
+        }       
       ]
     },
       {
