@@ -18,7 +18,7 @@
         {
           "url": "https://dom.pmvc.ba.gov.br/diarios/previsualizar/Yad0GEam/34",
           "rotulo": "Decreto Municipal nº 24.279/2026",
-          "datas": "2026-06-22", "2026-06-23"
+          "datas": ["2026-06-22", "2026-06-23"]
         }       
       ]
     },
