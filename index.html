@@ -75,12 +75,22 @@
         }
 
         .page-header {
-            background: var(--gradient-header);
-            border-bottom: 3px solid;
-            border-image: var(--gradient-border) 1;
-            padding: 25px 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-md);
+            background: #ffffff;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 16px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #16a34a);
         }
 
         .page-header-content {
@@ -88,7 +98,7 @@
             margin: 0 auto;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
         }
 
         .page-header .brand-subtitle {
@@ -115,41 +125,73 @@
 
         .nav-tabs {
             max-width: 1200px;
-            margin: 0 auto 16px;
+            margin: 0 auto 20px;
             display: flex;
-            gap: 6px;
-            background: #f9fafb;
+            gap: 4px;
+            background: transparent;
             padding: 4px;
             border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .nav-tab-slider {
+            position: absolute;
+            top: 4px;
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: left 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                        width 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .nav-tab {
             flex: 1;
-            padding: 9px 16px;
+            padding: 9px 12px;
             border: none;
             background: transparent;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.875rem;
-            color: #6b7280;
-            transition: all 0.2s;
+            color: #64748b;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 7px;
+            position: relative;
+            z-index: 1;
         }
 
-        .nav-tab:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--color-blue-500);
+        .nav-tab svg {
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #f1f5f9;
+            color: #334155;
+            transform: translateY(-2px);
+        }
+
+        .nav-tab:hover:not(.active) svg {
+            transform: scale(1.12);
+        }
+
+        .nav-tab:active:not(.active) {
+            transform: translateY(0) scale(0.97);
+            transition-duration: 0.08s;
         }
 
         .nav-tab.active {
-            background: white;
-            color: #1f2937;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+        }
+
+        .nav-tab.active svg {
+            color: #ffffff;
         }
 
         .page-content {
@@ -628,13 +670,13 @@
             bottom: 0;
             width: 220px;
             background: #ffffff;
-            border-right: 1px solid #e5e7eb;
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.07);
+            border-right: 1px solid #f0f0f0;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             z-index: 150;
             transform: translateX(-100%);
-            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
 
@@ -646,28 +688,28 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 16px 14px;
-            border-bottom: 1px solid #e5e7eb;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #ffffff;
             flex-shrink: 0;
         }
 
         .sidebar-logo-cp {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--color-blue-500), var(--color-green-600));
-            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             color: white;
             flex-shrink: 0;
         }
 
         .sidebar-brand-name {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -677,7 +719,7 @@
         .sidebar-nav-items {
             display: flex;
             flex-direction: column;
-            padding: 10px 8px;
+            padding: 8px;
             gap: 2px;
             flex: 1;
             overflow-y: auto;
@@ -694,25 +736,90 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.875rem;
-            color: #6b7280;
-            transition: all 0.15s;
+            color: #64748b;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
             text-align: left;
             width: 100%;
             font-family: system-ui, -apple-system, sans-serif;
         }
 
-        .sidebar-tab:hover {
-            background: rgba(59, 130, 246, 0.08);
-            color: var(--color-blue-500);
+        .sidebar-tab svg {
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-tab:hover:not(.active) {
+            background: #f1f5f9;
+            color: #334155;
+            transform: translateX(3px);
+        }
+
+        .sidebar-tab:hover:not(.active) svg {
+            transform: scale(1.12);
+        }
+
+        .sidebar-tab:active:not(.active) {
+            transform: translateX(0) scale(0.97);
+            transition-duration: 0.08s;
         }
 
         .sidebar-tab.active {
-            background: rgba(22, 163, 74, 0.09);
-            color: var(--color-green-600);
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
         }
 
-        .sidebar-tab svg {
+        .sidebar-tab.active svg {
+            color: #ffffff;
+            filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.2));
+        }
+
+        .sidebar-tab.active::before {
+            display: none;
+        }
+
+        .sidebar-footer {
             flex-shrink: 0;
+            padding: 10px 8px 14px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-footer-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 0.78rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 7px 8px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-family: inherit;
+            text-align: left;
+            width: 100%;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-footer-link:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .sidebar-footer-link svg {
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer-meta {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            padding: 4px 8px 0;
+            line-height: 1.5;
         }
 
         /* Fade out nav horizontal quando sidebar está ativa */
@@ -3344,13 +3451,11 @@
             }
 
             .nav-tabs {
-                gap: 3px;
-                padding: 3px;
                 margin-bottom: 12px;
             }
 
             .nav-tab {
-                padding: 8px 10px;
+                padding: 9px 8px;
                 font-size: 0.8rem;
                 gap: 5px;
             }
@@ -3618,7 +3723,12 @@
             }
 
             .nav-tab {
-                font-size: 0.75rem;
+                padding: 10px 6px;
+                gap: 0;
+            }
+
+            .nav-label {
+                display: none;
             }
 
             /* Ajustes completos para aba de Ajuda em telas muito pequenas */
@@ -5401,62 +5511,29 @@
     </div>
 
     <!-- Menu de Navegação -->
-    <div class="nav-tabs">
+    <div class="nav-tabs" id="navTabs">
+        <div class="nav-tab-slider" id="navSlider"></div>
         <button class="nav-tab active" onclick="trocarPagina('calculo')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10H4M20 10V11.75M4 10V19C4 20.1046 4.89543 21 6 21H11M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M14 19L16 21L21 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Calculadora
+            <span class="nav-label">Calculadora</span>
         </button>
         <button class="nav-tab" onclick="trocarPagina('gerenciamento')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="
-            M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06
-            a2 2 0 1 1-2.83 2.83l-.06-.06
-            a1.65 1.65 0 0 0-1.82-.33
-            1.65 1.65 0 0 0-1 1.51V21
-            a2 2 0 1 1-4 0v-.09
-            a1.65 1.65 0 0 0-1-1.51
-            1.65 1.65 0 0 0-1.82.33l-.06.06
-            a2 2 0 1 1-2.83-2.83l.06-.06
-            a1.65 1.65 0 0 0 .33-1.82
-            1.65 1.65 0 0 0-1.51-1H3
-            a2 2 0 1 1 0-4h.09
-            a1.65 1.65 0 0 0 1.51-1
-            1.65 1.65 0 0 0-.33-1.82l-.06-.06
-            a2 2 0 1 1 2.83-2.83l.06.06
-            a1.65 1.65 0 0 0 1.82.33H9
-            a1.65 1.65 0 0 0 1-1.51V3
-            a2 2 0 1 1 4 0v.09
-            a1.65 1.65 0 0 0 1 1.51
-            1.65 1.65 0 0 0 1.82-.33l.06-.06
-            a2 2 0 1 1 2.83 2.83l-.06.06
-            a1.65 1.65 0 0 0-.33 1.82V9
-            a1.65 1.65 0 0 0 1.51 1H21
-            a2 2 0 1 1 0 4h-.09
-            a1.65 1.65 0 0 0-1.51 1z
-    "></path>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M4 10V19C4 20.1046 4.89543 21 6 21H11M4 10V7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7V10H4ZM8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17.4641 15C18.2043 15 18.8506 15.4021 19.1964 15.9998M17.4641 15C16.7239 15 16.0776 15.4021 15.7318 15.9998M17.4641 15V13M17.4641 21V18.9667M20.9282 15L19.1964 15.9998M14 19L15.7318 18.0002M20.9282 19L19.1965 18.0002M14 15L15.7318 15.9998M15.7318 18.0002C15.5615 17.706 15.4641 17.3644 15.4641 17C15.4641 16.6356 15.5615 16.294 15.7318 15.9998M15.7318 18.0002C16.1255 18.6807 16.7977 18.9802 17.4641 18.9667M17.4641 18.9667C18.1521 18.9529 18.8338 18.6057 19.1965 18.0002M19.1965 18.0002C19.3645 17.7197 19.4641 17.3838 19.4641 17C19.4641 16.6356 19.3667 16.294 19.1964 15.9998" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            Editor de Feriados
+            <span class="nav-label">Editor de Feriados</span>
         </button>
         <button class="nav-tab" onclick="trocarPagina('agenda')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-                <path d="M8 14h.01"></path>
-                <path d="M12 14h.01"></path>
-                <path d="M16 14h.01"></path>
-                <path d="M8 18h.01"></path>
-                <path d="M12 18h.01"></path>
-                <path d="M16 18h.01"></path>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="8" y1="17" x2="11" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            Minha Agenda
+            <span class="nav-label">Minha Agenda</span>
         </button>
         <button class="nav-tab" onclick="trocarPagina('ajuda')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -5464,7 +5541,7 @@
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            Ajuda
+            <span class="nav-label">Ajuda</span>
         </button>
     </div>
 
@@ -5478,33 +5555,24 @@
         </div>
         <div class="sidebar-nav-items">
             <button class="sidebar-tab active" data-page="calculo" onclick="trocarPagina('calculo')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10H4M20 10V11.75M4 10V19C4 20.1046 4.89543 21 6 21H11M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 19L16 21L21 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span>Calculadora</span>
             </button>
             <button class="sidebar-tab" data-page="gerenciamento" onclick="trocarPagina('gerenciamento')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06 a2 2 0 1 1-2.83 2.83l-.06-.06 a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21 a2 2 0 1 1-4 0v-.09 a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06 a2 2 0 1 1-2.83-2.83l.06-.06 a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3 a2 2 0 1 1 0-4h.09 a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06 a2 2 0 1 1 2.83-2.83l.06.06 a1.65 1.65 0 0 0 1.82.33H9 a1.65 1.65 0 0 0 1-1.51V3 a2 2 0 1 1 4 0v.09 a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06 a2 2 0 1 1 2.83 2.83l-.06.06 a1.65 1.65 0 0 0-.33 1.82V9 a1.65 1.65 0 0 0 1.51 1H21 a2 2 0 1 1 0 4h-.09 a1.65 1.65 0 0 0-1.51 1z"></path>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 10V19C4 20.1046 4.89543 21 6 21H11M4 10V7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7V10H4ZM8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17.4641 15C18.2043 15 18.8506 15.4021 19.1964 15.9998M17.4641 15C16.7239 15 16.0776 15.4021 15.7318 15.9998M17.4641 15V13M17.4641 21V18.9667M20.9282 15L19.1964 15.9998M14 19L15.7318 18.0002M20.9282 19L19.1965 18.0002M14 15L15.7318 15.9998M15.7318 18.0002C15.5615 17.706 15.4641 17.3644 15.4641 17C15.4641 16.6356 15.5615 16.294 15.7318 15.9998M15.7318 18.0002C16.1255 18.6807 16.7977 18.9802 17.4641 18.9667M17.4641 18.9667C18.1521 18.9529 18.8338 18.6057 19.1965 18.0002M19.1965 18.0002C19.3645 17.7197 19.4641 17.3838 19.4641 17C19.4641 16.6356 19.3667 16.294 19.1964 15.9998" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 <span>Editor de Feriados</span>
             </button>
             <button class="sidebar-tab" data-page="agenda" onclick="trocarPagina('agenda')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                    <path d="M8 14h.01"></path>
-                    <path d="M12 14h.01"></path>
-                    <path d="M16 14h.01"></path>
-                    <path d="M8 18h.01"></path>
-                    <path d="M12 18h.01"></path>
-                    <path d="M16 18h.01"></path>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="8" y1="17" x2="11" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 <span>Minha Agenda</span>
             </button>
@@ -5516,6 +5584,24 @@
                 </svg>
                 <span>Ajuda</span>
             </button>
+        </div>
+        <div class="sidebar-footer">
+            <button class="sidebar-footer-link" onclick="baixarCalculadora()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Baixar calculadora
+            </button>
+            <a class="sidebar-footer-link" href="mailto:contaprazo@outlook.com">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,12 2,6"></polyline>
+                </svg>
+                Entre em Contato
+            </a>
+            <p class="sidebar-footer-meta">ContaPrazo v1.9.5 &middot; 2026 &middot; I. F.</p>
         </div>
     </nav>
 
@@ -6552,7 +6638,7 @@
                 </a>
             </p>
             <p style="margin-top: 10px; color: #9ca3af; font-size: 0.75rem; font-style: italic;">
-                ContaPrazo Calculadora v1.9 • 2026 • Um projeto de Italoan F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
+                ContaPrazo Calculadora v1.9.5 • 2026 • Um projeto de I. F. • <a href="mailto:contaprazo@outlook.com" style="color: #9ca3af; font-size: 0.75rem; font-style: italic; text-decoration: underline;">Entre em Contato</a>
             </p>
         </div>
     </div>
@@ -11859,6 +11945,19 @@
         }
 
         // Função para trocar de página
+        function moverSliderNav(pagina) {
+            const slider = document.getElementById('navSlider');
+            if (!slider) return;
+            const container = document.getElementById('navTabs');
+            if (!container) return;
+            const tab = (cacheDom && pagina && cacheDom.navTabs[pagina])
+                ? cacheDom.navTabs[pagina]
+                : container.querySelector('.nav-tab.active');
+            if (!tab) return;
+            slider.style.left  = tab.offsetLeft  + 'px';
+            slider.style.width = tab.offsetWidth + 'px';
+        }
+
         function trocarPagina(pagina) {
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
@@ -11903,6 +12002,7 @@
                 ? (_navTabs ? _navTabs.offsetTop + _navTabs.offsetHeight : _header.offsetTop + _header.offsetHeight + 1)
                 : 0;
             window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
+            moverSliderNav(pagina);
         }
 
         // ========================================
@@ -15023,6 +15123,15 @@
 
             // Inicia verificação periódica de atualizações de feriados
             iniciarVerificacaoPeriodica();
+
+            // Posiciona o slider na aba ativa sem animação
+            requestAnimationFrame(function() {
+                const s = document.getElementById('navSlider');
+                if (!s) return;
+                s.style.transition = 'none';
+                moverSliderNav();
+                requestAnimationFrame(function() { s.style.transition = ''; });
+            });
         });
 
         // Event listener para redimensionamento da janela
@@ -15038,6 +15147,7 @@
                 // Sempre reposiciona após o debounce: o texto do botão pode ter
                 // mudado (Mensal ↔ Bimestral ↔ Trimestral), alterando sua largura.
                 posicionarGliderVisualizacao();
+                moverSliderNav();
             }, 250); // Debounce de 250ms
         });
 
