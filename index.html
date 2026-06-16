@@ -157,7 +157,7 @@
             font-weight: 600;
             font-size: 0.875rem;
             color: #64748b;
-            transition: color 0.25s ease, background 0.25s ease;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -167,22 +167,22 @@
         }
 
         .nav-tab svg {
-            transition: transform 0.22s ease, color 0.22s ease;
+            transition: transform 0.2s ease;
             flex-shrink: 0;
         }
 
         .nav-tab:hover:not(.active) {
-            color: #3b82f6;
-            background: rgba(59, 130, 246, 0.08);
+            background: #f1f5f9;
+            color: #334155;
+            transform: translateY(-2px);
         }
 
         .nav-tab:hover:not(.active) svg {
-            transform: translateY(-1px) scale(1.15);
+            transform: scale(1.12);
         }
 
         .nav-tab:active:not(.active) {
-            color: #2563eb;
-            background: rgba(59, 130, 246, 0.14);
+            transform: translateY(0) scale(0.97);
             transition-duration: 0.08s;
         }
 
