@@ -14794,6 +14794,7 @@
                 return status === filtroAtual || (filtroAtual === 'concluidos' && eConcluido);
             });
 
+            prazosSelecionados.clear();
             prazosFiltrados.forEach(prazo => prazosSelecionados.add(prazo.id));
 
             // Se selecionou concluídos e a seção está colapsada, expande para que
