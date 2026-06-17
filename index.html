@@ -15393,6 +15393,7 @@
             let hideTimer = null;
             let showTimer = null;
             let touchTimer = null;
+            let lastTouchMs = 0;
 
             // Converte todos os .tooltip-icon existentes para usar data-tooltip-html
             // (elimina herança de opacity e overflow:hidden dos containers)
@@ -15465,6 +15466,8 @@
 
             // Mouse
             document.addEventListener('mouseover', function(e) {
+                // Ignora mouseover sintético disparado por touch (~300ms após toque)
+                if (Date.now() - lastTouchMs < 600) return;
                 const result = obterTooltip(e.target);
                 if (!result) return;
                 clearTimeout(showTimer);
@@ -15489,6 +15492,7 @@
 
             // Touch: long-press apenas em elementos de tooltip explícitos (não em botões/controles)
             document.addEventListener('touchstart', function(e) {
+                lastTouchMs = Date.now();
                 const result = obterTooltip(e.target);
                 if (!result) return;
                 // Só mostrar tooltip em long-press para elementos com tooltip explícito (não data-tiptitle convertido de title)
