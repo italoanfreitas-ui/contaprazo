@@ -3753,12 +3753,23 @@
             }
 
             .nav-tab {
-                padding: 10px 6px;
-                gap: 0;
+                padding: 8px 4px 6px;
+                gap: 2px;
+                flex-direction: column;
+                font-size: 0;
             }
 
             .nav-label {
-                display: none;
+                display: block;
+                font-size: 0.6rem;
+                font-weight: 600;
+                line-height: 1.2;
+                text-align: center;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                max-width: 100%;
+                white-space: normal;
             }
 
             /* Ajustes completos para aba de Ajuda em telas muito pequenas */
@@ -5461,6 +5472,18 @@
 
             .modal-input-content {
                 border-radius: 1.5rem;
+            }
+
+            .modal-input-footer {
+                flex-wrap: wrap;
+                justify-content: stretch;
+            }
+
+            .modal-input-footer .btn {
+                flex: 1 1 auto;
+                text-align: center;
+                justify-content: center;
+                min-width: 0;
             }
 
             .modal-detalhes-header,
@@ -8816,13 +8839,6 @@
             document.getElementById('btnDiasCorridos').classList.remove('active');
             posicionarGlider();
             atualizarVisibilidadeFeriados();
-
-            // Resetar tipos de feriado para padrão (todos ativos)
-            feriadosFixosAtivos = true;
-            feriadosMoveisAtivos = true;
-            feriadosPersonalizadosAtivos = true;
-            salvarTiposFeriadoAtivos();
-            atualizarPillsTiposFeriado();
 
             // Resetar visualização do calendário para mensal
             visualizacaoCalendario = 'mensal';
