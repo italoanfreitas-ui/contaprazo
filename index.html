@@ -15464,13 +15464,8 @@
                 return null;
             }
 
-            // Mouse
+            // Mouse (desktop) — comportamento original, sem guards de touch
             document.addEventListener('mouseover', function(e) {
-                // Suprime mouseover sintético de toque em controles interativos
-                // (checkbox, button, input, etc.) — ícones "?" não são interativos
-                // e continuam funcionando com toque simples via mouseover sintético
-                if (Date.now() - lastTouchMs < 600 &&
-                    e.target.closest('input, button, select, textarea, label')) return;
                 const result = obterTooltip(e.target);
                 if (!result) return;
                 clearTimeout(showTimer);
@@ -15493,12 +15488,17 @@
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
             });
 
-            // Touch: long-press apenas em elementos de tooltip explícitos (não em botões/controles)
+            // Touch
+            // Regras:
+            //   • Elementos interativos (input/button/select/textarea/label): NUNCA tooltip por toque
+            //   • tooltip-icon "?": toque simples mostra imediatamente (tratado no touchend)
+            //   • Outros elementos com tooltip explícito: long-press (600 ms)
             document.addEventListener('touchstart', function(e) {
                 lastTouchMs = Date.now();
+                // Interativos: não inicia timer, evita tooltip em qualquer toque
+                if (e.target.closest('input, button, select, textarea, label')) return;
                 const result = obterTooltip(e.target);
                 if (!result) return;
-                // Só mostrar tooltip em long-press para elementos com tooltip explícito (não data-tiptitle convertido de title)
                 const isExplicit = result.el.hasAttribute('data-tooltip') || result.el.hasAttribute('data-tooltip-html');
                 if (!isExplicit) return;
                 clearTimeout(touchTimer);
@@ -15507,12 +15507,23 @@
 
             document.addEventListener('touchmove', function() { esconder(); }, { passive: true });
 
-            document.addEventListener('touchend', function() {
+            document.addEventListener('touchend', function(e) {
+                const tapMs = Date.now() - lastTouchMs;
                 clearTimeout(touchTimer);
-                // Se o tooltip foi mostrado por long-press, esconde após curto delay
-                // Se não estava visível, não faz nada
+
+                // Toque simples (< 400 ms) em elemento não-interativo com tooltip explícito → mostra
+                // Isso cobre os ícones "?" que não recebem mouseover sintético por serem <span>
+                if (tapMs < 400 && !e.target.closest('input, button, select, textarea, label')) {
+                    const el = e.target.closest('[data-tooltip-html]') || e.target.closest('[data-tooltip]');
+                    if (el) {
+                        const html = el.getAttribute('data-tooltip-html');
+                        const txt  = el.getAttribute('data-tooltip');
+                        posicionarTip(el, html || txt, !!html);
+                    }
+                }
+
                 if (tip.classList.contains('visible')) {
-                    hideTimer = setTimeout(() => tip.classList.remove('visible'), 1200);
+                    hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
                 }
             }, { passive: true });
 
