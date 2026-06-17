@@ -171,14 +171,16 @@
             flex-shrink: 0;
         }
 
-        .nav-tab:hover:not(.active) {
-            background: #f1f5f9;
-            color: #334155;
-            transform: translateY(-2px);
-        }
+        @media (hover: hover) {
+            .nav-tab:hover:not(.active) {
+                background: #f1f5f9;
+                color: #334155;
+                transform: translateY(-2px);
+            }
 
-        .nav-tab:hover:not(.active) svg {
-            transform: scale(1.12);
+            .nav-tab:hover:not(.active) svg {
+                transform: scale(1.12);
+            }
         }
 
         .nav-tab:active:not(.active) {
@@ -725,6 +727,23 @@
             overflow-y: auto;
         }
 
+        .sidebar-nav-items {
+            position: relative;
+        }
+
+        .sidebar-tab-slider {
+            position: absolute;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #3b82f6, #16a34a);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: top 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                        height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .sidebar-tab {
             display: flex;
             align-items: center;
@@ -737,10 +756,12 @@
             font-weight: 600;
             font-size: 0.875rem;
             color: #64748b;
-            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+            transition: color 0.2s ease, transform 0.15s ease;
             text-align: left;
             width: 100%;
             font-family: system-ui, -apple-system, sans-serif;
+            position: relative;
+            z-index: 1;
         }
 
         .sidebar-tab svg {
@@ -748,14 +769,16 @@
             transition: transform 0.2s ease;
         }
 
-        .sidebar-tab:hover:not(.active) {
-            background: #f1f5f9;
-            color: #334155;
-            transform: translateX(3px);
-        }
+        @media (hover: hover) {
+            .sidebar-tab:hover:not(.active) {
+                background: #f1f5f9;
+                color: #334155;
+                transform: translateX(3px);
+            }
 
-        .sidebar-tab:hover:not(.active) svg {
-            transform: scale(1.12);
+            .sidebar-tab:hover:not(.active) svg {
+                transform: scale(1.12);
+            }
         }
 
         .sidebar-tab:active:not(.active) {
@@ -764,9 +787,7 @@
         }
 
         .sidebar-tab.active {
-            background: linear-gradient(135deg, #3b82f6, #16a34a);
             color: #ffffff;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
         }
 
         .sidebar-tab.active svg {
@@ -1762,29 +1783,45 @@
             color: var(--color-blue-500) !important;
         }
 
-        .btn-nav-today:hover {
-            color: var(--color-blue-600) !important;
-            background: #eff6ff !important;
+        @media (hover: hover) {
+            .btn-nav-today:hover {
+                color: var(--color-blue-600) !important;
+                background: #eff6ff !important;
+            }
         }
 
-        /* Quando o mês/ano atual não está visível: anel tracejado com rotação lenta */
+        /* Quando o mês/ano atual não está visível: pulso radar */
         .btn-nav-today.fora-do-mes {
             background: #eff6ff !important;
             color: var(--color-blue-500) !important;
             position: relative;
         }
+        .btn-nav-today.fora-do-mes::before,
         .btn-nav-today.fora-do-mes::after {
             content: '';
             position: absolute;
             inset: -3px;
             border-radius: 50%;
-            border: 2px dashed #60a5fa;
-            animation: girar-anel-hoje 8s linear infinite;
+            border: 1.5px solid #93c5fd;
             pointer-events: none;
+            animation: radar-pulse-hoje 3.2s ease-out infinite;
         }
-        @keyframes girar-anel-hoje {
-            from { transform: rotate(0deg); }
-            to   { transform: rotate(360deg); }
+        .btn-nav-today.fora-do-mes::after {
+            animation-delay: 1.6s;
+        }
+        @keyframes radar-pulse-hoje {
+            0%   { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.45); opacity: 0; }
+        }
+        @media (max-width: 600px) {
+            .btn-nav-today.fora-do-mes::before,
+            .btn-nav-today.fora-do-mes::after {
+                inset: -2px;
+            }
+            @keyframes radar-pulse-hoje {
+                0%   { transform: scale(0.92); opacity: 0.65; }
+                100% { transform: scale(1.28); opacity: 0; }
+            }
         }
 
         .btn-nav svg {
@@ -2355,6 +2392,16 @@
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #e5e7eb;
+        }
+
+        /* Garante que o rodapé fique no final mesmo com pouco conteúdo */
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
+        }
+        .page-content {
+            flex: 1;
         }
 
         .rodape a {
@@ -3723,12 +3770,23 @@
             }
 
             .nav-tab {
-                padding: 10px 6px;
-                gap: 0;
+                padding: 8px 4px 6px;
+                gap: 2px;
+                flex-direction: column;
+                font-size: 0;
             }
 
             .nav-label {
-                display: none;
+                display: block;
+                font-size: 0.6rem;
+                font-weight: 600;
+                line-height: 1.2;
+                text-align: center;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                max-width: 100%;
+                white-space: normal;
             }
 
             /* Ajustes completos para aba de Ajuda em telas muito pequenas */
@@ -4173,7 +4231,7 @@
         }
         .agenda-ordenacao-opcao:hover { background: #f9fafb; }
         .agenda-ordenacao-opcao.ativo { background: #eff6ff; color: var(--color-blue-600); font-weight: 600; }
-        .agenda-ordenacao-opcao.ativo svg { stroke: var(--color-blue-600); }
+        .agenda-ordenacao-opcao.ativo svg { stroke: var(--color-blue-600); color: var(--color-blue-600); }
         .agenda-ordenacao-opcao svg { width: 14px; height: 14px; stroke-width: 2; flex-shrink: 0; color: #9ca3af; }
         .agenda-ordenacao-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
         .agenda-ordenacao-dir {
@@ -4279,6 +4337,8 @@
             color: var(--color-blue-600); background: #eff6ff;
             padding: 3px 10px; border-radius: 20px;
             white-space: nowrap; flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+            min-width: 7.5ch; text-align: center;
         }
 
         .barra-selecao-div {
@@ -4298,7 +4358,7 @@
 
         .barra-selecao-spacer { flex: 1; min-width: 8px; }
 
-        .barra-selecao-actions { display: flex; gap: 5px; align-items: center; }
+        .barra-selecao-actions { display: flex; gap: 5px; align-items: center; min-height: 32px; }
 
         .btn-selecao-action {
             display: inline-flex; align-items: center; gap: 5px;
@@ -4433,11 +4493,16 @@
             visibility: visible;
         }
 
-        .prazo-item.concluido {
+        .prazo-item.concluido > .prazo-checkbox-wrapper,
+        .prazo-item.concluido > .prazo-conteudo,
+        .prazo-item.concluido > .checkbox-selecao {
             opacity: 0.72;
+            transition: opacity 0.2s;
         }
 
-        .prazo-item.concluido:hover {
+        .prazo-item.concluido:hover > .prazo-checkbox-wrapper,
+        .prazo-item.concluido:hover > .prazo-conteudo,
+        .prazo-item.concluido:hover > .checkbox-selecao {
             opacity: 0.9;
         }
 
@@ -5426,6 +5491,18 @@
                 border-radius: 1.5rem;
             }
 
+            .modal-input-footer {
+                flex-wrap: wrap;
+                justify-content: stretch;
+            }
+
+            .modal-input-footer .btn {
+                flex: 1 1 auto;
+                text-align: center;
+                justify-content: center;
+                min-width: 0;
+            }
+
             .modal-detalhes-header,
             .modal-detalhes-body,
             .modal-detalhes-acoes {
@@ -5554,6 +5631,7 @@
             </div>
         </div>
         <div class="sidebar-nav-items">
+            <div class="sidebar-tab-slider" id="sidebarSlider"></div>
             <button class="sidebar-tab active" data-page="calculo" onclick="trocarPagina('calculo')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10H4M20 10V11.75M4 10V19C4 20.1046 4.89543 21 6 21H11M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -6489,13 +6567,14 @@
                         <!-- Ordenação dropdown -->
                         <div class="agenda-ordenacao-wrapper" id="agendaOrdenacaoWrapper">
                             <button class="agenda-toolbar-btn" id="btnOrdenacao" onclick="toggleOrdenacaoMenu(event)" title="Ordenar lista">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                                <span id="ordenacaoTexto">Ordenar</span>
+                                <svg id="ordenacaoIcone" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+                                <span id="ordenacaoTexto">Status</span>
+                                <svg id="ordenacaoSetaIcone" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 5 5 12"/></svg>
                             </button>
                             <div class="agenda-ordenacao-menu" id="agendaOrdenacaoMenu" style="display:none;">
                                 <div class="agenda-ordenacao-grupo-label">Ordenar por</div>
                                 <button class="agenda-ordenacao-opcao ativo" data-modo="status" onclick="setOrdenacao('status')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
                                     Por status (padrão)
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="prazo" onclick="setOrdenacao('prazo')">
@@ -6503,15 +6582,15 @@
                                     Prazo mais próximo
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="alfabetico" onclick="setOrdenacao('alfabetico')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                                    Ordem alfabética
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L4 21"/><path d="M12 3L20 21"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="2" y1="21" x2="6" y2="21"/><line x1="18" y1="21" x2="22" y2="21"/></svg>
+                                    Alfabética
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="criacao" onclick="setOrdenacao('criacao')">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                     Data de criação
                                 </button>
                                 <div class="agenda-ordenacao-sep"></div>
-                                <div class="agenda-ordenacao-grupo-label">Direção</div>
+                                <div class="agenda-ordenacao-grupo-label">Ordem</div>
                                 <div class="agenda-ordenacao-dir">
                                     <button class="agenda-ordenacao-dir-btn ativo" id="btnDirAsc" onclick="setDirecaoOrdenacao('asc')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
@@ -6566,14 +6645,14 @@
                     <button class="barra-selecao-cancel" onclick="sairModoSelecao()" title="Cancelar seleção">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
-                    <span class="barra-selecao-count"><span id="contadorSelecionados">0</span> selecionado(s)</span>
+                    <span class="barra-selecao-count" id="contadorSelecionados">0 selecionado(s)</span>
                     <div class="barra-selecao-div"></div>
                     <button class="btn-selecao-mini" onclick="selecionarTodos()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         Todos
                     </button>
                     <button class="btn-selecao-mini" onclick="selecionarNenhum()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
                         Nenhum
                     </button>
                     <div class="barra-selecao-spacer"></div>
@@ -7462,12 +7541,12 @@
                     const s = JSON.parse(salvo);
                     feriadosFixosAtivos = s.fixos !== undefined ? s.fixos : true;
                     feriadosMoveisAtivos = s.moveis !== undefined ? s.moveis : true;
-                    feriadosPersonalizadosAtivos = s.personalizados !== undefined ? s.personalizados : true;
                 } else {
                     feriadosFixosAtivos = true;
                     feriadosMoveisAtivos = true;
-                    feriadosPersonalizadosAtivos = true;
                 }
+                // "Nenhum" = sem feriados personalizados carregados; forçar desativado
+                feriadosPersonalizadosAtivos = false;
                 salvarTiposFeriadoAtivos();
                 atualizarPillsTiposFeriado();
             } else {
@@ -8779,14 +8858,12 @@
             posicionarGlider();
             atualizarVisibilidadeFeriados();
 
-            // Resetar tipos de feriado para padrão (todos ativos)
-            feriadosFixosAtivos = true;
-            feriadosMoveisAtivos = true;
-            feriadosPersonalizadosAtivos = true;
-            salvarTiposFeriadoAtivos();
-            atualizarPillsTiposFeriado();
+            // Resetar visualização do calendário para mensal
+            visualizacaoCalendario = 'mensal';
+            posicionarGliderVisualizacao();
 
             renderizarCalendario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Aplica auto-desmarque de fixos/móveis ao ativar perfil (se não houver preferência salva)
@@ -10002,6 +10079,7 @@
 
             try {
                 let criados = 0, sobrescritos = 0, semDados = 0;
+                let perfilAtivoFoiSobrescrito = false;
 
                 for (const cb of checkboxes) {
                     const nomePerfil = (cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL);
@@ -10010,6 +10088,9 @@
 
                     const existingIdx = perfisData.findIndex(p => p.nome.toLowerCase() === nomePerfil.toLowerCase());
                     if (existingIdx >= 0) {
+                        if (perfilAtivoId && perfisData[existingIdx].id === perfilAtivoId) {
+                            perfilAtivoFoiSobrescrito = true;
+                        }
                         perfisData.splice(existingIdx, 1);
                         sobrescritos++;
                     } else {
@@ -10022,6 +10103,7 @@
                     perfisData.push({
                         id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
                         nome: nomePerfil,
+                        tiposFeriado: { fixos: false, moveis: false, personalizados: true },
                         feriados: dados.feriados.map(f => ({ ...f, arquivo: cb.dataset.arquivo })),
                         conjuntosImportados: [{
                             nome: cb.dataset.nome,
@@ -10036,8 +10118,16 @@
                 }
 
                 salvarPerfisNoLocalStorage();
-                atualizarDropdownPerfis();
-                renderizarDropdownPerfilCalculo();
+
+                // Se o perfil ativo foi sobrescrito, seu ID sumiu: migrar para "Nenhum"
+                if (perfilAtivoFoiSobrescrito) {
+                    atualizarDropdownPerfis();
+                    efetuarTrocaPerfil(null);
+                } else {
+                    atualizarDropdownPerfis();
+                    renderizarDropdownPerfilCalculo();
+                    atualizarUIPerfilAtivo();
+                }
 
                 // Atualiza conjuntosPredefinidosImportados com os metadados dos conjuntos
                 // recém-importados (com links[] corretos), para que o estado global não
@@ -10487,6 +10577,21 @@
         function mostrarBannerAtualizacao(conjuntosAtualizados) {
             if (sessionStorage.getItem('updateBannerClosed') === 'true') return;
             if (document.querySelector('[data-toast-id="updateBanner"]')) return;
+
+            // Se há modal aberto, aguardar fechamento para não sobrepor
+            const modalAberto = document.querySelector(
+                '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
+            );
+            if (modalAberto) {
+                const obs = new MutationObserver(() => {
+                    if (!document.querySelector('.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active')) {
+                        obs.disconnect();
+                        mostrarBannerAtualizacao(conjuntosAtualizados);
+                    }
+                });
+                obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+                return;
+            }
 
             let titulo, mensagemHTML;
             if (conjuntosAtualizados.length === 1) {
@@ -11944,6 +12049,17 @@
             };
         }
 
+        function moverSliderSidebar(pagina) {
+            const slider = document.getElementById('sidebarSlider');
+            if (!slider) return;
+            const container = document.getElementById('sidebarNav');
+            if (!container) return;
+            const tab = container.querySelector(`.sidebar-tab[data-page="${pagina}"]`);
+            if (!tab) return;
+            slider.style.top    = tab.offsetTop    + 'px';
+            slider.style.height = tab.offsetHeight + 'px';
+        }
+
         // Função para trocar de página
         function moverSliderNav(pagina) {
             const slider = document.getElementById('navSlider');
@@ -11959,6 +12075,9 @@
         }
 
         function trocarPagina(pagina) {
+            // Sair do modo seleção ao trocar de aba
+            if (typeof modoSelecao !== 'undefined' && modoSelecao) sairModoSelecao();
+
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
 
@@ -12003,6 +12122,7 @@
                 : 0;
             window.scrollTo({ top: _scrollTarget, behavior: 'instant' });
             moverSliderNav(pagina);
+            moverSliderSidebar(pagina);
         }
 
         // ========================================
@@ -12723,27 +12843,72 @@
                 }
                 return;
             }
-            document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
+            const inputTitulo = document.getElementById('inputTituloPrazo');
+            inputTitulo.value = descricaoPrazo || '';
+            inputTitulo.placeholder = gerarTituloFallbackExport() || 'Ex: Recurso Processo 12345';
             document.getElementById('inputDescricaoPrazo').value = '';
             document.getElementById('modalInputTitulo').classList.add('active');
-            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 100);
+            setTimeout(() => { inputTitulo.focus(); }, 100);
         }
 
-        // Fechar modal de input
+        // Fechar modal de input (reseta para view padrão)
         function fecharModalInputTitulo() {
             document.getElementById('modalInputTitulo').classList.remove('active');
             document.getElementById('inputTituloPrazo').value = '';
             document.getElementById('inputDescricaoPrazo').value = '';
+            _resetarViewModalSalvar();
+        }
+
+        function _resetarViewModalSalvar() {
+            document.getElementById('modalSalvarViewForm').style.display = '';
+            document.getElementById('modalSalvarViewPadrao').style.display = 'none';
+            const icone = document.getElementById('modalSalvarIcone');
+            icone.className = 'modal-header-icon modal-icon-green';
+            icone.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+            document.getElementById('modalSalvarTitulo').textContent = 'Salvar Prazo na Agenda';
+        }
+
+        // Morfa o modal para a view de título padrão
+        function _mostrarViewTituloPadrao(titulo) {
+            document.getElementById('tituloPadraoSugerido').textContent = titulo;
+            document.getElementById('modalSalvarViewForm').style.display = 'none';
+            document.getElementById('modalSalvarViewPadrao').style.display = '';
+            const icone = document.getElementById('modalSalvarIcone');
+            icone.className = 'modal-header-icon modal-icon-amber';
+            icone.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            document.getElementById('modalSalvarTitulo').textContent = 'Título não informado';
+            tocarSomToast('aviso');
+        }
+
+        function confirmarUsarTituloPadrao() {
+            const titulo = document.getElementById('tituloPadraoSugerido').textContent;
+            fecharModalInputTitulo();
+            confirmarSalvarPrazo(titulo);
+        }
+
+        function cancelarTituloPadrao() {
+            _resetarViewModalSalvar();
+            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 80);
+        }
+
+        // Gera título único sem colisão com prazos existentes
+        function gerarTituloUnico(tituloBase) {
+            if (!prazos.some(p => p.titulo === tituloBase)) return tituloBase;
+            let i = 2;
+            while (prazos.some(p => p.titulo === `${tituloBase} #${i}`)) i++;
+            return `${tituloBase} #${i}`;
         }
 
         // Confirmar e salvar prazo
-        function confirmarSalvarPrazo() {
-            const titulo = document.getElementById('inputTituloPrazo').value.trim();
+        function confirmarSalvarPrazo(tituloForçado) {
+            const titulo = tituloForçado || document.getElementById('inputTituloPrazo').value.trim();
             const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
 
             if (!titulo) {
-                mostrarNotificacao('Por favor, digite um título para o prazo.', 'aviso');
-                document.getElementById('inputTituloPrazo').focus();
+                // Morfa o modal para a view de título padrão
+                const base = descricaoPrazo || gerarTituloFallbackExport() || 'Prazo sem título';
+                const tituloPadrao = gerarTituloUnico(base);
+                _mostrarViewTituloPadrao(tituloPadrao);
                 return;
             }
 
@@ -14356,10 +14521,28 @@
         }
 
         function atualizarBtnOrdenacao() {
-            const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'A–Z', criacao: 'Criação' };
-            const seta = ordenacaoAtual.direcao === 'asc' ? ' ↑' : ' ↓';
+            const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'Alfabética', criacao: 'Criação' };
             const el = document.getElementById('ordenacaoTexto');
-            if (el) el.textContent = (labels[ordenacaoAtual.modo] || 'Ordenar') + seta;
+            if (el) el.textContent = labels[ordenacaoAtual.modo] || 'Ordenar';
+
+            // Ícones por modo de ordenação
+            const icones = {
+                status:    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>',
+                prazo:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+                alfabetico:'<path d="M12 3L4 21"/><path d="M12 3L20 21"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="2" y1="21" x2="6" y2="21"/><line x1="18" y1="21" x2="22" y2="21"/>',
+                criacao:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
+            };
+            const iconeEl = document.getElementById('ordenacaoIcone');
+            if (iconeEl) iconeEl.innerHTML = icones[ordenacaoAtual.modo] || icones.status;
+
+            // Seta direcional (sempre visível, após o texto)
+            const setaEl = document.getElementById('ordenacaoSetaIcone');
+            if (setaEl) {
+                const asc = ordenacaoAtual.direcao === 'asc';
+                setaEl.innerHTML = asc
+                    ? '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 5 5 12"/>'
+                    : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/>';
+            }
         }
 
         function fecharFiltroDropdown() {
@@ -14398,6 +14581,9 @@
             modoSelecao = true;
             prazosSelecionados.clear();
 
+            const contador = document.getElementById('contadorSelecionados');
+            if (contador) contador.textContent = '0 selecionado(s)';
+
             const toolbar = document.getElementById('agendaToolbar');
             if (toolbar) toolbar.style.display = 'none';
             document.getElementById('barraSelecao').style.display = 'flex';
@@ -14421,11 +14607,41 @@
                     </button>
                 `;
             } else {
-                acoes.innerHTML = `
+                // Verificar quais selecionados são concluídos
+                const fonteDados = prazos;
+                let temConcluidos = false;
+                let temNaoConcluidos = false;
+                prazosSelecionados.forEach(id => {
+                    const prazo = fonteDados.find(p => p.id === id);
+                    if (prazo) {
+                        if (prazo.status === 'concluido') temConcluidos = true;
+                        else temNaoConcluidos = true;
+                    }
+                });
+
+                // Se nada selecionado ainda, mostrar botão padrão "Concluir"
+                if (prazosSelecionados.size === 0) {
+                    temNaoConcluidos = true;
+                }
+
+                let botoesConclui = '';
+                if (temNaoConcluidos) {
+                    botoesConclui += `
                     <button class="btn-selecao-action" onclick="marcarSelecionadosConcluidos()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                         <span class="selecao-label">Concluir</span>
-                    </button>
+                    </button>`;
+                }
+                if (temConcluidos) {
+                    botoesConclui += `
+                    <button class="btn-selecao-action" onclick="desmarcarSelecionadosConcluidos()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        <span class="selecao-label">Desmarcar</span>
+                    </button>`;
+                }
+
+                acoes.innerHTML = `
+                    ${botoesConclui}
                     <button class="btn-selecao-action" onclick="arquivarSelecionados()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
                         <span class="selecao-label">Arquivar</span>
@@ -14461,10 +14677,18 @@
             }
 
             // Atualizar contador
-            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+            document.getElementById('contadorSelecionados').textContent =
+                `${prazosSelecionados.size} selecionado(s)`;
 
-            // Re-renderizar para atualizar checkboxes
-            renderizarPrazos();
+            // Atualizar apenas o checkbox do item tocado (evita reflow total da lista)
+            const itemEl = document.querySelector(`.prazo-item[data-id="${id}"]`);
+            if (itemEl) {
+                const cb = itemEl.querySelector('.checkbox-selecao');
+                if (cb) cb.classList.toggle('selecionado', prazosSelecionados.has(id));
+            }
+
+            // Atualizar botões de ação (dinâmicos conforme seleção)
+            renderizarMenuAcoesSelecao();
         }
 
         function selecionarTodos() {
@@ -14484,9 +14708,10 @@
             });
 
             // Atualizar contador
-            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+            document.getElementById('contadorSelecionados').textContent = `${prazosSelecionados.size} selecionado(s)`;
 
             // Re-renderizar
+            renderizarMenuAcoesSelecao();
             renderizarPrazos();
         }
 
@@ -14497,6 +14722,7 @@
             document.getElementById('contadorSelecionados').textContent = 0;
 
             // Re-renderizar
+            renderizarMenuAcoesSelecao();
             renderizarPrazos();
         }
 
@@ -14508,12 +14734,14 @@
             }
 
             const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            let count = 0;
 
             prazosSelecionados.forEach(id => {
                 const prazo = fonteDados.find(p => p.id === id);
                 if (prazo && prazo.status !== 'concluido') {
                     prazo.status = 'concluido';
                     prazo.dataConclusao = new Date();
+                    count++;
                 }
             });
 
@@ -14526,7 +14754,43 @@
 
             sairModoSelecao();
 
-            mostrarNotificacao(`${prazosSelecionados.size} prazo(s) marcado(s) como concluído(s)!`, 'sucesso');
+            if (count > 0) {
+                mostrarNotificacao(`${count} prazo(s) marcado(s) como concluído(s)!`, 'sucesso');
+            } else {
+                mostrarNotificacao('Os prazos selecionados já estavam concluídos.', 'info');
+            }
+        }
+
+        function desmarcarSelecionadosConcluidos() {
+            if (prazosSelecionados.size === 0) {
+                mostrarNotificacao('Nenhum prazo selecionado.', 'aviso');
+                return;
+            }
+
+            const fonteDados = modoVisualizacao === 'arquivados' ? prazosArquivados : prazos;
+            let count = 0;
+
+            prazosSelecionados.forEach(id => {
+                const prazo = fonteDados.find(p => p.id === id);
+                if (prazo && prazo.status === 'concluido') {
+                    prazo.status = 'pendente';
+                    prazo.dataConclusao = null;
+                    count++;
+                }
+            });
+
+            // Salvar
+            if (modoVisualizacao === 'arquivados') {
+                salvarArquivadosStorage();
+            } else {
+                salvarPrazosStorage();
+            }
+
+            sairModoSelecao();
+
+            if (count > 0) {
+                mostrarNotificacao(`${count} prazo(s) desmarcado(s) como concluído(s)!`, 'sucesso');
+            }
         }
 
         function arquivarSelecionados() {
@@ -15131,6 +15395,14 @@
                 s.style.transition = 'none';
                 moverSliderNav();
                 requestAnimationFrame(function() { s.style.transition = ''; });
+
+                const ss = document.getElementById('sidebarSlider');
+                if (ss) {
+                    ss.style.transition = 'none';
+                    const activeTab = document.querySelector('.sidebar-tab.active');
+                    moverSliderSidebar(activeTab ? activeTab.dataset.page : 'calculo');
+                    requestAnimationFrame(function() { ss.style.transition = ''; });
+                }
             });
         });
 
@@ -15148,6 +15420,8 @@
                 // mudado (Mensal ↔ Bimestral ↔ Trimestral), alterando sua largura.
                 posicionarGliderVisualizacao();
                 moverSliderNav();
+                const activeSideTab = document.querySelector('.sidebar-tab.active');
+                if (activeSideTab) moverSliderSidebar(activeSideTab.dataset.page);
             }, 250); // Debounce de 250ms
         });
 
@@ -15162,6 +15436,7 @@
             let hideTimer = null;
             let showTimer = null;
             let touchTimer = null;
+            let lastTouchMs = 0;
 
             // Converte todos os .tooltip-icon existentes para usar data-tooltip-html
             // (elimina herança de opacity e overflow:hidden dos containers)
@@ -15174,11 +15449,15 @@
             });
 
             function posicionarTip(refEl, content, isHtml) {
+                // Se o elemento foi removido do DOM (re-render), abortar para evitar tooltip em 0,0
+                if (!document.contains(refEl)) return;
                 clearTimeout(hideTimer);
                 if (isHtml) { tip.innerHTML = content; }
                 else { tip.textContent = content; }
                 tip.classList.add('visible');
                 const r = refEl.getBoundingClientRect();
+                // Abortar se o elemento não tem posição válida (oculto ou fora do viewport)
+                if (r.width === 0 && r.height === 0) { tip.classList.remove('visible'); return; }
                 tip.style.left = '0'; tip.style.top = '0';
                 const tw = tip.offsetWidth;
                 const th = tip.offsetHeight;
@@ -15228,7 +15507,7 @@
                 return null;
             }
 
-            // Mouse
+            // Mouse (desktop) — comportamento original, sem guards de touch
             document.addEventListener('mouseover', function(e) {
                 const result = obterTooltip(e.target);
                 if (!result) return;
@@ -15252,19 +15531,43 @@
                 hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
             });
 
-            // Touch: long-press para mostrar, esconde ao mover/rolar/soltar
+            // Touch
+            // Regras:
+            //   • Elementos interativos (input/button/select/textarea/label): NUNCA tooltip por toque
+            //   • tooltip-icon "?": toque simples mostra imediatamente (tratado no touchend)
+            //   • Outros elementos com tooltip explícito: long-press (600 ms)
             document.addEventListener('touchstart', function(e) {
+                lastTouchMs = Date.now();
+                // Interativos: não inicia timer, evita tooltip em qualquer toque
+                if (e.target.closest('input, button, select, textarea, label')) return;
                 const result = obterTooltip(e.target);
                 if (!result) return;
+                const isExplicit = result.el.hasAttribute('data-tooltip') || result.el.hasAttribute('data-tooltip-html');
+                if (!isExplicit) return;
                 clearTimeout(touchTimer);
-                touchTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 500);
+                touchTimer = setTimeout(() => posicionarTip(result.el, result.content, result.isHtml), 600);
             }, { passive: true });
 
             document.addEventListener('touchmove', function() { esconder(); }, { passive: true });
 
-            document.addEventListener('touchend', function() {
+            document.addEventListener('touchend', function(e) {
+                const tapMs = Date.now() - lastTouchMs;
                 clearTimeout(touchTimer);
-                hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
+
+                // Toque simples (< 400 ms) em elemento não-interativo com tooltip explícito → mostra
+                // Isso cobre os ícones "?" que não recebem mouseover sintético por serem <span>
+                if (tapMs < 400 && !e.target.closest('input, button, select, textarea, label')) {
+                    const el = e.target.closest('[data-tooltip-html]') || e.target.closest('[data-tooltip]');
+                    if (el) {
+                        const html = el.getAttribute('data-tooltip-html');
+                        const txt  = el.getAttribute('data-tooltip');
+                        posicionarTip(el, html || txt, !!html);
+                    }
+                }
+
+                if (tip.classList.contains('visible')) {
+                    hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
+                }
             }, { passive: true });
 
             document.addEventListener('touchcancel', function() { esconder(); }, { passive: true });
@@ -15411,39 +15714,54 @@
         <div class="modal-input-content">
             <div class="modal-input-header">
                 <h3>
-                    <span class="modal-header-icon modal-icon-green">
+                    <span class="modal-header-icon modal-icon-green" id="modalSalvarIcone">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     </span>
-                    Salvar Prazo na Agenda
+                    <span id="modalSalvarTitulo">Salvar Prazo na Agenda</span>
                 </h3>
                 <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalInputTitulo()">
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
                 </button>
             </div>
-            <div class="modal-input-body">
-                <div class="modal-input-group">
-                    <label for="inputTituloPrazo">Título do Prazo *</label>
-                    <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+
+            <!-- View 1: Formulário normal -->
+            <div id="modalSalvarViewForm">
+                <div class="modal-input-body">
+                    <div class="modal-input-group">
+                        <label for="inputTituloPrazo">Título do Prazo *</label>
+                        <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="inputDescricaoPrazo">Descrição (opcional)</label>
+                        <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                    </div>
                 </div>
-                <div class="modal-input-group">
-                    <label for="inputDescricaoPrazo">Descrição (opcional)</label>
-                    <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                <div class="modal-input-footer">
+                    <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
+                    <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Salvar na Agenda
+                    </button>
                 </div>
             </div>
-            <div class="modal-input-footer">
-                <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
-                <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
-                    </svg>
-                    Salvar na Agenda
-                </button>
+
+            <!-- View 2: Título padrão (aparece no lugar do formulário) -->
+            <div id="modalSalvarViewPadrao" style="display:none;">
+                <div class="modal-input-body">
+                    <p style="margin:0 0 10px;color:#6b7280;font-size:0.88rem;">Nenhum título foi fornecido. O prazo será salvo com o título gerado automaticamente:</p>
+                    <p id="tituloPadraoSugerido" style="padding:10px 14px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;font-weight:600;font-size:0.9rem;color:#1f2937;word-break:break-word;margin:0;"></p>
+                </div>
+                <div class="modal-input-footer">
+                    <button class="btn btn-secondary" onclick="cancelarTituloPadrao()">Informar título manualmente</button>
+                    <button class="btn btn-success" onclick="confirmarUsarTituloPadrao()">Usar este título</button>
+                </div>
             </div>
         </div>
     </div>
-
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
@@ -15572,8 +15890,14 @@
                     }
                 }
 
-                /* Escape: fecha o modal/aviso aberto (se permitir fechar) */
+                /* Escape: cancela modo de seleção ou fecha modal aberto */
                 if (e.key === 'Escape') {
+                    // Prioridade: modo de seleção
+                    if (typeof modoSelecao !== 'undefined' && modoSelecao) {
+                        sairModoSelecao();
+                        return;
+                    }
+
                     var open = document.querySelector(
                         '.modal.active:not([data-no-backdrop-close]), ' +
                         '.modal-aviso.active, ' +
