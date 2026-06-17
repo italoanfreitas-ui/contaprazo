@@ -1766,9 +1766,11 @@
             color: var(--color-blue-500) !important;
         }
 
-        .btn-nav-today:hover {
-            color: var(--color-blue-600) !important;
-            background: #eff6ff !important;
+        @media (hover: hover) {
+            .btn-nav-today:hover {
+                color: var(--color-blue-600) !important;
+                background: #eff6ff !important;
+            }
         }
 
         /* Quando o mês/ano atual não está visível: pulso radar */
@@ -1781,18 +1783,28 @@
         .btn-nav-today.fora-do-mes::after {
             content: '';
             position: absolute;
-            inset: -4px;
+            inset: -3px;
             border-radius: 50%;
-            border: 2px solid #60a5fa;
+            border: 1.5px solid #93c5fd;
             pointer-events: none;
-            animation: radar-pulse-hoje 2s ease-out infinite;
+            animation: radar-pulse-hoje 3.2s ease-out infinite;
         }
         .btn-nav-today.fora-do-mes::after {
-            animation-delay: 1s;
+            animation-delay: 1.6s;
         }
         @keyframes radar-pulse-hoje {
-            0%   { transform: scale(0.85); opacity: 0.8; }
-            100% { transform: scale(1.6);  opacity: 0; }
+            0%   { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.45); opacity: 0; }
+        }
+        @media (max-width: 600px) {
+            .btn-nav-today.fora-do-mes::before,
+            .btn-nav-today.fora-do-mes::after {
+                inset: -2px;
+            }
+            @keyframes radar-pulse-hoje {
+                0%   { transform: scale(0.92); opacity: 0.65; }
+                100% { transform: scale(1.28); opacity: 0; }
+            }
         }
 
         .btn-nav svg {
@@ -4316,7 +4328,7 @@
 
         .barra-selecao-spacer { flex: 1; min-width: 8px; }
 
-        .barra-selecao-actions { display: flex; gap: 5px; align-items: center; }
+        .barra-selecao-actions { display: flex; gap: 5px; align-items: center; min-height: 32px; }
 
         .btn-selecao-action {
             display: inline-flex; align-items: center; gap: 5px;
@@ -5473,7 +5485,6 @@
             #ordenacaoTexto,
             #textoVerArquivados,
             .agenda-toolbar-btn .btn-label { display: none; }
-            #ordenacaoSetaIcone { display: inline !important; }
         }
 
         @media (max-width: 480px) {
@@ -6513,14 +6524,14 @@
                         <!-- Ordenação dropdown -->
                         <div class="agenda-ordenacao-wrapper" id="agendaOrdenacaoWrapper">
                             <button class="agenda-toolbar-btn" id="btnOrdenacao" onclick="toggleOrdenacaoMenu(event)" title="Ordenar lista">
-                                <svg id="ordenacaoIcone" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                                <svg id="ordenacaoSetaIcone" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none;flex-shrink:0;"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 5 5 12"/></svg>
-                                <span id="ordenacaoTexto">Ordenar</span>
+                                <svg id="ordenacaoIcone" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+                                <span id="ordenacaoTexto">Status</span>
+                                <svg id="ordenacaoSetaIcone" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 5 5 12"/></svg>
                             </button>
                             <div class="agenda-ordenacao-menu" id="agendaOrdenacaoMenu" style="display:none;">
                                 <div class="agenda-ordenacao-grupo-label">Ordenar por</div>
                                 <button class="agenda-ordenacao-opcao ativo" data-modo="status" onclick="setOrdenacao('status')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
                                     Por status (padrão)
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="prazo" onclick="setOrdenacao('prazo')">
@@ -6528,7 +6539,7 @@
                                     Prazo mais próximo
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="alfabetico" onclick="setOrdenacao('alfabetico')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><text x="3" y="18" font-size="18" font-family="Georgia,serif" font-weight="bold" stroke="none" fill="currentColor">A</text></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="12" y2="4"/><line x1="6.5" y1="14" x2="17.5" y2="14"/></svg>
                                     Ordem alfabética
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="criacao" onclick="setOrdenacao('criacao')">
@@ -6536,7 +6547,7 @@
                                     Data de criação
                                 </button>
                                 <div class="agenda-ordenacao-sep"></div>
-                                <div class="agenda-ordenacao-grupo-label">Direção</div>
+                                <div class="agenda-ordenacao-grupo-label">Ordem</div>
                                 <div class="agenda-ordenacao-dir">
                                     <button class="agenda-ordenacao-dir-btn ativo" id="btnDirAsc" onclick="setDirecaoOrdenacao('asc')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
@@ -6594,11 +6605,11 @@
                     <span class="barra-selecao-count"><span id="contadorSelecionados">0</span> selecionado(s)</span>
                     <div class="barra-selecao-div"></div>
                     <button class="btn-selecao-mini" onclick="selecionarTodos()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         Todos
                     </button>
                     <button class="btn-selecao-mini" onclick="selecionarNenhum()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
                         Nenhum
                     </button>
                     <div class="barra-selecao-spacer"></div>
@@ -8811,6 +8822,10 @@
             salvarTiposFeriadoAtivos();
             atualizarPillsTiposFeriado();
 
+            // Resetar visualização do calendário para mensal
+            visualizacaoCalendario = 'mensal';
+            posicionarGliderVisualizacao();
+
             renderizarCalendario();
         }
 
@@ -10513,6 +10528,21 @@
             if (sessionStorage.getItem('updateBannerClosed') === 'true') return;
             if (document.querySelector('[data-toast-id="updateBanner"]')) return;
 
+            // Se há modal aberto, aguardar fechamento para não sobrepor
+            const modalAberto = document.querySelector(
+                '.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active'
+            );
+            if (modalAberto) {
+                const obs = new MutationObserver(() => {
+                    if (!document.querySelector('.modal.active, .modal-aviso.active, .modal-detalhes.active, .modal-input-titulo.active')) {
+                        obs.disconnect();
+                        mostrarBannerAtualizacao(conjuntosAtualizados);
+                    }
+                });
+                obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+                return;
+            }
+
             let titulo, mensagemHTML;
             if (conjuntosAtualizados.length === 1) {
                 const c = conjuntosAtualizados[0];
@@ -11984,6 +12014,9 @@
         }
 
         function trocarPagina(pagina) {
+            // Sair do modo seleção ao trocar de aba
+            if (typeof modoSelecao !== 'undefined' && modoSelecao) sairModoSelecao();
+
             // Inicializa cache se necessário
             if (!cacheDom) inicializarCacheDom();
 
@@ -12748,10 +12781,12 @@
                 }
                 return;
             }
-            document.getElementById('inputTituloPrazo').value = descricaoPrazo || '';
+            const inputTitulo = document.getElementById('inputTituloPrazo');
+            inputTitulo.value = descricaoPrazo || '';
+            inputTitulo.placeholder = gerarTituloFallbackExport() || 'Ex: Recurso Processo 12345';
             document.getElementById('inputDescricaoPrazo').value = '';
             document.getElementById('modalInputTitulo').classList.add('active');
-            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 100);
+            setTimeout(() => { inputTitulo.focus(); }, 100);
         }
 
         // Fechar modal de input
@@ -12761,14 +12796,42 @@
             document.getElementById('inputDescricaoPrazo').value = '';
         }
 
+        // Modal de título padrão
+        function confirmarUsarTituloPadrao() {
+            const titulo = document.getElementById('tituloPadraoSugerido').textContent;
+            document.getElementById('modalTituloPadrao').classList.remove('active');
+            fecharModalInputTitulo();
+            confirmarSalvarPrazo(titulo);
+        }
+
+        function cancelarTituloPadrao() {
+            document.getElementById('modalTituloPadrao').classList.remove('active');
+            // Retorna ao modal de salvar com foco no título
+            setTimeout(() => {
+                document.getElementById('inputTituloPrazo').focus();
+            }, 100);
+        }
+
+        // Gera título único sem colisão com prazos existentes
+        function gerarTituloUnico(tituloBase) {
+            if (!prazos.some(p => p.titulo === tituloBase)) return tituloBase;
+            let i = 2;
+            while (prazos.some(p => p.titulo === `${tituloBase} #${i}`)) i++;
+            return `${tituloBase} #${i}`;
+        }
+
         // Confirmar e salvar prazo
-        function confirmarSalvarPrazo() {
-            const titulo = document.getElementById('inputTituloPrazo').value.trim();
+        function confirmarSalvarPrazo(tituloForçado) {
+            const titulo = tituloForçado || document.getElementById('inputTituloPrazo').value.trim();
             const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
 
             if (!titulo) {
-                mostrarNotificacao('Por favor, digite um título para o prazo.', 'aviso');
-                document.getElementById('inputTituloPrazo').focus();
+                // Gerar título padrão e mostrar modal de confirmação
+                const base = descricaoPrazo || gerarTituloFallbackExport() || 'Prazo sem título';
+                const tituloPadrao = gerarTituloUnico(base);
+                document.getElementById('tituloPadraoSugerido').textContent = tituloPadrao;
+                document.getElementById('modalTituloPadrao').classList.add('active');
+                tocarSomToast('aviso');
                 return;
             }
 
@@ -14382,28 +14445,26 @@
 
         function atualizarBtnOrdenacao() {
             const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'A–Z', criacao: 'Criação' };
-            const seta = ordenacaoAtual.direcao === 'asc' ? ' ↑' : ' ↓';
             const el = document.getElementById('ordenacaoTexto');
-            if (el) el.textContent = (labels[ordenacaoAtual.modo] || 'Ordenar') + seta;
+            if (el) el.textContent = labels[ordenacaoAtual.modo] || 'Ordenar';
 
             // Ícones por modo de ordenação
             const icones = {
-                status:    '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+                status:    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>',
                 prazo:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-                alfabetico:'<text x="3" y="18" font-size="18" font-family="Georgia,serif" font-weight="bold" stroke="none" fill="currentColor">A</text>',
+                alfabetico:'<line x1="4" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="12" y2="4"/><line x1="6.5" y1="14" x2="17.5" y2="14"/>',
                 criacao:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
             };
             const iconeEl = document.getElementById('ordenacaoIcone');
             if (iconeEl) iconeEl.innerHTML = icones[ordenacaoAtual.modo] || icones.status;
 
-            // Seta direcional (visível apenas no modo compacto via CSS)
+            // Seta direcional (sempre visível, após o texto)
             const setaEl = document.getElementById('ordenacaoSetaIcone');
             if (setaEl) {
                 const asc = ordenacaoAtual.direcao === 'asc';
                 setaEl.innerHTML = asc
                     ? '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 5 5 12"/>'
                     : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="5 12 12 19 19 12"/>';
-                setaEl.style.display = '';
             }
         }
 
@@ -15290,11 +15351,15 @@
             });
 
             function posicionarTip(refEl, content, isHtml) {
+                // Se o elemento foi removido do DOM (re-render), abortar para evitar tooltip em 0,0
+                if (!document.contains(refEl)) return;
                 clearTimeout(hideTimer);
                 if (isHtml) { tip.innerHTML = content; }
                 else { tip.textContent = content; }
                 tip.classList.add('visible');
                 const r = refEl.getBoundingClientRect();
+                // Abortar se o elemento não tem posição válida (oculto ou fora do viewport)
+                if (r.width === 0 && r.height === 0) { tip.classList.remove('visible'); return; }
                 tip.style.left = '0'; tip.style.top = '0';
                 const tw = tip.offsetWidth;
                 const th = tip.offsetHeight;
@@ -15383,9 +15448,10 @@
 
             document.addEventListener('touchend', function() {
                 clearTimeout(touchTimer);
-                // Esconde rapidamente se o tooltip não for de long-press explícito
+                // Se o tooltip foi mostrado por long-press, esconde após curto delay
+                // Se não estava visível, não faz nada
                 if (tip.classList.contains('visible')) {
-                    hideTimer = setTimeout(() => tip.classList.remove('visible'), 1800);
+                    hideTimer = setTimeout(() => tip.classList.remove('visible'), 1200);
                 }
             }, { passive: true });
 
@@ -15566,6 +15632,22 @@
         </div>
     </div>
 
+    <!-- Modal: Título Padrão para Prazo -->
+    <div id="modalTituloPadrao" class="modal-aviso" data-no-backdrop-close>
+        <div class="modal-aviso-content">
+            <div class="modal-aviso-icon modal-icon-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3>Título não informado</h3>
+            <p>Nenhum título foi fornecido. O prazo será salvo com o título gerado automaticamente:</p>
+            <p style="margin:8px 0 0;padding:8px 12px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;font-weight:600;font-size:0.9rem;color:#1f2937;word-break:break-word;" id="tituloPadraoSugerido"></p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;">
+                <button class="btn btn-secondary" onclick="cancelarTituloPadrao()">Informar manualmente</button>
+                <button class="btn btn-success" onclick="confirmarUsarTituloPadrao()">Usar este título</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
@@ -15694,8 +15776,14 @@
                     }
                 }
 
-                /* Escape: fecha o modal/aviso aberto (se permitir fechar) */
+                /* Escape: cancela modo de seleção ou fecha modal aberto */
                 if (e.key === 'Escape') {
+                    // Prioridade: modo de seleção
+                    if (typeof modoSelecao !== 'undefined' && modoSelecao) {
+                        sairModoSelecao();
+                        return;
+                    }
+
                     var open = document.querySelector(
                         '.modal.active:not([data-no-backdrop-close]), ' +
                         '.modal-aviso.active, ' +
