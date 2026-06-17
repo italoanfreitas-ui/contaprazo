@@ -4203,7 +4203,7 @@
         }
         .agenda-ordenacao-opcao:hover { background: #f9fafb; }
         .agenda-ordenacao-opcao.ativo { background: #eff6ff; color: var(--color-blue-600); font-weight: 600; }
-        .agenda-ordenacao-opcao.ativo svg { stroke: var(--color-blue-600); }
+        .agenda-ordenacao-opcao.ativo svg { stroke: var(--color-blue-600); color: var(--color-blue-600); }
         .agenda-ordenacao-opcao svg { width: 14px; height: 14px; stroke-width: 2; flex-shrink: 0; color: #9ca3af; }
         .agenda-ordenacao-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
         .agenda-ordenacao-dir {
@@ -4309,6 +4309,8 @@
             color: var(--color-blue-600); background: #eff6ff;
             padding: 3px 10px; border-radius: 20px;
             white-space: nowrap; flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+            min-width: 7.5ch; text-align: center;
         }
 
         .barra-selecao-div {
@@ -6539,8 +6541,8 @@
                                     Prazo mais próximo
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="alfabetico" onclick="setOrdenacao('alfabetico')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="12" y2="4"/><line x1="6.5" y1="14" x2="17.5" y2="14"/></svg>
-                                    Ordem alfabética
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="14" x2="10" y2="14"/><line x1="3" y1="20" x2="7" y2="20"/><polyline points="17 4 17 20"/><polyline points="13 16 17 20 21 16"/></svg>
+                                    Alfabética
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="criacao" onclick="setOrdenacao('criacao')">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -6602,7 +6604,7 @@
                     <button class="barra-selecao-cancel" onclick="sairModoSelecao()" title="Cancelar seleção">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
-                    <span class="barra-selecao-count"><span id="contadorSelecionados">0</span> selecionado(s)</span>
+                    <span class="barra-selecao-count" id="contadorSelecionados">0 selecionado(s)</span>
                     <div class="barra-selecao-div"></div>
                     <button class="btn-selecao-mini" onclick="selecionarTodos()">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -8827,6 +8829,7 @@
             posicionarGliderVisualizacao();
 
             renderizarCalendario();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Aplica auto-desmarque de fixos/móveis ao ativar perfil (se não houver preferência salva)
@@ -12789,27 +12792,44 @@
             setTimeout(() => { inputTitulo.focus(); }, 100);
         }
 
-        // Fechar modal de input
+        // Fechar modal de input (reseta para view padrão)
         function fecharModalInputTitulo() {
             document.getElementById('modalInputTitulo').classList.remove('active');
             document.getElementById('inputTituloPrazo').value = '';
             document.getElementById('inputDescricaoPrazo').value = '';
+            _resetarViewModalSalvar();
         }
 
-        // Modal de título padrão
+        function _resetarViewModalSalvar() {
+            document.getElementById('modalSalvarViewForm').style.display = '';
+            document.getElementById('modalSalvarViewPadrao').style.display = 'none';
+            const icone = document.getElementById('modalSalvarIcone');
+            icone.className = 'modal-header-icon modal-icon-green';
+            icone.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+            document.getElementById('modalSalvarTitulo').textContent = 'Salvar Prazo na Agenda';
+        }
+
+        // Morfa o modal para a view de título padrão
+        function _mostrarViewTituloPadrao(titulo) {
+            document.getElementById('tituloPadraoSugerido').textContent = titulo;
+            document.getElementById('modalSalvarViewForm').style.display = 'none';
+            document.getElementById('modalSalvarViewPadrao').style.display = '';
+            const icone = document.getElementById('modalSalvarIcone');
+            icone.className = 'modal-header-icon modal-icon-amber';
+            icone.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            document.getElementById('modalSalvarTitulo').textContent = 'Título não informado';
+            tocarSomToast('aviso');
+        }
+
         function confirmarUsarTituloPadrao() {
             const titulo = document.getElementById('tituloPadraoSugerido').textContent;
-            document.getElementById('modalTituloPadrao').classList.remove('active');
             fecharModalInputTitulo();
             confirmarSalvarPrazo(titulo);
         }
 
         function cancelarTituloPadrao() {
-            document.getElementById('modalTituloPadrao').classList.remove('active');
-            // Retorna ao modal de salvar com foco no título
-            setTimeout(() => {
-                document.getElementById('inputTituloPrazo').focus();
-            }, 100);
+            _resetarViewModalSalvar();
+            setTimeout(() => { document.getElementById('inputTituloPrazo').focus(); }, 80);
         }
 
         // Gera título único sem colisão com prazos existentes
@@ -12826,12 +12846,10 @@
             const descricao = document.getElementById('inputDescricaoPrazo').value.trim();
 
             if (!titulo) {
-                // Gerar título padrão e mostrar modal de confirmação
+                // Morfa o modal para a view de título padrão
                 const base = descricaoPrazo || gerarTituloFallbackExport() || 'Prazo sem título';
                 const tituloPadrao = gerarTituloUnico(base);
-                document.getElementById('tituloPadraoSugerido').textContent = tituloPadrao;
-                document.getElementById('modalTituloPadrao').classList.add('active');
-                tocarSomToast('aviso');
+                _mostrarViewTituloPadrao(tituloPadrao);
                 return;
             }
 
@@ -14444,7 +14462,7 @@
         }
 
         function atualizarBtnOrdenacao() {
-            const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'A–Z', criacao: 'Criação' };
+            const labels = { status: 'Status', prazo: 'Prazo', alfabetico: 'Alfabética', criacao: 'Criação' };
             const el = document.getElementById('ordenacaoTexto');
             if (el) el.textContent = labels[ordenacaoAtual.modo] || 'Ordenar';
 
@@ -14452,7 +14470,7 @@
             const icones = {
                 status:    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>',
                 prazo:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-                alfabetico:'<line x1="4" y1="20" x2="12" y2="4"/><line x1="20" y1="20" x2="12" y2="4"/><line x1="6.5" y1="14" x2="17.5" y2="14"/>',
+                alfabetico:'<line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="14" x2="10" y2="14"/><line x1="3" y1="20" x2="7" y2="20"/><polyline points="17 4 17 20"/><polyline points="13 16 17 20 21 16"/>',
                 criacao:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
             };
             const iconeEl = document.getElementById('ordenacaoIcone');
@@ -14597,11 +14615,18 @@
             }
 
             // Atualizar contador
-            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+            document.getElementById('contadorSelecionados').textContent =
+                `${prazosSelecionados.size} selecionado(s)`;
 
-            // Re-renderizar ações e checkboxes
+            // Atualizar apenas o checkbox do item tocado (evita reflow total da lista)
+            const itemEl = document.querySelector(`.prazo-item[data-id="${id}"]`);
+            if (itemEl) {
+                const cb = itemEl.querySelector('.checkbox-selecao');
+                if (cb) cb.classList.toggle('selecionado', prazosSelecionados.has(id));
+            }
+
+            // Atualizar botões de ação (dinâmicos conforme seleção)
             renderizarMenuAcoesSelecao();
-            renderizarPrazos();
         }
 
         function selecionarTodos() {
@@ -14621,7 +14646,7 @@
             });
 
             // Atualizar contador
-            document.getElementById('contadorSelecionados').textContent = prazosSelecionados.size;
+            document.getElementById('contadorSelecionados').textContent = `${prazosSelecionados.size} selecionado(s)`;
 
             // Re-renderizar
             renderizarMenuAcoesSelecao();
@@ -15599,55 +15624,54 @@
         <div class="modal-input-content">
             <div class="modal-input-header">
                 <h3>
-                    <span class="modal-header-icon modal-icon-green">
+                    <span class="modal-header-icon modal-icon-green" id="modalSalvarIcone">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     </span>
-                    Salvar Prazo na Agenda
+                    <span id="modalSalvarTitulo">Salvar Prazo na Agenda</span>
                 </h3>
                 <button class="modal-close-btn" aria-label="Fechar" onclick="fecharModalInputTitulo()">
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
                 </button>
             </div>
-            <div class="modal-input-body">
-                <div class="modal-input-group">
-                    <label for="inputTituloPrazo">Título do Prazo *</label>
-                    <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+
+            <!-- View 1: Formulário normal -->
+            <div id="modalSalvarViewForm">
+                <div class="modal-input-body">
+                    <div class="modal-input-group">
+                        <label for="inputTituloPrazo">Título do Prazo *</label>
+                        <input type="text" id="inputTituloPrazo" placeholder="Ex: Recurso Processo 12345" autocomplete="off" required>
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="inputDescricaoPrazo">Descrição (opcional)</label>
+                        <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                    </div>
                 </div>
-                <div class="modal-input-group">
-                    <label for="inputDescricaoPrazo">Descrição (opcional)</label>
-                    <textarea id="inputDescricaoPrazo" placeholder="Detalhes adicionais sobre o prazo..." rows="3"></textarea>
+                <div class="modal-input-footer">
+                    <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
+                    <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Salvar na Agenda
+                    </button>
                 </div>
             </div>
-            <div class="modal-input-footer">
-                <button class="btn btn-secondary" onclick="fecharModalInputTitulo()">Cancelar</button>
-                <button class="btn btn-success" onclick="confirmarSalvarPrazo()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
-                    </svg>
-                    Salvar na Agenda
-                </button>
+
+            <!-- View 2: Título padrão (aparece no lugar do formulário) -->
+            <div id="modalSalvarViewPadrao" style="display:none;">
+                <div class="modal-input-body">
+                    <p style="margin:0 0 10px;color:#6b7280;font-size:0.88rem;">Nenhum título foi fornecido. O prazo será salvo com o título gerado automaticamente:</p>
+                    <p id="tituloPadraoSugerido" style="padding:10px 14px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;font-weight:600;font-size:0.9rem;color:#1f2937;word-break:break-word;margin:0;"></p>
+                </div>
+                <div class="modal-input-footer">
+                    <button class="btn btn-secondary" onclick="cancelarTituloPadrao()">Informar título manualmente</button>
+                    <button class="btn btn-success" onclick="confirmarUsarTituloPadrao()">Usar este título</button>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal: Título Padrão para Prazo -->
-    <div id="modalTituloPadrao" class="modal-aviso" data-no-backdrop-close>
-        <div class="modal-aviso-content">
-            <div class="modal-aviso-icon modal-icon-amber">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            </div>
-            <h3>Título não informado</h3>
-            <p>Nenhum título foi fornecido. O prazo será salvo com o título gerado automaticamente:</p>
-            <p style="margin:8px 0 0;padding:8px 12px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb;font-weight:600;font-size:0.9rem;color:#1f2937;word-break:break-word;" id="tituloPadraoSugerido"></p>
-            <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;">
-                <button class="btn btn-secondary" onclick="cancelarTituloPadrao()">Informar manualmente</button>
-                <button class="btn btn-success" onclick="confirmarUsarTituloPadrao()">Usar este título</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Input invisível para importação de arquivo -->
     <input type="file" id="inputImportAgenda" accept=".json" style="display: none;" onchange="processarImportAgenda(event)">
 
