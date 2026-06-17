@@ -6564,7 +6564,7 @@
                                     Prazo mais próximo
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="alfabetico" onclick="setOrdenacao('alfabetico')">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="14" x2="10" y2="14"/><line x1="3" y1="20" x2="7" y2="20"/><polyline points="17 4 17 20"/><polyline points="13 16 17 20 21 16"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L4 21"/><path d="M12 3L20 21"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="2" y1="21" x2="6" y2="21"/><line x1="18" y1="21" x2="22" y2="21"/></svg>
                                     Alfabética
                                 </button>
                                 <button class="agenda-ordenacao-opcao" data-modo="criacao" onclick="setOrdenacao('criacao')">
@@ -7523,12 +7523,12 @@
                     const s = JSON.parse(salvo);
                     feriadosFixosAtivos = s.fixos !== undefined ? s.fixos : true;
                     feriadosMoveisAtivos = s.moveis !== undefined ? s.moveis : true;
-                    feriadosPersonalizadosAtivos = s.personalizados !== undefined ? s.personalizados : true;
                 } else {
                     feriadosFixosAtivos = true;
                     feriadosMoveisAtivos = true;
-                    feriadosPersonalizadosAtivos = true;
                 }
+                // "Nenhum" = sem feriados personalizados carregados; forçar desativado
+                feriadosPersonalizadosAtivos = false;
                 salvarTiposFeriadoAtivos();
                 atualizarPillsTiposFeriado();
             } else {
@@ -10061,6 +10061,7 @@
 
             try {
                 let criados = 0, sobrescritos = 0, semDados = 0;
+                let perfilAtivoFoiSobrescrito = false;
 
                 for (const cb of checkboxes) {
                     const nomePerfil = (cb.dataset.id2 || '').substring(0, MAX_NOME_PERFIL);
@@ -10069,6 +10070,9 @@
 
                     const existingIdx = perfisData.findIndex(p => p.nome.toLowerCase() === nomePerfil.toLowerCase());
                     if (existingIdx >= 0) {
+                        if (perfilAtivoId && perfisData[existingIdx].id === perfilAtivoId) {
+                            perfilAtivoFoiSobrescrito = true;
+                        }
                         perfisData.splice(existingIdx, 1);
                         sobrescritos++;
                     } else {
@@ -10081,6 +10085,7 @@
                     perfisData.push({
                         id: 'perfil_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
                         nome: nomePerfil,
+                        tiposFeriado: { fixos: false, moveis: false, personalizados: true },
                         feriados: dados.feriados.map(f => ({ ...f, arquivo: cb.dataset.arquivo })),
                         conjuntosImportados: [{
                             nome: cb.dataset.nome,
@@ -10095,8 +10100,16 @@
                 }
 
                 salvarPerfisNoLocalStorage();
-                atualizarDropdownPerfis();
-                renderizarDropdownPerfilCalculo();
+
+                // Se o perfil ativo foi sobrescrito, seu ID sumiu: migrar para "Nenhum"
+                if (perfilAtivoFoiSobrescrito) {
+                    atualizarDropdownPerfis();
+                    efetuarTrocaPerfil(null);
+                } else {
+                    atualizarDropdownPerfis();
+                    renderizarDropdownPerfilCalculo();
+                    atualizarUIPerfilAtivo();
+                }
 
                 // Atualiza conjuntosPredefinidosImportados com os metadados dos conjuntos
                 // recém-importados (com links[] corretos), para que o estado global não
@@ -14486,7 +14499,7 @@
             const icones = {
                 status:    '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>',
                 prazo:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-                alfabetico:'<line x1="3" y1="8" x2="13" y2="8"/><line x1="3" y1="14" x2="10" y2="14"/><line x1="3" y1="20" x2="7" y2="20"/><polyline points="17 4 17 20"/><polyline points="13 16 17 20 21 16"/>',
+                alfabetico:'<path d="M12 3L4 21"/><path d="M12 3L20 21"/><line x1="7" y1="15" x2="17" y2="15"/><line x1="2" y1="21" x2="6" y2="21"/><line x1="18" y1="21" x2="22" y2="21"/>',
                 criacao:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
             };
             const iconeEl = document.getElementById('ordenacaoIcone');
