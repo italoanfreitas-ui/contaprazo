@@ -15466,8 +15466,11 @@
 
             // Mouse
             document.addEventListener('mouseover', function(e) {
-                // Ignora mouseover sintético disparado por touch (~300ms após toque)
-                if (Date.now() - lastTouchMs < 600) return;
+                // Suprime mouseover sintético de toque em controles interativos
+                // (checkbox, button, input, etc.) — ícones "?" não são interativos
+                // e continuam funcionando com toque simples via mouseover sintético
+                if (Date.now() - lastTouchMs < 600 &&
+                    e.target.closest('input, button, select, textarea, label')) return;
                 const result = obterTooltip(e.target);
                 if (!result) return;
                 clearTimeout(showTimer);
