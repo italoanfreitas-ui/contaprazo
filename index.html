@@ -10406,77 +10406,9 @@
             }
         }
 
-        // ==================== FUNÇÕES AUXILIARES PARA EXPORTS ====================
+        // ==================== RELATÓRIOS (PDF / PNG) ====================
+        // Um único gerador, usado pela calculadora e pela Minha Agenda, resumido ou completo.
 
-        /**
-         * Gera HTML de nota de rodapé com os conjuntos de feriados online utilizados.
-         * Retorna string vazia se não houver nenhum conjunto importado.
-         * @param {string} [contexto='print'] - 'print' para PDF, 'image' para PNG
-         */
-        function gerarHTMLConjuntosNota(contexto = 'print') {
-            if (!usarDiasUteis) return '';
-            const conjuntos = obterMetadataConjuntos();
-            if (!conjuntos || conjuntos.length === 0) return '';
-            // Só exibe conjuntos que realmente contribuíram com feriados no cálculo atual
-            const arquivosAtivos = new Set(feriadosArquivoMap.values());
-            const conjuntosAtivos = conjuntos.filter(c => arquivosAtivos.has(c.arquivo));
-            if (conjuntosAtivos.length === 0) return '';
-
-            const itensHTML = conjuntosAtivos.map(c => {
-                const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
-                const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
-                const links = obterLinksDoConjunto(c);
-                // Links clicáveis apenas no PDF (PNG é bitmap, sem hiperlinks)
-                const linksHTML = contexto === 'print' && links.length > 0
-                    ? ' ' + links.map(l => `<a href="${escapeHtml(l.url)}" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;font-size:11px;" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join(' · ')
-                    : '';
-                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linksHTML}</div>`;
-            }).join('');
-
-            return `
-                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
-                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
-                    ${itensHTML}
-                </div>
-            `;
-        }
-
-        function _gerarHTMLConjuntosNotaPrazo(prazo, contexto) {
-            if (prazo.tipoDias !== 'uteis') return '';
-            const conjuntos = prazo.conjuntosMetadata;
-            if (!conjuntos || conjuntos.length === 0) return '';
-
-            const itensHTML = conjuntos.map(c => {
-                const nomeHTML = `<span style="font-weight: 600; color: #374151;">${escapeHtml(c.nome)}</span>`;
-                const descHTML = c.descricao ? `<span style="color: #6b7280;"> — ${escapeHtml(c.descricao)}</span>` : '';
-                const links = obterLinksDoConjunto(c);
-                const linksHTML = contexto === 'print' && links.length > 0
-                    ? ' ' + links.map(l => `<a href="${escapeHtml(l.url)}" style="color:#9ca3af;text-decoration:underline;text-underline-offset:2px;font-size:11px;" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join(' · ')
-                    : '';
-                return `<div style="margin-top: 6px;">${nomeHTML}${descHTML}${linksHTML}</div>`;
-            }).join('');
-
-            return `
-                <div style="margin-top: 30px; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #6b7280;">
-                    <div style="font-weight: 600; color: #4b5563; margin-bottom: 4px; letter-spacing: 0.02em; text-transform: uppercase; font-size: 11px;">Feriados online utilizados</div>
-                    ${itensHTML}
-                </div>
-            `;
-        }
-
-        /**
-         * Gera o cabeçalho HTML padronizado para exports PDF/PNG
-         * @param {Object} params - Parâmetros do cabeçalho
-         * @param {string} params.dataInicioFormatada - Data inicial formatada
-         * @param {string} params.dataFinalFormatada - Data final formatada
-         * @param {string} params.tipoDias - "Úteis" ou "Corridos"
-         * @param {number} params.diasContados - Quantidade de dias contados
-         * @param {string} params.descricaoHTML - HTML da descrição (opcional)
-         * @param {string} params.conteudoEspecifico - HTML do conteúdo específico (visualização ou lista)
-         * @param {string} params.diasVisuaisHTML - HTML da visualização dos dias (opcional, para incluir dentro do header)
-         * @param {string} params.estilosAdicionais - CSS adicional (opcional)
-         * @returns {string} HTML completo do documento
-         */
         function sanitizarTituloPDF(descricao) {
             if (!descricao || descricao.trim() === '') return '';
             return descricao
@@ -10486,315 +10418,358 @@
                 .substring(0, 100);
         }
 
-        function gerarCabecalhoExportHTML(params) {
-            const {
-                dataInicioFormatada,
-                dataFinalFormatada,
-                tipoDias,
-                diasContados,
-                descricaoHTML = '',
-                conteudoEspecifico,
-                diasVisuaisHTML = '',
-                estilosAdicionais = '',
-                conjuntosHTML = '',
-                titulo = ''
-            } = params;
-
-            const tituloDoc = titulo ? `ContaPrazo - ${titulo}` : 'Cálculo de Prazo - ContaPrazo';
-
-            // Partes da data final para o novo layout (hero)
-            const dfObj = dataFinal;
-            const exportDiaNum   = dfObj.getDate();
-            const exportMesNome  = dfObj.toLocaleDateString('pt-BR', { month: 'long' });
-            const exportAno      = dfObj.getFullYear();
-            const exportDiaSem   = dfObj.toLocaleDateString('pt-BR', { weekday: 'long' });
-            const exportDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-
-            return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>${tituloDoc}</title>
-    <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: #fff; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
-        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; }
-        .brand-name { display: flex; align-items: center; line-height: 1; }
-        .brand-conta { color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-prazo { color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0 0 0 2px; line-height: 1; display: inline-flex; align-items: center; }
-        .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-        /* ── Hero card ── */
-        .header { background: #f0fdf4; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
-        .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
-        .header-body { padding: 24px 28px 20px; }
-        .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
-        .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-        .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
-        .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-        .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
-        .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
-        .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-        .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
-        /* Info legada — usada apenas pelo conteúdo específico abaixo do hero */
-        .info { margin: 15px 0; font-size: 16px; }
-        .destaque { color: #15803d; font-size: 18px; font-weight: bold; }
-        @media print {
-            body { padding: 15px; }
-            .no-print { display: none; }
-        }
-        ${estilosAdicionais}
-    </style>
-</head>
-<body>
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
-    </div>
-    <div class="header">
-        <div class="header-accent"></div>
-        <div class="header-body">
-            <div class="header-label">&#128197; Prazo Calculado</div>
-            ${descricaoHTML}
-            <div class="header-date">${exportDiaNum} de ${exportMesNome} de ${exportAno}</div>
-            <div class="header-weekday">${exportDiaSem}</div>
-            <div class="header-chips">
-                <div class="header-chip">
-                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
-                    <div class="chip-value">${exportDtInicio}</div>
-                </div>
-                <div class="header-chip">
-                    <div class="chip-label">Dias contados</div>
-                    <div class="chip-value">${diasContados} dias ${tipoDias.toLowerCase()}</div>
-                </div>
-                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
-                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
-                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
-                </div>` : ''}
-            </div>
-            ${diasVisuaisHTML}
-            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-        </div>
-    </div>
-    ${conteudoEspecifico}
-    ${conjuntosHTML}
-    <div class="no-print" style="text-align:center; margin-top:28px; padding:18px; background:#fef3c7; border-radius:8px;">
-        <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
-        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top:14px; padding:10px 20px; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
-            🖨️ Imprimir / Salvar como PDF
-        </button>
-    </div>
-</body>
-</html>`;
+        function _nomeRegraRelatorio(r) {
+            if (!r) return null;
+            const p = REGRAS_CONTAGEM.find(x => x.ini === r.ini && x.uteis === r.uteis &&
+                (x.uteis || (x.prorrogar === !!r.prorrogar && x.s310 === !!r.s310)));
+            if (p && !r.personalizada) return { titulo: p.titulo, ref: p.ref };
+            return {
+                titulo: 'Personalizada',
+                ref: [r.uteis ? 'Dias úteis' : 'Dias corridos', 'dia informado ' + MARCOS_INICIAIS[r.ini].conta,
+                      !r.uteis ? (r.prorrogar ? 'prorroga' : 'não prorroga') : null].filter(Boolean).join(' · ')
+            };
         }
 
-        // ==================== FUNÇÕES DE EXPORTAÇÃO ====================
+        // Marcos derivados dos próprios dias (servem também para prazos salvos)
+        function _marcosRelatorio(regra, ini, dias) {
+            const dia1 = dias[0].data;
+            const vespera = new Date(dia1); vespera.setDate(vespera.getDate() - 1);
+            const r = regra || {};
+            const publicacao = r.ini === 'disp' ? vespera : null;
+            const inicioAdiado = (!r.uteis && r.s310 && r.ini === 'pub' && formatarDataCompleta(vespera) !== formatarDataCompleta(ini)) ? dia1 : null;
+            const iExt = dias.findIndex(d => d.prorrogacao);
+            const prorrogadoDe = iExt > 0 ? dias[iExt - 1].data : null;
+            return { publicacao, inicioAdiado, prorrogadoDe };
+        }
 
-        function exportarPDFResumido() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
-                return;
-            }
+        function _dadosRelatorioCalculo() {
+            const regra = infoCalculo ? infoCalculo.regra : { ...regraContagem };
+            const ini = new Date(dataInicio + 'T00:00:00');
+            const dias = todosOsDias.map(d => {
+                const tipo = ehFeriado(d.data) ? getTipoFeriado(d.data) : null;
+                const kind = tipo === 'personalizado' ? 'per' : (tipo ? 'nac' : null);
+                return {
+                    data: d.data, contado: d.contado, numero: d.numero, prorrogacao: !!d.prorrogacao, kind,
+                    nome: kind ? (obterNomeFeriado(d.data) || 'Feriado/Ponto Facultativo') : null,
+                    link: kind === 'per' ? _linkAtoNormativo(d.data) : null
+                };
+            });
+            const arquivosAtivos = new Set(feriadosArquivoMap.values());
+            const conjuntos = regraUsaFeriados() ? obterMetadataConjuntos().filter(c => arquivosAtivos.has(c.arquivo)) : [];
+            return {
+                titulo: descricaoPrazo || gerarTituloFallbackExport(), descricao: descricaoPrazo,
+                ini, fim: new Date(dataFinal), n: parseInt(diasUteis, 10), uteis: usarDiasUteis, regra,
+                dias, conjuntos, ..._marcosRelatorio(regra, ini, todosOsDias)
+            };
+        }
 
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
-            }
-
-            // Gerar visualização dos dias
-            let diasVisuaisHTML = '';
-            const inicioDataPDF = new Date(dataInicio + 'T00:00:00');
-
-            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
-            if (usarDiasUteis) {
-                const diaNum = inicioDataPDF.getDate();
-                const nomeMes = inicioDataPDF.toLocaleDateString('pt-BR', { month: 'short' });
-                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #18181b; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
-            }
-
-            todosOsDias.forEach((dia, index) => {
-                const diaNum = dia.data.getDate();
-                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
-                const isInicio = !usarDiasUteis && index === 0;
-                const isFinal = index === todosOsDias.length - 1;
-
-                const ehFds = ehFimDeSemana(dia.data);
-                const ehFer = ehFeriado(dia.data);
-                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
-                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
-
-                let cor = '#bfdbfe';
-                let borda = 'none';
-                let textoCor = '#1e40af';
-
-                if (isInicio) {
-                    cor = '#18181b';
-                    borda = 'none';
-                    textoCor = '#ffffff';
-                } else if (isFinal) {
-                    cor = '#6366f1';
-                    borda = 'none';
-                    textoCor = '#ffffff';
-                } else if (usarDiasUteis) {
-                    if (ehPersonalizado) {
-                        cor = '#e9d5ff';
-                        borda = 'none';
-                        textoCor = '#6b21a8';
-                    } else if (ehFer) {
-                        cor = '#fecdd3';
-                        borda = 'none';
-                        textoCor = '#9f1239';
-                    } else if (ehFds) {
-                        cor = '#d4d4d8';
-                        borda = 'none';
-                        textoCor = '#52525b';
+        function _dadosRelatorioPrazo(prazo) {
+            const uteis = prazo.tipoDias === 'uteis';
+            const regra = prazo.regraContagem || { ini: 'pub', uteis, prorrogar: false, s310: false };
+            const pers = new Map();
+            ((prazo.feriadosUsados && prazo.feriadosUsados.personalizados) || []).forEach(p => {
+                if (Array.isArray(p)) pers.set(p[0], p[1]); else pers.set(p.data, p.nome);
+            });
+            const dias = prazo.detalhamentoDias.map(d => {
+                const ds = formatarDataCompleta(d.data);
+                const m = d.motivo || '';
+                // nome do feriado a partir do motivo gravado
+                let nome = null;
+                if (m.startsWith('Final de Semana e ')) nome = m.slice('Final de Semana e '.length);
+                else if (/^Dia \d+ - /.test(m)) { const x = m.replace(/^Dia \d+ - /, ''); nome = x === 'Final de Semana' ? null : x.replace(/^Final de Semana e /, ''); }
+                else if (!d.contado && m && m !== 'Final de Semana' && m !== 'Prorrogação') nome = m;
+                let kind = null;
+                if (pers.has(ds)) { kind = 'per'; nome = pers.get(ds) || nome || 'Feriado personalizado'; }
+                else if (nome) kind = 'nac';
+                let link = null;
+                if (kind === 'per') {
+                    const url = _obterLinkFeriadoDoPrazo(d, prazo.conjuntosMetadata);
+                    if (url) {
+                        const c = (prazo.conjuntosMetadata || []).find(x => x.arquivo === d.arquivo);
+                        const l = c ? obterLinksDoConjunto(c).find(x => x.url === url) : null;
+                        link = { url, rotulo: (l && l.rotulo) || 'Ver ato normativo' };
                     }
                 }
-
-                let mesIndicador = '';
-                let mostrarMes;
-                if (usarDiasUteis && index === 0) {
-                    // Chip da data do ato já mostrou o mês; só repete se for mês diferente
-                    mostrarMes = dia.data.getMonth() !== inicioDataPDF.getMonth() || dia.data.getFullYear() !== inicioDataPDF.getFullYear();
-                } else {
-                    mostrarMes = index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth();
-                }
-                if (mostrarMes) {
-                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
-                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                }
-
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
+                return { data: d.data, contado: d.contado, numero: d.numero, prorrogacao: !!d.prorrogacao, kind, nome, link };
             });
+            return {
+                titulo: prazo.titulo, descricao: prazo.descricao,
+                ini: new Date(prazo.dataInicio), fim: new Date(prazo.dataFinal), n: prazo.diasSolicitados, uteis, regra,
+                dias, conjuntos: prazo.conjuntosMetadata || [], ..._marcosRelatorio(regra, prazo.dataInicio, prazo.detalhamentoDias)
+            };
+        }
 
-            // Formatar visualização dos dias com legenda para incluir dentro do header
-            const labelInicioChip = 'Início';
-            const diasVisuaisHTMLFormatado = `
-                <div class="info" style="margin-top: 25px; border-top: 2px solid #e5e7eb; padding-top: 20px;">
-                    <div style="margin-bottom: 12px;"><strong>Dias considerados:</strong></div>
-                    <div style="line-height: 36px; text-align: left;">${diasVisuaisHTML}</div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #18181b; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChip}</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #6366f1; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #bfdbfe; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #d4d4d8; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #fecdd3; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                        <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
-                    </div>
-                </div>
-            `;
+        const CSS_RELATORIO = `
+            .rel { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: #0f172a; background: #fff; width: 900px; box-sizing: border-box; padding: 34px 38px 30px; line-height: 1.45; }
+            .rel * { box-sizing: border-box; }
+            .rel-marca { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+            .rel-logo { width: 46px; height: 46px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: #fff; background: linear-gradient(135deg, #3b82f6, #16a34a); }
+            .rel-nome { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+            .rel-nome .a { color: #3b82f6; } .rel-nome .b { color: #16a34a; }
+            .rel-sub { padding-left: 14px; margin-left: 2px; border-left: 1px solid #e2e8f0; font-size: 13px; color: #475569; }
+            .rel-site { margin-left: auto; font-size: 11px; color: #94a3b8; text-decoration: none; }
+            .rel-card { border: 1px solid #e6eaf0; border-radius: 16px; overflow: hidden; }
+            .rel-topo { position: relative; padding: 24px 28px 20px; background: radial-gradient(120% 140% at 0% 0%, #eef5ff 0%, rgba(238,245,255,0) 55%), radial-gradient(120% 140% at 100% 0%, #eafbf1 0%, rgba(234,251,241,0) 55%), #fff; }
+            .rel-topo::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
+            .rel-rotulo { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #16a34a; }
+            .rel-desc { margin-top: 8px; font-size: 15px; font-weight: 650; color: #334155; }
+            .rel-data { margin-top: 4px; font-size: 38px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; color: #0b3b24; white-space: nowrap; }
+            .rel-dia { margin-top: 4px; font-size: 15px; font-weight: 600; color: #475569; }
+            .rel-dia span { font-weight: 500; color: #94a3b8; }
+            .rel-regua { margin-top: 18px; }
+            .rel-regua-topo { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 7px; }
+            .rel-ponta b { display: block; font-size: 14px; } .rel-ponta small { font-size: 10.5px; color: #64748b; }
+            .rel-ponta.dir { text-align: right; }
+            .rel-meio { font-size: 11px; color: #94a3b8; }
+            .rel-barra { display: flex; gap: 1px; height: 12px; border-radius: 6px; overflow: hidden; background: #eef1f5; }
+            .rel-barra.densa { gap: 0; }
+            .rel-barra i { flex: 1; background: #86efac; }
+            .rel-barra i.w { background: #e2e8f0; } .rel-barra i.x { background: #fb7185; } .rel-barra i.p { background: #c084fc; }
+            .rel-barra i.z { background: repeating-linear-gradient(135deg, #f59e0b 0 3px, #fcd34d 3px 6px); }
+            .rel-barra i.e { background: linear-gradient(180deg, #3b82f6, #16a34a); }
+            .rel-meses { position: relative; height: 16px; margin-top: 5px; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #64748b; }
+            .rel-meses span { position: absolute; top: 0; padding-left: 5px; border-left: 1px solid #cbd5e1; line-height: 16px; white-space: nowrap; }
+            .rel-leg { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 11px; color: #64748b; }
+            .rel-leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+            .rel-resumo { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; margin-top: 18px; padding: 11px 0; border-top: 1px solid #e9edf3; border-bottom: 1px solid #e9edf3; }
+            .rel-resumo div { padding: 0 18px; border-left: 1px solid #e9edf3; }
+            .rel-resumo div:first-child { padding-left: 0; border-left: 0; }
+            .rel-resumo small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #64748b; }
+            .rel-resumo b { font-size: 13.5px; font-weight: 650; }
+            .rel-nota { margin: 10px 0 0; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+            .rel-nota b { color: #64748b; font-weight: 600; }
+            .rel-secao { margin-top: 22px; }
+            .rel-secao h3 { margin: 0 0 10px; font-size: 15px; font-weight: 700; color: #0f172a; }
+            .rel-fer { display: grid; gap: 6px; }
+            .rel-fer div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 12.5px; padding: 7px 12px; border-radius: 9px; background: #fafbfc; border: 1px solid #f0f2f6; }
+            .rel-fer b { font-weight: 650; } .rel-fer .k { font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; display: block; }
+            .rel-fer .nac .k { color: #be123c; } .rel-fer .per .k { color: #7e22ce; } .rel-fer .ext .k { color: #b45309; }
+            .rel-mes { margin: 14px 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #3b82f6; display: flex; gap: 8px; }
+            .rel-mes em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; color: #94a3b8; }
+            .rel-it { position: relative; display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; padding: 5px 8px; break-inside: avoid; page-break-inside: avoid; }
+            .rel-it::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: #eef1f5; }
+            .rel-b { position: relative; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 800; color: #fff; }
+            .rel-cnt .rel-b { background: linear-gradient(145deg, #22c55e, #15803d); }
+            .rel-fds .rel-b { width: 20px; height: 20px; margin: 0 4px; background: linear-gradient(145deg, #cbd5e1, #94a3b8); }
+            .rel-nac .rel-b { background: linear-gradient(145deg, #f43f5e, #be123c); }
+            .rel-per .rel-b { background: linear-gradient(145deg, #a855f7, #7e22ce); }
+            .rel-ext .rel-b { background: linear-gradient(145deg, #f59e0b, #b45309); }
+            .rel-ms .rel-b { border-radius: 8px; background: linear-gradient(145deg, #3b82f6, #1d4ed8); }
+            .rel-fin { background: linear-gradient(90deg, #eef5ff, #ecfbf2); border-radius: 10px; }
+            .rel-fin .rel-b { width: 32px; height: 32px; margin-left: -2px; background: linear-gradient(135deg, #3b82f6, #16a34a); }
+            .rel-t { font-size: 13px; font-weight: 650; color: #1e293b; } .rel-t span { font-weight: 500; color: #94a3b8; }
+            .rel-fds .rel-t { font-size: 12px; font-weight: 500; color: #94a3b8; }
+            .rel-r { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-top: 1px; }
+            .rel-nac .rel-r { color: #be123c; } .rel-per .rel-r { color: #7e22ce; } .rel-ext .rel-r { color: #b45309; } .rel-ms .rel-r { color: #2563eb; } .rel-fin .rel-r { color: #15803d; }
+            .rel-d { font-size: 11.5px; color: #64748b; }
+            .rel-nac .rel-d { color: #be123c; } .rel-per .rel-d { color: #7e22ce; } .rel-ext .rel-d { color: #b45309; }
+            .rel a { color: inherit; }
+            .rel-conj { margin-top: 22px; padding: 12px 16px; border: 1px dashed #e2e8f0; border-radius: 10px; font-size: 11.5px; color: #64748b; }
+            .rel-conj small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+            .rel-conj b { color: #334155; font-weight: 650; }
+            .rel-rodape { margin-top: 22px; padding-top: 12px; border-top: 1px solid #f0f2f6; display: flex; justify-content: space-between; font-size: 10.5px; color: #94a3b8; }
+        `;
 
-            // Gerar HTML usando função helper (dias considerados agora dentro do header)
-            const htmlContent = gerarCabecalhoExportHTML({
-                dataInicioFormatada,
-                dataFinalFormatada,
-                tipoDias,
-                diasContados: diasUteis,
-                descricaoHTML,
-                diasVisuaisHTML: diasVisuaisHTMLFormatado,
-                conteudoEspecifico: '',
-                conjuntosHTML: gerarHTMLConjuntosNota('print'),
-                titulo: sanitizarTituloPDF(descricaoPrazo || gerarTituloFallbackExport())
-            });
+        function _htmlRelatorio(D, completo, contexto) {
+            const N = D.dias.length;
+            const dm = d => `${d.getDate()} de ${MESES_PT[d.getMonth()]}`;
+            const dia = d => `<b>${ddmm(d)} (${DIAS_CURTOS[d.getDay()]})</b>`;
+            const esc = escapeHtml;
+            const linkHTML = l => l ? (contexto === 'print'
+                ? ` · <a href="${esc(l.url)}">${esc(l.rotulo)} ↗</a>`
+                : ` · ${esc(l.rotulo)}`) : '';
+            const classe = (d, i) => {
+                if (i === N - 1) return 'fin';
+                if (d.prorrogacao && !d.contado) return 'ext';
+                if (!d.contado && d.kind) return d.kind;
+                if (!d.contado) return 'fds';
+                return 'cnt';
+            };
 
-            const popup = window.open('', '_blank', 'width=900,height=700');
+            // Régua
+            let nNac = 0, nPer = 0;
+            const barras = D.dias.map((d, i) => {
+                const c = classe(d, i);
+                if (c === 'fin') return '<i class="e"></i>';
+                if (c === 'ext') return '<i class="z"></i>';
+                if (d.kind && (!D.uteis || !d.contado)) { d.kind === 'per' ? nPer++ : nNac++; return `<i class="${d.kind === 'per' ? 'p' : 'x'}"></i>`; }
+                return c === 'fds' ? '<i class="w"></i>' : '<i></i>';
+            }).join('');
+            let meses = '';
+            D.dias.forEach((d, i) => { if (i === 0 || d.data.getDate() === 1) { const l = i / N * 100; if (l < 92) meses += `<span style="left:${l.toFixed(2)}%">${MESES_ABREV[d.data.getMonth()]}</span>`; } });
+            const leg = [`<span><i style="background:#86efac"></i>${D.uteis ? 'Contado' : 'Corrido'}</span>`,
+                D.uteis ? '<span><i style="background:#e2e8f0"></i>Fim de semana</span>' : '',
+                nNac ? `<span><i style="background:#fb7185"></i>Feriado nacional (${nNac})</span>` : '',
+                nPer ? `<span><i style="background:#c084fc"></i>Feriado do perfil (${nPer})</span>` : '',
+                D.prorrogadoDe ? '<span><i style="background:repeating-linear-gradient(135deg,#f59e0b 0 2px,#fcd34d 2px 4px)"></i>Prorrogação</span>' : '',
+                '<span><i style="background:linear-gradient(135deg,#3b82f6,#16a34a)"></i>Prazo final</span>'].join('');
+
+            // Resumo
+            const r = D.regra || {};
+            const rotIni = r.ini === 'disp' ? 'Disponibilização' : r.ini === 'inc' ? '1º dia do prazo' : (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início';
+            const ferContados = D.dias.filter((d, i) => d.kind && !d.prorrogacao && (D.uteis ? !d.contado : true));
+            const regraNome = _nomeRegraRelatorio(D.regra);
+
+            // Nota
+            let nota;
+            if (r.ini === 'disp' && D.publicacao) nota = `Disponibilizado no DJe em ${dia(D.ini)}; considera-se publicado em ${dia(D.publicacao)}, e a contagem começa no dia útil seguinte (Lei 11.419/2006, art. 4º, §§ 3º e 4º).`;
+            else if (r.ini === 'inc') nota = 'O dia informado conta como dia 1 do prazo (Código Penal, art. 10).';
+            else if (D.inicioAdiado) nota = `Intimação em ${dia(D.ini)}; a contagem começa no 1º dia útil seguinte, ${dia(D.inicioAdiado)} (Súmula 310 do STF).`;
+            else if (D.uteis) nota = 'O dia da intimação/publicação não conta: o dia 1 é o próximo dia útil.';
+            else nota = 'O dia informado não conta: o dia 1 é o dia seguinte.';
+            if (D.prorrogadoDe) nota += ` O prazo terminaria em ${dia(D.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
+
+            // Dias que não contaram / feriados (resumido)
+            const listaFer = D.dias.map((d, i) => ({ d, c: classe(d, i) }))
+                .filter(x => x.c === 'nac' || x.c === 'per' || x.c === 'ext' || (x.d.kind && !D.uteis))
+                .map(({ d, c }) => {
+                    const k = c === 'ext' ? 'ext' : (d.kind || c);
+                    const rot = c === 'ext' ? 'Prorrogação' : (d.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional') + (D.uteis ? '' : ' (contado)');
+                    return `<div class="${k}"><b>${ddmmaaaa(d.data)} <span style="font-weight:500;color:#94a3b8">${DIAS_CURTOS[d.data.getDay()]}</span></b><span><span class="k">${rot}</span>${esc(d.nome || (c === 'ext' ? 'Fim de semana' : ''))}${linkHTML(d.link)}</span></div>`;
+                }).join('');
+
+            // Linha do tempo (completo)
+            let linha = '';
+            if (completo) {
+                const it = (cls, badge, data, rot, desc) => `<div class="rel-it rel-${cls}"><span class="rel-b">${badge}</span><div><div class="rel-t">${dm(data)} <span>· ${DIAS_MEDIOS[data.getDay()]}${cls === 'fds' ? ' · fim de semana' : ''}</span></div>${rot ? `<div class="rel-r">${rot}</div>` : ''}${desc ? `<div class="rel-d">${desc}</div>` : ''}</div></div>`;
+                const marcos = [];
+                if (r.ini === 'disp' && D.publicacao) { marcos.push(it('ms', '◆', D.ini, 'Disponibilizado no DJe', 'Data informada')); marcos.push(it('ms', '◆', D.publicacao, 'Considera-se publicado', '1º dia útil após a disponibilização')); }
+                else if (r.ini !== 'inc') {
+                    marcos.push(it('ms', '◆', D.ini, (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início', 'Não conta na contagem'));
+                    if (D.inicioAdiado) marcos.push(it('ms', '↷', D.inicioAdiado, 'Início adiado', 'Súmula 310 do STF: o prazo começa no 1º dia útil'));
+                }
+                if (marcos.length) linha += `<div class="rel-mes">Antes da contagem</div>${marcos.join('')}`;
+                let mesAtualRel = null;
+                D.dias.forEach((d, i) => {
+                    const chave = d.data.getFullYear() * 12 + d.data.getMonth();
+                    if (chave !== mesAtualRel) {
+                        mesAtualRel = chave;
+                        const doMes = D.dias.filter(x => x.data.getFullYear() * 12 + x.data.getMonth() === chave);
+                        linha += `<div class="rel-mes">${MESES_PT[d.data.getMonth()]} ${d.data.getFullYear()}<em>${doMes.length} dias · ${doMes.filter(x => x.contado && !x.prorrogacao).length} ${D.uteis ? 'contados' : 'corridos'}</em></div>`;
+                    }
+                    const c = classe(d, i);
+                    const num = d.numero != null ? String(d.numero).padStart(2, '0') : '';
+                    const rotK = d.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional';
+                    if (c === 'fin') linha += it('fin', d.prorrogacao ? '→' : num, d.data, 'Prazo final', d.prorrogacao ? 'Primeiro dia útil após o vencimento.' : 'Último dia do prazo.');
+                    else if (c === 'ext') linha += it('ext', '→', d.data, 'Prorrogação', `${d.nome ? esc(d.nome) + ' · ' : ''}dia não útil`);
+                    else if (c === 'nac' || c === 'per') linha += it(c, '✕', d.data, rotK, `${esc(d.nome)} — suspensão de prazo${linkHTML(d.link)}`);
+                    else if (c === 'fds') linha += it('fds', '', d.data, '', '');
+                    else linha += it('cnt', num, d.data, d.kind ? rotK : '', [d.kind ? `${esc(d.nome)} · contado (dias corridos)${linkHTML(d.link)}` : '', d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : ''].filter(Boolean).join(' · '));
+                });
+            }
+
+            const conj = (D.conjuntos || []).length ? `<div class="rel-conj"><small>Feriados online utilizados</small>${D.conjuntos.map(c => {
+                const ls = obterLinksDoConjunto(c);
+                return `<div><b>${esc(c.nome)}</b>${c.descricao ? ' — ' + esc(c.descricao) : ''}${ls.map(l => linkHTML(l)).join('')}</div>`;
+            }).join('')}</div>` : '';
+
+            const hoje = new Date();
+            return `
+<div class="rel">
+    <div class="rel-marca">
+        <div class="rel-logo">CP</div>
+        <div class="rel-nome"><span class="a">Conta</span><span class="b">Prazo</span></div>
+        <div class="rel-sub">Calculadora de Prazos</div>
+        <a class="rel-site" href="https://contaprazo.netlify.app/">contaprazo.netlify.app</a>
+    </div>
+    <div class="rel-card"><div class="rel-topo">
+        <div class="rel-rotulo">Prazo calculado</div>
+        ${D.descricao ? `<div class="rel-desc">${esc(D.descricao)}</div>` : ''}
+        <div class="rel-data">${D.fim.getDate()} de ${MESES_PT[D.fim.getMonth()]} de ${D.fim.getFullYear()}</div>
+        <div class="rel-dia">${DIAS_SEMANA[D.fim.getDay()]}</div>
+        <div class="rel-regua">
+            <div class="rel-regua-topo"><div class="rel-ponta"><b>${ddmm(D.dias[0].data)}</b><small>1º dia do período</small></div><div class="rel-meio">${N} ${N === 1 ? 'dia' : 'dias'} no calendário</div><div class="rel-ponta dir"><b>${ddmm(D.fim)}</b><small>${D.prorrogadoDe ? 'prazo final (prorrogado)' : 'prazo final'}</small></div></div>
+            <div class="rel-barra${N > 60 ? ' densa' : ''}">${barras}</div>
+            <div class="rel-meses">${meses}</div>
+            <div class="rel-leg">${leg}</div>
+        </div>
+        <div class="rel-resumo">
+            <div><small>${rotIni} *</small><b>${ddmmaaaa(D.ini)} <span style="font-weight:500;color:#64748b">(${DIAS_CURTOS[D.ini.getDay()]})</span></b></div>
+            <div><small>Contagem</small><b>${D.n} ${D.uteis ? 'dias úteis' : 'dias corridos'}</b></div>
+            <div><small>${D.uteis ? 'Feriados pulados' : 'Feriados no período'}</small><b>${ferContados.length}</b></div>
+            ${regraNome ? `<div><small>Regra</small><b>${esc(regraNome.titulo)}</b></div>` : ''}
+        </div>
+        <p class="rel-nota">* ${nota}${regraNome ? ` Regra de contagem: ${esc(regraNome.titulo)} (${esc(regraNome.ref)}).` : ''}</p>
+    </div></div>
+    ${!completo && listaFer ? `<div class="rel-secao"><h3>Feriados e dias especiais no período</h3><div class="rel-fer">${listaFer}</div></div>` : ''}
+    ${completo ? `<div class="rel-secao"><h3>Detalhamento do cálculo</h3>${linha}</div>` : ''}
+    ${conj}
+    <div class="rel-rodape"><span>Calculado com ContaPrazo · contaprazo.netlify.app</span><span>Gerado em ${ddmmaaaa(hoje)}</span></div>
+</div>`;
+        }
+
+        function _abrirRelatorioPDF(D, completo) {
+            const titulo = sanitizarTituloPDF(D.titulo) || 'ContaPrazo';
+            const html = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><title>${escapeHtml(titulo)}</title>
+<style>
+    body { margin: 0; background: #f6f8fb; }
+    .rel { margin: 24px auto; border-radius: 18px; box-shadow: 0 8px 30px -18px rgba(15,23,42,.35); }
+    ${CSS_RELATORIO}
+    .rel-aviso { width: 900px; margin: 0 auto 28px; padding: 18px; border-radius: 14px; background: #fff; border: 1px solid #e6eaf0; text-align: center; font-family: system-ui, sans-serif; color: #334155; font-size: 14px; }
+    .rel-aviso button { margin-top: 12px; padding: 10px 20px; border: 0; border-radius: 10px; cursor: pointer; font: inherit; font-weight: 650; color: #fff; background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    @page { margin: 12mm; }
+    @media print {
+        body { background: #fff; }
+        .rel { margin: 0 auto; box-shadow: none; border-radius: 0; padding: 0; }
+        .rel-aviso { display: none; }
+        * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+</style></head>
+<body>
+${_htmlRelatorio(D, completo, 'print')}
+<div class="rel-aviso">Para salvar em PDF, use <b>Ctrl+P</b> (Windows/Linux) ou <b>Cmd+P</b> (Mac) e escolha <b>Salvar como PDF</b>.<br><button onclick="window.print()">Imprimir ou salvar como PDF</button></div>
+</body></html>`;
+            const popup = window.open('', '_blank', 'width=960,height=760');
             if (popup) {
-                popup.document.write(htmlContent);
+                popup.document.write(html);
                 popup.document.close();
-                setTimeout(() => {
-                    popup.print();
-                }, 500);
+                setTimeout(() => { popup.print(); }, 500);
             } else {
-                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site.', 'aviso');
+                mostrarNotificacao('Pop-up bloqueado. Permita pop-ups para este site ou exporte como imagem.', 'aviso');
             }
         }
 
-        function exportarPDFCompleto() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso');
+        function _baixarRelatorioPNG(D, completo) {
+            if (typeof htmlToImage === 'undefined') {
+                mostrarNotificacao('A exportação como imagem precisa de internet para carregar. Tente novamente quando estiver online.', 'erro');
                 return;
             }
-
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
-            }
-
-            // Conteúdo específico: detalhamento em linha do tempo
-            const conteudoEspecifico = `
-                <div class="secao">
-                    <h3>Detalhamento do cálculo</h3>
-                    ${renderTimelineDetalhamento(todosOsDias)}
-                </div>
-            `;
-
-            // Estilos adicionais para a seção de detalhamento
-            const estilosAdicionais = `
-                .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
-                h3 { color: #374151; font-size: 18px; margin-bottom: 20px; }
-                .timeline-item { display: flex; align-items: stretch; gap: 12px; }
-                .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
-                .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; }
-                .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
-                .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
-                .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-                .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
-                .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-                .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-                .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
-                .timeline-link-pill { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 700; text-decoration: none; }
-                .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
-                .timeline-item-contado .timeline-badge, .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-                .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
-                .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
-                .timeline-item-feriado .timeline-desc { color: #a50606; }
-                .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-                a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }
-            `;
-
-            // Gerar HTML usando função helper
-            const htmlContent = gerarCabecalhoExportHTML({
-                dataInicioFormatada,
-                dataFinalFormatada,
-                tipoDias,
-                diasContados: diasUteis,
-                descricaoHTML,
-                conteudoEspecifico,
-                estilosAdicionais,
-                conjuntosHTML: gerarHTMLConjuntosNota('print'),
-                titulo: sanitizarTituloPDF(descricaoPrazo || gerarTituloFallbackExport())
+            const portal = document.createElement('div');
+            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
+            const container = document.createElement('div');
+            container.style.width = '900px';
+            container.innerHTML = `<style>${CSS_RELATORIO}</style>${_htmlRelatorio(D, completo, 'image')}`;
+            portal.appendChild(container);
+            document.body.appendChild(portal);
+            const alvo = container.querySelector('.rel');
+            htmlToImage.toBlob(alvo, { pixelRatio: 2, backgroundColor: '#ffffff', width: 900 }).then(blob => {
+                document.body.removeChild(portal);
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const prefixo = sanitizarNomeArquivo(D.titulo);
+                const tipo = completo ? 'completo' : 'resumo';
+                link.download = prefixo ? `${prefixo}contaprazo-${tipo}.png` : `contaprazo-${tipo}-${Date.now()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+            }).catch(error => {
+                document.body.removeChild(portal);
+                console.error('Erro ao gerar imagem:', error);
+                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
             });
-
-            const popup = window.open('', '_blank', 'width=900,height=700');
-            if (popup) {
-                popup.document.write(htmlContent);
-                popup.document.close();
-                // Auto-invocar impressão após carregar
-                setTimeout(() => {
-                    popup.print();
-                }, 500);
-            } else {
-                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site ou use os botões de exportar imagem.', 'aviso');
-            }
         }
+
+        function _exigirCalculo() {
+            if (!dataFinal || !todosOsDias.length) { mostrarNotificacao('Calcule um prazo primeiro para exportar.', 'aviso'); return false; }
+            return true;
+        }
+        function exportarPDFResumido() { if (_exigirCalculo()) _abrirRelatorioPDF(_dadosRelatorioCalculo(), false); }
+        function exportarPDFCompleto() { if (_exigirCalculo()) _abrirRelatorioPDF(_dadosRelatorioCalculo(), true); }
+        function exportarImagemResumo() { if (_exigirCalculo()) _baixarRelatorioPNG(_dadosRelatorioCalculo(), false); }
+        function exportarImagemCompleta() { if (_exigirCalculo()) _baixarRelatorioPNG(_dadosRelatorioCalculo(), true); }
+        function _exportarPrazoAgendaPDF(prazo, completo) { _abrirRelatorioPDF(_dadosRelatorioPrazo(prazo), completo); }
+        function _exportarPrazoAgendaPNG(prazo, completo) { _baixarRelatorioPNG(_dadosRelatorioPrazo(prazo), completo); }
 
 		function sanitizarNomeArquivo(descricao) {
             if (!descricao || descricao.trim() === '') return '';
@@ -10828,675 +10803,6 @@
             const mm = (d.getMonth() + 1).toString().padStart(2, '0');
             const yyyy = d.getFullYear();
             return `${dd}.${mm}.${yyyy} - ${diasUteis} ${tipoLabel}`;
-        }
-
-        function exportarImagemResumo() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro.', 'aviso');
-                return;
-            }
-
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
-            }
-
-            // Gerar visualização dos dias (código compartilhado com exportarPDFResumido)
-            let diasVisuaisHTML = '';
-            const inicioDataPNG = new Date(dataInicio + 'T00:00:00');
-
-            // Em modo dias úteis, adicionar chip da data do ato (não contada) antes dos demais dias
-            if (usarDiasUteis) {
-                const diaNum = inicioDataPNG.getDate();
-                const nomeMes = inicioDataPNG.toLocaleDateString('pt-BR', { month: 'short' });
-                const mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: #18181b; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: #ffffff; margin: 2px;">${diaNum}</div>`;
-            }
-
-            todosOsDias.forEach((dia, index) => {
-                const diaNum = dia.data.getDate();
-                // Em dias úteis o chip de "início" já foi adicionado separadamente acima
-                const isInicio = !usarDiasUteis && index === 0;
-                const isFinal = index === todosOsDias.length - 1;
-
-                const ehFds = ehFimDeSemana(dia.data);
-                const ehFer = ehFeriado(dia.data);
-                const dataStr = `${dia.data.getFullYear()}-${String(dia.data.getMonth() + 1).padStart(2, '0')}-${String(dia.data.getDate()).padStart(2, '0')}`;
-                const ehPersonalizado = feriadosPersonalizados.has(dataStr);
-
-                let cor = '#bfdbfe';
-                let borda = 'none';
-                let textoCor = '#1e40af';
-
-                if (isInicio) {
-                    cor = '#18181b';
-                    borda = 'none';
-                    textoCor = '#ffffff';
-                } else if (isFinal) {
-                    cor = '#6366f1';
-                    borda = 'none';
-                    textoCor = '#ffffff';
-                } else if (usarDiasUteis) {
-                    if (ehPersonalizado) {
-                        cor = '#e9d5ff';
-                        borda = 'none';
-                        textoCor = '#6b21a8';
-                    } else if (ehFer) {
-                        cor = '#fecdd3';
-                        borda = 'none';
-                        textoCor = '#9f1239';
-                    } else if (ehFds) {
-                        cor = '#d4d4d8';
-                        borda = 'none';
-                        textoCor = '#52525b';
-                    }
-                }
-
-                let mesIndicador = '';
-                let mostrarMes;
-                if (usarDiasUteis && index === 0) {
-                    // Chip da data de início já mostrou o mês; só repete se for mês diferente
-                    mostrarMes = dia.data.getMonth() !== inicioDataPNG.getMonth() || dia.data.getFullYear() !== inicioDataPNG.getFullYear();
-                } else {
-                    mostrarMes = index === 0 || dia.data.getMonth() !== todosOsDias[index - 1].data.getMonth();
-                }
-                if (mostrarMes) {
-                    const nomeMes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
-                    mesIndicador = `<span style="font-size: 10px; color: #6b7280; font-weight: 600; margin-right: 5px; display: inline-block; text-transform: uppercase;">${nomeMes}</span>`;
-                }
-
-                diasVisuaisHTML += `${mesIndicador}<div style="display: inline-block; width: 28px; height: 28px; background: ${cor}; border: ${borda}; border-radius: 4px; text-align: center; line-height: 28px; font-size: 12px; font-weight: 600; color: ${textoCor}; margin: 2px;">${diaNum}</div>`;
-            });
-
-            const labelInicioChipPNG = 'Início';
-            const pngDiaNum = dataFinal.getDate();
-            const pngMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
-            const pngAno = dataFinal.getFullYear();
-            const pngDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
-            const pngDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-
-            // HTML específico para PNG (nota: usa classes diferentes do PDF para evitar conflitos com html2canvas)
-            const htmlContent = `
-<style>
-    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; }
-    .export-wrapper .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-    .export-wrapper .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-    .export-wrapper .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
-    .export-wrapper .brand-name { display: flex; align-items: center; line-height: 1; background: transparent !important; }
-    .export-wrapper .brand-conta { color: #3b82f6 !important; -webkit-text-fill-color: #3b82f6 !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-prazo { color: #16a34a !important; -webkit-text-fill-color: #16a34a !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
-    .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
-    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
-    .export-wrapper .header-body { padding: 26px 30px 22px; }
-    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
-    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
-    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
-    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
-    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
-</style>
-<div class="export-wrapper">
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta" style="background:none;-webkit-text-fill-color:#3b82f6;color:#3b82f6;">Conta</span><span class="brand-prazo" style="background:none;-webkit-text-fill-color:#16a34a;color:#16a34a;">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
-    </div>
-    <div class="header">
-        <div class="header-accent"></div>
-        <div class="header-body">
-            <div class="header-label">&#128197; Prazo Calculado</div>
-            ${descricaoHTML}
-            <div class="header-date">${pngDiaNum} de ${pngMesNome} de ${pngAno}</div>
-            <div class="header-weekday">${pngDiaSem}</div>
-            <div class="header-chips">
-                <div class="header-chip">
-                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
-                    <div class="chip-value">${pngDtInicio}</div>
-                </div>
-                <div class="header-chip">
-                    <div class="chip-label">Dias contados</div>
-                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
-                </div>
-                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
-                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
-                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
-                </div>` : ''}
-            </div>
-            <div style="line-height: 36px; text-align: left; margin-bottom: 10px;">${diasVisuaisHTML}</div>
-            <div style="padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 13px; line-height: 24px;">
-                <span style="display: inline-block; width: 14px; height: 14px; background: #18181b; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">${labelInicioChipPNG}</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #6366f1; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Final</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #bfdbfe; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Dias contados</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #d4d4d8; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">FDS</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #fecdd3; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span style="margin-right: 12px;">Feriado</span>
-                <span style="display: inline-block; width: 14px; height: 14px; background: #e9d5ff; border-radius: 3px; margin-right: 4px; vertical-align: middle;"></span><span>Feriados Personalizados</span>
-            </div>
-            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-        </div>
-    </div>
-    ${gerarHTMLConjuntosNota('image')}
-</div>`;
-
-            const portal = document.createElement('div');
-            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
-            const container = document.createElement('div');
-            container.style.width = '900px';
-            container.innerHTML = htmlContent;
-            portal.appendChild(container);
-            document.body.appendChild(portal);
-
-            htmlToImage.toBlob(container, {
-                pixelRatio: 2,
-                backgroundColor: '#ffffff',
-                width: 900
-            }).then(blob => {
-                document.body.removeChild(portal);
-
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                const prefixo = sanitizarNomeArquivo(descricaoPrazo || gerarTituloFallbackExport());
-                link.download = prefixo ? `${prefixo}-contaprazo-resumo.png` : `contaprazo-resumo-${Date.now()}.png`;
-                link.click();
-                URL.revokeObjectURL(url);
-            }).catch(error => {
-                document.body.removeChild(portal);
-                console.error('Erro ao gerar imagem:', error);
-                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
-            });
-        }
-
-        function exportarImagemCompleta() {
-            if (!dataFinal) {
-                mostrarNotificacao('Calcule um prazo primeiro.', 'aviso');
-                return;
-            }
-
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (descricaoPrazo) {
-                descricaoHTML = `<div class="header-titulo">${escapeHtml(descricaoPrazo)}</div>`;
-            }
-
-            const listaHTML = renderTimelineDetalhamento(todosOsDias);
-
-            const cmpDiaNum = dataFinal.getDate();
-            const cmpMesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
-            const cmpAno = dataFinal.getFullYear();
-            const cmpDiaSem = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
-            const cmpDtInicio = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-
-            const exportCSS = `
-    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; line-height: normal; }
-    .export-wrapper .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-    .export-wrapper .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-    .export-wrapper .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
-    .export-wrapper .brand-name { display: flex; align-items: center; line-height: 1; background: transparent !important; }
-    .export-wrapper .brand-conta { color: #3b82f6 !important; -webkit-text-fill-color: #3b82f6 !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-prazo { color: #16a34a !important; -webkit-text-fill-color: #16a34a !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
-    .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
-    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
-    .export-wrapper .header-body { padding: 26px 30px 22px; }
-    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
-    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
-    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
-    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
-    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
-    .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
-    .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 20px 0; }
-    .export-wrapper .timeline-item { display: flex; align-items: stretch; gap: 12px; }
-    .export-wrapper .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
-    .export-wrapper .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; line-height: 1; }
-    .export-wrapper .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
-    .export-wrapper .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
-    .export-wrapper .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-    .export-wrapper .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
-    .export-wrapper .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
-    .export-wrapper .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
-    .export-wrapper .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; line-height: 1; }
-    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
-    .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
-    .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-    .export-wrapper .timeline-link-pill { display: none !important; }
-    .export-wrapper a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }
-`;
-            const htmlContent = `<div class="export-wrapper">
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta" style="background:none;-webkit-text-fill-color:#3b82f6;color:#3b82f6;">Conta</span><span class="brand-prazo" style="background:none;-webkit-text-fill-color:#16a34a;color:#16a34a;">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-        <a href="https://contaprazo.netlify.app/" style="margin-left:auto; font-size:0.72rem; color:#b0b7c3; text-decoration:none; letter-spacing:0.01em;">contaprazo.netlify.app</a>
-    </div>
-    <div class="header">
-        <div class="header-accent"></div>
-        <div class="header-body">
-            <div class="header-label">&#128197; Prazo Calculado</div>
-            ${descricaoHTML}
-            <div class="header-date">${cmpDiaNum} de ${cmpMesNome} de ${cmpAno}</div>
-            <div class="header-weekday">${cmpDiaSem}</div>
-            <div class="header-chips">
-                <div class="header-chip">
-                    <div class="chip-label">Data de início${usarDiasUteis ? ' *' : ''}</div>
-                    <div class="chip-value">${cmpDtInicio}</div>
-                </div>
-                <div class="header-chip">
-                    <div class="chip-label">Dias contados</div>
-                    <div class="chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</div>
-                </div>
-                ${feriadosDoCalculo.length > 0 ? `<div class="header-chip" style="border-color:#fed7aa;">
-                    <div class="chip-label" style="color:#ea580c;">${usarDiasUteis ? 'Feriados pulados' : 'Feriados no período'}</div>
-                    <div class="chip-value" style="color:#c2410c;">${feriadosDoCalculo.length}</div>
-                </div>` : ''}
-            </div>
-            ${usarDiasUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-        </div>
-    </div>
-    <div class="secao">
-        <h3>Detalhamento do cálculo</h3>
-        ${listaHTML}
-    </div>
-    ${gerarHTMLConjuntosNota('image')}
-</div>`;
-
-            // Injetar CSS diretamente no <head> para garantir que seja aplicado antes da renderização
-            const exportStyleEl = document.createElement('style');
-            exportStyleEl.id = 'export-completo-style';
-            exportStyleEl.textContent = exportCSS;
-            document.head.appendChild(exportStyleEl);
-
-            const portal = document.createElement('div');
-            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
-            const container = document.createElement('div');
-            container.style.width = '900px';
-            container.innerHTML = htmlContent;
-            portal.appendChild(container);
-            document.body.appendChild(portal);
-
-            const cleanupExport = () => {
-                if (document.head.contains(exportStyleEl)) document.head.removeChild(exportStyleEl);
-                if (document.body.contains(portal)) document.body.removeChild(portal);
-            };
-
-            htmlToImage.toBlob(container, {
-                pixelRatio: 2,
-                backgroundColor: '#ffffff',
-                width: 900
-            }).then(blob => {
-                cleanupExport();
-
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                const prefixo = sanitizarNomeArquivo(descricaoPrazo || gerarTituloFallbackExport());
-                link.download = prefixo ? `${prefixo}contaprazo-completo.png` : `contaprazo-completo-${Date.now()}.png`;
-                link.click();
-                URL.revokeObjectURL(url);
-            }).catch(error => {
-                cleanupExport();
-                console.error('Erro ao gerar imagem:', error);
-                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
-            });
-        }
-
-        // ==================== EXPORTAÇÃO DE PRAZOS DA AGENDA ====================
-
-        function _dadosPrazoExport(prazo) {
-            const isUteis = prazo.tipoDias === 'uteis';
-            const dfObj = prazo.dataFinal;
-            const diaNum = dfObj.getDate();
-            const mesNome = dfObj.toLocaleDateString('pt-BR', { month: 'long' });
-            const ano = dfObj.getFullYear();
-            const diaSem = dfObj.toLocaleDateString('pt-BR', { weekday: 'long' });
-            const dtInicioChip = prazo.dataInicio.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-            const tipoDiasLabel = isUteis ? 'Úteis' : 'Corridos';
-
-            const ferPers = new Set();
-            if (prazo.feriadosUsados && prazo.feriadosUsados.personalizados) {
-                prazo.feriadosUsados.personalizados.forEach(p => {
-                    // Suporta formato legado [[ds, nome]] e novo {data, nome, arquivo}
-                    ferPers.add(Array.isArray(p) ? p[0] : p.data);
-                });
-            }
-
-            const feriadosCount = prazo.detalhamentoDias.filter(dia => {
-                if (isUteis) return !dia.contado && dia.motivo !== 'Final de Semana';
-                const dashIdx = dia.motivo.indexOf(' - ');
-                if (dashIdx === -1) return false;
-                return dia.motivo.slice(dashIdx + 3) !== 'Final de Semana';
-            }).length;
-
-            const descricaoHTML = prazo.descricao
-                ? `<div class="header-titulo">${escapeHtml(prazo.descricao)}</div>`
-                : '';
-
-            const titulo = sanitizarTituloPDF(prazo.titulo);
-            const nomeArquivo = sanitizarNomeArquivo(prazo.titulo);
-
-            return { isUteis, dfObj, diaNum, mesNome, ano, diaSem, dtInicioChip, tipoDiasLabel, ferPers, feriadosCount, descricaoHTML, titulo, nomeArquivo };
-        }
-
-        function _diasVisuaisHTMLPrazo(prazo, ferPers, isUteis) {
-            const dias = prazo.detalhamentoDias;
-            let html = '';
-
-            if (isUteis) {
-                const dInicio = prazo.dataInicio;
-                const mes = dInicio.toLocaleDateString('pt-BR', { month: 'short' });
-                html += `<span style="font-size:10px;color:#6b7280;font-weight:600;margin-right:5px;display:inline-block;text-transform:uppercase;">${mes}</span>`;
-                html += `<div style="display:inline-block;width:28px;height:28px;background:#18181b;border-radius:4px;text-align:center;line-height:28px;font-size:12px;font-weight:600;color:#ffffff;margin:2px;">${dInicio.getDate()}</div>`;
-            }
-
-            dias.forEach((dia, index) => {
-                const dNum = dia.data.getDate();
-                const isInicio = !isUteis && index === 0;
-                const isFinal = index === dias.length - 1;
-
-                let cor = '#bfdbfe', textoCor = '#1e40af';
-
-                if (isInicio) {
-                    cor = '#18181b'; textoCor = '#ffffff';
-                } else if (isFinal) {
-                    cor = '#6366f1'; textoCor = '#ffffff';
-                } else if (!dia.contado) {
-                    const ds = `${dia.data.getFullYear()}-${String(dia.data.getMonth()+1).padStart(2,'0')}-${String(dia.data.getDate()).padStart(2,'0')}`;
-                    if (ferPers.has(ds)) {
-                        cor = '#e9d5ff'; textoCor = '#6b21a8';
-                    } else if (dia.motivo === 'Final de Semana' || dia.motivo.startsWith('Final de Semana e ')) {
-                        cor = '#d4d4d8'; textoCor = '#52525b';
-                    } else {
-                        cor = '#fecdd3'; textoCor = '#9f1239';
-                    }
-                }
-
-                let mesIndicador = '';
-                let mostrarMes;
-                if (isUteis && index === 0) {
-                    mostrarMes = dia.data.getMonth() !== prazo.dataInicio.getMonth() || dia.data.getFullYear() !== prazo.dataInicio.getFullYear();
-                } else {
-                    mostrarMes = index === 0 || dia.data.getMonth() !== dias[index-1].data.getMonth();
-                }
-                if (mostrarMes) {
-                    const mes = dia.data.toLocaleDateString('pt-BR', { month: 'short' });
-                    mesIndicador = `<span style="font-size:10px;color:#6b7280;font-weight:600;margin-right:5px;display:inline-block;text-transform:uppercase;">${mes}</span>`;
-                }
-
-                html += `${mesIndicador}<div style="display:inline-block;width:28px;height:28px;background:${cor};border-radius:4px;text-align:center;line-height:28px;font-size:12px;font-weight:600;color:${textoCor};margin:2px;">${dNum}</div>`;
-            });
-
-            return html;
-        }
-
-        function _exportarPrazoAgendaPDF(prazo, completo) {
-            const d = _dadosPrazoExport(prazo);
-            const diasVisuaisHTML = completo ? '' : _diasVisuaisHTMLPrazo(prazo, d.ferPers, d.isUteis);
-
-            const estilosCompleto = completo ? `
-        .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
-        h3 { color: #374151; font-size: 18px; margin-bottom: 20px; }
-        .timeline-item { display: flex; align-items: stretch; gap: 12px; }
-        .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
-        .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; }
-        .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
-        .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
-        .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-        .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
-        .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-        .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-        .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; }
-        .timeline-link-pill { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 700; text-decoration: none; }
-        .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
-        .timeline-item-contado .timeline-badge, .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-        .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
-        .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
-        .timeline-item-feriado .timeline-desc { color: #a50606; }
-        .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-        a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }` : '';
-
-            const tituloDoc = d.titulo ? `ContaPrazo - ${d.titulo}` : 'Prazo - ContaPrazo';
-
-            const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>${tituloDoc}</title>
-    <style>
-        body { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: #fff; }
-        .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
-        .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-        .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; }
-        .brand-name { display: flex; align-items: center; line-height: 1; }
-        .brand-conta { color: #3b82f6; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-prazo { color: #16a34a; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; }
-        .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0 0 0 2px; line-height: 1; display: inline-flex; align-items: center; }
-        .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-        .header { background: #f0fdf4; border-radius: 12px; margin-bottom: 28px; overflow: hidden; }
-        .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
-        .header-body { padding: 24px 28px 20px; }
-        .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
-        .header-titulo-main { font-size: 16px; font-weight: 700; color: #111827; line-height: 1.3; margin-bottom: 6px; }
-        .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
-        .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-        .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
-        .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-        .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
-        .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
-        .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-        .info { margin: 15px 0; font-size: 16px; }
-        @media print { body { padding: 15px; } .no-print { display: none; } }
-        ${estilosCompleto}
-    </style>
-</head>
-<body>
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta">Conta</span><span class="brand-prazo">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-        <a href="https://contaprazo.netlify.app/" style="margin-left:auto;font-size:0.72rem;color:#b0b7c3;text-decoration:none;letter-spacing:0.01em;">contaprazo.netlify.app</a>
-    </div>
-    <div class="header">
-        <div class="header-accent"></div>
-        <div class="header-body">
-            <div class="header-label">&#128197; Prazo Salvo</div>
-            <div class="header-titulo-main">${escapeHtml(prazo.titulo)}</div>
-            ${d.descricaoHTML}
-            <div class="header-date">${d.diaNum} de ${d.mesNome} de ${d.ano}</div>
-            <div class="header-weekday">${d.diaSem}</div>
-            <div class="header-chips">
-                <div class="header-chip">
-                    <div class="chip-label">Data de início${d.isUteis ? ' *' : ''}</div>
-                    <div class="chip-value">${d.dtInicioChip}</div>
-                </div>
-                <div class="header-chip">
-                    <div class="chip-label">Dias contados</div>
-                    <div class="chip-value">${prazo.diasSolicitados} dias ${d.tipoDiasLabel.toLowerCase()}</div>
-                </div>
-                ${d.feriadosCount > 0 ? `<div class="header-chip" style="border-color:#fed7aa;"><div class="chip-label" style="color:#ea580c;">${d.isUteis ? 'Feriados pulados' : 'Feriados no período'}</div><div class="chip-value" style="color:#c2410c;">${d.feriadosCount}</div></div>` : ''}
-            </div>
-            ${!completo ? `<div class="info" style="margin-top:25px;border-top:2px solid #e5e7eb;padding-top:20px;"><div style="margin-bottom:12px;"><strong>Dias considerados:</strong></div><div style="line-height:36px;text-align:left;">${diasVisuaisHTML}</div><div style="margin-top:15px;padding-top:15px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div></div>` : ''}
-            ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-            ${(d.isUteis && prazo.perfilUsado) ? `<p style="font-size:11px;color:#9ca3af;margin:4px 0 0;display:flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Perfil de feriados: <strong style="color:#6b7280;">${escapeHtml(prazo.perfilUsado.nome)}</strong></p>` : ''}
-        </div>
-    </div>
-    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}</div>` : ''}
-    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'print')}
-    <div class="no-print" style="text-align:center;margin-top:28px;padding:18px;background:#fef3c7;border-radius:8px;">
-        <p style="margin-bottom:12px;"><strong>📌 Para salvar como PDF:</strong></p>
-        <p>Use Ctrl+P (Windows/Linux) ou Cmd+P (Mac) e selecione "Salvar como PDF"</p>
-        <button onclick="window.print()" style="margin-top:14px;padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🖨️ Imprimir / Salvar como PDF</button>
-    </div>
-</body>
-</html>`;
-
-            const popup = window.open('', '_blank', 'width=900,height=700');
-            if (popup) {
-                popup.document.write(htmlContent);
-                popup.document.close();
-                setTimeout(() => popup.print(), 500);
-            } else {
-                mostrarNotificacao('Pop-up bloqueado. Por favor, permita pop-ups para este site.', 'aviso');
-            }
-        }
-
-        function _exportarPrazoAgendaPNG(prazo, completo) {
-            if (typeof htmlToImage === 'undefined') {
-                mostrarNotificacao('Exportação de imagem não disponível (verifique sua conexão).', 'aviso');
-                return;
-            }
-
-            const d = _dadosPrazoExport(prazo);
-            const diasVisuaisHTML = completo ? '' : _diasVisuaisHTMLPrazo(prazo, d.ferPers, d.isUteis);
-            const listaHTML = completo ? renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata) : '';
-
-            const exportCSS = `
-    .export-wrapper { font-family: system-ui; padding: 30px; max-width: 900px; margin: 0 auto; background: white; line-height: normal; }
-    .export-wrapper .brand-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-    .export-wrapper .logo-cp { width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #16a34a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: white; }
-    .export-wrapper .brand-title { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; line-height: 1; height: fit-content; }
-    .export-wrapper .brand-name { display: flex; align-items: center; line-height: 1; background: transparent !important; }
-    .export-wrapper .brand-conta { color: #3b82f6 !important; -webkit-text-fill-color: #3b82f6 !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-prazo { color: #16a34a !important; -webkit-text-fill-color: #16a34a !important; -webkit-background-clip: unset !important; background-clip: unset !important; display: inline-flex; align-items: center; line-height: 1; margin: 0; padding: 0; background: none !important; }
-    .export-wrapper .brand-separator { color: #d1d5db; font-weight: 300; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; }
-    .export-wrapper .brand-subtitle { font-size: 0.875rem; color: #6b7280; margin: 0; padding: 0; line-height: 1; display: inline-flex; align-items: center; transform: translateY(4px); }
-    .export-wrapper .header { background: #f0fdf4; border-radius: 12px; overflow: hidden; margin-bottom: 30px; }
-    .export-wrapper .header-accent { height: 4px; background: linear-gradient(90deg, #3b82f6, #16a34a); }
-    .export-wrapper .header-body { padding: 26px 30px 22px; }
-    .export-wrapper .header-label { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #16a34a; margin-bottom: 10px; }
-    .export-wrapper .header-titulo-main { font-size: 16px; font-weight: 700; color: #111827; line-height: 1.3; margin-bottom: 6px; }
-    .export-wrapper .header-titulo { font-size: 14px; font-weight: 600; color: #374151; line-height: 1.3; margin-bottom: 12px; }
-    .export-wrapper .header-date { font-size: 2.2rem; font-weight: 800; color: #14532d; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-    .export-wrapper .header-weekday { font-size: 14px; color: #6b7280; text-transform: capitalize; margin-bottom: 18px; }
-    .export-wrapper .header-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .export-wrapper .header-chip { background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 7px 14px; }
-    .export-wrapper .chip-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #9ca3af; }
-    .export-wrapper .chip-value { font-size: 13px; font-weight: 600; color: #1f2937; }
-    ${completo ? `
-    .export-wrapper .secao { margin: 30px 0; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; }
-    .export-wrapper h3 { color: #374151; font-size: 18px; margin: 0 0 20px 0; }
-    .export-wrapper .timeline-item { display: flex; align-items: stretch; gap: 12px; }
-    .export-wrapper .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 32px; }
-    .export-wrapper .timeline-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.76rem; flex-shrink: 0; letter-spacing: -0.01em; line-height: 1; }
-    .export-wrapper .timeline-connector { width: 2px; flex: 1; background: #e5e7eb; min-height: 6px; margin-top: 1px; }
-    .export-wrapper .timeline-content { flex: 1; padding-bottom: 14px; padding-top: 4px; min-width: 0; }
-    .export-wrapper .timeline-date-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-    .export-wrapper .timeline-date-text { font-weight: 650; font-size: 0.88rem; color: #1f2937; }
-    .export-wrapper .timeline-weekday-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #f3f4f6; color: #6b7280; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
-    .export-wrapper .timeline-prazo-final-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 4px; background: #16a34a; color: white; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
-    .export-wrapper .timeline-feriado-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.03em; line-height: 1; }
-    .export-wrapper .timeline-desc { font-size: 0.79rem; color: #4b5563; line-height: 1.4; }
-    .export-wrapper .timeline-item-contado .timeline-badge, .export-wrapper .timeline-item-final .timeline-badge { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 1px 3px rgba(22,163,74,0.3); }
-    .export-wrapper .timeline-item-fds .timeline-badge { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; box-shadow: 0 1px 3px rgba(107,114,128,0.25); font-size: 0.85rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-badge { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 1px 3px rgba(185,28,28,0.35); font-size: 0.85rem; font-weight: 900; }
-    .export-wrapper .timeline-item-feriado .timeline-desc { color: #a50606; }
-    .export-wrapper .timeline-item-final .timeline-date-text { color: #15803d; font-weight: 700; }
-    .export-wrapper .timeline-link-pill { display: none !important; }
-    .export-wrapper a.timeline-desc-link { color: inherit !important; text-decoration: none !important; }` : ''}`;
-
-            const htmlContent = `<div class="export-wrapper">
-    <div class="brand-header">
-        <div class="logo-cp">CP</div>
-        <div class="brand-title">
-            <div class="brand-name">
-                <span class="brand-conta" style="background:none;-webkit-text-fill-color:#3b82f6;color:#3b82f6;">Conta</span><span class="brand-prazo" style="background:none;-webkit-text-fill-color:#16a34a;color:#16a34a;">Prazo</span>
-            </div>
-            <span class="brand-separator">|</span>
-            <span class="brand-subtitle">Calculadora de Prazos</span>
-        </div>
-        <a href="https://contaprazo.netlify.app/" style="margin-left:auto;font-size:0.72rem;color:#b0b7c3;text-decoration:none;letter-spacing:0.01em;">contaprazo.netlify.app</a>
-    </div>
-    <div class="header">
-        <div class="header-accent"></div>
-        <div class="header-body">
-            <div class="header-label">&#128197; Prazo Salvo</div>
-            <div class="header-titulo-main">${escapeHtml(prazo.titulo)}</div>
-            ${d.descricaoHTML}
-            <div class="header-date">${d.diaNum} de ${d.mesNome} de ${d.ano}</div>
-            <div class="header-weekday">${d.diaSem}</div>
-            <div class="header-chips">
-                <div class="header-chip"><div class="chip-label">Data de início${d.isUteis ? ' *' : ''}</div><div class="chip-value">${d.dtInicioChip}</div></div>
-                <div class="header-chip"><div class="chip-label">Dias contados</div><div class="chip-value">${prazo.diasSolicitados} dias ${d.tipoDiasLabel.toLowerCase()}</div></div>
-                ${d.feriadosCount > 0 ? `<div class="header-chip" style="border-color:#fed7aa;"><div class="chip-label" style="color:#ea580c;">${d.isUteis ? 'Feriados pulados' : 'Feriados no período'}</div><div class="chip-value" style="color:#c2410c;">${d.feriadosCount}</div></div>` : ''}
-            </div>
-            ${!completo ? `<div style="line-height:36px;text-align:left;margin-bottom:10px;">${diasVisuaisHTML}</div><div style="padding-top:10px;border-top:1px solid #e5e7eb;font-size:13px;line-height:24px;"><span style="display:inline-block;width:14px;height:14px;background:#18181b;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Início</span><span style="display:inline-block;width:14px;height:14px;background:#6366f1;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Final</span><span style="display:inline-block;width:14px;height:14px;background:#bfdbfe;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Dias contados</span><span style="display:inline-block;width:14px;height:14px;background:#d4d4d8;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">FDS</span><span style="display:inline-block;width:14px;height:14px;background:#fecdd3;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span style="margin-right:12px;">Feriado</span><span style="display:inline-block;width:14px;height:14px;background:#e9d5ff;border-radius:3px;margin-right:4px;vertical-align:middle;"></span><span>Personalizados</span></div>` : ''}
-            ${d.isUteis ? '<p style="font-size:11px;color:#9ca3af;margin:6px 0 0;line-height:1.4;"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-            ${(d.isUteis && prazo.perfilUsado) ? `<p style="font-size:11px;color:#9ca3af;margin:4px 0 0;display:flex;align-items:center;gap:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Perfil de feriados: <strong style="color:#6b7280;">${escapeHtml(prazo.perfilUsado.nome)}</strong></p>` : ''}
-        </div>
-    </div>
-    ${completo ? `<div class="secao"><h3>Detalhamento do cálculo</h3>${listaHTML}</div>` : ''}
-    ${_gerarHTMLConjuntosNotaPrazo(prazo, 'image')}
-</div>`;
-
-            const exportStyleEl = document.createElement('style');
-            exportStyleEl.id = 'export-agenda-style';
-            exportStyleEl.textContent = exportCSS;
-            document.head.appendChild(exportStyleEl);
-
-            const portal = document.createElement('div');
-            portal.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:hidden;z-index:-1;';
-            const container = document.createElement('div');
-            container.style.width = '900px';
-            container.innerHTML = htmlContent;
-            portal.appendChild(container);
-            document.body.appendChild(portal);
-
-            const cleanup = () => {
-                if (document.head.contains(exportStyleEl)) document.head.removeChild(exportStyleEl);
-                if (document.body.contains(portal)) document.body.removeChild(portal);
-            };
-
-            htmlToImage.toBlob(container, {
-                pixelRatio: 2,
-                backgroundColor: '#ffffff',
-                width: 900
-            }).then(blob => {
-                cleanup();
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                const prefixo = sanitizarNomeArquivo(prazo.titulo);
-                const sufixo = completo ? 'completo' : 'resumo';
-                link.download = prefixo ? `${prefixo}-contaprazo-${sufixo}.png` : `contaprazo-${sufixo}-${Date.now()}.png`;
-                link.click();
-                URL.revokeObjectURL(url);
-            }).catch(error => {
-                cleanup();
-                console.error('Erro ao gerar imagem:', error);
-                mostrarNotificacao('Erro ao gerar imagem. Por favor, tente novamente.', 'erro');
-            });
         }
 
         function exportarPrazoAgenda(tipo, formato) {
