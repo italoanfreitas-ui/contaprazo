@@ -272,7 +272,7 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 
 **Italoan F.**
 
-📧 Contato: [prazocerto@outlook.com](mailto:prazocerto@outlook.com)
+📧 Contato: [contaprazo@outlook.com](mailto:contaprazo@outlook.com)
 
 ## 📄 Licença
 

@@ -646,6 +646,11 @@
         }
         .regra-opcao-txt strong { display: block; font-size: 0.86rem; font-weight: 600; color: #1e293b; }
         .regra-ref { margin-left: 6px; font-size: 0.7rem; font-weight: 500; color: var(--cp-faint); }
+        .regra-personal .regra-ref {
+            display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; vertical-align: 1px;
+            font-size: 0.66rem; font-weight: 700; background: var(--cp-soft); color: var(--cp-muted);
+        }
+        .regra-personal .regra-opcao.ativa .regra-ref { background: #e8f0ff; color: var(--color-blue-600); }
         .regra-opcao-txt small, .regra-check small {
             display: block; margin-top: 2px; font-size: 0.74rem; line-height: 1.4; color: var(--cp-muted); font-weight: 400;
         }
@@ -7415,27 +7420,27 @@
         const REGRAS_CONTAGEM = [
             { id: 'civ', titulo: 'Processo civil, trabalhista e juizados', ref: 'CPC, arts. 219 e 224 · CLT, art. 775',
               ini: 'pub', uteis: true, prorrogar: true, s310: false, rotuloData: 'Data da publicação ou intimação',
-              ajuda: 'Dias úteis. O dia da intimação ou publicação não conta; a contagem começa no próximo dia útil.' },
+              ajuda: 'Dias úteis. O dia da intimação ou publicação não conta: o dia 1 é o próximo dia útil.' },
             { id: 'dje', titulo: 'Processo civil, pela disponibilização no DJe', ref: 'Lei 11.419/2006, art. 4º',
               ini: 'disp', uteis: true, prorrogar: true, s310: false, rotuloData: 'Data de disponibilização',
               ajuda: 'Considera-se publicado no 1º dia útil após a disponibilização; a contagem começa no dia útil seguinte.' },
             { id: 'cpp', titulo: 'Processo penal', ref: 'CPP, art. 798 · Súmula 310 do STF',
               ini: 'pub', uteis: false, prorrogar: true, s310: true, rotuloData: 'Data da intimação',
-              ajuda: 'Dias corridos. Não conta o dia do começo; a contagem começa no 1º dia útil e, se o último dia não for útil, prorroga.' },
+              ajuda: 'Dias corridos. O dia da intimação não conta: o dia 1 é o 1º dia útil seguinte. Se o último dia não for útil, prorroga.' },
             { id: 'cp', titulo: 'Prazo penal material', ref: 'Código Penal, art. 10',
               ini: 'inc', uteis: false, prorrogar: false, s310: false, rotuloData: 'Data de início',
-              ajuda: 'Dias corridos. O dia do começo é o dia 1; em regra, não se prorroga.' },
+              ajuda: 'Dias corridos. O dia informado já é o dia 1; em regra, não se prorroga.' },
             { id: 'sim', titulo: 'Contagem simples em dias corridos', ref: 'sem regra processual',
               ini: 'pub', uteis: false, prorrogar: false, s310: false, rotuloData: 'Data de início',
-              ajuda: 'Conta os dias do calendário a partir do dia seguinte, sem pular nada e sem prorrogar. Útil para medir um intervalo.' }
+              ajuda: 'Conta todos os dias do calendário, sem pular nada e sem prorrogar. O dia informado não conta: o dia 1 é o dia seguinte. Útil para medir um intervalo.' }
         ];
         const MARCOS_INICIAIS = {
-            pub:  { titulo: 'Intimação ou publicação', rotuloData: 'Data da publicação ou intimação',
-                    ajuda: u => `Não é computado; a contagem começa no ${u ? 'próximo dia útil' : 'dia seguinte'} (CPC, art. 224; CPP, art. 798, § 1º).` },
-            disp: { titulo: 'Disponibilização no DJe', rotuloData: 'Data de disponibilização',
-                    ajuda: () => 'A publicação é o 1º dia útil seguinte, e a contagem começa no dia útil depois dela (Lei 11.419/2006, art. 4º, §§ 3º e 4º).' },
-            inc:  { titulo: 'Primeiro dia do prazo', rotuloData: 'Data de início',
-                    ajuda: u => `O próprio dia informado é o dia 1${u ? ', se for dia útil' : ''} (Código Penal, art. 10).` }
+            pub:  { titulo: 'Intimação ou publicação', conta: 'não conta', rotuloData: 'Data da publicação ou intimação',
+                    ajuda: u => `O dia informado não entra na contagem: o dia 1 é o ${u ? 'próximo dia útil' : 'dia seguinte'} (CPC, art. 224; CPP, art. 798, § 1º).` },
+            disp: { titulo: 'Disponibilização no DJe', conta: 'não conta', rotuloData: 'Data de disponibilização',
+                    ajuda: () => 'O dia informado não entra na contagem. A publicação é o 1º dia útil seguinte, e o dia 1 é o dia útil depois dela (Lei 11.419/2006, art. 4º, §§ 3º e 4º).' },
+            inc:  { titulo: 'Primeiro dia do prazo', conta: 'conta como dia 1', rotuloData: 'Data de início',
+                    ajuda: u => `O dia informado já é o dia 1 do prazo${u ? ', se for dia útil' : ''} (Código Penal, art. 10).` }
         };
         const REGRA_STORAGE_KEY = 'contaprazo_regra_contagem';
         let regraContagem = { ini: 'pub', uteis: true, prorrogar: true, s310: false, personalizada: false };
@@ -7534,6 +7539,7 @@
                 const resumo = atual ? atual.ref : [
                     u ? 'Dias úteis' : 'Dias corridos',
                     MARCOS_INICIAIS[r.ini].titulo.toLowerCase(),
+                    'dia informado ' + MARCOS_INICIAIS[r.ini].conta,
                     !u ? (r.prorrogar ? 'prorroga' : 'não prorroga') : null
                 ].filter(Boolean).join(' · ');
                 el.innerHTML = `
@@ -7554,14 +7560,14 @@
             let personal = '';
             if (idAtual === 'pers') {
                 const marcos = Object.keys(MARCOS_INICIAIS).map(k =>
-                    radio(r.ini === k, `definirOpcaoRegra('ini','${k}')`, MARCOS_INICIAIS[k].titulo, '', MARCOS_INICIAIS[k].ajuda(u))).join('');
+                    radio(r.ini === k, `definirOpcaoRegra('ini','${k}')`, MARCOS_INICIAIS[k].titulo, MARCOS_INICIAIS[k].conta, MARCOS_INICIAIS[k].ajuda(u))).join('');
                 const ck = (on, onclick, label, nota) => `
                     <button type="button" class="regra-check${on ? ' ativa' : ''}" onclick="${onclick}" role="checkbox" aria-checked="${on}">
                         <span class="tipos-feriado-checkbox${on ? ' active' : ''}"></span><span>${escapeHtml(label)}${on && nota ? `<small>${escapeHtml(nota)}</small>` : ''}</span>
                     </button>`;
                 personal = `
                     <div class="regra-personal">
-                        <div class="regra-sub-label">O dia informado é</div>
+                        <div class="regra-sub-label">O que é o dia informado</div>
                         <div class="regra-lista" role="radiogroup">${marcos}</div>
                         <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
                             <span class="seg-glider" id="segGlider"></span>
@@ -8130,14 +8136,14 @@
             if (r.ini === 'disp' && infoCalculo && infoCalculo.publicacao) {
                 t = `Disponibilizado no DJe em ${dia(ini)}; considera-se publicado em ${dia(infoCalculo.publicacao)}, e a contagem começa no dia útil seguinte (Lei 11.419/2006, art. 4º, §§ 3º e 4º).`;
             } else if (r.ini === 'inc') {
-                t = 'O dia informado foi computado como 1º dia do prazo (Código Penal, art. 10)' +
+                t = 'O dia informado conta como dia 1 do prazo (Código Penal, art. 10)' +
                     (r.uteis && (ehFimDeSemana(ini) || ehFeriado(ini)) ? '; como não é dia útil, a contagem começou no próximo dia útil' : '') + '.';
             } else if (infoCalculo && infoCalculo.inicioAdiado) {
                 t = `Intimação em ${dia(ini)}; a contagem começa no 1º dia útil seguinte, ${dia(infoCalculo.inicioAdiado)} (Súmula 310 do STF).`;
             } else if (r.uteis) {
-                t = 'Data da intimação/publicação não computada; a contagem começa no próximo dia útil.';
+                t = 'O dia da intimação/publicação não conta: o dia 1 é o próximo dia útil.';
             } else {
-                t = 'Dia do início não computado.';
+                t = 'O dia informado não conta: o dia 1 é o dia seguinte.';
             }
             if (infoCalculo && infoCalculo.prorrogadoDe) {
                 t += ` O prazo terminaria em ${dia(infoCalculo.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
