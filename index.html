@@ -2435,29 +2435,43 @@
         /* Gerenciamento Avançado */
         .batch-editor {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 24px 26px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--cp-line);
+            box-shadow: var(--cp-shadow-card);
         }
 
         .batch-editor h3 {
-            color: #1f2937;
-            font-size: 1.25rem;
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--cp-ink);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+            padding-bottom: 12px;
+            position: relative;
         }
+        .batch-editor h3::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+            background: linear-gradient(90deg, #3b82f6, rgba(59, 130, 246, 0.25) 70%, transparent);
+        }
+        .batch-editor h3 svg { color: var(--color-blue-500); flex-shrink: 0; }
 
         .batch-editor textarea {
             width: 100%;
-            min-height: 300px;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            min-height: 240px;
+            padding: 12px 14px;
+            border: 1px solid #d9dfe8;
+            border-radius: 11px;
+            font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+            font-size: 0.86rem;
+            line-height: 1.65;
             resize: vertical;
+            background: #fff;
         }
+        .batch-editor textarea.ed-com-erro { border-color: #fda4af; }
 
         .batch-editor textarea:focus {
             outline: none;
@@ -2496,34 +2510,63 @@
         }
 
         .feriados-list {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 400px;
+            background: #fafbfc;
+            border: 1px solid var(--cp-line);
+            border-radius: 12px;
+            padding: 6px;
+            max-height: 380px;
             overflow-y: auto;
+            font-size: 0.84rem;
+            scrollbar-width: thin;
         }
 
         .feriado-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            margin: 5px 0;
-            background: white;
-            border-radius: 6px;
-            border-left: 4px solid var(--color-blue-500);
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            color: var(--cp-text);
         }
+        .feriado-item:hover { background: #fff; }
+        .feriado-item strong { font-variant-numeric: tabular-nums; color: var(--cp-ink); }
 
-        .feriado-item.fixo,
-        .feriado-item.movel {
-            border-left-color: #fecaca;
+        /* ==================== EDITOR DE FERIADOS ==================== */
+        .ed-intro { margin: 12px 0 18px; font-size: 0.9rem; line-height: 1.55; color: var(--cp-muted); max-width: 75ch; }
+        .ed-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .ed-grade-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
+        .ed-bloco { display: grid; gap: 8px; align-content: start; min-width: 0; }
+        .ed-bloco-topo { display: flex; align-items: center; gap: 8px; }
+        .ed-bloco-topo h4, .ed-lista-titulo { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--cp-ink); }
+        .ed-lista-titulo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .ed-formato { margin-left: auto; padding: 2px 8px; border-radius: 6px; background: var(--cp-soft); color: var(--cp-muted); font-size: 0.72rem; }
+        .ed-ponto { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .ed-ponto-nac { background: var(--cp-nac); }
+        .ed-ponto-per { background: var(--cp-per); }
+        .ed-ajuda { margin: 0; font-size: 0.8rem; color: var(--cp-muted); }
+        .ed-ajuda code, .ed-intro code { padding: 1px 5px; border-radius: 4px; background: var(--cp-soft); font-size: 0.78rem; }
+        .ed-validacao { min-height: 18px; font-size: 0.78rem; line-height: 1.5; color: var(--cp-muted); }
+        .ed-validacao.ok { color: var(--cp-ok); }
+        .ed-validacao.erro { color: var(--cp-late); }
+        .ed-validacao ul { margin: 4px 0 0; padding-left: 18px; }
+        .ed-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cp-line-soft); }
+        .ed-nota { font-size: 0.78rem; color: var(--cp-faint); margin-left: 4px; }
+        .ed-btn {
+            display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px;
+            border: 1px solid var(--cp-line); border-radius: 11px; background: #fff; color: #475569;
+            font: inherit; font-size: 0.86rem; font-weight: 650; cursor: pointer; white-space: nowrap;
+            transition: border-color 0.15s, background 0.15s, transform 0.15s;
         }
-
-        .feriado-item.personalizado {
-            border-left-color: #e9d5ff;
-        }
+        .ed-btn:hover { border-color: #cbd5e1; background: #fafbfc; }
+        .ed-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .ed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ed-btn-pri { border: 0; color: #fff; background: linear-gradient(180deg, #3b82f6, #2563eb); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 18px -10px rgba(37,99,235,.9); }
+        .ed-btn-pri:hover { background: linear-gradient(180deg, #3b82f6, #2563eb); filter: brightness(1.05); transform: translateY(-1px); }
+        .ed-btn-perigo { margin-left: auto; color: var(--cp-late); }
+        .ed-btn-perigo:hover { border-color: #fecdd3; background: #fff1f3; }
+        @media (max-width: 860px) { .ed-grade, .ed-grade-3 { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .batch-editor { padding: 18px 16px; } .ed-btn-perigo { margin-left: 0; } }
 
         /* Botão scroll to top */
         .scroll-to-top {
@@ -5126,157 +5169,60 @@
 
         <!-- Página de Gerenciamento de Feriados -->
         <div id="paginaGerenciamento" class="page-content">
-            <div class="batch-editor">
-                <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    Gerenciamento Avançado de Feriados
-                </h3>
-                <p style="color: #6b7280; margin-bottom: 20px;">
-                    Configure os feriados fixos e móveis da calculadora. Estas configurações são diferentes dos feriados personalizados que você adiciona clicando no calendário.
-                </p>
+            <div class="batch-editor ed">
+                <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="16" cy="16" r="2.5"/></svg> Feriados nacionais</h3>
+                <p class="ed-intro">Feriados fixos e móveis que valem para todos os cálculos. Para feriados do seu tribunal ou da sua cidade, use os feriados personalizados abaixo ou clique no dia no calendário.</p>
 
-                <!-- Seção 1: Feriados Fixos e Móveis -->
-                <div style="background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
-                    <h4 style="color: #dc2626; margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Feriados Fixos e Móveis
-                    </h4>
-
-                    <div class="info-box">
-                        <p><strong>ℹ️ Formatos aceitos:</strong></p>
-                        <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.8;">
-                            <li><strong>Feriados Fixos:</strong> <code>DD-MM Nome</code> (sem ano) - Ex: <code>25-12 Natal</code></li>
-                            <li><strong>Feriados Móveis:</strong> <code>DD-MM-YYYY Nome</code> (com ano) - Ex: <code>04-03-2025 Carnaval</code></li>
-                        </ul>
-                    </div>
-
-                    <h5 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px; font-size: 1rem;">Feriados Fixos</h5>
-                    <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 10px;">Feriados que ocorrem na mesma data todos os anos. <strong>Formato: DD-MM Nome</strong> (sem especificar o ano):</p>
-                    <textarea id="editorFeriadosFixos" placeholder="01-01 Ano Novo&#10;25-12 Natal"></textarea>
-
-                    <h5 style="color: #1f2937; margin-top: 20px; margin-bottom: 10px; font-size: 1rem;">Feriados Móveis</h5>
-                    <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 10px;">Feriados que variam de data a cada ano. <strong>Formato: DD-MM-YYYY Nome</strong> (com o ano completo):</p>
-                    <textarea id="editorFeriadosMoveis" placeholder="04-03-2025 Carnaval&#10;18-04-2025 Sexta-feira Santa"></textarea>
-
-                    <div class="warning-box" style="margin-top: 15px;">
-                        <p><strong>⚠️ Atenção:</strong> Ao salvar, as configurações atuais de fixos/móveis serão substituídas pelas novas. Esta ação não afeta os feriados personalizados.</p>
-                    </div>
-
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-success" onclick="salvarFeriadosBatch()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Salvar Fixos e Móveis
-                        </button>
-                        <button class="btn btn-secondary" onclick="resetarFeriadosPadrao()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 4 23 10 17 10"></polyline>
-                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                            </svg>
-                            Resetar Fixos/Móveis
-                        </button>
-                    </div>
+                <div class="ed-grade">
+                    <section class="ed-bloco">
+                        <div class="ed-bloco-topo"><span class="ed-ponto ed-ponto-nac"></span><h4>Fixos</h4><code class="ed-formato">DD-MM Nome</code></div>
+                        <p class="ed-ajuda">Repetem todo ano na mesma data. Ex.: <code>25-12 Natal</code></p>
+                        <textarea id="editorFeriadosFixos" data-formato="fixo" placeholder="01-01 Ano Novo&#10;25-12 Natal" spellcheck="false"></textarea>
+                        <div class="ed-validacao" id="valEditorFeriadosFixos" aria-live="polite"></div>
+                    </section>
+                    <section class="ed-bloco">
+                        <div class="ed-bloco-topo"><span class="ed-ponto ed-ponto-nac"></span><h4>Móveis</h4><code class="ed-formato">DD-MM-AAAA Nome</code></div>
+                        <p class="ed-ajuda">Mudam de data a cada ano, como Carnaval e Corpus Christi. Ex.: <code>04-03-2025 Carnaval</code></p>
+                        <textarea id="editorFeriadosMoveis" data-formato="movel" placeholder="04-03-2025 Carnaval&#10;18-04-2025 Sexta-feira Santa" spellcheck="false"></textarea>
+                        <div class="ed-validacao" id="valEditorFeriadosMoveis" aria-live="polite"></div>
+                    </section>
                 </div>
 
-                <!-- Divisor visual -->
-                <div style="border-top: 3px solid #d1d5db; margin: 30px 0;"></div>
-
-                <!-- Seção 2: Feriados Personalizados -->
-                <div style="background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px;">
-                    <h4 style="color: #9333ea; margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        Feriados Personalizados
-                    </h4>
-
-                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 15px;">
-                        Gerencie feriados específicos adicionados por você (via calendário ou importação JSON). <strong>Formato: DD-MM-YYYY Nome</strong> (nome opcional)
-                    </p>
-
-                    <div id="avisoEditorMultiFonte" style="display:none; background:#fef9ec; border:1px solid #fcd34d; border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:0.88rem; color:#92400e; line-height:1.5;">
-                        <strong>Perfil com múltiplas fontes mescladas.</strong><br>
-                        O editor de texto não está disponível para este perfil. Para alterar os feriados, importe um novo conjunto usando <em>Substituir</em> (descarta as fontes atuais) ou <em>Mesclar</em> (adiciona sem remover as fontes existentes).
-                    </div>
-
-                    <textarea id="editorFeriadosPersonalizados" placeholder="25-12-2025 Natal&#10;01-01-2026 Ano Novo&#10;15-06-2026"></textarea>
-
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-success" id="btnSalvarPersonalizados" onclick="salvarFeriadosPersonalizadosEditor()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Salvar Personalizados
-                        </button>
-                        <button class="btn btn-red" id="btnLimparPersonalizados" onclick="limparFeriadosPersonalizados()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                            Limpar Personalizados
-                        </button>
-                    </div>
-
-                    <div class="btn-group" style="margin-top: 10px;">
-                        <button class="btn btn-purple" onclick="abrirModalSelecionarFonte()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Importar Feriados
-                        </button>
-                        <button class="btn btn-secondary" onclick="exportarFeriados()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            Exportar JSON
-                        </button>
-                    </div>
-
-                    <div class="btn-group" style="margin-top: 10px;">
-                        <button class="btn btn-secondary" onclick="verificarAtualizacoesFeriados(true)" style="width: 100%;" title="Verificar se há atualizações disponíveis">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 4 23 10 17 10"></polyline>
-                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                            </svg>
-                            Verificar Atualizações
-                        </button>
-                    </div>
+                <div class="ed-acoes">
+                    <button class="ed-btn ed-btn-pri" onclick="salvarFeriadosBatch()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Salvar fixos e móveis</button>
+                    <button class="ed-btn" onclick="resetarFeriadosPadrao()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/></svg>Restaurar padrão</button>
+                    <span class="ed-nota">Salvar substitui os fixos e móveis atuais. Os personalizados não mudam.</span>
                 </div>
             </div>
 
-            <div class="batch-editor">
-                <h3>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                        <line x1="4" y1="22" x2="4" y2="15"></line>
-                    </svg>
-                    Visualização de Feriados Configurados
-                </h3>
+            <div class="batch-editor ed">
+                <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="16" cy="16" r="2.5"/></svg> Feriados personalizados</h3>
+                <p class="ed-intro">Feriados do seu tribunal, da sua cidade ou pontos facultativos, adicionados por você, pelo calendário ou por importação. O nome é opcional.</p>
+                <div id="avisoEditorMultiFonte" style="display:none; background:#fef9ec; border:1px solid #fcd34d; border-radius:8px; padding:12px 14px; margin-bottom:12px; font-size:0.88rem; color:#92400e; line-height:1.5;">
+                        <strong>Perfil com múltiplas fontes mescladas.</strong><br>
+                        O editor de texto não está disponível para este perfil. Para alterar os feriados, importe um novo conjunto usando <em>Substituir</em> (descarta as fontes atuais) ou <em>Mesclar</em> (adiciona sem remover as fontes existentes).
+                    </div>
+                <section class="ed-bloco">
+                    <div class="ed-bloco-topo"><span class="ed-ponto ed-ponto-per"></span><h4>Personalizados do perfil ativo</h4><code class="ed-formato">DD-MM-AAAA Nome</code></div>
+                    <textarea id="editorFeriadosPersonalizados" data-formato="personalizado" placeholder="25-12-2025 Natal&#10;01-01-2026 Ano Novo&#10;15-06-2026" spellcheck="false"></textarea>
+                    <div class="ed-validacao" id="valEditorFeriadosPersonalizados" aria-live="polite"></div>
+                </section>
+                <div class="ed-acoes">
+                    <button class="ed-btn ed-btn-pri" id="btnSalvarPersonalizados" onclick="salvarFeriadosPersonalizadosEditor()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Salvar personalizados</button>
+                    <button class="ed-btn" onclick="abrirModalSelecionarFonte()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Importar</button>
+                    <button class="ed-btn" onclick="exportarFeriados()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Exportar</button>
+                    <button class="ed-btn" onclick="verificarAtualizacoesFeriados(true)" title="Verificar se há datas novas nos conjuntos importados"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Verificar atualizações</button>
+                    <button class="ed-btn ed-btn-perigo" id="btnLimparPersonalizados" onclick="limparFeriadosPersonalizados()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Limpar</button>
+                </div>
+            </div>
 
-                <h4 style="color: #dc2626; margin-top: 20px; margin-bottom: 10px;">Feriados Fixos Ativos</h4>
-                <div id="listaFeriadosFixos" class="feriados-list"></div>
-
-                <h4 style="color: #dc2626; margin-top: 20px; margin-bottom: 10px;">Feriados Móveis Ativos</h4>
-                <div id="listaFeriadosMoveis" class="feriados-list"></div>
-
-                <h4 style="color: #9333ea; margin-top: 20px; margin-bottom: 10px;">Feriados Personalizados Ativos</h4>
-                <div id="listaFeriadosPersonalizados" class="feriados-list"></div>
+            <div class="batch-editor ed">
+                <h3><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Feriados em uso</h3>
+                <div class="ed-grade ed-grade-3">
+                    <section><h4 class="ed-lista-titulo"><span class="ed-ponto ed-ponto-nac"></span>Fixos</h4><div id="listaFeriadosFixos" class="feriados-list"></div></section>
+                    <section><h4 class="ed-lista-titulo"><span class="ed-ponto ed-ponto-nac"></span>Móveis</h4><div id="listaFeriadosMoveis" class="feriados-list"></div></section>
+                    <section><h4 class="ed-lista-titulo"><span class="ed-ponto ed-ponto-per"></span>Personalizados</h4><div id="listaFeriadosPersonalizados" class="feriados-list"></div></section>
+                </div>
             </div>
         </div>
         <!-- Fim Página de Gerenciamento -->
@@ -13728,6 +13674,55 @@ ${_htmlRelatorio(D, completo, 'print')}
         }
 
         // Carregar editores de feriados
+        // Validação linha a linha dos editores de feriados (mostrada abaixo de cada caixa)
+        function validarEditorFeriados(textarea) {
+            const saida = document.getElementById('val' + textarea.id.charAt(0).toUpperCase() + textarea.id.slice(1));
+            if (!saida) return;
+            const formato = textarea.dataset.formato;
+            const linhas = textarea.value.split('\n');
+            const problemas = [];
+            const vistas = new Set();
+            let validas = 0;
+            const existe = (d, m, a) => { const x = new Date(a, m - 1, d); return x.getFullYear() === a && x.getMonth() === m - 1 && x.getDate() === d; };
+            linhas.forEach((bruta, idx) => {
+                const linha = bruta.trim();
+                if (!linha) return;
+                let m, ok = false, msg = '';
+                if (formato === 'fixo') {
+                    m = linha.match(/^(\d{2})-(\d{2})\s+(.+)$/);
+                    if (!m) msg = 'use DD-MM Nome';
+                    else if (!existe(+m[1], +m[2], 2024)) msg = 'data inexistente';
+                    else ok = true;
+                } else {
+                    m = linha.match(/^(\d{2})-(\d{2})-(\d{4})(?:\s+(.+))?$/);
+                    if (!m) msg = formato === 'movel' ? 'use DD-MM-AAAA Nome' : 'use DD-MM-AAAA e, se quiser, o nome';
+                    else if (formato === 'movel' && !m[4]) msg = 'falta o nome do feriado';
+                    else if (!existe(+m[1], +m[2], +m[3])) msg = 'data inexistente';
+                    else ok = true;
+                }
+                if (ok) {
+                    const chave = formato === 'fixo' ? linha.slice(0, 5) : linha.slice(0, 10);
+                    if (vistas.has(chave)) problemas.push(`linha ${idx + 1} (“${escapeHtml(linha)}”): data repetida`);
+                    vistas.add(chave);
+                    validas++;
+                } else {
+                    problemas.push(`linha ${idx + 1} (“${escapeHtml(linha.slice(0, 40))}”): ${msg}`);
+                }
+            });
+            textarea.classList.toggle('ed-com-erro', problemas.length > 0);
+            if (problemas.length) {
+                saida.className = 'ed-validacao erro';
+                const lista = problemas.slice(0, 5).map(p => `<li>${p}</li>`).join('');
+                saida.innerHTML = `${problemas.length} ${problemas.length === 1 ? 'linha precisa' : 'linhas precisam'} de ajuste. Corrija antes de salvar.<ul>${lista}</ul>${problemas.length > 5 ? `e mais ${problemas.length - 5}…` : ''}`;
+            } else {
+                saida.className = 'ed-validacao' + (validas ? ' ok' : '');
+                saida.textContent = validas ? `✓ ${validas} ${validas === 1 ? 'feriado' : 'feriados'}, tudo certo.` : '';
+            }
+        }
+        document.addEventListener('input', e => {
+            if (e.target instanceof Element && e.target.matches('textarea[data-formato]')) validarEditorFeriados(e.target);
+        });
+
         function carregarEditoresFeriados() {
             // Carregar feriados fixos no formato brasileiro DD-MM
             let textoFixos = '';
@@ -13756,6 +13751,7 @@ ${_htmlRelatorio(D, completo, 'print')}
 
             // Atualizar visualizações
             atualizarVisualizacaoFeriados();
+            document.querySelectorAll('textarea[data-formato]').forEach(validarEditorFeriados);
         }
 
         // Atualizar visualização de feriados
