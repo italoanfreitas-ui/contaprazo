@@ -8323,8 +8323,18 @@
             const content = document.getElementById('configFeriadosContent');
             const icon = document.getElementById('configToggleIcon');
 
-            content.classList.toggle('aberto');
+            const abriu = content.classList.toggle('aberto');
             icon.classList.toggle('aberto');
+            const header = document.querySelector('.config-feriados-header');
+            if (header) header.setAttribute('aria-expanded', abriu);
+            // Ao abrir, rola só o necessário para as opções ficarem visíveis. No computador a coluna
+            // do calendário tem rolagem própria; scrollIntoView rola o contêiner certo.
+            if (abriu) {
+                setTimeout(() => {
+                    const ultimo = content.lastElementChild;
+                    if (ultimo) ultimo.scrollIntoView({ block: 'nearest', behavior: _reduzirMovimento() ? 'auto' : 'smooth' });
+                }, 60);
+            }
         }
 
         function limparFeriadosPersonalizados() {
