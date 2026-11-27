@@ -95,6 +95,10 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            /* rodapé sempre no final, mesmo com pouco conteúdo */
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 64px);
         }
 
         .page-header {
@@ -148,6 +152,7 @@
 
         .nav-tabs {
             max-width: 1200px;
+            transition: opacity 0.2s ease;
             margin: 0 auto 20px;
             display: flex;
             gap: 4px;
@@ -221,6 +226,7 @@
 
         .page-content {
             display: none;
+            flex: 1;
         }
 
         .page-content.active {
@@ -304,12 +310,6 @@
 
         .card-cal-header .section-title {
             margin-bottom: 0;
-        }
-
-        .perfil-badge-container {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
         }
 
         /* Dropdown — z-index alto para aparecer sobre qualquer container */
@@ -717,16 +717,13 @@
         }
 
         .sidebar-nav-items {
+            position: relative;
             display: flex;
             flex-direction: column;
             padding: 8px;
             gap: 2px;
             flex: 1;
             overflow-y: auto;
-        }
-
-        .sidebar-nav-items {
-            position: relative;
         }
 
         .sidebar-tab-slider {
@@ -842,9 +839,6 @@
         }
 
         /* Fade out nav horizontal quando sidebar está ativa */
-        .nav-tabs {
-            transition: opacity 0.2s ease;
-        }
 
         body.sidebar-mode .nav-tabs {
             opacity: 0;
@@ -890,11 +884,6 @@
             font-weight: 600;
             color: #374151;
             margin-bottom: 8px;
-        }
-
-        .tipos-feriado-calc-hint {
-            font-size: 0.75rem;
-            color: #9ca3af;
         }
 
         .perfil-calculo-select {
@@ -1054,16 +1043,9 @@
             box-shadow: 0 4px 8px rgba(147, 51, 234, 0.3);
         }
 
-        .btn-indigo {
-            background: #6366f1;
-            color: white;
-        }
+        
 
-        .btn-indigo:hover {
-            background: #4f46e5;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
-        }
+        
 
         .btn-quick {
             flex: 1;
@@ -1406,10 +1388,7 @@
         }
 
         /* ── Body section ── */
-        .resultado-body {
-            background: white;
-            padding: 20px 28px 28px;
-        }
+        
 
         .resultado-info {
             margin: 8px 0;
@@ -1444,6 +1423,8 @@
 
         .detalhamento {
             background: white;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 16px 16px 4px 16px;
@@ -1474,10 +1455,6 @@
         }
 
         /* Estilos de scrollbar para Firefox */
-        .detalhamento {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 transparent;
-        }
 
         .detalhamento h3 {
             color: #1f2937;
@@ -1764,119 +1741,37 @@
         }
 
         /* Chip dropdown de tipos de feriado */
-        .tipos-feriado-wrapper {
-            position: relative;
-            flex-shrink: 0;
-        }
+        
 
-        .tipos-feriado-chip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: 500;
-            color: #374151;
-            transition: all 0.15s;
-            white-space: nowrap;
-        }
+        
 
-        .tipos-feriado-chip:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
+        
 
-        .tipos-feriado-badge {
-            background: var(--color-green-600);
-            color: white;
-            font-size: 0.68rem;
-            font-weight: 700;
-            padding: 1px 6px;
-            border-radius: 10px;
-            min-width: 26px;
-            text-align: center;
-        }
+        
 
-        .tipos-feriado-badge.incompleto { background: #f59e0b; }
-        .tipos-feriado-badge.zero { background: #dc2626; }
+        
+        
 
-        .tipos-feriado-dropdown {
-            position: fixed;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            min-width: 190px;
-            display: none;
-            z-index: 10001;
-            overflow: hidden;
-        }
+        
 
-        .tipos-feriado-dropdown.active {
-            display: block;
-            animation: menuSlideIn 0.15s ease-out;
-        }
+        
 
-        .tipos-feriado-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 11px 14px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            color: #1f2937;
-            transition: background 0.1s;
-            user-select: none;
-        }
+        
 
-        .tipos-feriado-item:hover { background: #f9fafb; }
-        .tipos-feriado-item + .tipos-feriado-item { border-top: 1px solid #f3f4f6; }
+        
+        
 
-        .tipos-feriado-item.inativo { color: #9ca3af; }
+        
 
-        .tipos-feriado-check {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            background: #dcfce7;
-            color: var(--color-green-600);
-            border: 1.5px solid #86efac;
-            flex-shrink: 0;
-        }
+        
 
-        .tipos-feriado-item.inativo .tipos-feriado-check {
-            background: #f3f4f6;
-            color: #9ca3af;
-            border-color: #d1d5db;
-        }
+        
 
-        .toggle-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        
 
-        .toggle-ativo {
-            background: var(--color-green-600);
-            color: white;
-        }
+        
 
-        .toggle-inativo {
-            background: #d1d5db;
-            color: #4b5563;
-        }
+        
 
         .calendario-grid {
             display: grid;
@@ -1912,16 +1807,6 @@
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #e5e7eb;
-        }
-
-        /* Garante que o rodapé fique no final mesmo com pouco conteúdo */
-        .container {
-            display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 64px);
-        }
-        .page-content {
-            flex: 1;
         }
 
         .rodape a {
@@ -2907,9 +2792,7 @@
                 margin-bottom: 15px;
             }
 
-            .resultado-body {
-                padding: 18px;
-            }
+            
 
             .resultado-info {
                 font-size: 0.95rem;
@@ -3041,9 +2924,7 @@
                 padding: 12px;
             }
 
-            .resultado-body {
-                padding: 14px;
-            }
+            
 
             .btn-group {
                 gap: 6px;
@@ -3371,63 +3252,13 @@
             }
         }
 
-        /* ==================== MINHA AGENDA - ESTILOS ==================== */
+        
 
-        /* Separador elegante para botão Salvar na Agenda */
-        .resultado-separador {
-            margin: 30px 0 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        
 
-        .resultado-separador::before,
-        .resultado-separador::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-        }
+        
 
-        .resultado-separador-texto {
-            font-size: 0.875rem;
-            color: #9ca3af;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        /* Botão Salvar na Agenda */
-        .btn-salvar-agenda {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            color: white;
-            padding: 14px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
-            width: 100%;
-        }
-
-        .btn-salvar-agenda:hover {
-            background: linear-gradient(135deg, #ea580c, #c2410c);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
-        }
-
-        .btn-salvar-agenda:active {
-            transform: translateY(0);
-        }
-
-        .btn-salvar-agenda svg {
-            flex-shrink: 0;
-        }
+        
 
         /* ── Agenda Toolbar ── */
         .agenda-toolbar {
@@ -3594,8 +3425,8 @@
         }
         .agenda-mais-menu button:hover { background: #f9fafb; }
         .agenda-mais-menu button svg { width: 15px; height: 15px; stroke-width: 2; flex-shrink: 0; color: #6b7280; }
-        .agenda-mais-menu button.agenda-mais-destrutivo { color: #dc2626; }
-        .agenda-mais-menu button.agenda-mais-destrutivo svg { color: #dc2626; }
+
+        
         .agenda-mais-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
         .agenda-mais-arquivo-info {
             padding: 10px 14px 8px;
@@ -3939,35 +3770,13 @@
             color: #9ca3af;
         }
 
-        /* Data Final - Destaque Principal */
-        .prazo-data-final-destaque {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            padding: 8px 12px;
-            background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%);
-            border-left: 3px solid var(--color-blue-500);
-            border-radius: 4px;
-        }
+        
 
-        .prazo-data-final-destaque svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-            stroke: var(--color-blue-500);
-        }
+        
 
-        .prazo-data-final-texto {
-            font-size: 0.95rem;
-            color: #374151;
-        }
+        
 
-        .prazo-data-final-texto strong {
-            font-weight: 700;
-            color: #1f2937;
-            font-size: 1rem;
-        }
+        
 
         /* Badges de Status - Discreto */
         .prazo-badge {
@@ -4037,93 +3846,40 @@
         }
 
         /* Contador Regressivo - Discreto mas Claro */
-        .prazo-contador {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 2px;
-            padding: 8px 12px;
-            background: #f9fafb;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
-            min-width: 140px;
-        }
+        
 
-        .contador-numero {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #374151;
-            line-height: 1;
-        }
+        
 
-        .contador-label {
-            font-size: 0.7rem;
-            color: #6b7280;
-            font-weight: 500;
-            text-align: right;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
+        
 
-        .prazo-item.concluido .prazo-contador {
-            background: transparent;
-            border-color: transparent;
-        }
+        
 
-        .prazo-item.concluido .contador-numero,
-        .prazo-item.concluido .contador-label {
-            color: #9ca3af;
-        }
+        
 
         /* Atrasado - vermelho */
-        .contador-atrasado .contador-numero {
-            color: #dc2626;
-        }
+        
 
         /* Vencendo - laranja */
-        .contador-vencendo .contador-numero {
-            color: #ea580c;
-        }
+        
 
         /* Pendente - azul */
-        .contador-pendente .contador-numero {
-            color: var(--color-blue-500);
-        }
+        
 
-        /* Contador Inline (sem caixa, apenas texto destacado) */
-        .prazo-contador-inline {
-            display: inline-block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-left: 4px;
-        }
-
-        .prazo-contador-inline.atrasado {
+        /* Contador Inline (sem caixa{
             color: #dc2626;
         }
 
-        .prazo-contador-inline.vence-hoje {
-            color: #ea580c;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
+        
 
         .prazo-contador-inline.vencendo {
             color: #ea580c;
         }
 
-        .prazo-contador-inline.pendente {
-            color: var(--color-blue-500);
-        }
+        
 
-        .prazo-contador-inline.concluido {
-            color: var(--color-green-600);
-        }
+        
 
-        .prazo-contador-inline strong {
-            font-weight: 700;
-        }
+        
 
         /* Countdown como linha dedicada abaixo da meta */
         .prazo-countdown {
@@ -4268,43 +4024,15 @@
             stroke: #dc2626;
         }
 
-        .prazo-btn-acao {
-            width: 36px;
-            height: 36px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            background: #f3f4f6;
-            color: #6b7280;
-        }
+        
 
-        .prazo-btn-acao:hover {
-            transform: scale(1.1);
-        }
+        
 
-        .prazo-btn-acao svg {
-            width: 18px;
-            height: 18px;
-        }
+        
 
-        .prazo-btn-ver:hover {
-            background: #dbeafe;
-            color: #1e40af;
-        }
+        
 
-        .prazo-btn-editar:hover {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .prazo-btn-excluir:hover {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+        
 
         /* Estado vazio */
         .agenda-vazia {
@@ -4426,6 +4154,8 @@
         .modal-estrela-btn svg { width: 18px; height: 18px; }
 
         .modal-detalhes-body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
             padding: 1.2rem 1.6rem;
             overflow-y: auto;
             flex: 1;
@@ -4447,10 +4177,6 @@
         }
 
         /* Estilos de scrollbar para Firefox */
-        .modal-detalhes-body {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 transparent;
-        }
 
         .modal-detalhes-acoes {
             padding: 1rem 1.6rem 1.5rem;
@@ -4462,21 +4188,12 @@
             flex-shrink: 0;
         }
 
-        /* ── Arquivo da Agenda ── */
-        .agenda-info-arquivo {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 14px;
-            background: linear-gradient(to right, #f0fdf4, #f7fef9);
-            border: 1px solid #bbf7d0; border-radius: 10px;
-            cursor: pointer; transition: all 0.18s; user-select: none; margin-bottom: 14px;
-        }
-        .agenda-info-arquivo:hover { background: linear-gradient(to right, #dcfce7, #f0fdf4); border-color: #86efac; box-shadow: 0 2px 8px rgba(22,163,74,0.09); }
-        .agenda-info-arquivo-icone { flex-shrink: 0; color: #16a34a; display: flex; align-items: center; }
-        .agenda-info-arquivo-corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-        .agenda-info-arquivo-label { font-size: 0.68rem; color: #6b7280; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
-        .agenda-info-arquivo-nome { font-weight: 600; font-size: 0.85rem; color: #166534; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .agenda-info-arquivo-acao { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; color: #16a34a; padding: 4px 10px; background: rgba(22,163,74,0.1); border-radius: 6px; white-space: nowrap; transition: background 0.18s; }
-        .agenda-info-arquivo:hover .agenda-info-arquivo-acao { background: rgba(22,163,74,0.18); }
+        
+        
+        
+        
+        
+        
         .agenda-setup-screen { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; text-align: center; }
         .agenda-setup-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: #16a34a; }
         .agenda-setup-titulo { font-size: 1.15rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
@@ -4690,7 +4407,7 @@
         }
 
         /* Botões de Gerenciamento da Agenda */
-        .agenda-acoes-gerenciamento { display: none; }
+        
 
         /* Modal de Input de Título */
         .modal-input-titulo {
@@ -4804,23 +4521,11 @@
                 padding: 16px;
             }
 
-            .prazo-contador {
-                grid-column: 2;
-                align-items: flex-start;
-                margin-top: 8px;
-            }
-
             .prazo-acoes {
                 opacity: 1;
                 visibility: visible;
                 grid-column: 2;
                 justify-content: flex-end;
-            }
-
-            .filtro-btn {
-                min-width: 100px;
-                font-size: 0.85rem;
-                padding: 8px 12px;
             }
 
             .modal-detalhes-content {
@@ -4883,10 +4588,6 @@
                 font-size: 1rem;
             }
 
-            .contador-numero {
-                font-size: 1.5rem;
-            }
-
             .agenda-toolbar-btn { font-size: 0.75rem; padding: 7px 9px; }
             .agenda-filtro-btn { font-size: 0.85rem; }
         }
@@ -4911,7 +4612,7 @@
         .cal-linha-sub { gap: 10px; }
 
         /* Perfil ativo (linha 2 do topo) */
-        .perfil-badge-container { position: relative; min-width: 0; }
+        .perfil-badge-container { position: relative; min-width: 0; display: inline-flex; align-items: center; }
         .perfil-badge {
             display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
             font-size: 0.78rem; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 6px;
@@ -8102,11 +7803,11 @@
                 let tipo, badge, desc = '', extraPill = '';
 
                 if (dia.contado) {
-                    const numStr = dia.numero.toString().padStart(2, '0');
+                    const numStr = dia.prorrogacao ? '→' : String(dia.numero ?? '').padStart(2, '0');
                     tipo = isFinalDay ? 'final' : 'contado';
                     badge = numStr;
                     if (isFinalDay) {
-                        desc = 'Data final do prazo.';
+                        desc = dia.prorrogacao ? 'Data final do prazo, prorrogada para o primeiro dia útil.' : 'Data final do prazo.';
                         extraPill = '<span class="timeline-prazo-final-pill">Prazo Final</span>';
                     } else if (dia.numero === 1) {
                         desc = 'Início da contagem do prazo.';
@@ -8114,7 +7815,7 @@
                 } else if (dia.motivo === 'Final de Semana') {
                     tipo = 'fds';
                     badge = '✖';
-                    desc = 'Fim de semana — não contabilizado.';
+                    desc = dia.prorrogacao ? 'Fim de semana — prorrogação do vencimento.' : 'Fim de semana — não contabilizado.';
                 } else {
                     tipo = 'feriado';
                     badge = '✖';
