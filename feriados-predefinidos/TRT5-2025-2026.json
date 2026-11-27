@@ -1,4 +1,18 @@
 {
+  "meta": {
+    "id": "trt5-2025-2026",
+    "id2": "TRT5 2025-2026",
+    "nome": "TRT5 - Tribunal Regional do Trabalho da 5ª Região (2025-2026)",
+    "descricao": "Suspensões de acordo com a Resolução administrativa TRT5 nº 037, de 10 de junho 2025",
+    "ano": "2025-2026",
+    "links": [
+      {
+        "url": "https://www.trt5.jus.br/sites/default/files/sistema/normas/2026-01/0037-2025_aprova_calendario_exercicio_de_2026_0.pdf",
+        "rotulo": "Resolução TRT5 nº 037/2025",
+        "ate": "2026-12-31"
+      }
+    ]
+  },
   "feriadosPersonalizados": [
     "20-12-2025 Recesso Forense - TRT5",
     "21-12-2025 Recesso Forense - TRT5",

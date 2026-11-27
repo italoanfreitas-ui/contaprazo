@@ -154,90 +154,16 @@ contaprazo/
 ├── index.html                     # Aplicação completa (standalone)
 ├── README.md                      # Este arquivo
 ├── feriados-predefinidos/
-│   ├── manifest.json              # Índice dos conjuntos de feriados online
-│   └── *.json                     # Arquivos de feriados por conjunto
+│   ├── manifest.json              # Índice gerado automaticamente (não editar)
+│   └── *.json                     # Um arquivo por conjunto: datas + bloco "meta"
+├── scripts/gerar-manifest.js      # Valida os conjuntos e gera o manifest
+├── .github/workflows/             # Automação que roda o script a cada mudança
 └── .git/                          # Controle de versão Git
 ```
 
-## 📄 Formato do manifest.json
+## 📄 Conjuntos de feriados online
 
-O `manifest.json` é o índice central dos conjuntos de feriados disponíveis para importação online. Estrutura:
-
-```json
-{
-  "versao": "2.0",
-  "conjuntos": [
-    {
-      "id": "tjba-2025-2026",
-      "id2": "TJBA 2025-2026",
-      "arquivo": "TJBA-2025-2026.json",
-      "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
-      "descricao": "Suspensões conforme Decreto Judiciário nº ...",
-      "dataAtualizacao": "DD-MM-YYYY",
-      "ano": "2025-2026",
-      "links": [...]
-    }
-  ]
-}
-```
-
-### Campo `links`
-
-Cada conjunto pode ter um ou mais atos normativos associados. O sistema seleciona automaticamente o link correto para cada data de feriado.
-
-#### Formato básico (legado — campo `ate`)
-
-```json
-"links": [
-  {
-    "url": "https://...",
-    "rotulo": "Decreto nº 1050/2025",
-    "ate": "2026-12-31"
-  },
-  {
-    "url": "https://...",
-    "rotulo": "Decretos nº 949-951/2024",
-    "ate": "2025-12-31"
-  }
-]
-```
-
-Com múltiplos links e `ate`, o sistema ordena por data crescente e seleciona o **primeiro** cujo `ate` seja maior ou igual à data do feriado.
-
-#### Formato avançado (campo `datas`)
-
-Quando um ato normativo cobre apenas **datas específicas ou intervalos pontuais** dentro de um período maior, use a chave `datas`:
-
-```json
-"links": [
-  {
-    "url": "https://...",
-    "rotulo": "Portaria nº 10/2025",
-    "datas": [
-      "2025-01-20",
-      {"de": "2025-06-01", "ate": "2025-06-30"},
-      "2025-11-15"
-    ]
-  },
-  {
-    "url": "https://...",
-    "rotulo": "Portaria nº 5/2025",
-    "ate": "2025-12-31"
-  }
-]
-```
-
-**Regras de seleção** (em ordem de prioridade):
-1. Se algum link tem `datas` e a data do feriado está coberta → usa esse link
-2. Caso contrário, aplica a lógica legada via `ate`
-
-**Tipos de entrada em `datas`:**
-| Tipo | Formato | Descrição |
-|------|---------|-----------|
-| Data exata | `"YYYY-MM-DD"` | Cobre apenas aquela data |
-| Intervalo | `{"de": "YYYY-MM-DD", "ate": "YYYY-MM-DD"}` | Intervalo fechado (início e fim inclusivos) |
-
-> **Compatibilidade**: links sem `datas` continuam funcionando normalmente. A chave `datas` é totalmente opcional.
+Cada conjunto fica num único arquivo em `feriados-predefinidos/`, com as datas e um bloco `meta` (nome, descrição e links do ato normativo). O `manifest.json` é gerado automaticamente pela automação **Manifest de feriados** (`.github/workflows/manifest-feriados.yml`), que também atualiza a `dataAtualizacao` quando um conjunto muda. Formato completo e passo a passo em [`feriados-predefinidos/README.md`](feriados-predefinidos/README.md).
 
 ## 🔒 Privacidade
 

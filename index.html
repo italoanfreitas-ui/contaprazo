@@ -9919,6 +9919,11 @@
                     if (btn) btn.classList.add('btn-novos-conjuntos');
                 });
 
+                // Se o modal de boas-vindas já está aberto, ele já lista os conjuntos:
+                // não empilha uma notificação repetindo a mesma informação.
+                const modalBV = document.getElementById('modalBoasVindas');
+                if (modalBV && modalBV.classList.contains('active')) return;
+
                 // Toast resumido: mostra no máximo 2 nomes, depois "+ N mais"
                 const MAX_NOMES_TOAST = 2;
                 const plural = novos.length > 1;
@@ -15424,6 +15429,7 @@
         atualizarEstadoEditorPersonalizados();
         // Posiciona tooltip do chip de feriados com coordenadas fixas para escapar de overflow:hidden
         document.addEventListener('mouseenter', function(e) {
+            if (!(e.target instanceof Element)) return;
             const chip = e.target.closest('.chip-feriados');
             if (!chip) return;
             const tooltip = chip.querySelector('.chip-feriados-tooltip');

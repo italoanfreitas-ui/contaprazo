@@ -1,0 +1,62 @@
+name: Manifest de feriados
+
+# Gera feriados-predefinidos/manifest.json a partir dos arquivos de conjunto.
+# Você edita só o arquivo do conjunto (datas + bloco "meta"); este fluxo valida
+# e reescreve o manifest, inclusive a dataAtualizacao, que avisa os usuários.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'feriados-predefinidos/*.json'
+      - '!feriados-predefinidos/manifest.json'
+      - 'scripts/gerar-manifest.js'
+  pull_request:
+    paths:
+      - 'feriados-predefinidos/**'
+      - 'scripts/gerar-manifest.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manifest-feriados
+  cancel-in-progress: false
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validar conjuntos (pull request)
+        if: github.event_name == 'pull_request'
+        run: node scripts/gerar-manifest.js --verificar
+
+      - name: Gerar manifest
+        if: github.event_name != 'pull_request'
+        env:
+          BASE: ${{ github.event.before }}
+        run: |
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then BASE=HEAD; fi
+          node scripts/gerar-manifest.js --base-ref "$BASE"
+
+      - name: Salvar manifest atualizado
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add feriados-predefinidos/manifest.json
+          if git diff --cached --quiet; then
+            echo "Manifest sem mudanças."
+          else
+            git commit -m "chore(feriados): atualiza manifest.json automaticamente"
+            git push
+          fi
