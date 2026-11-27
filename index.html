@@ -2000,6 +2000,18 @@
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
         }
 
+        /* Detalhe do prazo: só a ação principal é cheia; as demais são contornadas */
+        .modal-detalhes-acoes .btn-primary,
+        .modal-detalhes-acoes .btn-red {
+            background: #fff;
+            border: 1px solid var(--cp-line);
+            box-shadow: none;
+        }
+        .modal-detalhes-acoes .btn-primary { color: var(--color-blue-600); }
+        .modal-detalhes-acoes .btn-red { color: var(--cp-late); }
+        .modal-detalhes-acoes .btn-primary:hover { background: #f5f9ff; border-color: #c7d7fb; }
+        .modal-detalhes-acoes .btn-red:hover { background: #fff1f3; border-color: #fecdd3; }
+
         .modal-content .btn:active,
         .modal-aviso-content .btn:active,
         .modal-detalhes-acoes .btn:active,
@@ -2391,33 +2403,51 @@
         /* Página de Ajuda */
         .help-section {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 24px 26px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--cp-line);
+            box-shadow: var(--cp-shadow-card);
         }
 
         .help-section h3 {
-            color: #1f2937;
-            font-size: 1.25rem;
-            margin-bottom: 15px;
+            color: var(--cp-ink);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0 0 14px;
+            padding-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+            position: relative;
         }
+        .help-section h3::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+            background: linear-gradient(90deg, #3b82f6, rgba(59, 130, 246, 0.25) 70%, transparent);
+        }
+        .help-section h3 svg { color: var(--color-blue-500); flex-shrink: 0; }
 
         .help-section p {
-            color: #4b5563;
-            line-height: 1.8;
+            color: var(--cp-text);
+            line-height: 1.75;
             margin-bottom: 12px;
+            max-width: 80ch;
         }
 
         .help-section ul,
         .help-section ol {
             margin-left: 20px;
-            color: #4b5563;
-            line-height: 1.8;
+            color: var(--cp-text);
+            line-height: 1.75;
+            max-width: 80ch;
         }
+        .help-section li::marker { color: var(--color-blue-500); }
+        .help-tabela-wrap { overflow-x: auto; margin: 4px 0 14px; border: 1px solid var(--cp-line); border-radius: 12px; }
+        .help-tabela { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.84rem; color: var(--cp-text); }
+        .help-tabela th { text-align: left; padding: 10px 12px; background: #fafbfc; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cp-muted); border-bottom: 1px solid var(--cp-line); }
+        .help-tabela td { padding: 10px 12px; border-bottom: 1px solid var(--cp-line-soft); vertical-align: top; line-height: 1.5; }
+        .help-tabela tr:last-child td { border-bottom: 0; }
+        .help-tabela small { color: var(--cp-faint); }
 
         .help-section li {
             margin-bottom: 8px;
@@ -5264,12 +5294,34 @@
                     Como Usar a Calculadora
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> Em <em>Dias Úteis</em>, esta data não é computada — a contagem começa no próximo dia útil. Em <em>Dias Corridos</em>, é o primeiro dia contado.</li>
-                    <li><strong>Quantidade de dias a serem contados:</strong> Informe quantos dias você deseja contar. Use os botões rápidos (5, 10, 15, 30 dias) para agilizar.</li>
-                    <li><strong>Tipo de Dias:</strong> Use o controle segmentado para escolher entre <strong>Dias Úteis</strong> (exclui fins de semana e feriados) ou <strong>Dias Corridos</strong> (conta todos os dias do calendário). No modo Dias Corridos, os feriados são ocultados do calendário e ignorados no cálculo.</li>
-                    <li><strong>Descrição:</strong> Adicione uma descrição opcional para identificar o cálculo (ex: "Prazo para recurso administrativo").</li>
-                    <li><strong>Calcular:</strong> Clique no botão "Calcular Prazo" para ver o resultado.</li>
+                    <li><strong>Data informada:</strong> o nome do campo muda conforme a regra de contagem (data da publicação ou intimação, data de disponibilização ou data de início). O botão "Hoje" preenche a data atual.</li>
+                    <li><strong>Quantidade de dias:</strong> quantos dias contar. Os atalhos 5, 10, 15 e 30 preenchem o campo.</li>
+                    <li><strong>Regra de contagem:</strong> diz se os dias são úteis ou corridos, se o dia informado conta e o que acontece quando o último dia não é útil. Fica recolhida mostrando a regra ativa; clique em "Alterar" para escolher outra. Veja a seção abaixo.</li>
+                    <li><strong>Descrição:</strong> opcional, para identificar o cálculo (ex.: "Contestação · Proc. 0001234-56").</li>
+                    <li><strong>Perfil e tipos de feriado:</strong> escolha o perfil de feriados (ex.: TJBA) e quais tipos de feriado considerar (fixos, móveis, personalizados).</li>
+                    <li><strong>Calcular:</strong> clique em "Calcular Prazo". A página rola até o resultado.</li>
                 </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+                    Regras de Contagem
+                </h3>
+                <p>Escolha a regra pela lei aplicável. Em todas, exceto no prazo penal material, <strong>o dia informado não conta</strong>: o dia 1 é o dia seguinte (ou o próximo dia útil, em dias úteis).</p>
+                <div class="help-tabela-wrap">
+                    <table class="help-tabela">
+                        <thead><tr><th>Regra</th><th>Dias</th><th>O dia informado</th><th>Último dia não útil</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Processo civil, trabalhista e juizados</strong><br><small>CPC, arts. 219 e 224 · CLT, art. 775</small></td><td>Úteis</td><td>Não conta</td><td>Não ocorre: o último dia é sempre útil</td></tr>
+                            <tr><td><strong>Processo civil, pela disponibilização no DJe</strong><br><small>Lei 11.419/2006, art. 4º</small></td><td>Úteis</td><td>Não conta; a publicação é o 1º dia útil seguinte e o dia 1 é o dia útil depois dela</td><td>Não ocorre</td></tr>
+                            <tr><td><strong>Processo penal</strong><br><small>CPP, art. 798 · Súmula 310 do STF</small></td><td>Corridos</td><td>Não conta; o dia 1 é o 1º dia útil seguinte (intimação na sexta: começa na segunda)</td><td>Prorroga para o próximo dia útil</td></tr>
+                            <tr><td><strong>Prazo penal material</strong><br><small>Código Penal, art. 10</small></td><td>Corridos</td><td>Conta como dia 1</td><td>Não prorroga</td></tr>
+                            <tr><td><strong>Contagem simples em dias corridos</strong><br><small>sem regra processual</small></td><td>Corridos</td><td>Não conta</td><td>Não prorroga</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>Personalizada:</strong> monte a sua combinação: o que é o dia informado (e se ele conta), dias úteis ou corridos e, nos corridos, se prorroga e se começa no 1º dia útil. A regra escolhida fica salva e é gravada junto com o prazo na Minha Agenda.</p>
             </div>
 
             <div class="help-section">
@@ -5281,10 +5333,11 @@
                     Entendendo os Resultados
                 </h3>
                 <ul>
-                    <li><strong>Data de Início:</strong> A data informada. Em <em>Dias Úteis</em>, ela não é computada — a contagem inicia no próximo dia útil (indicado pelo asterisco no resultado). Em <em>Dias Corridos</em>, é o primeiro dia contado.</li>
-                    <li><strong>Dias Contados:</strong> Quantidade de dias úteis ou corridos que foram contados.</li>
-                    <li><strong>Data Final do Prazo:</strong> A data final calculada, destacada em verde.</li>
-                    <li><strong>Detalhamento do cálculo:</strong> Lista completa de todos os dias percorridos, mostrando quais foram contados (em verde) e quais foram pulados (em vermelho) com o motivo.</li>
+                    <li><strong>Data final:</strong> em destaque, com o dia da semana e quanto falta (verde), se vence em até 3 dias (laranja) ou se já venceu (vermelho).</li>
+                    <li><strong>Régua do período:</strong> cada dia do prazo, do 1º dia ao prazo final, com cores para dias contados, fins de semana, feriados nacionais, feriados do perfil e prorrogação.</li>
+                    <li><strong>Resumo:</strong> a data informada, a contagem e quantos feriados foram pulados. Clique no número de feriados para ver a lista.</li>
+                    <li><strong>Nota (*):</strong> explica em uma frase como a contagem foi feita (se o dia informado contou, publicação no DJe, Súmula 310, prorrogação).</li>
+                    <li><strong>Detalhamento do cálculo:</strong> linha do tempo dia a dia, começando pelo que aconteceu antes da contagem e separada por mês. Use as abas Todos, Contados, Fim de semana e Feriados para filtrar. Os feriados do perfil trazem o link do ato normativo.</li>
                 </ul>
             </div>
 
@@ -5299,10 +5352,10 @@
                 </h3>
                 <p>Você pode exportar os resultados em diferentes formatos:</p>
                 <ul>
-                    <li><strong>Exportar PDF:</strong> Gera um documento HTML que pode ser impresso ou salvo como PDF (use Ctrl+P ou Cmd+P). Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
-                    <li><strong>Exportar PNG:</strong> Salva uma imagem do cálculo. Você pode escolher entre a versão resumida (com visualização gráfica dos dias) ou completa (com detalhamento dia a dia).</li>
-                    <li><strong>Salvar no Google Agenda:</strong> Cria um evento no Google Agenda com a data final do prazo como evento de dia inteiro. O evento inclui automaticamente a data de início, a quantidade de dias contados, o perfil de feriados ativo e os links dos atos normativos consultados (quando conjuntos online foram importados). Não requer conta conectada ao app — abre diretamente no Google Agenda.</li>
-                    <li><strong>Salvar na Minha Agenda:</strong> Salva o prazo calculado na agenda interna do app para acompanhamento futuro.</li>
+                    <li><strong>Exportar PDF:</strong> abre o relatório numa nova aba para imprimir ou salvar como PDF (Ctrl+P ou Cmd+P). O <em>resumido</em> traz a data final, a régua, o resumo com a regra usada e a lista de feriados; o <em>completo</em> acrescenta o detalhamento dia a dia.</li>
+                    <li><strong>Exportar PNG:</strong> salva o mesmo relatório como imagem. Precisa de internet para carregar a biblioteca de imagem.</li>
+                    <li><strong>Salvar no Google Agenda:</strong> cria um evento de dia inteiro na data final, com a data informada, a contagem, o perfil de feriados e os links dos atos normativos. Não precisa conectar conta.</li>
+                    <li><strong>Salvar na Minha Agenda:</strong> guarda o prazo para acompanhar depois.</li>
                 </ul>
             </div>
 
@@ -5317,10 +5370,12 @@
                     Usando o Calendário
                 </h3>
                 <ul>
-                    <li><strong>Visualização:</strong> Alterne entre visualização <strong>Mensal</strong> e <strong>Anual</strong> usando os botões correspondentes. No modo Mensal, o calendário adapta-se automaticamente para exibir 1, 2 (Bimestral) ou 3 meses (Trimestral) conforme o espaço disponível na tela.</li>
-                    <li><strong>Navegação:</strong> Use as setas para navegar entre meses ou anos. O botão <strong>"Hoje"</strong> retorna para o mês/ano atual.</li>
-                    <li><strong>Feriados Personalizados:</strong> Clique em qualquer dia útil no calendário para marcá-lo ou desmarcá-lo como feriado personalizado. Você pode adicionar nomes descritivos aos feriados na aba "Editor de Feriados".</li>
-                    <li><strong>Legenda:</strong> Consulte a legenda abaixo do calendário para entender as cores de cada tipo de dia.</li>
+                    <li><strong>Faixa do prazo:</strong> depois de calcular, o período aparece como uma faixa verde do 1º dia ao prazo final. A data informada tem um anel verde e o prazo final um círculo em degradê.</li>
+                    <li><strong>Vários meses:</strong> se o prazo passa de um mês, o calendário mostra 2 ou 3 meses lado a lado. Prazos mais longos mostram os 3 últimos meses, e os pontinhos abaixo indicam quantos meses o prazo tem.</li>
+                    <li><strong>Navegação:</strong> use as setas para mudar de mês e "Hoje" para voltar ao mês atual. "Mensal"/"Anual" alterna a vista.</li>
+                    <li><strong>Marcar feriados:</strong> clique em qualquer dia útil para marcá-lo (ou desmarcá-lo) como feriado personalizado do perfil ativo.</li>
+                    <li><strong>Perfil de feriados:</strong> no rodapé do calendário você troca de perfil, cria, importa e gerencia perfis. "Configurar feriados" reúne importar, exportar, verificar atualizações e limpar.</li>
+                    <li><strong>Legenda:</strong> pontos coloridos logo abaixo do calendário: rosa para feriado fixo/móvel e lilás para feriado personalizado.</li>
                 </ul>
             </div>
 
@@ -5381,7 +5436,7 @@
                 </h3>
                 <p>Existem três tipos de feriados na calculadora:</p>
                 <ul>
-                    <li><strong>Feriados Nacionais:</strong> Feriados fixos do Brasil (Ano Novo, Tiradentes, Natal, etc.). Podem ser ativados/desativados na seção "Configurar Feriados".</li>
+                    <li><strong>Feriados Nacionais:</strong> Feriados fixos do Brasil (Ano Novo, Tiradentes, Natal, etc.). Podem ser ativados ou desativados nos tipos de feriado do formulário e editados no Editor de Feriados.</li>
                     <li><strong>Feriados Móveis:</strong> Feriados que mudam de data a cada ano (Carnaval, Páscoa, Corpus Christi). Também podem ser ativados/desativados.</li>
                     <li><strong>Feriados Personalizados:</strong> Datas específicas que você marca clicando no calendário (ex: feriados municipais, ponto facultativo local).</li>
                 </ul>
@@ -5989,16 +6044,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                Escolha o tipo de export PDF:
+                Escolha o que entra no PDF:
             </div>
             <div class="modal-options">
                 <div class="modal-option" onclick="finalizarExportPDF('resumido')">
-                    <div class="modal-option-title">📄 Resumido</div>
-                    <div class="modal-option-desc">Export compacto com visualização gráfica dos dias considerados.</div>
+                    <div class="modal-option-title">Resumido</div>
+                    <div class="modal-option-desc">Uma página: data final, régua do período, resumo com a regra usada e a lista de feriados.</div>
                 </div>
                 <div class="modal-option" onclick="finalizarExportPDF('completo')">
-                    <div class="modal-option-title">📋 Completo</div>
-                    <div class="modal-option-desc">Export detalhado com lista completa de todos os dias do período.</div>
+                    <div class="modal-option-title">Completo</div>
+                    <div class="modal-option-desc">Tudo do resumido, mais o detalhamento dia a dia do período.</div>
                 </div>
             </div>
             <div class="modal-buttons">
@@ -6141,16 +6196,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                Escolha o tipo de export PNG:
+                Escolha o que entra na imagem:
             </div>
             <div class="modal-options">
                 <div class="modal-option" onclick="finalizarExportPNG('resumido')">
-                    <div class="modal-option-title">🖼️ Resumido</div>
-                    <div class="modal-option-desc">Salva uma imagem com as informações principais e visualização gráfica dos dias considerados.</div>
+                    <div class="modal-option-title">Resumido</div>
+                    <div class="modal-option-desc">Imagem com a data final, a régua do período, o resumo e a lista de feriados.</div>
                 </div>
                 <div class="modal-option" onclick="finalizarExportPNG('completo')">
-                    <div class="modal-option-title">📸 Completo</div>
-                    <div class="modal-option-desc">Salva uma imagem completa incluindo o detalhamento dia a dia do período.</div>
+                    <div class="modal-option-title">Completo</div>
+                    <div class="modal-option-desc">Imagem com tudo do resumido, mais o detalhamento dia a dia.</div>
                 </div>
             </div>
             <div class="modal-buttons">
@@ -11815,6 +11870,9 @@ ${_htmlRelatorio(D, completo, 'print')}
                 <button class="toast-close" aria-label="Fechar"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>`;
 
             container.prepend(toast);
+            // No máximo 3 avisos visíveis: os mais antigos saem para não cobrir a tela
+            const visiveis = [...container.querySelectorAll('.toast-item:not(.hiding)')];
+            visiveis.slice(3).forEach(t => fecharToast(t));
             tocarSomToast(tipo);
 
             // Botão primário: executa callback (opcional) e fecha sem disparar aoFechar
