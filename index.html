@@ -542,59 +542,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* Segmented Control — Dias Úteis / Dias Corridos */
-        .segmented-control {
-            position: relative;
-            display: flex;
-            align-items: stretch;
-            background: #e5e7eb;
-            border-radius: 8px;
-            padding: 3px;
-            gap: 2px;
-            /* min-height alinhado à altura do input (padding 12px × 2 + font 1rem + 2px borda) */
-            min-height: 44px;
-        }
-
-        .seg-glider {
-            position: absolute;
-            top: 3px;
-            bottom: 3px;
-            left: 3px;
-            width: calc(50% - 4px);
-            background: #ffffff;
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-        }
-
-        .segmented-btn {
-            position: relative;
-            flex: 1;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: transparent;
-            color: #6b7280;
-            transition: color 0.2s;
-            white-space: nowrap;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .segmented-btn.active {
-            color: var(--color-green-600);
-        }
-
-        .segmented-btn:not(.active):hover {
-            color: #374151;
-        }
-
         /* ==================== REGRA DE CONTAGEM ==================== */
         .regra-group { margin-bottom: 20px; }
         .regra-resumo, .regra-topo, .regra-opcao {
