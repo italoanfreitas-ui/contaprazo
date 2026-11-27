@@ -41,6 +41,29 @@
             /* Transitions */
             --transition-fast: all 0.2s;
             --transition-normal: all 0.3s;
+
+            /* Redesign v2.0: tokens semânticos (resultado, detalhamento, calendário) */
+            --cp-ink: #0f172a;
+            --cp-text: #334155;
+            --cp-muted: #64748b;
+            --cp-faint: #94a3b8;
+            --cp-line: #e6eaf0;
+            --cp-line-soft: #f0f2f6;
+            --cp-soft: #f1f4f8;
+            --cp-focus: rgba(59, 130, 246, 0.14);
+            --cp-ok: #15803d;
+            --cp-warn: #c2410c;
+            --cp-late: #be123c;
+            --cp-cnt: #e9f9ef;          /* dia contado / faixa do período */
+            --cp-cnt-strong: #86efac;   /* dia contado na régua */
+            --cp-wk: #e2e8f0;           /* fim de semana na régua */
+            --cp-nac: #e11d48;          /* feriado fixo/móvel */
+            --cp-nac-soft: #fde4e9;
+            --cp-per: #9333ea;          /* feriado personalizado/do perfil */
+            --cp-per-soft: #f1e8ff;
+            --cp-ext: #f59e0b;          /* prorrogação */
+            --cp-ext-soft: #fef3c7;
+            --cp-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
         }
 
         body {
@@ -660,6 +683,68 @@
         .segmented-btn:not(.active):hover {
             color: #374151;
         }
+
+        /* ==================== REGRA DE CONTAGEM ==================== */
+        .regra-group { margin-bottom: 20px; }
+        .regra-resumo, .regra-topo, .regra-opcao, .regra-check {
+            font: inherit; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; color: inherit;
+        }
+        .regra-resumo {
+            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+            border: 1px solid #d1d5db; border-radius: 11px; background: #fff;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .regra-resumo:hover { border-color: #93b4f5; }
+        .regra-resumo:focus-visible, .regra-opcao:focus-visible, .regra-topo:focus-visible, .regra-check:focus-visible {
+            outline: none; box-shadow: 0 0 0 3px var(--cp-focus);
+        }
+        .regra-resumo-ic {
+            width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+            display: grid; place-items: center; background: #eef4ff; color: var(--color-blue-600);
+        }
+        .regra-resumo-txt { min-width: 0; flex: 1; display: grid; }
+        .regra-resumo-txt strong { font-size: 0.9rem; font-weight: 650; color: var(--cp-ink); }
+        .regra-resumo-txt small { font-size: 0.76rem; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .regra-acao {
+            display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+            font-size: 0.82rem; font-weight: 650; color: var(--color-blue-600); white-space: nowrap;
+        }
+        .regra-chev-up { display: inline-grid; transform: rotate(180deg); }
+        .regra-caixa { border: 1px solid #d1d5db; border-radius: 12px; padding: 6px; background: #fff; }
+        .regra-topo {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 10px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--cp-line-soft);
+            font-size: 0.78rem; font-weight: 600; color: var(--cp-muted);
+        }
+        .regra-lista { display: grid; gap: 2px; }
+        .regra-opcao {
+            display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start;
+            padding: 8px 10px; border-radius: 10px; transition: background 0.15s;
+        }
+        .regra-opcao:hover { background: #f8fafc; }
+        .regra-opcao.ativa { background: #f5f9ff; box-shadow: inset 0 0 0 1px #d6e4fd; }
+        .regra-radio {
+            width: 18px; height: 18px; margin-top: 1px; border-radius: 50%;
+            border: 1.5px solid #cbd5e1; background: #fff; display: grid; place-items: center;
+        }
+        .regra-opcao.ativa .regra-radio { border-color: var(--color-blue-500); box-shadow: 0 0 0 3px var(--cp-focus); }
+        .regra-opcao.ativa .regra-radio::after {
+            content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gradient-primary);
+        }
+        .regra-opcao-txt strong { display: block; font-size: 0.86rem; font-weight: 600; color: #1e293b; }
+        .regra-ref { margin-left: 6px; font-size: 0.7rem; font-weight: 500; color: var(--cp-faint); }
+        .regra-opcao-txt small, .regra-check small {
+            display: block; margin-top: 2px; font-size: 0.74rem; line-height: 1.4; color: var(--cp-muted); font-weight: 400;
+        }
+        .regra-personal {
+            display: grid; gap: 10px; margin: 6px 4px 4px 34px; padding: 10px 0 4px 12px; border-left: 2px solid var(--cp-line);
+        }
+        .regra-sub-label { font-size: 0.76rem; font-weight: 600; color: var(--cp-text); }
+        .regra-check {
+            display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start;
+            font-size: 0.84rem; color: var(--cp-text); padding: 2px 0;
+        }
+        .regra-check .tipos-feriado-checkbox { margin-top: 1px; }
 
         /* ================================================
            SIDEBAR DE NAVEGAÇÃO (desktop ≥ 1025px)
@@ -5749,8 +5834,8 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label style="display:inline-flex; align-items:center; gap:6px;">Data de Início
-                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre Data de Início">?<span class="tooltip-box">Em <strong>Dias Úteis</strong>: a data de início não é computada — a contagem começa no próximo dia útil.<br>Em <strong>Dias Corridos</strong>: a data de início é o primeiro dia contado.</span></span>
+                    <label style="display:inline-flex; align-items:center; gap:6px;"><span id="lblDataInicio">Data da publicação ou intimação</span>
+                        <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre a data informada">?<span class="tooltip-box" id="ajudaDataInicio">O significado desta data depende da regra de contagem escolhida abaixo.</span></span>
                     </label>
                     <div class="data-input-wrapper">
                         <input type="date" id="dataInicio">
@@ -5769,13 +5854,15 @@
                             <button class="btn btn-quick" onclick="setDias(15)">15 dias</button>
                             <button class="btn btn-quick" onclick="setDias(30)">30 dias</button>
                         </div>
-                        <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
-                            <span class="seg-glider" id="segGlider"></span>
-                            <button class="segmented-btn active" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
-                            <button class="segmented-btn" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
-                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group regra-group">
+                <label style="display:inline-flex; align-items:center; gap:6px;">Regra de contagem
+                    <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre a regra de contagem">?<span class="tooltip-box">Define como o prazo é contado: dias úteis ou corridos, se o dia informado entra na contagem e o que acontece quando o último dia não é útil. Escolha pela lei aplicável ou monte uma regra personalizada.</span></span>
+                </label>
+                <div id="regraContagem" class="regra"></div>
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
@@ -7275,6 +7362,7 @@
         let dataFinal = null;
         let visualizacaoCalendario = 'mensal'; // 'mensal' ou 'anual'
         let usarDiasUteis = true; // true = dias úteis, false = dias corridos
+        let infoCalculo = null; // regra usada e marcos do último cálculo (publicação, início adiado, prorrogação)
         let descricaoPrazo = '';
         let configImportacaoPendente = null;
         let conjuntoPendenteMetadata = null; // Armazena metadata do conjunto sendo importado
@@ -8311,17 +8399,184 @@
             }
         };
 
+        // ==================== REGRAS DE CONTAGEM ====================
+        // Cada regra define: o que é o dia informado (ini), se conta dias úteis,
+        // se prorroga quando o último dia não é útil e se aplica a Súmula 310 do STF.
+        const REGRAS_CONTAGEM = [
+            { id: 'civ', titulo: 'Processo civil, trabalhista e juizados', ref: 'CPC, arts. 219 e 224 · CLT, art. 775',
+              ini: 'pub', uteis: true, prorrogar: true, s310: false, rotuloData: 'Data da publicação ou intimação',
+              ajuda: 'Dias úteis. O dia da intimação ou publicação não conta; a contagem começa no próximo dia útil.' },
+            { id: 'dje', titulo: 'Processo civil, pela disponibilização no DJe', ref: 'Lei 11.419/2006, art. 4º',
+              ini: 'disp', uteis: true, prorrogar: true, s310: false, rotuloData: 'Data de disponibilização',
+              ajuda: 'Considera-se publicado no 1º dia útil após a disponibilização; a contagem começa no dia útil seguinte.' },
+            { id: 'cpp', titulo: 'Processo penal', ref: 'CPP, art. 798 · Súmula 310 do STF',
+              ini: 'pub', uteis: false, prorrogar: true, s310: true, rotuloData: 'Data da intimação',
+              ajuda: 'Dias corridos. Não conta o dia do começo; a contagem começa no 1º dia útil e, se o último dia não for útil, prorroga.' },
+            { id: 'cp', titulo: 'Prazo penal material', ref: 'Código Penal, art. 10',
+              ini: 'inc', uteis: false, prorrogar: false, s310: false, rotuloData: 'Data de início',
+              ajuda: 'Dias corridos. O dia do começo é o dia 1; em regra, não se prorroga.' },
+            { id: 'sim', titulo: 'Contagem simples em dias corridos', ref: 'sem regra processual',
+              ini: 'pub', uteis: false, prorrogar: false, s310: false, rotuloData: 'Data de início',
+              ajuda: 'Conta os dias do calendário a partir do dia seguinte, sem pular nada e sem prorrogar. Útil para medir um intervalo.' }
+        ];
+        const MARCOS_INICIAIS = {
+            pub:  { titulo: 'Intimação ou publicação', rotuloData: 'Data da publicação ou intimação',
+                    ajuda: u => `Não é computado; a contagem começa no ${u ? 'próximo dia útil' : 'dia seguinte'} (CPC, art. 224; CPP, art. 798, § 1º).` },
+            disp: { titulo: 'Disponibilização no DJe', rotuloData: 'Data de disponibilização',
+                    ajuda: () => 'A publicação é o 1º dia útil seguinte, e a contagem começa no dia útil depois dela (Lei 11.419/2006, art. 4º, §§ 3º e 4º).' },
+            inc:  { titulo: 'Primeiro dia do prazo', rotuloData: 'Data de início',
+                    ajuda: u => `O próprio dia informado é o dia 1${u ? ', se for dia útil' : ''} (Código Penal, art. 10).` }
+        };
+        const REGRA_STORAGE_KEY = 'contaprazo_regra_contagem';
+        let regraContagem = { ini: 'pub', uteis: true, prorrogar: true, s310: false, personalizada: false };
+        let regraPickerAberto = false;
+
+        function carregarRegraContagem() {
+            try {
+                const r = JSON.parse(localStorage.getItem(REGRA_STORAGE_KEY) || 'null');
+                if (r && MARCOS_INICIAIS[r.ini]) {
+                    regraContagem = {
+                        ini: r.ini, uteis: r.uteis !== false, prorrogar: r.prorrogar !== false,
+                        s310: !!r.s310, personalizada: !!r.personalizada
+                    };
+                }
+            } catch (e) { /* mantém o padrão */ }
+            usarDiasUteis = regraContagem.uteis;
+        }
+
+        function salvarRegraContagem() {
+            try { localStorage.setItem(REGRA_STORAGE_KEY, JSON.stringify(regraContagem)); } catch (e) { /* sem armazenamento */ }
+        }
+
+        // Regra pronta que corresponde às opções atuais, ou null (personalizada)
+        function regraContagemAtual() {
+            if (regraContagem.personalizada) return null;
+            const r = regraContagem;
+            return REGRAS_CONTAGEM.find(p => p.ini === r.ini && p.uteis === r.uteis &&
+                (p.uteis || (p.prorrogar === r.prorrogar && p.s310 === r.s310))) || null;
+        }
+
+        // Nas regras em dias corridos sem prorrogação nem Súmula 310, os feriados não alteram o resultado
+        function regraUsaFeriados() {
+            return regraContagem.uteis || regraContagem.prorrogar || (regraContagem.s310 && regraContagem.ini === 'pub');
+        }
+
+        function rotuloDataInformada() {
+            const p = regraContagemAtual();
+            return p ? p.rotuloData : MARCOS_INICIAIS[regraContagem.ini].rotuloData;
+        }
+
+        function escolherRegraContagem(id) {
+            if (id === 'pers') {
+                regraContagem.personalizada = true;
+            } else {
+                const p = REGRAS_CONTAGEM.find(x => x.id === id);
+                if (!p) return;
+                regraContagem = { ini: p.ini, uteis: p.uteis, prorrogar: p.prorrogar, s310: p.s310, personalizada: false };
+            }
+            aplicarMudancaRegra();
+        }
+
+        function definirOpcaoRegra(chave, valor) {
+            regraContagem[chave] = valor;
+            regraContagem.personalizada = true;
+            aplicarMudancaRegra();
+        }
+
+        // Mantida para compatibilidade: alterna dias úteis/corridos dentro da regra personalizada
         function selecionarTipoDias(uteis) {
-            usarDiasUteis = uteis;
+            definirOpcaoRegra('uteis', !!uteis);
+        }
 
-            document.getElementById('btnDiasUteis').classList.toggle('active', uteis);
-            document.getElementById('btnDiasCorridos').classList.toggle('active', !uteis);
-            posicionarGlider();
+        function alternarRegraPicker(aberto) {
+            regraPickerAberto = aberto === undefined ? !regraPickerAberto : !!aberto;
+            renderizarRegraContagem();
+        }
 
+        function aplicarMudancaRegra() {
+            const mudouTipo = usarDiasUteis !== regraContagem.uteis;
+            usarDiasUteis = regraContagem.uteis;
+            salvarRegraContagem();
+            renderizarRegraContagem();
             atualizarVisibilidadeFeriados();
-
+            if (mudouTipo) posicionarGlider();
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
+        }
+
+        function renderizarRegraContagem() {
+            const el = document.getElementById('regraContagem');
+            if (!el) return;
+            const r = regraContagem, u = r.uteis;
+            const atual = regraContagemAtual();
+            const idAtual = atual ? atual.id : 'pers';
+
+            // Rótulo e ajuda do campo de data acompanham a regra
+            const lbl = document.getElementById('lblDataInicio');
+            if (lbl) lbl.textContent = rotuloDataInformada();
+            const ajuda = document.getElementById('ajudaDataInicio');
+            if (ajuda) ajuda.textContent = MARCOS_INICIAIS[r.ini].ajuda(u);
+
+            const icoRegra = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>';
+            const chev = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>';
+
+            if (!regraPickerAberto) {
+                const resumo = atual ? atual.ref : [
+                    u ? 'Dias úteis' : 'Dias corridos',
+                    MARCOS_INICIAIS[r.ini].titulo.toLowerCase(),
+                    !u ? (r.prorrogar ? 'prorroga' : 'não prorroga') : null
+                ].filter(Boolean).join(' · ');
+                el.innerHTML = `
+                    <button type="button" class="regra-resumo" onclick="alternarRegraPicker(true)" aria-expanded="false">
+                        <span class="regra-resumo-ic">${icoRegra}</span>
+                        <span class="regra-resumo-txt"><strong>${escapeHtml(atual ? atual.titulo : 'Personalizada')}</strong><small>${escapeHtml(resumo)}</small></span>
+                        <span class="regra-acao">Alterar ${chev}</span>
+                    </button>`;
+                return;
+            }
+
+            const radio = (on, onclick, titulo, ref, ajudaTxt) => `
+                <button type="button" class="regra-opcao${on ? ' ativa' : ''}" onclick="${onclick}" role="radio" aria-checked="${on}">
+                    <span class="regra-radio"></span>
+                    <span class="regra-opcao-txt"><strong>${escapeHtml(titulo)}${ref ? `<span class="regra-ref">${escapeHtml(ref)}</span>` : ''}</strong>${on && ajudaTxt ? `<small>${escapeHtml(ajudaTxt)}</small>` : ''}</span>
+                </button>`;
+
+            let personal = '';
+            if (idAtual === 'pers') {
+                const marcos = Object.keys(MARCOS_INICIAIS).map(k =>
+                    radio(r.ini === k, `definirOpcaoRegra('ini','${k}')`, MARCOS_INICIAIS[k].titulo, '', MARCOS_INICIAIS[k].ajuda(u))).join('');
+                const ck = (on, onclick, label, nota) => `
+                    <button type="button" class="regra-check${on ? ' ativa' : ''}" onclick="${onclick}" role="checkbox" aria-checked="${on}">
+                        <span class="tipos-feriado-checkbox${on ? ' active' : ''}"></span><span>${escapeHtml(label)}${on && nota ? `<small>${escapeHtml(nota)}</small>` : ''}</span>
+                    </button>`;
+                personal = `
+                    <div class="regra-personal">
+                        <div class="regra-sub-label">O dia informado é</div>
+                        <div class="regra-lista" role="radiogroup">${marcos}</div>
+                        <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
+                            <span class="seg-glider" id="segGlider"></span>
+                            <button type="button" class="segmented-btn${u ? ' active' : ''}" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
+                            <button type="button" class="segmented-btn${!u ? ' active' : ''}" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
+                        </div>
+                        ${!u ? ck(r.prorrogar, `definirOpcaoRegra('prorrogar', ${!r.prorrogar})`, 'Prorrogar se o último dia não for útil',
+                                  'Vai para o próximo dia útil (CPP, art. 798, § 3º; CC, art. 132, § 1º).') : ''}
+                        ${!u && r.ini === 'pub' ? ck(r.s310, `definirOpcaoRegra('s310', ${!r.s310})`, 'Começar no 1º dia útil',
+                                  'Se a intimação for na sexta, o prazo começa na segunda (Súmula 310 do STF).') : ''}
+                    </div>`;
+            }
+
+            el.innerHTML = `
+                <div class="regra-caixa">
+                    <button type="button" class="regra-topo" onclick="alternarRegraPicker(false)" aria-expanded="true">
+                        <span>Escolha a regra</span><span class="regra-acao">Recolher <span class="regra-chev-up">${chev}</span></span>
+                    </button>
+                    <div class="regra-lista" role="radiogroup" aria-label="Regra de contagem">
+                        ${REGRAS_CONTAGEM.map(p => radio(idAtual === p.id, `escolherRegraContagem('${p.id}')`, p.titulo, p.ref, p.ajuda)).join('')}
+                        ${radio(idAtual === 'pers', `escolherRegraContagem('pers')`, 'Personalizada', '', 'Escolha cada opção abaixo.')}
+                    </div>
+                    ${personal}
+                </div>`;
+            if (idAtual === 'pers') requestAnimationFrame(posicionarGlider);
         }
 
         function posicionarGlider() {
@@ -8375,12 +8630,13 @@
 
         function atualizarVisibilidadeFeriados() {
             const secoesFeridados = document.querySelectorAll('.tipos-feriado-calc-group');
+            const usa = regraUsaFeriados();
             secoesFeridados.forEach(sec => {
-                sec.style.opacity = usarDiasUteis ? '' : '0.35';
+                sec.style.opacity = usa ? '' : '0.35';
                 // Disable only interactive children so the section itself keeps pointer
                 // events — this allows CSS hover tooltips (.tooltip-icon) to still work
                 sec.querySelectorAll('input, select, button, .perfil-pill, .tipos-feriado-pill').forEach(el => {
-                    el.style.pointerEvents = usarDiasUteis ? '' : 'none';
+                    el.style.pointerEvents = usa ? '' : 'none';
                 });
             });
             atualizarBadgePerfilDiasCorridos();
@@ -8391,9 +8647,9 @@
             const container = document.querySelector('.perfil-badge-container');
             const badge = document.getElementById('perfilBadge');
             if (!container) return;
-            if (!usarDiasUteis) {
+            if (!regraUsaFeriados()) {
                 container.style.opacity = '0.35';
-                container.setAttribute('data-tiptitle', 'Perfis de feriados não se aplicam no modo de dias corridos');
+                container.setAttribute('data-tiptitle', 'Nesta regra de contagem os feriados não alteram o resultado');
                 // Disable clicks on the badge itself, but keep the container interactive
                 // so its tooltip remains accessible on hover
                 if (badge) badge.style.pointerEvents = 'none';
@@ -8625,7 +8881,29 @@
                 return;
             }
             let diasContados = 0;
+            // Ponto de partida conforme a regra de contagem: o laço avança um dia antes de contar
+            const regraCalc = { ...regraContagem };
+            const ehDiaUtil = d => !ehFimDeSemana(d) && !ehFeriado(d);
+            const proximoDiaUtil = d => { const x = new Date(d); do { x.setDate(x.getDate() + 1); } while (!ehDiaUtil(x)); return x; };
+            infoCalculo = { regra: regraCalc, regraId: (regraContagemAtual() || { id: 'pers' }).id,
+                            publicacao: null, inicioAdiado: null, prorrogadoDe: null };
             let dataAtual = new Date(inicio);
+            if (regraCalc.ini === 'disp') {
+                // Lei 11.419/2006, art. 4º, §§ 3º e 4º
+                infoCalculo.publicacao = proximoDiaUtil(inicio);
+                dataAtual = new Date(infoCalculo.publicacao);
+            } else if (regraCalc.ini === 'inc') {
+                // Código Penal, art. 10: o dia do começo é computado
+                dataAtual.setDate(dataAtual.getDate() - 1);
+            } else if (!regraCalc.uteis && regraCalc.s310) {
+                // Súmula 310 do STF: o prazo começa no primeiro dia útil após a intimação
+                const primeiro = proximoDiaUtil(inicio);
+                const diaSeguinte = new Date(inicio); diaSeguinte.setDate(diaSeguinte.getDate() + 1);
+                if (formatarDataCompleta(primeiro) !== formatarDataCompleta(diaSeguinte)) {
+                    infoCalculo.inicioAdiado = primeiro;
+                    dataAtual = new Date(primeiro); dataAtual.setDate(dataAtual.getDate() - 1);
+                }
+            }
             todosOsDias = [];
             feriadosDoCalculo = [];
             let contador = 0;
@@ -8692,6 +8970,25 @@
                     motivo: motivo,
                     numero: contado ? contador : null
                 });
+            }
+
+            // Prorrogação: em dias corridos, se o último dia não for útil, vai ao próximo dia útil
+            if (!regraCalc.uteis && regraCalc.prorrogar && !ehDiaUtil(dataAtual)) {
+                infoCalculo.prorrogadoDe = new Date(dataAtual);
+                do {
+                    dataAtual.setDate(dataAtual.getDate() + 1);
+                    const ehFds = ehFimDeSemana(dataAtual), ehFer = ehFeriado(dataAtual);
+                    const util = !ehFds && !ehFer;
+                    const nomeFeriado = ehFer ? obterNomeFeriado(dataAtual) : null;
+                    if (ehFer) feriadosDoCalculo.push({ data: new Date(dataAtual), nome: nomeFeriado || 'Feriado/Ponto Facultativo', emFimDeSemana: ehFds });
+                    todosOsDias.push({
+                        data: new Date(dataAtual),
+                        contado: util,           // o dia útil de destino é o novo último dia
+                        prorrogacao: true,
+                        motivo: util ? 'Prorrogação' : (ehFds && ehFer ? `Final de Semana e ${nomeFeriado || 'Feriado'}` : ehFds ? 'Final de Semana' : (nomeFeriado || 'Feriado/Ponto Facultativo')),
+                        numero: util ? contador : null
+                    });
+                } while (!ehDiaUtil(dataAtual));
             }
 
             dataFinal = dataAtual;
@@ -8915,11 +9212,10 @@
             descricaoPrazo = '';
             calculoRealizado = false; // Resetar flag de cálculo realizado
 
-            // Resetar para dias úteis (padrão)
-            usarDiasUteis = true;
-            document.getElementById('btnDiasUteis').classList.add('active');
-            document.getElementById('btnDiasCorridos').classList.remove('active');
-            posicionarGlider();
+            // A regra de contagem é uma preferência e é mantida; só recolhe o seletor
+            infoCalculo = null;
+            regraPickerAberto = false;
+            renderizarRegraContagem();
             atualizarVisibilidadeFeriados();
 
             // Resetar visualização do calendário para mensal
@@ -12989,6 +13285,7 @@
                 dataFinal: new Date(dataFinal),
                 diasSolicitados: parseInt(diasUteis),
                 tipoDias: usarDiasUteis ? 'uteis' : 'corridos',
+                regraContagem: infoCalculo ? { ...infoCalculo.regra, id: infoCalculo.regraId } : null,
                 status: 'pendente',
                 dataCriacao: new Date(),
                 dataConclusao: null,
@@ -12997,6 +13294,7 @@
                     contado: dia.contado,
                     motivo: dia.motivo,
                     numero: dia.numero,
+                    prorrogacao: dia.prorrogacao || undefined,
                     arquivo: feriadosArquivoMap.get(formatarDataCompleta(dia.data)) || null
                 })),
                 feriadosUsados: {
@@ -15411,6 +15709,8 @@
             mostrarAvisoRecalculo();
         });
 
+        carregarRegraContagem();
+        renderizarRegraContagem();
         inicializarPerfis();
         inicializarArquivoAgenda();
         _restaurarOrdenacaoUI();
