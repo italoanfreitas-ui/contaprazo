@@ -1209,151 +1209,228 @@
             }
         }
 
-        /* ── Resultado: container wrapper ── */
+        /* ==================== CARTÃO DE RESULTADO ==================== */
         .resultado {
-            border-radius: 14px;
+            border-radius: 16px;
             margin-bottom: 30px;
             overflow: hidden;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            background: #fff;
+            border: 1px solid var(--cp-line);
+            box-shadow: var(--cp-shadow-card);
+            animation: resEntrada 0.35s ease both;
         }
-
-        /* Barra de acento superior com gradiente da marca */
-        .resultado-top-bar {
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-blue-500), var(--color-green-600));
-        }
-
-        /* ── Hero block ── */
-        .resultado-hero {
-            background: linear-gradient(160deg, #f0fdf4 0%, #ecfdf5 100%);
-            padding: 22px 28px 20px;
+        @keyframes resEntrada { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        .res-topo {
             position: relative;
-            overflow: hidden;
-            border-bottom: 1px solid #d1fae5;
+            padding: 22px 24px 18px;
+            background:
+                radial-gradient(120% 140% at 0% 0%, #eef5ff 0%, rgba(238, 245, 255, 0) 55%),
+                radial-gradient(120% 140% at 100% 0%, #eafbf1 0%, rgba(234, 251, 241, 0) 55%),
+                #fff;
         }
+        .res-topo::before {
+            content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--gradient-border);
+        }
+        .res-rotulo {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-green-600);
+        }
+        .res-rotulo svg { width: 12px; height: 12px; }
+        .res-descricao {
+            margin-top: 8px; font-size: 0.9rem; font-weight: 650; color: var(--cp-text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .res-data {
+            margin-top: 4px; font-size: 2.25rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1;
+            white-space: nowrap; overflow: hidden;
+            color: #0b3b24;
+            background: linear-gradient(90deg, #0b3b24, #14532d 60%, #1e3a8a);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .res-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; font-size: 0.92rem; }
+        .res-dia-semana { font-weight: 600; color: #475569; }
+        .res-sep { color: #cbd5e1; }
+        .res-status { display: inline-flex; align-items: center; gap: 6px; font-weight: 650; }
+        .res-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .res-status-ok { color: var(--cp-ok); }
+        .res-status-warn { color: var(--cp-warn); }
+        .res-status-late { color: var(--cp-late); }
 
-        /* Label "Prazo Calculado" — destaque com cor da marca */
-        .resultado-hero-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-            color: var(--color-green-600);
-            margin-bottom: 10px;
+        /* Régua do período */
+        .res-regua { margin-top: 16px; }
+        .res-regua-topo {
+            display: flex; justify-content: space-between; align-items: flex-end; gap: 12px;
+            margin-bottom: 7px; font-variant-numeric: tabular-nums;
         }
+        .res-regua-ponta { display: grid; line-height: 1.25; }
+        .res-regua-ponta strong { font-size: 0.88rem; font-weight: 700; color: var(--cp-ink); }
+        .res-regua-ponta small { font-size: 0.66rem; color: var(--cp-muted); }
+        .res-regua-ponta.direita { text-align: right; }
+        .res-regua-meio { font-size: 0.7rem; color: var(--cp-faint); white-space: nowrap; padding-bottom: 1px; }
+        .res-regua-barra { display: flex; gap: 1px; height: 12px; border-radius: 6px; overflow: hidden; background: #eef1f5; }
+        .res-regua-barra.densa { gap: 0; }
+        .res-regua-barra i {
+            flex: 1; min-width: 0; background: var(--cp-cnt-strong);
+            transform-origin: left; animation: reguaCresce 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        }
+        .res-regua-barra i.w { background: var(--cp-wk); }
+        .res-regua-barra i.x { background: #fb7185; }
+        .res-regua-barra i.p { background: #c084fc; }
+        .res-regua-barra i.z { background: repeating-linear-gradient(135deg, var(--cp-ext) 0 3px, #fcd34d 3px 6px); }
+        .res-regua-barra i.e { background: linear-gradient(180deg, #3b82f6, #16a34a); }
+        @keyframes reguaCresce { from { transform: scaleX(0); opacity: 0; } to { transform: none; opacity: 1; } }
+        .res-regua-meses {
+            position: relative; height: 16px; margin-top: 5px;
+            font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cp-muted);
+        }
+        .res-regua-meses span { position: absolute; top: 0; padding-left: 5px; border-left: 1px solid #cbd5e1; line-height: 16px; white-space: nowrap; }
+        .res-legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 0.68rem; color: var(--cp-muted); }
+        .res-legenda i, .dx-aba i {
+            display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px;
+        }
+        .rg-cnt { background: var(--cp-cnt-strong); }
+        .rg-wk { background: var(--cp-wk); }
+        .rg-nac { background: #fb7185; }
+        .rg-per { background: #c084fc; }
+        .rg-fer { background: linear-gradient(90deg, #fb7185 50%, #c084fc 50%); }
+        .rg-ext { background: repeating-linear-gradient(135deg, var(--cp-ext) 0 2px, #fcd34d 2px 4px); }
+        .rg-fin { background: linear-gradient(135deg, #3b82f6, #16a34a); }
 
-        /* Data final principal — ano na mesma linha */
-        .resultado-hero-data {
-            font-size: 2.6rem;
-            font-weight: 800;
-            line-height: 1.0;
-            margin-bottom: 2px;
-            letter-spacing: -1.5px;
-            color: #14532d;
+        /* Resumo em linha */
+        .res-resumo {
+            display: grid; grid-template-columns: repeat(3, auto); justify-content: start;
+            margin-top: 16px; padding: 10px 0; border-top: 1px solid #e9edf3; border-bottom: 1px solid #e9edf3;
         }
-        /* Dia da semana (linha secundária) */
-        .resultado-hero-ano {
-            font-size: 0.92rem;
-            font-weight: 400;
-            color: #6b7280;
-            margin-bottom: 20px;
-            text-transform: capitalize;
+        .res-resumo > div { display: grid; gap: 1px; padding: 0 18px; border-left: 1px solid #e9edf3; min-width: 0; }
+        .res-resumo > div:first-child { padding-left: 0; border-left: 0; }
+        .res-resumo small {
+            font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cp-muted); white-space: nowrap;
         }
+        .res-resumo strong { font-size: 0.86rem; font-weight: 650; color: var(--cp-ink); white-space: nowrap; }
+        .res-resumo strong span { font-weight: 500; color: var(--cp-muted); }
+        .res-resumo-link {
+            justify-self: start; font: inherit; font-size: 0.86rem; font-weight: 700; padding: 0; border: 0; background: none; cursor: pointer;
+            color: var(--color-blue-600); text-decoration: underline; text-decoration-color: #bcd0fa; text-underline-offset: 3px;
+        }
+        .res-resumo-link:hover { text-decoration-color: currentColor; }
+        .res-nota { margin: 10px 0 0; font-size: 0.7rem; line-height: 1.5; color: var(--cp-faint); }
+        .res-nota strong { color: var(--cp-muted); font-weight: 600; }
 
-        /* Chips: data início, dias contados */
-        .resultado-hero-chips {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+        /* Barra de ações */
+        .res-acoes {
+            display: flex; gap: 8px; align-items: center;
+            padding: 12px 24px; border-top: 1px solid var(--cp-line); background: #fbfcfd;
         }
-        .resultado-hero-chip {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            background: white;
-            border: 1px solid #d1fae5;
-            border-radius: 10px;
-            padding: 8px 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            min-width: 0;
+        .res-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 14px;
+            border-radius: 11px; font: inherit; font-size: 0.86rem; font-weight: 650; white-space: nowrap; cursor: pointer;
+            border: 1px solid var(--cp-line); background: #fff; color: #475569;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, filter 0.15s;
         }
-        .resultado-hero-chip-label {
-            font-size: 0.58rem;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: #9ca3af;
-            white-space: nowrap;
+        .res-btn:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+        .res-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .res-btn-salvar {
+            flex: 1; border: 0; color: #fff;
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 18px -10px rgba(22, 163, 74, 0.9);
         }
-        .resultado-hero-chip-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1f2937;
-            white-space: nowrap;
-        }
+        .res-btn-salvar:hover { filter: brightness(1.04); }
+        .res-btn-icone { width: 40px; padding: 0; flex-shrink: 0; }
 
-        /* Chip de feriados — variante interativa (clicável) */
-        .chip-feriados {
-            border-color: #bfdbfe;
-            cursor: pointer;
-            position: relative;
-            transition: box-shadow 0.15s, border-color 0.15s;
-        }
-        .chip-feriados:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-        }
-        .chip-feriados .resultado-hero-chip-label { color: #2563eb; }
-        .chip-feriados .resultado-hero-chip-value { color: #1d4ed8; }
+        /* Corpo: detalhamento + conjuntos */
+        .res-corpo { padding: 18px 24px 20px; display: grid; gap: 14px; }
 
-        /* Tooltip do chip de feriados — position:fixed para escapar de overflow:hidden do hero */
-        .chip-feriados-tooltip {
-            display: none;
-            position: fixed;
-            bottom: auto;
-            left: 0;
-            transform: translateX(-50%);
-            background: #1e293b;
-            color: #f1f5f9;
-            font-size: 0.75rem;
-            line-height: 1.6;
-            padding: 10px 14px;
-            border-radius: 8px;
-            white-space: nowrap;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-            z-index: 9999;
-            pointer-events: none;
+        /* ==================== DETALHAMENTO (linha do tempo) ==================== */
+        .dx { display: grid; gap: 10px; }
+        .dx-titulo { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1rem; font-weight: 700; color: var(--cp-ink); }
+        .dx-titulo svg { color: var(--color-blue-500); flex-shrink: 0; }
+        .dx-abas {
+            display: flex; gap: 18px; border-bottom: 1px solid var(--cp-line);
+            overflow-x: auto; scrollbar-width: none;
+            -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+            mask-image: linear-gradient(90deg, #000 88%, transparent);
         }
-        .chip-feriados-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #1e293b;
+        .dx-abas::-webkit-scrollbar { display: none; }
+        .dx-aba {
+            position: relative; flex-shrink: 0; display: inline-flex; align-items: center; height: 34px; padding: 0 1px;
+            border: 0; background: none; font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--cp-muted); cursor: pointer; white-space: nowrap;
         }
-        .chip-feriados-tooltip-item { display: block; }
-        .chip-feriados-tooltip-mais {
-            display: block;
-            margin-top: 4px;
-            color: #94a3b8;
-            font-style: italic;
+        .dx-aba em { font-style: normal; margin-left: 5px; color: var(--cp-faint); font-variant-numeric: tabular-nums; }
+        .dx-aba:hover { color: var(--cp-text); }
+        .dx-aba.ativa { color: var(--cp-ink); }
+        .dx-aba.ativa::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--gradient-border);
         }
-        .chip-feriados-tooltip-hint {
-            display: block;
-            margin-top: 6px;
-            padding-top: 6px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: #64748b;
-            font-size: 0.68rem;
-            text-align: center;
+        .dx-aba:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--cp-focus); border-radius: 6px; }
+        .dx-lista {
+            max-height: 440px; overflow-y: auto; padding: 0 8px 8px;
+            border: 1px solid var(--cp-line); border-radius: 14px; background: #fff;
+            scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
         }
-        .chip-feriados:hover .chip-feriados-tooltip { display: block; }
+        .dx-grupo { margin: 0; }
+        .dx-mes {
+            position: sticky; top: 0; z-index: 1; display: flex; align-items: baseline; gap: 8px; margin: 0;
+            padding: 12px 8px 8px; background: #fff;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-blue-500);
+        }
+        .dx-mes em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 0.72rem; color: var(--cp-faint); }
+        .dx-item {
+            position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: center;
+            padding: 7px 8px; border-radius: 10px;
+        }
+        .dx-item::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #e2e8f0, #eef1f5); }
+        .dx-grupo:first-child .dx-item:first-of-type::before { top: 50%; }
+        .dx-grupo:last-child .dx-item:last-of-type::before { bottom: 50%; }
+        .dx-badge {
+            position: relative; z-index: 1; width: 28px; height: 28px; border-radius: 50%;
+            display: grid; place-items: center; font-size: 0.66rem; font-weight: 800; font-variant-numeric: tabular-nums;
+            color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 3px 8px -3px var(--dx-sombra, rgba(15, 23, 42, 0.3));
+        }
+        .dx-cnt .dx-badge { background: linear-gradient(145deg, #22c55e, #15803d); --dx-sombra: rgba(22, 163, 74, 0.7); }
+        .dx-fds .dx-badge { width: 20px; height: 20px; margin: 0 4px; background: linear-gradient(145deg, #cbd5e1, #94a3b8); --dx-sombra: rgba(100, 116, 139, 0.4); }
+        .dx-nac .dx-badge { background: linear-gradient(145deg, #f43f5e, #be123c); --dx-sombra: rgba(225, 29, 72, 0.6); }
+        .dx-per .dx-badge { background: linear-gradient(145deg, #a855f7, #7e22ce); --dx-sombra: rgba(147, 51, 234, 0.6); }
+        .dx-ext .dx-badge { background: linear-gradient(145deg, #f59e0b, #b45309); --dx-sombra: rgba(245, 158, 11, 0.6); }
+        .dx-ms .dx-badge { border-radius: 8px; background: linear-gradient(145deg, #3b82f6, #1d4ed8); --dx-sombra: rgba(37, 99, 235, 0.6); }
+        .dx-fin { background: linear-gradient(90deg, #eef5ff, #ecfbf2); box-shadow: inset 0 0 0 1px #d6f0e1; }
+        .dx-fin .dx-badge {
+            width: 32px; height: 32px; margin-left: -2px; background: linear-gradient(135deg, #3b82f6, #16a34a);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 0 4px rgba(22, 163, 74, 0.14), 0 6px 14px -4px rgba(22, 163, 74, 0.7);
+        }
+        .dx-corpo { min-width: 0; }
+        .dx-data { font-size: 0.86rem; font-weight: 650; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dx-data span { font-weight: 500; color: var(--cp-faint); }
+        .dx-fds .dx-data { font-size: 0.8rem; font-weight: 500; color: var(--cp-faint); }
+        .dx-fin .dx-data { color: #14532d; font-weight: 750; }
+        .dx-rotulo { margin-top: 2px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+        .dx-rotulo-nac { color: var(--cp-late); }
+        .dx-rotulo-per { color: #7e22ce; }
+        .dx-rotulo-ext { color: #b45309; }
+        .dx-rotulo-ms { color: var(--color-blue-600); }
+        .dx-rotulo-fin { color: var(--cp-ok); }
+        .dx-desc { margin-top: 1px; font-size: 0.76rem; line-height: 1.45; color: var(--cp-muted); }
+        .dx-nac .dx-desc { color: var(--cp-late); }
+        .dx-per .dx-desc { color: #7e22ce; }
+        .dx-ext .dx-desc { color: #b45309; }
+        .dx-link { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; white-space: nowrap; }
+        .dx-link:hover { text-decoration-thickness: 2px; }
+
+        @media (max-width: 600px) {
+            .res-topo { padding: 18px 16px 16px; }
+            .res-data { font-size: 1.75rem; }
+            .res-regua-meio { display: none; }
+            .res-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .res-resumo > div { padding: 0 10px; }
+            .res-resumo small, .res-resumo strong { white-space: normal; }
+            .res-acoes { padding: 12px 16px; }
+            .res-btn-google span { display: none; }
+            .res-btn-google { width: 40px; padding: 0; flex-shrink: 0; }
+            .res-corpo { padding: 16px 14px 18px; }
+            .dx-lista { max-height: 420px; padding: 0 4px 6px; }
+            .dx-item { gap: 10px; padding: 7px 6px; }
+            .dx-item::before { left: 19px; }
+        }
 
         /* Modal de feriados do cálculo */
         .modal-feriados-subtitulo {
@@ -1363,60 +1440,6 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #f1f5f9;
         }
-
-        /* Status de dias restantes — ponto + texto, sem pílula */
-        .resultado-prazo-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .resultado-prazo-status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .prazo-status-verde   { color: var(--color-green-600); }
-        .prazo-status-verde   .resultado-prazo-status-dot { background: var(--color-green-600); }
-        .prazo-status-amarelo { color: #b45309; }
-        .prazo-status-amarelo .resultado-prazo-status-dot { background: #d97706; }
-        .prazo-status-vermelho{ color: #dc2626; }
-        .prazo-status-vermelho .resultado-prazo-status-dot { background: #dc2626; }
-        .prazo-status-passado { color: #9ca3af; }
-        .prazo-status-passado .resultado-prazo-status-dot { background: #d1d5db; }
-
-        /* ── Botão de menu do hero (salvar/exportar) ── */
-        .resultado-hero-menu-btn {
-            position: absolute;
-            bottom: 18px;
-            right: 18px;
-            height: 32px;
-            padding: 0 12px 0 10px;
-            border: 1px solid rgba(209,250,229,0.9);
-            border-radius: 8px;
-            background: rgba(255,255,255,0.72);
-            backdrop-filter: blur(4px);
-            color: var(--color-green-700);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            font-family: inherit;
-            letter-spacing: 0.2px;
-            transition: all 0.18s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-            z-index: 2;
-        }
-        .resultado-hero-menu-btn:hover {
-            background: white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.13);
-            transform: scale(1.04);
-        }
-        .resultado-hero-menu-btn:active { transform: scale(0.96); }
 
         /* ── Dropdown de ações do resultado ── */
         .resultado-hero-dropdown {
@@ -1467,24 +1490,6 @@
             margin: 0;
             border: none;
             border-top: 1px solid #f3f4f6;
-        }
-
-        /* Nota do asterisco — dentro do hero, abaixo do status */
-        .resultado-hero-footnote {
-            margin-top: 8px;
-            font-size: 0.68rem;
-            color: #9ca3af;
-            line-height: 1.4;
-            padding-right: 100px;
-        }
-
-        /* Título do cálculo — entre o label e a data */
-        .resultado-hero-titulo {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #374151;
-            line-height: 1.3;
-            margin-bottom: 10px;
         }
 
         /* ── Body section ── */
@@ -3618,14 +3623,6 @@
                 margin-bottom: 15px;
             }
 
-            .resultado-hero {
-                padding: 20px 18px 18px;
-            }
-
-            .resultado-hero-data {
-                font-size: 2.2rem;
-            }
-
             .resultado-body {
                 padding: 18px;
             }
@@ -3797,14 +3794,6 @@
 
             .card {
                 padding: 12px;
-            }
-
-            .resultado-hero {
-                padding: 16px 14px 14px;
-            }
-
-            .resultado-hero-data {
-                font-size: 1.9rem;
             }
 
             .resultado-body {
@@ -9008,47 +8997,274 @@
             }, 100);
         }
 
-        function mostrarResultado() {
-            const dataInicioFormatada = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = usarDiasUteis ? 'Úteis' : 'Corridos';
+        // ==================== CARTÃO DE RESULTADO ====================
+        const MESES_PT = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const MESES_ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+        const DIAS_SEMANA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        const DIAS_CURTOS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+        const DIAS_MEDIOS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+        const ddmm = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const ddmmaaaa = d => `${ddmm(d)}/${d.getFullYear()}`;
+        const ICO = {
+            cal: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+            lista: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h8M8 18h5"/></svg>',
+            salvar: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>',
+            mais: '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',
+            gcal: '<svg width="17" height="17" viewBox="0 0 200 200" aria-hidden="true"><rect x="22" y="22" width="156" height="156" rx="22" fill="#fff" stroke="#4285F4" stroke-width="14"/><path d="M22 64h156" stroke="#EA4335" stroke-width="22"/><text x="100" y="152" font-size="74" font-weight="700" text-anchor="middle" fill="#34A853" font-family="Arial, sans-serif">31</text></svg>'
+        };
 
-            // ── Hero: data formatada em partes ──
-            const diaNumero = dataFinal.getDate();
-            const mesNome = dataFinal.toLocaleDateString('pt-BR', { month: 'long' });
-            const anoNum  = dataFinal.getFullYear();
-            const diaSemana = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+        // Classifica um dia do cálculo para a régua e o detalhamento
+        function _classificarDiaCalculo(dia, index, total) {
+            const tipoFer = ehFeriado(dia.data) ? getTipoFeriado(dia.data) : null;
+            const kind = tipoFer === 'personalizado' ? 'per' : (tipoFer ? 'nac' : null);
+            if (index === total - 1) return { tipo: 'fin', kind };
+            if (dia.prorrogacao && !dia.contado) return { tipo: 'ext', kind };
+            if (!dia.contado && kind) return { tipo: kind, kind };
+            if (!dia.contado) return { tipo: 'fds', kind: null };
+            return { tipo: 'cnt', kind };   // contado (em dias corridos pode ser feriado)
+        }
 
-            // ── Indicador de dias restantes ──
-            const hoje = new Date(); hoje.setHours(0,0,0,0);
-            const diasRestantes = Math.ceil((dataFinal - hoje) / 86400000);
-            const totalDiasCalendario = Math.ceil(
-                (dataFinal - new Date(dataInicio + 'T00:00:00')) / 86400000
-            );
-            const pctRestante = totalDiasCalendario > 0 ? diasRestantes / totalDiasCalendario : 0;
-            let statusRestClasse, statusRestTexto;
-            if (diasRestantes === 1) {
-                statusRestClasse = 'prazo-status-vermelho';
-                statusRestTexto = '1 dia restante';
-            } else if (diasRestantes === 0) {
-                statusRestClasse = 'prazo-status-vermelho';
-                statusRestTexto = 'Vence hoje';
-            } else if (diasRestantes < 0) {
-                statusRestClasse = 'prazo-status-passado';
-                statusRestTexto = 'Prazo encerrado';
-            } else if (pctRestante > 0.5) {
-                statusRestClasse = 'prazo-status-verde';
-                statusRestTexto = diasRestantes + ' dias restantes';
-            } else if (pctRestante > 0.25) {
-                statusRestClasse = 'prazo-status-amarelo';
-                statusRestTexto = diasRestantes + ' dias restantes';
+        function _linkAtoNormativo(data) {
+            const dataStr = formatarDataCompleta(data);
+            const arquivo = feriadosArquivoMap.get(dataStr);
+            if (!arquivo) return null;
+            const conjunto = obterMetadataConjuntos().find(c => c.arquivo === arquivo);
+            if (!conjunto) return null;
+            const links = obterLinksDoConjunto(conjunto);
+            const url = _selecionarLink(links, dataStr);
+            if (!url) return null;
+            const l = links.find(x => x.url === url);
+            return { url, rotulo: (l && l.rotulo) || 'Ver ato normativo' };
+        }
+
+        function _statusDoPrazo(dataFim) {
+            const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+            const diff = Math.round((new Date(dataFim).setHours(0, 0, 0, 0) - hoje) / 86400000);
+            if (diff < 0) return { classe: 'late', texto: `Vencido há ${-diff} ${diff === -1 ? 'dia' : 'dias'}` };
+            if (diff === 0) return { classe: 'warn', texto: 'Vence hoje' };
+            if (diff === 1) return { classe: 'warn', texto: 'Falta 1 dia' };
+            if (diff <= 3) return { classe: 'warn', texto: `Faltam ${diff} dias` };
+            return { classe: 'ok', texto: `Faltam ${diff} dias` };
+        }
+
+        function _renderRegua(dias) {
+            const N = dias.length;
+            const uteis = usarDiasUteis;
+            let nNac = 0, nPer = 0;
+            const barras = dias.map((d, i) => {
+                const c = _classificarDiaCalculo(d, i, N);
+                let k = '';
+                if (c.tipo === 'fin') k = 'e';
+                else if (c.tipo === 'ext') k = 'z';
+                else if (c.kind && (!uteis || !d.contado)) { k = c.kind === 'per' ? 'p' : 'x'; c.kind === 'per' ? nPer++ : nNac++; }
+                else if (!d.contado) k = 'w';
+                return `<i class="${k}" style="animation-delay:${Math.min(i * 6, 400)}ms"></i>`;
+            }).join('');
+            let meses = '';
+            dias.forEach((d, i) => {
+                if (i === 0 || d.data.getDate() === 1) {
+                    const left = i / N * 100;
+                    if (left < 92) meses += `<span style="left:${left.toFixed(2)}%">${MESES_ABREV[d.data.getMonth()]}</span>`;
+                }
+            });
+            const prorrogado = !!(infoCalculo && infoCalculo.prorrogadoDe);
+            const legenda = [
+                `<span><i class="rg-cnt"></i>${uteis ? 'Contado' : 'Corrido'}</span>`,
+                uteis ? '<span><i class="rg-wk"></i>Fim de semana</span>' : '',
+                nNac ? `<span><i class="rg-nac"></i>Feriado nacional (${nNac})</span>` : '',
+                nPer ? `<span><i class="rg-per"></i>Feriado do perfil (${nPer})</span>` : '',
+                prorrogado ? '<span><i class="rg-ext"></i>Prorrogação</span>' : '',
+                '<span><i class="rg-fin"></i>Prazo final</span>'
+            ].join('');
+            return `
+                <div class="res-regua">
+                    <div class="res-regua-topo">
+                        <div class="res-regua-ponta"><strong>${ddmm(dias[0].data)}</strong><small>1º dia do período</small></div>
+                        <div class="res-regua-meio">${N} ${N === 1 ? 'dia' : 'dias'} no calendário</div>
+                        <div class="res-regua-ponta direita"><strong>${ddmm(dias[N - 1].data)}</strong><small>${prorrogado ? 'prazo final (prorrogado)' : 'prazo final'}</small></div>
+                    </div>
+                    <div class="res-regua-barra${N > 60 ? ' densa' : ''}" aria-hidden="true">${barras}</div>
+                    <div class="res-regua-meses" aria-hidden="true">${meses}</div>
+                    <div class="res-legenda">${legenda}</div>
+                </div>`;
+        }
+
+        function _renderResumoCalculo(dias) {
+            const r = infoCalculo ? infoCalculo.regra : regraContagem;
+            const ini = new Date(dataInicio + 'T00:00:00');
+            const rotuloIni = r.ini === 'disp' ? 'Disponibilização'
+                : r.ini === 'inc' ? '1º dia do prazo'
+                : (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início';
+            const nFer = usarDiasUteis
+                ? dias.filter((d, i) => !d.contado && !d.prorrogacao && ehFeriado(d.data)).length
+                : dias.filter(d => !d.prorrogacao && ehFeriado(d.data)).length;
+            const rotuloFer = usarDiasUteis ? 'Feriados pulados' : 'Feriados no período';
+            const valorFer = nFer > 0
+                ? `<button type="button" class="res-resumo-link" onclick="abrirModalFeriadosCalculo()" title="Ver a lista de feriados">${nFer}</button>`
+                : '<strong>0</strong>';
+            return `
+                <div class="res-resumo">
+                    <div><small>${rotuloIni} *</small><strong>${ddmmaaaa(ini)} <span>(${DIAS_CURTOS[ini.getDay()]})</span></strong></div>
+                    <div><small>Contagem</small><strong>${diasUteis} ${usarDiasUteis ? 'dias úteis' : 'dias corridos'}</strong></div>
+                    <div><small>${rotuloFer}</small>${valorFer}</div>
+                </div>`;
+        }
+
+        function _renderNotaCalculo() {
+            const r = infoCalculo ? infoCalculo.regra : regraContagem;
+            const ini = new Date(dataInicio + 'T00:00:00');
+            const dia = d => `<strong>${ddmm(d)} (${DIAS_CURTOS[d.getDay()]})</strong>`;
+            let t;
+            if (r.ini === 'disp' && infoCalculo && infoCalculo.publicacao) {
+                t = `Disponibilizado no DJe em ${dia(ini)}; considera-se publicado em ${dia(infoCalculo.publicacao)}, e a contagem começa no dia útil seguinte (Lei 11.419/2006, art. 4º, §§ 3º e 4º).`;
+            } else if (r.ini === 'inc') {
+                t = 'O dia informado foi computado como 1º dia do prazo (Código Penal, art. 10)' +
+                    (r.uteis && (ehFimDeSemana(ini) || ehFeriado(ini)) ? '; como não é dia útil, a contagem começou no próximo dia útil' : '') + '.';
+            } else if (infoCalculo && infoCalculo.inicioAdiado) {
+                t = `Intimação em ${dia(ini)}; a contagem começa no 1º dia útil seguinte, ${dia(infoCalculo.inicioAdiado)} (Súmula 310 do STF).`;
+            } else if (r.uteis) {
+                t = 'Data da intimação/publicação não computada; a contagem começa no próximo dia útil.';
             } else {
-                statusRestClasse = 'prazo-status-vermelho';
-                statusRestTexto = diasRestantes + ' dias restantes';
+                t = 'Dia do início não computado.';
+            }
+            if (infoCalculo && infoCalculo.prorrogadoDe) {
+                t += ` O prazo terminaria em ${dia(infoCalculo.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
+            }
+            return `<p class="res-nota"><sup>*</sup> ${t}</p>`;
+        }
+
+        // Linha do tempo do cálculo (cartão de resultado). Os relatórios PDF/PNG
+        // e a Minha Agenda continuam usando renderTimelineDetalhamento().
+        function _renderDetalhamentoCalculo(dias) {
+            const N = dias.length;
+            const r = infoCalculo ? infoCalculo.regra : regraContagem;
+            const ini = new Date(dataInicio + 'T00:00:00');
+
+            // Marcos antes da contagem
+            const marcos = [];
+            if (r.ini === 'disp' && infoCalculo && infoCalculo.publicacao) {
+                marcos.push({ data: ini, titulo: 'Disponibilizado no DJe', desc: 'Data informada', icone: '◆' });
+                marcos.push({ data: infoCalculo.publicacao, titulo: 'Considera-se publicado', desc: '1º dia útil após a disponibilização', icone: '◆' });
+            } else if (r.ini !== 'inc') {
+                marcos.push({ data: ini, titulo: (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início', desc: 'Não computada na contagem', icone: '◆' });
+                if (infoCalculo && infoCalculo.inicioAdiado) {
+                    marcos.push({ data: infoCalculo.inicioAdiado, titulo: 'Início adiado', desc: 'Súmula 310 do STF: o prazo começa no 1º dia útil', icone: '↷' });
+                }
             }
 
-            // ── Conjuntos importados ──
+            const linha = (tipo, badge, data, rotulo, desc, filtro, rotuloTipo = tipo) => `
+                <div class="dx-item dx-${tipo}" data-filtro="${filtro}">
+                    <span class="dx-badge" aria-hidden="true">${badge}</span>
+                    <div class="dx-corpo">
+                        <div class="dx-data">${data.getDate()} de ${MESES_PT[data.getMonth()]} <span>· ${DIAS_MEDIOS[data.getDay()]}${tipo === 'fds' ? ' · fim de semana' : ''}</span></div>
+                        ${rotulo ? `<div class="dx-rotulo dx-rotulo-${rotuloTipo}">${rotulo}</div>` : ''}
+                        ${desc ? `<div class="dx-desc">${desc}</div>` : ''}
+                    </div>
+                </div>`;
+
+            let html = '';
+            if (marcos.length) {
+                html += `<section class="dx-grupo"><h4 class="dx-mes">Antes da contagem</h4>` +
+                    marcos.map(m => linha('ms', m.icone, m.data, escapeHtml(m.titulo), escapeHtml(m.desc), 'marco')).join('') + '</section>';
+            }
+
+            // Agrupa por mês
+            const grupos = [];
+            dias.forEach((d, i) => {
+                const chave = d.data.getFullYear() * 12 + d.data.getMonth();
+                if (!grupos.length || grupos[grupos.length - 1].chave !== chave) grupos.push({ chave, data: d.data, itens: [] });
+                grupos[grupos.length - 1].itens.push({ d, i });
+            });
+            grupos.forEach(g => {
+                const contados = g.itens.filter(x => x.d.contado && !x.d.prorrogacao).length;
+                html += `<section class="dx-grupo"><h4 class="dx-mes">${MESES_PT[g.data.getMonth()]} ${g.data.getFullYear()}<em>${g.itens.length} ${g.itens.length === 1 ? 'dia' : 'dias'} · ${contados} ${usarDiasUteis ? 'contados' : 'corridos'}</em></h4>`;
+                g.itens.forEach(({ d, i }) => {
+                    const c = _classificarDiaCalculo(d, i, N);
+                    const nome = c.kind ? (obterNomeFeriado(d.data) || 'Feriado/Ponto Facultativo') : null;
+                    const link = c.kind === 'per' ? _linkAtoNormativo(d.data) : null;
+                    const linkHTML = link ? ` · <a class="dx-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.rotulo)} ↗</a>` : '';
+                    const rotuloKind = c.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional';
+                    const num = d.numero != null ? String(d.numero).padStart(2, '0') : '';
+                    if (c.tipo === 'fin') {
+                        html += linha('fin', d.prorrogacao ? '→' : num, d.data, 'Prazo final',
+                            d.prorrogacao ? 'Primeiro dia útil após o vencimento.' : 'Último dia do prazo.', 'contado');
+                    } else if (c.tipo === 'ext') {
+                        html += linha('ext', '→', d.data, 'Prorrogação', `${nome ? escapeHtml(nome) + ' · ' : ''}dia não útil`, nome ? 'prorrogacao feriado' : 'prorrogacao fds');
+                    } else if (c.tipo === 'nac' || c.tipo === 'per') {
+                        html += linha(c.tipo, '✕', d.data, rotuloKind, `${escapeHtml(nome)} — suspensão de prazo${linkHTML}`, 'feriado');
+                    } else if (c.tipo === 'fds') {
+                        html += linha('fds', '', d.data, '', '', 'fds');
+                    } else {
+                        const desc = d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : '';
+                        if (c.kind) {
+                            // Dias corridos: o feriado é contado normalmente
+                            html += linha('cnt', num, d.data, rotuloKind, `${escapeHtml(nome)} · contado (dias corridos)${linkHTML}${desc ? ' · ' + desc : ''}`, 'contado feriado', c.kind);
+                        } else {
+                            html += linha('cnt', num, d.data, '', desc, 'contado');
+                        }
+                    }
+                });
+                html += '</section>';
+            });
+
+            const nCont = dias.filter(d => d.contado && !d.prorrogacao).length;
+            const nFds = dias.filter((d, i) => !d.contado && !ehFeriado(d.data)).length;
+            const nFer = dias.filter(d => ehFeriado(d.data)).length;
+            const aba = (f, rotulo, n, cor) => `<button type="button" class="dx-aba${f === 'todos' ? ' ativa' : ''}" role="tab" aria-selected="${f === 'todos'}" data-f="${f}" onclick="filtrarDetalhamento(this)">${cor ? `<i class="${cor}"></i>` : ''}${rotulo} <em>${n}</em></button>`;
+            return `
+                <div class="dx">
+                    <h3 class="dx-titulo">${ICO.lista}Detalhamento do cálculo</h3>
+                    <div class="dx-abas" role="tablist" aria-label="Filtrar dias">
+                        ${aba('todos', 'Todos', N + marcos.length)}
+                        ${aba('contado', usarDiasUteis ? 'Contados' : 'Corridos', nCont, 'rg-cnt')}
+                        ${usarDiasUteis ? aba('fds', 'Fim de semana', nFds, 'rg-wk') : ''}
+                        ${aba('feriado', 'Feriados', nFer, 'rg-fer')}
+                    </div>
+                    <div class="dx-lista" data-filtro="todos">${html}</div>
+                </div>`;
+        }
+
+        function filtrarDetalhamento(botao) {
+            const dx = botao.closest('.dx');
+            if (!dx) return;
+            const f = botao.dataset.f;
+            dx.querySelectorAll('.dx-aba').forEach(b => {
+                const on = b === botao;
+                b.classList.toggle('ativa', on);
+                b.setAttribute('aria-selected', on);
+            });
+            const lista = dx.querySelector('.dx-lista');
+            lista.dataset.filtro = f;
+            lista.querySelectorAll('.dx-item').forEach(it => {
+                const fs = it.dataset.filtro.split(' ');
+                it.hidden = !(f === 'todos' || fs.includes(f));
+            });
+            lista.querySelectorAll('.dx-grupo').forEach(g => {
+                g.hidden = !g.querySelector('.dx-item:not([hidden])');
+            });
+            lista.scrollTop = 0;
+        }
+
+        // Encolhe a data final até caber numa linha
+        function ajustarDataResultado() {
+            const el = document.querySelector('#resultado .res-data');
+            if (!el) return;
+            el.style.fontSize = '';
+            let f = parseFloat(getComputedStyle(el).fontSize);
+            while (el.scrollWidth > el.clientWidth + 1 && f > 18) {
+                f -= 1;
+                el.style.fontSize = f + 'px';
+            }
+        }
+        window.addEventListener('resize', () => { if (calculoRealizado) ajustarDataResultado(); });
+
+        function mostrarResultado() {
+            const dias = todosOsDias;
+            const st = _statusDoPrazo(dataFinal);
+
+            // ── Conjuntos online usados (nota no fim do cartão) ──
             const conjuntosHTML = (() => {
-                if (!usarDiasUteis) return '';
+                if (!regraUsaFeriados()) return '';
                 const conjuntos = obterMetadataConjuntos();
                 if (!conjuntos || conjuntos.length === 0) return '';
                 const arquivosAtivos = new Set(feriadosArquivoMap.values());
@@ -9057,99 +9273,41 @@
                 const itens = conjuntosAtivos.map(c => {
                     const links = obterLinksDoConjunto(c);
                     const linksHTML = links.length > 0
-                        ? `<div class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</div>`
+                        ? `<span class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</span>`
                         : '';
                     return `
                     <div class="conjunto-obs-item">
                         <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
                         ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
                         ${linksHTML}
-                    </div>
-                `;
+                    </div>`;
                 }).join('');
-                return `
-                    <div class="conjuntos-obs">
-                        <span class="conjuntos-obs-label">Feriados online utilizados:</span>
-                        ${itens}
-                    </div>
-                `;
+                return `<div class="conjuntos-obs"><span class="conjuntos-obs-label">Feriados online utilizados</span>${itens}</div>`;
             })();
 
-            // Formata data de início de forma compacta para o chip
-            const dataInicioCompacta = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-BR', {
-                day: '2-digit', month: 'short', year: 'numeric'
-            });
-
-            let html = `
+            const html = `
                 <div class="resultado">
-                    <!-- Barra de acento com gradiente da marca -->
-                    <div class="resultado-top-bar"></div>
-
-                    <!-- ── HERO BLOCK ── -->
-                    <div class="resultado-hero">
-                        <div class="resultado-hero-label">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                            Prazo Calculado
+                    <div class="res-topo">
+                        <div class="res-rotulo">${ICO.cal}Prazo calculado</div>
+                        ${descricaoPrazo ? `<div class="res-descricao" title="${escapeHtml(descricaoPrazo)}">${escapeHtml(descricaoPrazo)}</div>` : ''}
+                        <div class="res-data">${dataFinal.getDate()} de ${MESES_PT[dataFinal.getMonth()]} de ${dataFinal.getFullYear()}</div>
+                        <div class="res-sub">
+                            <span class="res-dia-semana">${DIAS_SEMANA[dataFinal.getDay()]}</span>
+                            <span class="res-sep" aria-hidden="true">·</span>
+                            <span class="res-status res-status-${st.classe}">${st.texto}</span>
                         </div>
-                        ${descricaoPrazo ? `<div class="resultado-hero-titulo">${escapeHtml(descricaoPrazo)}</div>` : ''}
-                        <div class="resultado-hero-data">${diaNumero} de ${mesNome} de ${anoNum}</div>
-                        <div class="resultado-hero-ano">${diaSemana}</div>
-
-                        <!-- Chips: data início + qtd dias contados -->
-                        <div class="resultado-hero-chips">
-                            <div class="resultado-hero-chip">
-                                <span class="resultado-hero-chip-label">Data de início${usarDiasUteis ? ' *' : ''}</span>
-                                <span class="resultado-hero-chip-value">${dataInicioCompacta}</span>
-                            </div>
-                            <div class="resultado-hero-chip">
-                                <span class="resultado-hero-chip-label">Dias contados</span>
-                                <span class="resultado-hero-chip-value">${diasUteis} dias ${tipoDias.toLowerCase()}</span>
-                            </div>
-                            ${(() => {
-                                if (feriadosDoCalculo.length === 0) return '';
-                                const label = usarDiasUteis ? 'Feriados pulados' : 'Feriados no período';
-                                const MAX_TOOLTIP = 5;
-                                const tooltipItems = feriadosDoCalculo
-                                    .slice(0, MAX_TOOLTIP)
-                                    .map(f => {
-                                        const d = f.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-                                        return `<span class="chip-feriados-tooltip-item">${escapeHtml(d)} — ${escapeHtml(f.nome)}</span>`;
-                                    }).join('');
-                                const mais = feriadosDoCalculo.length > MAX_TOOLTIP
-                                    ? `<span class="chip-feriados-tooltip-mais">+ ${feriadosDoCalculo.length - MAX_TOOLTIP} mais...</span>`
-                                    : '';
-                                return `
-                                    <div class="resultado-hero-chip chip-feriados" onclick="abrirModalFeriadosCalculo()" title="">
-                                        <span class="resultado-hero-chip-label">${label}</span>
-                                        <span class="resultado-hero-chip-value">${feriadosDoCalculo.length}</span>
-                                        <div class="chip-feriados-tooltip">
-                                            ${tooltipItems}
-                                            ${mais}
-                                            <span class="chip-feriados-tooltip-hint">Clique para ver todos</span>
-                                        </div>
-                                    </div>`;
-                            })()}
-                        </div>
-
-                        <!-- Indicador de dias restantes (ponto + texto) -->
-                        <div class="resultado-prazo-status ${statusRestClasse}">
-                            <span class="resultado-prazo-status-dot"></span>
-                            ${statusRestTexto}
-                        </div>
-                        ${usarDiasUteis ? '<p class="resultado-hero-footnote"><sup>*</sup> Data de início não computada; contagem começa no próximo dia útil.</p>' : ''}
-
-                        <!-- Botão de ações: salvar/exportar -->
-                        <button class="resultado-hero-menu-btn" onclick="toggleMenuResultado(event)" id="btn-resultado-menu" title="Salvar e exportar">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                                <polyline points="16 6 12 2 8 6"/>
-                                <line x1="12" y1="2" x2="12" y2="15"/>
-                            </svg>
-                            Salvar
-                        </button>
+                        ${_renderRegua(dias)}
+                        ${_renderResumoCalculo(dias)}
+                        ${_renderNotaCalculo()}
                     </div>
 
-                    <!-- Dropdown de ações do resultado (position:fixed, sobrepõe tudo) -->
+                    <div class="res-acoes">
+                        <button type="button" class="res-btn res-btn-salvar" onclick="salvarNaAgenda()">${ICO.salvar}<span>Salvar na Minha Agenda</span></button>
+                        <button type="button" class="res-btn res-btn-google" onclick="abrirNoGoogleAgenda()" title="Salvar no Google Agenda">${ICO.gcal}<span>Google Agenda</span></button>
+                        <button type="button" class="res-btn res-btn-icone" onclick="toggleMenuResultado(event)" id="btn-resultado-menu" title="Exportar PDF ou imagem" aria-label="Mais opções">${ICO.mais}</button>
+                    </div>
+
+                    <!-- Dropdown de exportação (position:fixed, sobrepõe tudo) -->
                     <div class="resultado-hero-dropdown" id="menu-resultado">
                         <button class="resultado-menu-item menu-pdf" onclick="abrirModalExportPDF(); fecharMenuResultado()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -9159,33 +9317,10 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                             Exportar PNG
                         </button>
-                        <hr class="resultado-menu-sep">
-                        <button class="resultado-menu-item menu-google" onclick="abrirNoGoogleAgenda(); fecharMenuResultado()">
-                            <svg width="15" height="15" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><g transform="translate(3.75 3.75)"><path fill="#FFFFFF" d="M148.882,43.618l-47.368-5.263l-57.895,5.263L38.355,96.25l5.263,52.632l52.632,6.579l52.632-6.579l5.263-53.947L148.882,43.618z"/><path fill="#1A73E8" d="M65.211,125.276c-3.934-2.658-6.658-6.539-8.145-11.671l9.132-3.763c0.829,3.158,2.276,5.605,4.342,7.342c2.053,1.737,4.553,2.592,7.474,2.592c2.987,0,5.553-0.908,7.697-2.724s3.224-4.132,3.224-6.934c0-2.868-1.132-5.211-3.395-7.026s-5.105-2.724-8.5-2.724h-5.276v-9.039H76.5c2.921,0,5.382-0.789,7.382-2.368c2-1.579,3-3.737,3-6.487c0-2.447-0.895-4.395-2.684-5.855s-4.053-2.197-6.803-2.197c-2.684,0-4.816,0.711-6.395,2.145s-2.724,3.197-3.447,5.276l-9.039-3.763c1.197-3.395,3.395-6.395,6.618-8.987c3.224-2.592,7.342-3.895,12.342-3.895c3.697,0,7.026,0.711,9.974,2.145c2.947,1.434,5.263,3.421,6.934,5.947c1.671,2.539,2.5,5.382,2.5,8.539c0,3.224-0.776,5.947-2.329,8.184c-1.553,2.237-3.461,3.947-5.724,5.145v0.539c2.987,1.25,5.421,3.158,7.342,5.724c1.908,2.566,2.868,5.632,2.868,9.211s-0.908,6.776-2.724,9.579c-1.816,2.803-4.329,5.013-7.513,6.618c-3.197,1.605-6.789,2.421-10.776,2.421C73.408,129.263,69.145,127.934,65.211,125.276z"/><path fill="#1A73E8" d="M121.25,79.961l-9.974,7.25l-5.013-7.605l17.987-12.974h6.895v61.197h-9.895L121.25,79.961z"/><path fill="#EA4335" d="M148.882,196.25l47.368-47.368l-23.684-10.526l-23.684,10.526l-10.526,23.684L148.882,196.25z"/><path fill="#34A853" d="M33.092,172.566l10.526,23.684h105.263v-47.368H43.618L33.092,172.566z"/><path fill="#4285F4" d="M12.039-3.75C3.316-3.75-3.75,3.316-3.75,12.039v136.842l23.684,10.526l23.684-10.526V43.618h105.263l10.526-23.684L148.882-3.75H12.039z"/><path fill="#188038" d="M-3.75,148.882v31.579c0,8.724,7.066,15.789,15.789,15.789h31.579v-47.368H-3.75z"/><path fill="#FBBC04" d="M148.882,43.618v105.263h47.368V43.618l-23.684-10.526L148.882,43.618z"/><path fill="#1967D2" d="M196.25,43.618V12.039c0-8.724-7.066-15.789-15.789-15.789h-31.579v47.368H196.25z"/></g></svg>
-                            Salvar no Google Agenda
-                        </button>
-                        <button class="resultado-menu-item menu-save" onclick="salvarNaAgenda(); fecharMenuResultado()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                            Salvar na Minha Agenda
-                        </button>
                     </div>
 
-                    <!-- ── CORPO ── -->
-                    <div class="resultado-body">
-
-                        <div class="detalhamento">
-                            <h3>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                Detalhamento do cálculo
-                            </h3>
-                            ${renderTimelineDetalhamento(todosOsDias)}
-                        </div>
-
+                    <div class="res-corpo">
+                        ${_renderDetalhamentoCalculo(dias)}
                         ${conjuntosHTML}
                     </div>
                 </div>
@@ -9193,6 +9328,7 @@
 
             document.getElementById('resultado').innerHTML = html;
             document.getElementById('resultado').style.display = 'block';
+            requestAnimationFrame(ajustarDataResultado);
         }
 
         function limparResultado() {
@@ -15727,17 +15863,6 @@
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
         atualizarEstadoEditorPersonalizados();
-        // Posiciona tooltip do chip de feriados com coordenadas fixas para escapar de overflow:hidden
-        document.addEventListener('mouseenter', function(e) {
-            if (!(e.target instanceof Element)) return;
-            const chip = e.target.closest('.chip-feriados');
-            if (!chip) return;
-            const tooltip = chip.querySelector('.chip-feriados-tooltip');
-            if (!tooltip) return;
-            const rect = chip.getBoundingClientRect();
-            tooltip.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
-            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-        }, true);
 
         // Verificações de migração sequenciais: a segunda só roda se a primeira não exibiu modal.
         if (!verificarNecessidadeMigracaoLinks()) verificarNecessidadeMigracao();
