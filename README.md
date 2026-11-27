@@ -188,6 +188,10 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 - **Detalhamento**: linha do tempo com marcos antes da contagem, meses separados, abas que filtram e link do ato normativo em cada feriado do perfil
 - **Calendário em faixa contínua**: 1 a 3 meses lado a lado conforme o prazo, topo em duas linhas e painel de perfil integrado ao cartão
 - **Conjuntos de feriados**: cada conjunto é um arquivo só; o `manifest.json` é gerado por automação do GitHub
+- **Relatórios PDF e PNG** no novo visual, com um gerador único para a calculadora e a Minha Agenda (resumido e completo)
+- **Minha Agenda**: lista com faixa lateral de status, detalhe do prazo com o mesmo cartão e linha do tempo da calculadora, e tela de configuração com duas opções claras (arquivo no computador ou neste navegador)
+- **Editor de Feriados**: novo visual e validação linha a linha enquanto se digita (formato, data inexistente, data repetida)
+- **Ajuda** atualizada, com a tabela das regras de contagem; no máximo 3 avisos na tela ao mesmo tempo
 - **Limpeza**: correção de erro de JavaScript no carregamento, avisos da primeira visita não se empilham mais e remoção de CSS sem uso
 
 ### Versão 1.8
