@@ -1196,7 +1196,7 @@
         }
         .res-resumo-fer-ver svg { transition: transform 0.22s var(--cp-ease); }
         .res-resumo-fer:hover .res-resumo-fer-ver { opacity: 1; }
-        .res-resumo-fer:hover .res-resumo-fer-ver svg { transform: translateX(2px); }
+
         .res-nota { margin: 10px 0 0; font-size: 0.7rem; line-height: 1.5; color: var(--cp-faint); }
         .res-nota strong { color: var(--cp-muted); font-weight: 600; }
 
@@ -1262,8 +1262,7 @@
         .dx-lista-modal { max-height: none; border: 0; padding: 0; }
         .dx-mes {
             position: sticky; top: 0; z-index: 3; display: flex; align-items: baseline; gap: 8px; margin: 0 -8px;
-            padding: 12px 16px 8px; background: rgba(255, 255, 255, 0.94);
-            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            padding: 12px 16px 8px; background: #fff;
             box-shadow: 0 1px 0 var(--cp-line-soft);
             font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-blue-500);
         }
@@ -3688,14 +3687,8 @@
         }
 
         @keyframes menuSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+            to { opacity: 1; transform: none; }
         }
 
         .prazo-menu-item {
@@ -4345,8 +4338,6 @@
         .cal-nav-btn:hover { background: #fff; color: var(--color-blue-600); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
         .cal-nav-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
         .cal-nav-btn svg { transition: transform 0.22s var(--cp-ease); }
-        #btnNavAnterior:hover svg { transform: translateX(-2px); }
-        #btnNavProximo:hover svg { transform: translateX(2px); }
         .cal-nav-hoje { padding: 0 10px; }
         .cal-nav-hoje.fora-do-mes { color: var(--color-blue-600); background: #fff; }
         .cal-linha-sub { gap: 10px; justify-content: flex-start; }
@@ -4525,6 +4516,7 @@
             width: 100%; padding: 8px 4px; border: 0; border-radius: 10px; background: none; cursor: pointer; text-align: left; font: inherit;
         }
         .config-item:hover { background: #f6f8fb; }
+        .config-item { scroll-margin-bottom: 84px; }
         .config-item:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
         .config-item > svg { color: #cbd5e1; }
         .config-item-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--cp-soft); color: #475569; }
@@ -4566,7 +4558,7 @@
         .config-feriados-content.aberto .config-item:nth-child(2) { animation-delay: 30ms; }
         .config-feriados-content.aberto .config-item:nth-child(3) { animation-delay: 60ms; }
         .config-feriados-content.aberto .config-item:nth-child(5) { animation-delay: 90ms; }
-        .perfil-dropdown-menu.show, .perfil-badge-dropdown.show { animation: cpAbrir 0.18s var(--cp-ease) backwards; }
+        
         .ed-validacao.erro, .ed-validacao.ok { animation: cpSurgir 0.2s var(--cp-ease) backwards; }
         .perfil-unsaved-indicator.show { animation: cpSurgir 0.22s var(--cp-ease) backwards; }
     
@@ -4646,11 +4638,6 @@
         .modal-content .btn-secondary:hover, .modal-aviso-content .btn-secondary:hover, .modal-detalhes-acoes .btn-secondary:hover, .modal-input-footer .btn-secondary:hover {
             background: #e8f0ff; color: var(--color-blue-600); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
         }
-        /* Ícones com microinteração */
-        .btn:hover svg, .res-btn:hover svg, .ed-btn:hover svg, .agenda-toolbar-btn:hover svg, .agenda-setup-btn-primario:hover svg, .agenda-setup-btn-secundario:hover svg,
-        .regra-resumo:hover .regra-resumo-ic svg, .config-item:hover .config-item-ic svg { transform: scale(1.12); }
-        .perfil-btn:hover svg { transform: rotate(-8deg) scale(1.1); }
-        .nav-tab:hover:not(.active) svg { transform: scale(1.1); }
         /* Botões só de texto: fundo realçado para mostrar que são clicáveis */
         .dx-aba { padding: 0 9px; border-radius: 8px 8px 0 0; }
         .dx-aba::after { left: 6px !important; right: 6px !important; }
@@ -4661,6 +4648,23 @@
         .config-item:hover { background: #f5f9ff; }
         .config-item:hover .config-item-ic { background: #e8f0ff; color: var(--color-blue-600); }
         .regra-opcao:hover:not(.ativa) { background: #f5f9ff; }
+    
+        /* ==================== MENUS (abertura padronizada) ==================== */
+        @keyframes cpMenu { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: none; } }
+        @keyframes cpMenuCima { from { opacity: 0; transform: translateY(4px) scale(0.98); } to { opacity: 1; transform: none; } }
+        .menu-flutuante {
+            position: fixed !important; margin: 0 !important; z-index: 10050; padding: 4px; overflow-y: auto;
+            border-radius: 12px; border: 1px solid var(--cp-line); background: #fff;
+            box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.28), 0 2px 6px rgba(15, 23, 42, 0.06);
+            transform-origin: top left;
+        }
+        .menu-flutuante.para-cima { transform-origin: bottom left; }
+        .menu-flutuante.show { animation: cpMenu 0.16s var(--cp-ease) backwards; }
+        .menu-flutuante.para-cima.show { animation-name: cpMenuCima; }
+        .menu-flutuante .perfil-dropdown-item, .menu-flutuante .perfil-badge-dropdown-item { border-radius: 8px; transition: background-color 0.15s var(--cp-ease), color 0.15s var(--cp-ease); }
+        .agenda-filtro-menu, .agenda-ordenacao-menu, .agenda-mais-menu { animation: cpMenu 0.16s var(--cp-ease) backwards; transform-origin: top right; }
+        .agenda-filtro-menu { transform-origin: top left; }
+        .resultado-hero-dropdown.active, .prazo-menu-dropdown.active { animation: cpMenu 0.16s var(--cp-ease) backwards; }
     </style>
     <!-- Biblioteca html-to-image para exportação de PNG -->
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
@@ -6340,7 +6344,9 @@
                 const perfil = perfisData.find(p => p.id === perfilAtivoId);
                 if (perfil) {
                     pillText.textContent = perfil.nome;
-                    pillText.title = perfil.nome;
+                    // Dica com o nome só quando ele está cortado por reticências
+                    pillText.title = '';
+                    requestAnimationFrame(() => { if (pillText.scrollWidth > pillText.clientWidth) pillText.title = perfil.nome; });
                     pill.classList.add('active');
                 } else {
                     pillText.textContent = 'Nenhum';
@@ -6416,6 +6422,35 @@
             menu.innerHTML = html;
         }
 
+        // Menus flutuantes: ficam fixos na tela (não são cortados por contêineres com rolagem),
+        // abrem para baixo quando cabem e para cima quando não cabem.
+        function posicionarMenuFlutuante(menu, ancora) {
+            if (!menu || !ancora) return;
+            menu.classList.add('menu-flutuante');
+            menu.style.minWidth = Math.max(ancora.offsetWidth, 180) + 'px';
+            const r = ancora.getBoundingClientRect();
+            const h = menu.offsetHeight, w = menu.offsetWidth;
+            const vh = window.innerHeight, vw = window.innerWidth, folga = 8;
+            const abaixo = vh - r.bottom - folga, acima = r.top - folga;
+            const paraCima = h > abaixo && acima > abaixo;
+            const altMax = Math.max(120, (paraCima ? acima : abaixo) - 6);
+            menu.style.maxHeight = altMax + 'px';
+            const hReal = Math.min(h, altMax);
+            menu.style.top = (paraCima ? r.top - hReal - 6 : r.bottom + 6) + 'px';
+            menu.style.left = Math.min(Math.max(folga, r.left), vw - w - folga) + 'px';
+            menu.classList.toggle('para-cima', paraCima);
+            menu.dataset.abertoEm = Date.now();
+        }
+        // Fecha menus flutuantes ao rolar qualquer contêiner (a âncora sairia do lugar)
+        document.addEventListener('scroll', e => {
+            document.querySelectorAll('.menu-flutuante.show').forEach(m => {
+                if (e.target instanceof Node && m.contains(e.target)) return;
+                if (Date.now() - Number(m.dataset.abertoEm || 0) < 350) return;
+                m.classList.remove('show');
+                const seta = document.getElementById('perfilPillArrow'); if (seta) seta.classList.remove('open');
+            });
+        }, { passive: true, capture: true });
+
         function toggleBadgeDropdown() {
             const menu = document.getElementById('perfilBadgeDropdown');
             if (!menu) return;
@@ -6425,6 +6460,7 @@
             } else {
                 atualizarBadgeDropdown();
                 menu.classList.add('show');
+                posicionarMenuFlutuante(menu, document.getElementById('perfilBadge'));
                 setTimeout(() => {
                     const fechar = (e) => {
                         if (!e.target.closest('.perfil-badge-container')) {
@@ -6468,6 +6504,7 @@
                 atualizarDropdownPerfis();
                 menu.classList.add('show');
                 arrow.classList.add('open');
+                posicionarMenuFlutuante(menu, document.getElementById('perfilPill'));
 
                 // Fecha ao clicar fora
                 setTimeout(() => {
@@ -7331,12 +7368,10 @@
         }
 
         function aplicarMudancaRegra() {
-            const mudouTipo = usarDiasUteis !== regraContagem.uteis;
             usarDiasUteis = regraContagem.uteis;
             salvarRegraContagem();
             renderizarRegraContagem();
             atualizarVisibilidadeFeriados();
-            if (mudouTipo) posicionarGlider();
             // Mostra aviso se já houver cálculo realizado
             mostrarAvisoRecalculo();
         }
@@ -7462,15 +7497,6 @@
             }
         }
 
-        function posicionarGlider() {
-            const glider = document.getElementById('segGlider');
-            const activeBtn = document.getElementById(usarDiasUteis ? 'btnDiasUteis' : 'btnDiasCorridos');
-            if (glider && activeBtn && activeBtn.offsetWidth > 0) {
-                glider.style.left = activeBtn.offsetLeft + 'px';
-                glider.style.width = activeBtn.offsetWidth + 'px';
-            }
-        }
-
         function posicionarGliderVisualizacao() {
             const glider = document.getElementById('vizGlider');
             const activeBtn = document.getElementById(
@@ -7485,7 +7511,6 @@
         // Reposiciona ambos os gliders quando o layout muda por resize de janela.
         // Sem isso, o retângulo branco "congela" ao redimensionar.
         window.addEventListener('resize', () => {
-            posicionarGlider();
             posicionarGliderVisualizacao();
             atualizarVisibilidadeSidebar();
         });
@@ -7588,7 +7613,8 @@
         // Faixa do período calculado: do 1º dia da contagem até a véspera do prazo final
         function _faixaPeriodo() {
             if (!calculoRealizado || !dataFinal || !todosOsDias.length) return null;
-            return { ini: formatarDataCompleta(todosOsDias[0].data), fim: formatarDataCompleta(dataFinal) };
+            const primeiro = todosOsDias.find(d => d.contado) || todosOsDias[0];
+            return { ini: formatarDataCompleta(primeiro.data), fim: formatarDataCompleta(dataFinal) };
         }
 
         function obterClassesDia(data, baseClass) {
@@ -8243,33 +8269,6 @@
         // Mantido como alias para compatibilidade com chamadas existentes
         function atualizarChipTiposFeriado() { atualizarPillsTiposFeriado(); }
 
-        function toggleTiposFeriadoDropdown(event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('tiposFeriadoDropdown');
-            const chip = event.currentTarget;
-            const isActive = dropdown.classList.contains('active');
-            if (!isActive) {
-                // Posiciona o dropdown com position:fixed baseado no rect do botão
-                const rect = chip.getBoundingClientRect();
-                dropdown.style.top = (rect.bottom + 6) + 'px';
-                // Alinha pela borda direita do chip
-                const rightOffset = window.innerWidth - rect.right;
-                dropdown.style.right = Math.max(8, rightOffset) + 'px';
-                dropdown.style.left = 'auto';
-                dropdown.classList.add('active');
-                setTimeout(() => {
-                    document.addEventListener('click', function fecharTiposDropdown(e) {
-                        if (!dropdown.contains(e.target) && chip && !chip.contains(e.target)) {
-                            dropdown.classList.remove('active');
-                            document.removeEventListener('click', fecharTiposDropdown);
-                        }
-                    });
-                }, 10);
-            } else {
-                dropdown.classList.remove('active');
-            }
-        }
-
         function atualizarTitlesBotoesNav() {
             const ant = document.getElementById('btnNavAnterior');
             const prox = document.getElementById('btnNavProximo');
@@ -8383,7 +8382,8 @@
             // Prazo em um mês só: vista Mês. Em mais de um mês: Bimestre, mostrando o fim do prazo
             const vista = periodo.length > 1 ? 'bimestral' : 'mensal';
             const visiveis = vista === 'bimestral' ? 2 : 1;
-            mesAtual = new Date(periodo.length <= visiveis ? periodo[0] : periodo[periodo.length - visiveis]);
+            // Sempre começa pelo início do prazo; os pontinhos e as setas levam ao restante
+            mesAtual = new Date(periodo[0]);
             if (visualizacaoCalendario !== vista) alternarVisualizacao(vista);
             else renderizarCalendario();
         }
@@ -8472,7 +8472,8 @@
             const periodo = mesesDoPeriodo();
             if (!periodo || !todosOsDias.length) { el.innerHTML = ''; return; }
             const n = periodo.length;
-            el.innerHTML = `Prazo de <b>${ddmm(todosOsDias[0].data)}</b> a <b>${ddmm(dataFinal)}</b> · ${n} ${n === 1 ? 'mês' : 'meses'}`;
+            const primeiro = todosOsDias.find(d => d.contado) || todosOsDias[0];
+            el.innerHTML = `Contagem de <b>${ddmm(primeiro.data)}</b> a <b>${ddmm(dataFinal)}</b> · ${n} ${n === 1 ? 'mês' : 'meses'}`;
         }
 
         function atualizarMetaPerfil() {
@@ -10706,7 +10707,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             const b = document.querySelector('.sidebar-recolher span');
             if (b) b.textContent = recolher ? 'Expandir menu' : 'Recolher menu';
             try { localStorage.setItem('contaprazo_sidebar_recolhida', recolher ? '1' : '0'); } catch (e) { /* sem armazenamento */ }
-            if (typeof posicionarGlider === 'function') setTimeout(() => { posicionarGlider(); posicionarGliderVisualizacao(); renderizarCalendario(); }, 320);
+            setTimeout(() => { posicionarGliderVisualizacao(); renderizarCalendario(); }, 320);
         }
 
         function moverSliderSidebar(pagina) {
@@ -10757,8 +10758,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             if (pagina === 'calculo') {
                 cacheDom.paginas.calculo.classList.add('active');
                 cacheDom.navTabs.calculo.classList.add('active');
-                posicionarGlider();
-                posicionarGliderVisualizacao();
+                    posicionarGliderVisualizacao();
             } else if (pagina === 'gerenciamento') {
                 cacheDom.paginas.gerenciamento.classList.add('active');
                 cacheDom.navTabs.gerenciamento.classList.add('active');
@@ -13082,6 +13082,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             if (!isOpen) {
                 menu.style.display = 'block';
                 btn.classList.add('open');
+                encaixarMenuNaTela(menu);
             }
         }
 
@@ -13090,12 +13091,30 @@ ${_htmlRelatorio(D, completo, 'print')}
             renderizarPrazos();
         }
 
+        // Mantém um menu (posição absoluta) dentro da tela: desloca na horizontal e abre para cima se faltar espaço
+        function encaixarMenuNaTela(menu) {
+            if (!menu) return;
+            menu.style.left = ''; menu.style.right = ''; menu.style.top = ''; menu.style.bottom = '';
+            const r = menu.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight, folga = 8;
+            const cs = getComputedStyle(menu);
+            if (r.left < folga) {
+                if (cs.right !== 'auto') menu.style.right = (parseFloat(cs.right) - (folga - r.left)) + 'px';
+                else menu.style.left = (parseFloat(cs.left) + (folga - r.left)) + 'px';
+            } else if (r.right > vw - folga) {
+                if (cs.left !== 'auto') menu.style.left = (parseFloat(cs.left) - (r.right - vw + folga)) + 'px';
+                else menu.style.right = (parseFloat(cs.right) + (r.right - vw + folga)) + 'px';
+            }
+            if (r.bottom > vh - folga && r.top - r.height - 12 > folga) {
+                menu.style.top = 'auto'; menu.style.bottom = 'calc(100% + 6px)';
+            }
+        }
+
         function toggleOrdenacaoMenu(event) {
             event.stopPropagation();
             const menu = document.getElementById('agendaOrdenacaoMenu');
             const isOpen = menu.style.display !== 'none';
             fecharTodosDropdownsAgenda();
-            if (!isOpen) menu.style.display = 'block';
+            if (!isOpen) { menu.style.display = 'block'; encaixarMenuNaTela(menu); }
         }
 
         function fecharOrdenacaoMenu() {
@@ -13173,6 +13192,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             fecharTodosDropdownsAgenda();
             if (!isOpen) {
                 menu.style.display = 'block';
+                encaixarMenuNaTela(menu);
             }
         }
 
@@ -14021,7 +14041,6 @@ ${_htmlRelatorio(D, completo, 'print')}
         setTimeout(verificarNovosConjuntosOnline, 3500);
         atualizarTextoBotaoVisualizacao();
         atualizarTitlesBotoesNav();
-        posicionarGlider();
         posicionarGliderVisualizacao();
         atualizarToggleNavegarPeriodo();
         atualizarEstadoEditorPersonalizados();
