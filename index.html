@@ -1272,11 +1272,10 @@
             padding: 7px 8px; border-radius: 10px;
         }
         .dx-item::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #e2e8f0, #eef1f5); }
-        /* O conector começa no 1º item e termina no último (com um item só, não aparece) */
-        .dx-lista > .dx-item:first-child::before,
-        .dx-grupo:first-child .dx-item:first-of-type::before { top: 50%; }
-        .dx-lista > .dx-item:last-child::before,
-        .dx-grupo:last-child .dx-item:last-of-type::before { bottom: 50%; }
+        /* Conector: liga só itens visíveis vizinhos no mesmo bloco (calculado em ajustarConectores) */
+        .dx-item.sem-acima::before { top: 50%; }
+        .dx-item.sem-abaixo::before { bottom: 50%; }
+        .dx-item.sem-acima.sem-abaixo::before { display: none; }
         .dx-badge {
             position: relative; z-index: 1; width: 28px; height: 28px; border-radius: 50%;
             display: grid; place-items: center; font-size: 0.66rem; font-weight: 800; font-variant-numeric: tabular-nums;
@@ -7840,6 +7839,9 @@
         const DIAS_SEMANA = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
         const DIAS_CURTOS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
         const DIAS_MEDIOS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+        // Dia por extenso: o dia 1 vira ordinal ("1º de dezembro")
+        const diaExt = d => d.getDate() === 1 ? '1º' : String(d.getDate());
+        const dataExtenso = (d, comAno) => `${diaExt(d)} de ${MESES_PT[d.getMonth()]}${comAno ? ' de ' + d.getFullYear() : ''}`;
         const ddmm = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
         const ddmmaaaa = d => `${ddmm(d)}/${d.getFullYear()}`;
         const ICO = {
@@ -7984,7 +7986,7 @@
                 <div class="dx-item dx-${tipo}" data-filtro="${filtro}">
                     <span class="dx-badge" aria-hidden="true">${badge}</span>
                     <div class="dx-corpo">
-                        <div class="dx-data">${data.getDate()} de ${MESES_PT[data.getMonth()]} <span>· ${DIAS_MEDIOS[data.getDay()]}${tipo === 'fds' ? ' · fim de semana' : ''}</span></div>
+                        <div class="dx-data">${dataExtenso(data)} <span>· ${DIAS_MEDIOS[data.getDay()]}${tipo === 'fds' ? ' · fim de semana' : ''}</span></div>
                         ${rotulo ? `<div class="dx-rotulo dx-rotulo-${rotuloTipo}">${rotulo}</div>` : ''}
                         ${desc ? `<div class="dx-desc">${desc}</div>` : ''}
                     </div>
@@ -8060,6 +8062,28 @@
             return `<div class="conjuntos-obs"><span class="conjuntos-obs-label">Feriados online utilizados</span>${itens}</div>`;
         }
 
+        // Marca, em cada bloco (mês, marcos ou lista do modal), o 1º e o último item visível,
+        // para o traço da linha do tempo só ligar dias que aparecem lado a lado
+        function ajustarConectores(raiz) {
+            if (!raiz) return;
+            const blocos = raiz.querySelectorAll('.dx-grupo, .dx-lista-modal');
+            (blocos.length ? blocos : [raiz]).forEach(bloco => {
+                const itens = [...bloco.querySelectorAll(':scope > .dx-item')].filter(it => !it.hidden);
+                itens.forEach((it, i) => {
+                    it.classList.toggle('sem-acima', i === 0);
+                    it.classList.toggle('sem-abaixo', i === itens.length - 1);
+                });
+            });
+        }
+        // Aplica depois de qualquer renderização de linha do tempo
+        new MutationObserver(muts => {
+            muts.forEach(m => m.addedNodes.forEach(n => {
+                if (!(n instanceof Element)) return;
+                n.querySelectorAll && n.querySelectorAll('.dx-lista').forEach(ajustarConectores);
+                if (n.matches && n.matches('.dx-lista')) ajustarConectores(n);
+            }));
+        }).observe(document.body, { childList: true, subtree: true });
+
         function filtrarDetalhamento(botao) {
             const dx = botao.closest('.dx');
             if (!dx) return;
@@ -8078,6 +8102,7 @@
             lista.querySelectorAll('.dx-grupo').forEach(g => {
                 g.hidden = !g.querySelector('.dx-item:not([hidden])');
             });
+            ajustarConectores(lista);
             lista.scrollTop = 0;
             if (lista.animate && !_reduzirMovimento()) {
                 lista.animate([{ opacity: 0.35, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
@@ -8107,7 +8132,7 @@
                     <div class="res-topo">
                         <div class="res-rotulo">${ICO.cal}Prazo calculado</div>
                         ${descricaoPrazo ? `<div class="res-descricao" title="${escapeHtml(descricaoPrazo)}">${escapeHtml(descricaoPrazo)}</div>` : ''}
-                        <div class="res-data">${dataFinal.getDate()} de ${MESES_PT[dataFinal.getMonth()]} de ${dataFinal.getFullYear()}</div>
+                        <div class="res-data">${dataExtenso(dataFinal, true)}</div>
                         <div class="res-sub">
                             <span class="res-dia-semana">${DIAS_SEMANA[dataFinal.getDay()]}</span>
                             <span class="res-sep" aria-hidden="true">·</span>
@@ -10323,6 +10348,7 @@
             .rel-mes em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; color: #94a3b8; }
             .rel-it { position: relative; display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; padding: 5px 8px; break-inside: avoid; page-break-inside: avoid; }
             .rel-it::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: #eef1f5; }
+            .rel-it.sem-acima::before { top: 50%; } .rel-it.sem-abaixo::before { bottom: 50%; } .rel-it.sem-acima.sem-abaixo::before { display: none; }
             .rel-b { position: relative; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 800; color: #fff; }
             .rel-cnt .rel-b { background: linear-gradient(145deg, #22c55e, #15803d); }
             .rel-fds .rel-b { width: 20px; height: 20px; margin: 0 4px; background: linear-gradient(145deg, #cbd5e1, #94a3b8); }
@@ -10367,7 +10393,7 @@
 
         function _htmlRelatorio(D, completo, contexto) {
             const N = D.dias.length;
-            const dm = d => `${d.getDate()} de ${MESES_PT[d.getMonth()]}`;
+            const dm = d => dataExtenso(d);
             const dia = d => `<b>${ddmm(d)} (${DIAS_CURTOS[d.getDay()]})</b>`;
             const esc = escapeHtml;
             const linkHTML = l => l ? (contexto === 'print'
@@ -10465,6 +10491,16 @@
                 });
             }
 
+            // Conectores do relatório: só entre itens do mesmo bloco
+            if (linha) {
+                linha = linha.split('<div class="rel-mes">').map(seg => {
+                    const n = (seg.match(/class="rel-it /g) || []).length;
+                    if (!n) return seg;
+                    let k = 0;
+                    return seg.replace(/class="rel-it /g, () => { k++; return 'class="rel-it ' + (k === 1 ? 'sem-acima ' : '') + (k === n ? 'sem-abaixo ' : ''); });
+                }).join('<div class="rel-mes">');
+            }
+
             const conj = (D.conjuntos || []).length ? `<div class="rel-conj"><small>Feriados online utilizados</small>${D.conjuntos.map(c => {
                 const ls = obterLinksDoConjunto(c);
                 return `<div><b>${esc(c.nome)}</b>${c.descricao ? ' — ' + esc(c.descricao) : ''}${ls.map(l => linkHTML(l)).join('')}</div>`;
@@ -10482,7 +10518,7 @@
     <div class="rel-card"><div class="rel-topo">
         <div class="rel-rotulo">Prazo calculado</div>
         ${D.descricao ? `<div class="rel-desc">${esc(D.descricao)}</div>` : ''}
-        <div class="rel-data">${D.fim.getDate()} de ${MESES_PT[D.fim.getMonth()]} de ${D.fim.getFullYear()}</div>
+        <div class="rel-data">${dataExtenso(D.fim, true)}</div>
         <div class="rel-dia">${DIAS_SEMANA[D.fim.getDay()]}</div>
         ${completo ? `<div class="rel-regua">
             <div class="rel-regua-topo"><div class="rel-ponta"><b>${ddmm(D.dias[0].data)}</b><small>1º dia do período</small></div><div class="rel-meio">${N} ${N === 1 ? 'dia' : 'dias'} no calendário</div><div class="rel-ponta dir"><b>${ddmm(D.fim)}</b><small>${D.prorrogadoDe ? 'prazo final (prorrogado)' : 'prazo final'}</small></div></div>
@@ -11462,8 +11498,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             const tipoDiasStr = usarDiasUteis ? 'dias úteis' : 'dias corridos';
             const dataInicioFmt = new Date(dataInicio + 'T00:00:00')
                 .toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const dataFinalFmt = dataFinal
-                .toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+            const dataFinalFmt = `${DIAS_SEMANA[dataFinal.getDay()].toLowerCase()}, ${dataExtenso(dataFinal, true)}`;
 
             let detalhes = `Prazo: ${dataFinalFmt}\nInício: ${dataInicioFmt} · ${diasUteis} ${tipoDiasStr}`;
             const perfil = perfilAtivoId ? perfisData.find(p => p.id === perfilAtivoId)?.nome : null;
@@ -12509,7 +12544,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     <div class="res-topo">
                         <div class="res-rotulo">${ICO.cal}Prazo final</div>
                         ${prazo.descricao ? `<div class="res-descricao" title="${escapeHtml(prazo.descricao)}">${escapeHtml(prazo.descricao)}</div>` : ''}
-                        <div class="res-data">${D.fim.getDate()} de ${MESES_PT[D.fim.getMonth()]} de ${D.fim.getFullYear()}</div>
+                        <div class="res-data">${dataExtenso(D.fim, true)}</div>
                         <div class="res-sub">
                             <span class="res-dia-semana">${DIAS_SEMANA[D.fim.getDay()]}</span>
                             <span class="res-sep" aria-hidden="true">·</span>
@@ -12973,7 +13008,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     <div class="dx-item dx-${tipo}">
                         <span class="dx-badge" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
                         <div class="dx-corpo">
-                            <div class="dx-data">${f.data.getDate()} de ${MESES_PT[f.data.getMonth()]} de ${f.data.getFullYear()} <span>· ${DIAS_MEDIOS[f.data.getDay()]}</span></div>
+                            <div class="dx-data">${dataExtenso(f.data, true)} <span>· ${DIAS_MEDIOS[f.data.getDay()]}</span></div>
                             <div class="dx-rotulo dx-rotulo-${tipo}">${tipo === 'per' ? 'Feriado do perfil' : 'Feriado nacional'}</div>
                             <div class="dx-desc">${escapeHtml(nomeDisplay)}${ehUteis ? ' — suspensão de prazo' : ''}${linkHTML}</div>
                         </div>
