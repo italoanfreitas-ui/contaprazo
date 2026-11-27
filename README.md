@@ -157,6 +157,7 @@ contaprazo/
 │   ├── manifest.json              # Índice gerado automaticamente (não editar)
 │   └── *.json                     # Um arquivo por conjunto: datas + bloco "meta"
 ├── scripts/gerar-manifest.js      # Valida os conjuntos e gera o manifest
+├── ferramentas/                   # Skill do Claude para atualizar feriados a partir de decretos
 ├── .github/workflows/             # Automação que roda o script a cada mudança
 └── .git/                          # Controle de versão Git
 ```
@@ -179,7 +180,17 @@ Nenhum no momento. Reporte bugs através dos issues do repositório.
 
 ## 📝 Changelog
 
-### Versão 1.8 (Atual)
+### Versão 2.0 (Atual)
+- **Regras de contagem**: seletor recolhível com regras por lei: processo civil/trabalhista/juizados (CPC, arts. 219 e 224; CLT, art. 775), disponibilização no DJe (Lei 11.419/2006, art. 4º), processo penal (CPP, art. 798, com a Súmula 310 do STF), prazo penal material (CP, art. 10), contagem simples em dias corridos e regra personalizada
+  - O rótulo do campo de data acompanha a regra (publicação, disponibilização, intimação ou início)
+  - Em dias corridos com prorrogação, o vencimento em dia não útil passa para o próximo dia útil
+- **Cartão de resultado redesenhado**: data final numa linha, dias restantes em linha, régua do período, resumo em linha e ações no rodapé
+- **Detalhamento**: linha do tempo com marcos antes da contagem, meses separados, abas que filtram e link do ato normativo em cada feriado do perfil
+- **Calendário em faixa contínua**: 1 a 3 meses lado a lado conforme o prazo, topo em duas linhas e painel de perfil integrado ao cartão
+- **Conjuntos de feriados**: cada conjunto é um arquivo só; o `manifest.json` é gerado por automação do GitHub
+- **Limpeza**: correção de erro de JavaScript no carregamento, avisos da primeira visita não se empilham mais e remoção de CSS sem uso
+
+### Versão 1.8
 - **Chave `datas` no manifest.json**: permite indicar datas específicas ou intervalos personalizados em cada link de ato normativo, com prioridade sobre a lógica legada de `ate`
   - Cada entrada pode ser uma **data exata** (`"YYYY-MM-DD"`) ou um **intervalo fechado** (`{"de": "YYYY-MM-DD", "ate": "YYYY-MM-DD"}`)
   - Compatível com versões anteriores: links sem `datas` continuam funcionando normalmente via `ate`
