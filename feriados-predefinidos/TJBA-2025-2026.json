@@ -1,4 +1,23 @@
 {
+  "meta": {
+    "id": "tjba-2025-2026",
+    "id2": "TJBA 2025-2026",
+    "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
+    "descricao": "Suspensões de acordo com os Decretos Judiciários nº 949, 950 e 951, de 12 de dezembro de 2024, e Decreto Judiciário nº 1050, de 04 de dezembro de 2025",
+    "ano": "2025-2026",
+    "links": [
+      {
+        "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=41093&tmp.secao=9",
+        "rotulo": "Decreto nº 1050/2025",
+        "ate": "2026-12-31"
+      },
+      {
+        "url": "https://www7.tjba.jus.br/secao/lerPublicacao.wsp?tmp.mostrarDiv=sim&tmp.id=38639&tmp.secao=9",
+        "rotulo": "Decretos nº 949-951/2024",
+        "ate": "2025-12-31"
+      }
+    ]
+  },
   "feriadosPersonalizados": [
     "01-01-2025 Recesso Forense – TJBA",
     "02-01-2025 Recesso Forense – TJBA",

@@ -1,4 +1,18 @@
 {
+  "meta": {
+    "id": "stf-2025-2026",
+    "id2": "STF 2025-2026",
+    "nome": "STF - Supremo Tribunal Federal (2025-2026)",
+    "descricao": "Suspensões de acordo com a Portaria nº 189, de 26 de setembro de 2025",
+    "ano": "2025-2026",
+    "links": [
+      {
+        "url": "https://atosnormativos.stf.jus.br/visualizador/4rgBq5kBmFdZiXoIf1Wi",
+        "rotulo": "Portaria STF nº 189/2025",
+        "ate": "2026-12-31"
+      }
+    ]
+  },
   "feriadosPersonalizados": [
     "20-12-2025 Recesso Forense - STF",
     "21-12-2025 Recesso Forense - STF",

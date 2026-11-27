@@ -1,4 +1,18 @@
 {
+  "meta": {
+    "id": "stj-2025-2026",
+    "id2": "STJ 2025-2026",
+    "nome": "STJ - Superior Tribunal de Justiça (2025-2026)",
+    "descricao": "Suspensões de acordo com a Portaria STJ/GDG nº 1010, de 24 de dezembro de 2025",
+    "ano": "2025-2026",
+    "links": [
+      {
+        "url": "https://bdjur.stj.jus.br/server/api/core/bitstreams/6257b5ff-8c9d-408f-a7d5-c6d7064af8eb/content",
+        "rotulo": "Portaria STJ/GDG nº 1010/2025",
+        "ate": "2026-12-31"
+      }
+    ]
+  },
   "feriadosPersonalizados": [
     "20-12-2025 Recesso Forense - STJ",
     "21-12-2025 Recesso Forense - STJ",

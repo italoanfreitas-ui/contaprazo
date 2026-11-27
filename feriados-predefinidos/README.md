@@ -1,136 +1,82 @@
 # Conjuntos de Feriados Pré-definidos
 
-Este diretório contém os conjuntos de feriados personalizados disponíveis para importação online na aplicação ContaPrazo, além do arquivo `manifest.json` que os indexa.
+Este diretório guarda os conjuntos de feriados que o ContaPrazo oferece para importação online. Cada conjunto é **um arquivo só**, com as datas e os dados do ato normativo. O `manifest.json` é o índice que o app lê, e é **gerado automaticamente**.
 
-## 📋 Formato dos Arquivos de Feriados
+## ✍️ Como publicar um decreto novo
 
-Cada arquivo JSON de feriados segue o formato:
+1. Abra (ou crie) o arquivo do conjunto, por exemplo `TJBA-2025-2026.json`.
+2. Edite as datas em `feriadosPersonalizados` e, se for o caso, o bloco `meta` (descrição e links do decreto).
+3. Salve no branch `main`.
+
+Pronto. A automação **Manifest de feriados** (GitHub Actions) valida o arquivo e reescreve o `manifest.json`, inclusive a `dataAtualizacao`, que faz o app avisar os usuários que há datas novas. **Não edite o `manifest.json` à mão.**
+
+Se houver erro no arquivo (vírgula a mais, data inexistente, campo faltando), a automação falha, avisa por e-mail e **não mexe no manifest**, então a lista de conjuntos do app continua funcionando.
+
+## 📋 Formato do arquivo de conjunto
 
 ```json
 {
-  "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
-  "descricao": "Suspensões conforme Decretos Judiciários nº ...",
-  "versao": "1.0",
-  "ano": "2025-2026",
+  "meta": {
+    "id": "tjba-2025-2026",
+    "id2": "TJBA 2025-2026",
+    "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
+    "descricao": "Suspensões de acordo com o Decreto Judiciário nº 1050, de 04 de dezembro de 2025",
+    "ano": "2025-2026",
+    "links": [
+      {
+        "url": "https://www7.tjba.jus.br/...",
+        "rotulo": "Decreto nº 1050/2025",
+        "ate": "2026-12-31"
+      }
+    ]
+  },
   "feriadosPersonalizados": [
-    {
-      "data": "2025-01-20",
-      "nome": "Dia de São Sebastião"
-    },
-    {
-      "data": "2025-11-30",
-      "nome": "Dia do Evangélico"
-    }
+    "07-12-2026 Dia da Justiça – TJBA",
+    "08-12-2026 Dia da Justiça – TJBA"
   ]
 }
 ```
 
-> Datas no formato ISO 8601: `YYYY-MM-DD`. Inclua apenas feriados personalizados (estaduais, municipais, pontos facultativos) — os feriados nacionais fixos e móveis já estão embutidos na aplicação.
+### `feriadosPersonalizados`
 
-## 📦 Formato do manifest.json
+Cada item é um texto no formato **`DD-MM-AAAA Nome`**. Inclua só feriados estaduais, municipais, do tribunal e pontos facultativos: os nacionais fixos e móveis já estão no app. Linhas em branco entre grupos de datas são permitidas.
 
-O `manifest.json` (versão 2.0) indexa todos os conjuntos disponíveis para importação. Estrutura completa:
-
-```json
-{
-  "versao": "2.0",
-  "conjuntos": [
-    {
-      "id": "tjba-2025-2026",
-      "id2": "TJBA 2025-2026",
-      "arquivo": "TJBA-2025-2026.json",
-      "nome": "TJBA - Tribunal de Justiça da Bahia (2025-2026)",
-      "descricao": "Suspensões conforme Decretos Judiciários nº ...",
-      "dataAtualizacao": "DD-MM-YYYY",
-      "ano": "2025-2026",
-      "links": [...]
-    }
-  ]
-}
-```
+### `meta`
 
 | Campo | Obrigatório | Descrição |
 |-------|-------------|-----------|
-| `id` | sim | Identificador único (slug) |
-| `id2` | sim | Rótulo curto exibido na UI |
-| `arquivo` | sim | Nome do arquivo JSON deste conjunto |
-| `nome` | sim | Nome completo exibido na UI |
-| `descricao` | sim | Descrição resumida dos atos normativos |
-| `dataAtualizacao` | sim | Data da última atualização (`DD-MM-YYYY`) |
-| `ano` | sim | Ano ou intervalo coberto (ex: `"2025"` ou `"2025-2026"`) |
-| `links` | sim | Array de atos normativos (ver abaixo) |
+| `id` | não | Identificador único. Se faltar, vira o nome do arquivo em minúsculas (`tjba-2025-2026`) |
+| `id2` | sim | Rótulo curto exibido no app |
+| `nome` | sim | Nome completo exibido no app |
+| `descricao` | sim | Resumo dos atos normativos |
+| `ano` | sim | Ano ou intervalo coberto (`"2026"` ou `"2025-2026"`) |
+| `links` | sim | Atos normativos (ao menos um) |
 
-### Campo `links`
+`arquivo` e `dataAtualizacao` não ficam aqui: a automação calcula e grava no manifest.
 
-Cada conjunto deve ter ao menos um link apontando para o ato normativo de referência. O sistema seleciona automaticamente o link correto para cada data de feriado.
+### `links`
 
-#### Um único link
+O app escolhe sozinho o link certo para cada feriado.
 
-```json
-"links": [
-  {
-    "url": "https://...",
-    "rotulo": "Decreto Municipal nº 24.007/2025"
-  }
-]
-```
-
-#### Múltiplos links — por período (`ate`)
-
-Use quando atos normativos diferentes cobrem anos distintos. O sistema seleciona o **primeiro** link cujo `ate` seja maior ou igual à data do feriado.
+- **Um link só:** `{ "url": "https://...", "rotulo": "Decreto nº 24.007/2025" }`
+- **Por período (`ate`):** o app usa o primeiro link (em ordem de data) cujo `ate` seja igual ou posterior à data do feriado.
+- **Por datas específicas (`datas`):** tem prioridade sobre `ate`. Aceita `"AAAA-MM-DD"` ou intervalos `{"de": "AAAA-MM-DD", "ate": "AAAA-MM-DD"}`.
 
 ```json
 "links": [
-  {
-    "url": "https://...",
-    "rotulo": "Decreto nº 1050/2025",
-    "ate": "2026-12-31"
-  },
-  {
-    "url": "https://...",
-    "rotulo": "Decretos nº 949-951/2024",
-    "ate": "2025-12-31"
-  }
+  { "url": "https://...", "rotulo": "Decreto nº 24.279/2026", "datas": ["2026-06-22", "2026-06-23"] },
+  { "url": "https://...", "rotulo": "Decreto nº 24.007/2025", "ate": "2026-12-31" }
 ]
 ```
 
-#### Múltiplos links — por datas específicas (`datas`) *(novo)*
+## 🛠️ Rodar a automação localmente (opcional)
 
-Use quando um ato normativo cobre apenas **datas pontuais ou intervalos específicos** dentro do período. A chave `datas` tem **prioridade** sobre `ate`.
-
-```json
-"links": [
-  {
-    "url": "https://...",
-    "rotulo": "Portaria nº 10/2025",
-    "datas": [
-      "2025-01-20",
-      {"de": "2025-06-01", "ate": "2025-06-30"},
-      "2025-11-15"
-    ]
-  },
-  {
-    "url": "https://...",
-    "rotulo": "Portaria nº 5/2025",
-    "ate": "2025-12-31"
-  }
-]
+```bash
+node scripts/gerar-manifest.js --verificar   # só valida
+node scripts/gerar-manifest.js               # valida e gera o manifest
 ```
 
-**Tipos de entrada em `datas`:**
-
-| Tipo | Formato | Descrição |
-|------|---------|-----------|
-| Data exata | `"YYYY-MM-DD"` | Cobre apenas aquela data |
-| Intervalo | `{"de": "YYYY-MM-DD", "ate": "YYYY-MM-DD"}` | Intervalo fechado (início e fim inclusivos) |
-
-**Regras de seleção de link** (em ordem de prioridade):
-1. Se algum link tem `datas` que cobre a data do feriado → usa esse link
-2. Caso contrário, aplica a lógica de `ate` (seleção pelo período)
-
-> **Compatibilidade total**: `datas` é opcional. Links sem essa chave continuam funcionando normalmente.
-
-## 🗓️ Conjuntos Disponíveis
+## 🗓️ Conjuntos disponíveis
 
 | Arquivo | Conjunto | Período |
 |---------|----------|---------|
@@ -142,20 +88,8 @@ Use quando um ato normativo cobre apenas **datas pontuais ou intervalos específ
 | `STF-2025-2026.json` | Supremo Tribunal Federal | 2025–2026 |
 | `PMVC-2026.json` | Prefeitura Municipal de Vitória da Conquista | 2026 |
 
-## 📝 Como Adicionar Novos Conjuntos
+## ⚠️ Boas práticas
 
-1. Crie o arquivo JSON de feriados seguindo o formato acima
-2. Use o padrão de nome: `[SIGLA]-[ANO(S)].json`
-3. Adicione a entrada correspondente no `manifest.json`
-4. Teste a importação na aplicação
-
-## ⚠️ Boas Práticas
-
-- Sempre verifique as datas com a fonte oficial antes de publicar
-- Mantenha os arquivos atualizados anualmente
-- Use datas no formato ISO 8601 (`YYYY-MM-DD`) em todos os campos
-- Atualize `dataAtualizacao` no manifest sempre que editar um conjunto
-
----
-
-Para mais informações sobre a aplicação, consulte o README principal do projeto.
+- Confira as datas na fonte oficial antes de publicar.
+- Use o padrão de nome `SIGLA-ANO.json` ou `SIGLA-ANO-ANO.json`.
+- Siga o padrão dos nomes: `Nome do feriado – SIGLA` (com travessão).
