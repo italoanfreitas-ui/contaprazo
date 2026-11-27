@@ -542,59 +542,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* Segmented Control — Dias Úteis / Dias Corridos */
-        .segmented-control {
-            position: relative;
-            display: flex;
-            align-items: stretch;
-            background: #e5e7eb;
-            border-radius: 8px;
-            padding: 3px;
-            gap: 2px;
-            /* min-height alinhado à altura do input (padding 12px × 2 + font 1rem + 2px borda) */
-            min-height: 44px;
-        }
-
-        .seg-glider {
-            position: absolute;
-            top: 3px;
-            bottom: 3px;
-            left: 3px;
-            width: calc(50% - 4px);
-            background: #ffffff;
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-            transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-        }
-
-        .segmented-btn {
-            position: relative;
-            flex: 1;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: transparent;
-            color: #6b7280;
-            transition: color 0.2s;
-            white-space: nowrap;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .segmented-btn.active {
-            color: var(--color-green-600);
-        }
-
-        .segmented-btn:not(.active):hover {
-            color: #374151;
-        }
-
         /* ==================== REGRA DE CONTAGEM ==================== */
         .regra-group { margin-bottom: 20px; }
         .regra-resumo, .regra-topo, .regra-opcao {
@@ -1230,11 +1177,26 @@
         }
         .res-resumo strong { font-size: 0.86rem; font-weight: 650; color: var(--cp-ink); white-space: nowrap; }
         .res-resumo strong span { font-weight: 500; color: var(--cp-muted); }
-        .res-resumo-link {
-            justify-self: start; font: inherit; font-size: 0.86rem; font-weight: 700; padding: 0; border: 0; background: none; cursor: pointer;
-            color: var(--color-blue-600); text-decoration: underline; text-decoration-color: #bcd0fa; text-underline-offset: 3px;
+        .res-resumo-fer {
+            display: grid; gap: 1px; align-content: start; min-width: 0; margin: -6px 0 -6px 0; padding: 6px 12px 6px 18px;
+            border: 0; border-left: 1px solid #e9edf3; border-radius: 0 10px 10px 0; background: none; cursor: pointer; text-align: left; font: inherit;
+            transition: background-color 0.2s var(--cp-ease), box-shadow 0.2s var(--cp-ease);
         }
-        .res-resumo-link:hover { text-decoration-color: currentColor; }
+        .res-resumo-fer:hover { background: #f1f6ff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .res-resumo-fer:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .res-resumo-fer-valor { display: inline-flex; align-items: baseline; gap: 8px; }
+        .res-resumo-link {
+            font-size: 0.86rem; font-weight: 700; color: var(--color-blue-600);
+            text-decoration: underline; text-decoration-color: #bcd0fa; text-underline-offset: 3px;
+        }
+        .res-resumo-fer:hover .res-resumo-link { text-decoration-color: currentColor; }
+        .res-resumo-fer-ver {
+            display: inline-flex; align-items: center; gap: 2px; font-size: 0.72rem; font-weight: 650; color: var(--color-blue-600);
+            opacity: 0.6; transition: opacity 0.2s var(--cp-ease);
+        }
+        .res-resumo-fer-ver svg { transition: transform 0.22s var(--cp-ease); }
+        .res-resumo-fer:hover .res-resumo-fer-ver { opacity: 1; }
+        .res-resumo-fer:hover .res-resumo-fer-ver svg { transform: translateX(2px); }
         .res-nota { margin: 10px 0 0; font-size: 0.7rem; line-height: 1.5; color: var(--cp-faint); }
         .res-nota strong { color: var(--cp-muted); font-weight: 600; }
 
@@ -1299,8 +1261,10 @@
         .dx-grupo { margin: 0; }
         .dx-lista-modal { max-height: none; border: 0; padding: 0; }
         .dx-mes {
-            position: sticky; top: 0; z-index: 1; display: flex; align-items: baseline; gap: 8px; margin: 0;
-            padding: 12px 8px 8px; background: #fff;
+            position: sticky; top: 0; z-index: 3; display: flex; align-items: baseline; gap: 8px; margin: 0 -8px;
+            padding: 12px 16px 8px; background: rgba(255, 255, 255, 0.94);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            box-shadow: 0 1px 0 var(--cp-line-soft);
             font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-blue-500);
         }
         .dx-mes em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 0.72rem; color: var(--cp-faint); }
@@ -1348,6 +1312,8 @@
         .dx-ext .dx-desc { color: #b45309; }
         .dx-link { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; white-space: nowrap; }
         .dx-link:hover { text-decoration-thickness: 2px; }
+        .dx-ato { display: block; margin-top: 3px; }
+        .dx-ato .dx-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; }
 
         @media (max-width: 600px) {
             .res-topo { padding: 18px 16px 16px; }
@@ -4356,44 +4322,61 @@
 
     
         /* ==================== CALENDÁRIO (faixa contínua) ==================== */
-        .calendario-header { display: grid; gap: 10px; margin-bottom: 18px; }
-        .cal-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
-        .cal-titulo {
-            margin: 0; font-size: 1.3rem; font-weight: 750; letter-spacing: -0.025em; color: var(--cp-ink);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;
+        /* Cabeçalho em faixa: mês em cima, ano grande embaixo, controles em vidro */
+        .calendario-header.cal-faixa {
+            display: grid; gap: 12px; margin-bottom: 18px; padding: 16px 18px 14px;
+            border-radius: 14px; background: linear-gradient(120deg, #eef5ff 0%, #ecfbf2 100%); border: 1px solid #e3eef0;
         }
-        .cal-mes { color: var(--cp-ink); }
-        .cal-ano { color: var(--cp-faint); font-weight: 500; }
+        .cal-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; flex-wrap: wrap; }
+        .cal-titulo { margin: 0; display: grid; line-height: 1; min-width: 0; font-variant-numeric: tabular-nums; }
+        .cal-mes { font-size: 0.86rem; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-blue-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cal-ano { margin-top: 4px; font-size: 2.1rem; font-weight: 800; letter-spacing: -0.04em; color: var(--cp-ink); }
         .cal-titulo.troca { animation: cpSurgir 0.24s var(--cp-ease) backwards; }
-        .cal-nav { display: flex; align-items: center; gap: 2px; flex-shrink: 0; padding: 3px; border-radius: 11px; background: var(--cp-soft); }
-        .cal-nav-btn {
-            display: grid; place-items: center; height: 28px; min-width: 28px; padding: 0 8px; border: 0; border-radius: 8px; background: none; cursor: pointer;
-            font: inherit; font-size: 0.78rem; font-weight: 650; color: var(--cp-muted);
-            transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease);
+        .cal-ctl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .cal-vidro {
+            display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px;
+            background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(255, 255, 255, 0.95); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
         }
-        .cal-nav-btn + .cal-nav-btn { border-left: 0; }
-        .cal-nav-btn:hover { background: #fff; color: var(--cp-ink); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
+        .cal-nav-btn {
+            display: grid; place-items: center; height: 30px; min-width: 30px; padding: 0 8px; border: 0; border-radius: 9px; background: none; cursor: pointer;
+            font: inherit; font-size: 0.8rem; font-weight: 650; color: #475569;
+            transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.2s var(--cp-ease);
+        }
+        .cal-nav-btn:hover { background: #fff; color: var(--color-blue-600); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
         .cal-nav-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .cal-nav-btn svg { transition: transform 0.22s var(--cp-ease); }
+        #btnNavAnterior:hover svg { transform: translateX(-2px); }
+        #btnNavProximo:hover svg { transform: translateX(2px); }
         .cal-nav-hoje { padding: 0 10px; }
-        .cal-nav-hoje.fora-do-mes { color: var(--color-blue-600); background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
-        .cal-linha-sub { gap: 10px; }
-        /* Seletor Mês/Ano no mesmo desenho da navegação */
-        .cal-linha-sub .visualizacao-toggle { border-radius: 11px; background: var(--cp-soft); padding: 3px; gap: 2px; flex-shrink: 0; }
-        .cal-linha-sub .viz-glider { border-radius: 8px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
-        .cal-linha-sub .visualizacao-toggle button { height: 28px; padding: 0 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 650; color: var(--cp-muted); }
-        .cal-linha-sub .visualizacao-toggle button.active { color: var(--cp-ink); }
+        .cal-nav-hoje.fora-do-mes { color: var(--color-blue-600); background: #fff; }
+        .cal-linha-sub { gap: 10px; justify-content: flex-start; }
+        .cal-periodo-txt { font-size: 0.76rem; color: #475569; }
+        .cal-periodo-txt b { color: var(--cp-ink); font-weight: 650; }
+        .cal-periodo-txt:empty { display: none; }
+        @media (max-width: 560px) {
+            .calendario-header.cal-faixa { padding: 14px; }
+            .cal-ctl { width: 100%; flex-wrap: nowrap; justify-content: space-between; }
+            .cal-vidro.visualizacao-toggle button { padding: 0 9px; }
+            .cal-ano { font-size: 1.8rem; }
+        }
+        /* Seletor Mês/Bimestre/Ano no mesmo vidro da navegação */
+        .cal-vidro.visualizacao-toggle { position: relative; border-radius: 12px; padding: 3px; gap: 2px; flex-shrink: 0; }
+        .cal-vidro .viz-glider { top: 3px; bottom: 3px; border-radius: 9px; background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
+        .cal-vidro.visualizacao-toggle button { position: relative; z-index: 1; height: 30px; padding: 0 11px; border-radius: 9px; font-size: 0.8rem; font-weight: 650; color: #64748b; transition: color 0.18s var(--cp-ease); }
+        .cal-vidro.visualizacao-toggle button:hover:not(.active) { color: var(--color-blue-600); }
+        .cal-vidro.visualizacao-toggle button.active { color: var(--cp-ink); }
 
         /* Perfil ativo (linha 2 do topo): chip discreto */
         .perfil-badge-container { position: relative; min-width: 0; }
         .perfil-badge {
             display: inline-flex; align-items: center; gap: 7px; max-width: 100%; height: 28px; padding: 0 11px 0 9px;
-            border-radius: 999px; background: #fff; border: 1px solid var(--cp-line);
+            border-radius: 999px; background: rgba(255, 255, 255, 0.78); border: 1px solid rgba(255, 255, 255, 0.95);
             font-size: 0.76rem; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
             transition: border-color 0.18s var(--cp-ease), background-color 0.18s var(--cp-ease);
         }
         .perfil-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--color-green-600); box-shadow: 0 0 0 3px #dcfce7; }
         .perfil-badge strong { font-weight: 650; color: var(--cp-text); overflow: hidden; text-overflow: ellipsis; }
-        .perfil-badge:hover { border-color: #cbd5e1; background: #fafbfc; }
+        .perfil-badge:hover { background: #fff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
         .perfil-badge.sem-perfil::before { background: #cbd5e1; box-shadow: 0 0 0 3px #f1f5f9; }
 
         /* Grade de um mês */
@@ -4467,20 +4450,22 @@
         .cal-pontos { display: inline-flex; gap: 4px; }
         .cal-pontos i { width: 6px; height: 6px; border-radius: 3px; background: #cbd5e1; transition: width 0.2s; }
         .cal-pontos i.ativo { width: 16px; background: var(--color-blue-500); }
-        .cal-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; font-size: 0.7rem; color: var(--cp-muted); }
-        .cal-legenda > span > i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-        .cl-faixa { background: var(--cp-cnt); box-shadow: inset 0 0 0 1px #bbf0cd; border-radius: 4px !important; width: 14px !important; }
-        .cl-nac { background: var(--cp-nac-soft); box-shadow: inset 0 0 0 1.5px #fb7185; }
-        .cl-per { background: var(--cp-per-soft); box-shadow: inset 0 0 0 1.5px #c084fc; }
         @media (min-width: 641px) { .btn-group .btn-limpar { flex: 0 0 auto; min-width: 140px; } }
         .btn-limpar {
             background: #fff; color: var(--cp-muted); border: 1px solid var(--cp-line);
             transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease);
         }
         .btn-limpar:hover { background: #fafbfc; color: var(--cp-ink); border-color: #cbd5e1; }
+        .cal-legenda { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 14px; }
+        .cal-legenda > span { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 6px 9px; border-radius: 9px; background: #f8fafc; font-size: 0.7rem; font-weight: 600; color: #475569; white-space: nowrap; }
+        .cal-legenda > span > i { display: inline-block; flex-shrink: 0; width: 14px; height: 14px; border-radius: 5px; }
+        .cl-faixa { background: #dcfce7; box-shadow: inset 0 0 0 1px #86efac; }
+        .cl-nac { background: #fde4e9; box-shadow: inset 0 0 0 1.5px #fb7185; }
+        .cl-per { background: #f1e8ff; box-shadow: inset 0 0 0 1.5px #c084fc; }
+        .cl-ini { background: #fff; box-shadow: inset 0 0 0 2px var(--color-green-600); border-radius: 50% !important; }
+        .cl-fim { background: var(--gradient-primary); border-radius: 50% !important; }
+        .cl-hoje { background: #e8f0ff; box-shadow: inset 0 0 0 1.5px #93b4f5; border-radius: 50% !important; }
         .cal-dica { margin: 8px 0 0; font-size: 0.7rem; color: var(--cp-faint); }
-        .cl-ini { background: #fff; box-shadow: inset 0 0 0 2px var(--color-green-600); }
-        .cl-fim { background: var(--gradient-primary); }
 
         /* ==================== PAINEL DE PERFIL (rodapé do calendário) ==================== */
         .card-cal-footer { display: grid; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #eef1f5; }
@@ -4584,6 +4569,98 @@
         .perfil-dropdown-menu.show, .perfil-badge-dropdown.show { animation: cpAbrir 0.18s var(--cp-ease) backwards; }
         .ed-validacao.erro, .ed-validacao.ok { animation: cpSurgir 0.2s var(--cp-ease) backwards; }
         .perfil-unsaved-indicator.show { animation: cpSurgir 0.22s var(--cp-ease) backwards; }
+    
+        /* ==================== MENU LATERAL (indicador lateral) ==================== */
+        #sidebarNav { width: 220px; border-right: 1px solid #eef1f5; box-shadow: 4px 0 24px -12px rgba(15, 23, 42, 0.18); transition: transform 0.3s var(--cp-ease), width 0.3s var(--cp-ease); }
+        #sidebarNav .sidebar-brand-area { padding: 16px 16px 14px; border-bottom: 0; }
+        #sidebarNav .sidebar-tab-slider { display: none; }
+        #sidebarNav .sidebar-nav-items { padding: 0 10px 8px; gap: 2px; }
+        .sidebar-grupo { padding: 14px 10px 6px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #a3adbd; white-space: nowrap; overflow: hidden; transition: opacity 0.2s var(--cp-ease), max-height 0.3s var(--cp-ease), padding 0.3s var(--cp-ease); max-height: 40px; }
+        #sidebarNav .sidebar-tab {
+            position: relative; height: 38px; padding: 0 10px; gap: 10px; border-radius: 10px; color: #475569; font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden;
+            transition: background-color 0.2s var(--cp-ease), color 0.2s var(--cp-ease), box-shadow 0.2s var(--cp-ease);
+        }
+        #sidebarNav .sidebar-tab span { transition: opacity 0.2s var(--cp-ease); }
+        #sidebarNav .sidebar-tab:hover:not(.active) { background: #f3f6fa; color: var(--cp-ink); }
+        #sidebarNav .sidebar-tab:hover:not(.active) svg { color: var(--color-blue-600); }
+        #sidebarNav .sidebar-tab.active { background: #eef4ff; color: #1d4ed8; }
+        #sidebarNav .sidebar-tab.active svg { color: var(--color-blue-600); filter: none; }
+        #sidebarNav .sidebar-tab.active::before {
+            content: ""; display: block; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0;
+            background: linear-gradient(180deg, #3b82f6, #16a34a); animation: cpSurgir 0.25s var(--cp-ease) backwards;
+        }
+        #sidebarNav .sidebar-tab:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .sidebar-contador {
+            margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center;
+            font-size: 0.66rem; font-weight: 700; background: #fff1dc; color: var(--cp-warn); font-variant-numeric: tabular-nums;
+        }
+        .sidebar-contador.atrasado { background: var(--cp-nac-soft); color: var(--cp-late); }
+        #sidebarNav .sidebar-footer { padding: 10px 10px 14px; border-top: 1px solid #f0f2f6; }
+        #sidebarNav .sidebar-footer-link { height: 32px; padding: 0 10px; border-radius: 8px; white-space: nowrap; overflow: hidden; transition: background-color 0.2s var(--cp-ease), color 0.2s var(--cp-ease); }
+        #sidebarNav .sidebar-footer-meta { padding: 6px 10px 0; white-space: nowrap; overflow: hidden; }
+        .sidebar-recolher { color: #94a3b8 !important; }
+        /* Recolhido: só ícones */
+        body.sidebar-recolhida #sidebarNav { width: 64px; }
+        body.sidebar-recolhida.sidebar-mode { padding-left: calc(64px + 16px); }
+        body.sidebar-recolhida #sidebarNav .sidebar-brand-name,
+        body.sidebar-recolhida #sidebarNav .sidebar-tab span,
+        body.sidebar-recolhida #sidebarNav .sidebar-footer-link span,
+        body.sidebar-recolhida #sidebarNav .sidebar-footer-meta { opacity: 0; pointer-events: none; }
+        body.sidebar-recolhida .sidebar-grupo { max-height: 10px; padding: 4px 0; opacity: 0; }
+        body.sidebar-recolhida #sidebarNav .sidebar-brand-area { padding-left: 15px; }
+        body.sidebar-recolhida #sidebarNav .sidebar-tab { padding: 0 13px; }
+        body.sidebar-recolhida .sidebar-contador { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; font-size: 0.58rem; opacity: 1 !important; }
+        body.sidebar-recolhida .sidebar-recolher svg { transform: scaleX(-1); }
+
+        /* ==================== BOTÕES: brilho e halo ==================== */
+        .btn, .res-btn, .ed-btn, .perfil-btn, .perfil-pill, .btn-quick, .btn-data-hoje, .agenda-toolbar-btn, .agenda-filtro-btn,
+        .agenda-setup-btn-primario, .agenda-setup-btn-secundario, .regra-resumo, .prazo-menu-btn, .modal-option, .dx-aba, .nav-tab, .rp-opcao {
+            transition: background-color 0.2s var(--cp-ease), border-color 0.2s var(--cp-ease), color 0.2s var(--cp-ease),
+                        box-shadow 0.25s var(--cp-ease), filter 0.2s var(--cp-ease), transform 0.08s var(--cp-ease);
+        }
+        .btn svg, .res-btn svg, .ed-btn svg, .perfil-btn svg, .agenda-toolbar-btn svg, .agenda-setup-btn-primario svg, .agenda-setup-btn-secundario svg, .nav-tab svg, .regra-resumo-ic svg, .config-item-ic svg {
+            transition: transform 0.25s var(--cp-ease);
+        }
+        /* Coloridos: brilho + halo na própria cor */
+        .btn-primary:hover, .btn-data-hoje:hover, .ed-btn-pri:hover {
+            filter: brightness(1.06);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 0 4px rgba(59, 130, 246, 0.18), 0 10px 22px -10px rgba(37, 99, 235, 0.9);
+        }
+        .btn-success:hover, .res-btn-salvar:hover, .agenda-setup-btn-primario:hover {
+            filter: brightness(1.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 0 4px rgba(34, 197, 94, 0.18), 0 10px 22px -10px rgba(22, 163, 74, 0.9);
+        }
+        .btn-red:hover, .btn-danger:hover {
+            filter: brightness(1.05);
+            box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.18), 0 10px 22px -10px rgba(225, 29, 72, 0.8);
+        }
+        /* Contornados: borda e texto azuis, fundo azul-claro, halo leve */
+        .res-btn:not(.res-btn-salvar):hover, .ed-btn:not(.ed-btn-pri):not(.ed-btn-perigo):hover, .perfil-btn:hover, .perfil-pill:hover,
+        .btn-limpar:hover, .agenda-toolbar-btn:hover, .agenda-filtro-btn:hover, .agenda-setup-btn-secundario:hover, .regra-resumo:hover,
+        .prazo-menu-btn:hover, .modal-option:hover {
+            border-color: #bfd3fb; color: var(--color-blue-600); background: #f5f9ff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+        .btn-quick:hover { background: #e8f0ff; color: var(--color-blue-600); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); }
+        .ed-btn-perigo:hover, .modal-detalhes-acoes .btn-red:hover { border-color: #fda4af; background: #fff1f3; color: var(--cp-late); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.12); filter: none; }
+        .modal-detalhes-acoes .btn-primary:hover { background: #f5f9ff; border-color: #bfd3fb; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12); filter: none; }
+        .modal-content .btn-secondary:hover, .modal-aviso-content .btn-secondary:hover, .modal-detalhes-acoes .btn-secondary:hover, .modal-input-footer .btn-secondary:hover {
+            background: #e8f0ff; color: var(--color-blue-600); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+        /* Ícones com microinteração */
+        .btn:hover svg, .res-btn:hover svg, .ed-btn:hover svg, .agenda-toolbar-btn:hover svg, .agenda-setup-btn-primario:hover svg, .agenda-setup-btn-secundario:hover svg,
+        .regra-resumo:hover .regra-resumo-ic svg, .config-item:hover .config-item-ic svg { transform: scale(1.12); }
+        .perfil-btn:hover svg { transform: rotate(-8deg) scale(1.1); }
+        .nav-tab:hover:not(.active) svg { transform: scale(1.1); }
+        /* Botões só de texto: fundo realçado para mostrar que são clicáveis */
+        .dx-aba { padding: 0 9px; border-radius: 8px 8px 0 0; }
+        .dx-aba::after { left: 6px !important; right: 6px !important; }
+        .dx-aba:hover:not(.ativa) { color: var(--color-blue-600); background: #eef4ff; }
+        .dx-abas { gap: 4px !important; }
+        .rp-opcao:hover:not(.ativa) { color: var(--color-blue-600); background: rgba(255, 255, 255, 0.9); }
+        .nav-tab:hover:not(.active) { color: var(--color-blue-600) !important; background: #eef4ff !important; }
+        .config-item:hover { background: #f5f9ff; }
+        .config-item:hover .config-item-ic { background: #e8f0ff; color: var(--color-blue-600); }
+        .regra-opcao:hover:not(.ativa) { background: #f5f9ff; }
     </style>
     <!-- Biblioteca html-to-image para exportação de PNG -->
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
@@ -4674,29 +4751,33 @@
         </div>
         <div class="sidebar-nav-items">
             <div class="sidebar-tab-slider" id="sidebarSlider"></div>
-            <button class="sidebar-tab active" data-page="calculo" onclick="trocarPagina('calculo')">
+            <div class="sidebar-grupo">Calcular</div>
+            <button class="sidebar-tab active" data-page="calculo" onclick="trocarPagina('calculo')" title="Calculadora">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10H4M20 10V11.75M4 10V19C4 20.1046 4.89543 21 6 21H11M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     <path d="M14 19L16 21L21 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span>Calculadora</span>
             </button>
-            <button class="sidebar-tab" data-page="gerenciamento" onclick="trocarPagina('gerenciamento')">
+            <button class="sidebar-tab" data-page="gerenciamento" onclick="trocarPagina('gerenciamento')" title="Editor de Feriados">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M4 10V19C4 20.1046 4.89543 21 6 21H11M4 10V7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7V10H4ZM8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M17.4641 15C18.2043 15 18.8506 15.4021 19.1964 15.9998M17.4641 15C16.7239 15 16.0776 15.4021 15.7318 15.9998M17.4641 15V13M17.4641 21V18.9667M20.9282 15L19.1964 15.9998M14 19L15.7318 18.0002M20.9282 19L19.1965 18.0002M14 15L15.7318 15.9998M15.7318 18.0002C15.5615 17.706 15.4641 17.3644 15.4641 17C15.4641 16.6356 15.5615 16.294 15.7318 15.9998M15.7318 18.0002C16.1255 18.6807 16.7977 18.9802 17.4641 18.9667M17.4641 18.9667C18.1521 18.9529 18.8338 18.6057 19.1965 18.0002M19.1965 18.0002C19.3645 17.7197 19.4641 17.3838 19.4641 17C19.4641 16.6356 19.3667 16.294 19.1964 15.9998" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 <span>Editor de Feriados</span>
             </button>
-            <button class="sidebar-tab" data-page="agenda" onclick="trocarPagina('agenda')">
+            <div class="sidebar-grupo">Organizar</div>
+            <button class="sidebar-tab" data-page="agenda" onclick="trocarPagina('agenda')" title="Minha Agenda">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M20 10V7C20 5.89543 19.1046 5 18 5H6C4.89543 5 4 5.89543 4 7V10M20 10V19C20 20.1046 19.1046 21 18 21H6C4.89543 21 4 20.1046 4 19V10M20 10H4M8 3V7M16 3V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     <line x1="8" y1="17" x2="11" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 <span>Minha Agenda</span>
+                <span class="sidebar-contador" id="sidebarContador" hidden></span>
             </button>
-            <button class="sidebar-tab" data-page="ajuda" onclick="trocarPagina('ajuda')">
+            <div class="sidebar-grupo">Suporte</div>
+            <button class="sidebar-tab" data-page="ajuda" onclick="trocarPagina('ajuda')" title="Ajuda">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -4712,15 +4793,19 @@
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                Baixar calculadora
+                <span>Baixar calculadora</span>
             </button>
             <a class="sidebar-footer-link" href="mailto:contaprazo@outlook.com">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,12 2,6"></polyline>
                 </svg>
-                Entre em Contato
+                <span>Entre em Contato</span>
             </a>
+            <button class="sidebar-footer-link sidebar-recolher" onclick="alternarSidebarRecolhida()" title="Recolher ou expandir o menu" aria-label="Recolher ou expandir o menu">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path></svg>
+                <span>Recolher menu</span>
+            </button>
             <p class="sidebar-footer-meta">ContaPrazo v2.0 &middot; 2026 &middot; I. F.</p>
         </div>
     </nav>
@@ -4870,31 +4955,33 @@
                     </div>
                     <div class="section-divider"></div>
 
-            <div class="calendario-header">
-                <!-- Linha 1: mês e ano + navegação ‹ Hoje › -->
+            <div class="calendario-header cal-faixa">
                 <div class="cal-linha">
-                    <h4 class="cal-titulo"><span class="cal-mes" id="calMes"></span> <span class="cal-ano" id="calAno"></span></h4>
-                    <div class="cal-nav">
-                        <button class="cal-nav-btn" onclick="mudarMes(-1)" id="btnNavAnterior" title="Mês anterior" aria-label="Mês anterior">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                        </button>
-                        <button class="cal-nav-btn cal-nav-hoje" id="btnIrParaHoje" onclick="irParaHoje()" title="Ir para hoje">Hoje</button>
-                        <button class="cal-nav-btn" onclick="mudarMes(1)" id="btnNavProximo" title="Próximo mês" aria-label="Próximo mês">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </button>
+                    <h4 class="cal-titulo"><span class="cal-mes" id="calMes"></span><span class="cal-ano" id="calAno"></span></h4>
+                    <div class="cal-ctl">
+                        <div class="cal-nav cal-vidro">
+                            <button class="cal-nav-btn" onclick="mudarMes(-1)" id="btnNavAnterior" title="Mês anterior" aria-label="Mês anterior">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <button class="cal-nav-btn cal-nav-hoje" id="btnIrParaHoje" onclick="irParaHoje()" title="Ir para hoje">Hoje</button>
+                            <button class="cal-nav-btn" onclick="mudarMes(1)" id="btnNavProximo" title="Próximo mês" aria-label="Próximo mês">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
+                        </div>
+                        <div class="visualizacao-toggle cal-vidro" role="tablist" aria-label="Vista do calendário">
+                            <span class="viz-glider" id="vizGlider"></span>
+                            <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active" data-tiptitle="Exibir 1 mês">Mês</button>
+                            <button onclick="alternarVisualizacao('bimestral')" id="btnBimestral" data-tiptitle="Exibir 2 meses lado a lado">Bimestre</button>
+                            <button onclick="alternarVisualizacao('anual')" id="btnAnual" data-tiptitle="Exibir o ano completo">Ano</button>
+                        </div>
                     </div>
                 </div>
-                <!-- Linha 2: perfil ativo + Mês/Ano -->
                 <div class="cal-linha cal-linha-sub">
                     <div class="perfil-badge-container">
                         <span class="perfil-badge sem-perfil" id="perfilBadge" style="display:none"></span>
                         <div class="perfil-badge-dropdown" id="perfilBadgeDropdown"></div>
                     </div>
-                    <div class="visualizacao-toggle">
-                        <span class="viz-glider" id="vizGlider"></span>
-                        <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active" data-tiptitle="Exibir 1 a 3 meses">Mês</button>
-                        <button onclick="alternarVisualizacao('anual')" id="btnAnual" data-tiptitle="Exibir o calendário do ano completo">Ano</button>
-                    </div>
+                    <span class="cal-periodo-txt" id="calPeriodoTxt"></span>
                 </div>
             </div>
 
@@ -4907,6 +4994,7 @@
                 <span><i class="cl-per"></i>Feriado personalizado</span>
                 <span><i class="cl-ini"></i><span id="legendaDataInicio">Data informada</span></span>
                 <span><i class="cl-fim"></i>Prazo final</span>
+                <span><i class="cl-hoje"></i>Hoje</span>
             </div>
 
             <p class="cal-dica">Clique em um dia útil para marcar ou desmarcar um feriado personalizado.</p>
@@ -6109,7 +6197,7 @@
         let todosOsDias = [];
         let feriadosDoCalculo = []; // [{data, nome, emFimDeSemana}] — preenchido em calcularPrazo()
         let dataFinal = null;
-        let visualizacaoCalendario = 'mensal'; // 'mensal' ou 'anual'
+        let visualizacaoCalendario = 'mensal'; // 'mensal' (1 mês), 'bimestral' (2 meses) ou 'anual'
         let usarDiasUteis = true; // true = dias úteis, false = dias corridos
         let infoCalculo = null; // regra usada e marcos do último cálculo (publicação, início adiado, prorrogação)
         let descricaoPrazo = '';
@@ -7386,7 +7474,7 @@
         function posicionarGliderVisualizacao() {
             const glider = document.getElementById('vizGlider');
             const activeBtn = document.getElementById(
-                visualizacaoCalendario === 'mensal' ? 'btnMensal' : 'btnAnual'
+                ({ mensal: 'btnMensal', bimestral: 'btnBimestral', anual: 'btnAnual' })[visualizacaoCalendario] || 'btnMensal'
             );
             if (glider && activeBtn && activeBtn.offsetWidth > 0) {
                 glider.style.left = activeBtn.offsetLeft + 'px';
@@ -7706,7 +7794,7 @@
             mostrarResultado();
             renderizarCalendario();
             if (navegarParaPeriodo) navegarCalendarioParaPeriodo();
-            if (visualizacaoCalendario === 'mensal') { atualizarTextoBotaoVisualizacao(); posicionarGliderVisualizacao(); }
+            if (visualizacaoCalendario !== 'anual') { atualizarTextoBotaoVisualizacao(); posicionarGliderVisualizacao(); }
             animarFaixaCalendario();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
 
@@ -7814,14 +7902,19 @@
                 : r.ini === 'inc' ? '1º dia do prazo'
                 : (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início';
             const nFer = D.dias.filter(d => d.kind && !d.prorrogacao && (D.uteis ? !d.contado : true)).length;
-            const valorFer = nFer > 0 && feriadosClicaveis
-                ? `<button type="button" class="res-resumo-link" onclick="abrirModalFeriadosCalculo()" title="Ver a lista de feriados">${nFer}</button>`
-                : `<strong>${nFer}</strong>`;
+            const rotuloFer = D.uteis ? 'Feriados pulados' : 'Feriados no período';
+            // A área inteira de feriados é clicável e abre a lista
+            const blocoFer = nFer > 0 && feriadosClicaveis
+                ? `<button type="button" class="res-resumo-fer" onclick="abrirModalFeriadosCalculo()" title="Ver a lista de feriados">
+                        <small>${rotuloFer}</small>
+                        <span class="res-resumo-fer-valor"><span class="res-resumo-link">${nFer}</span><span class="res-resumo-fer-ver">Ver lista <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></span></span>
+                   </button>`
+                : `<div><small>${rotuloFer}</small><strong>${nFer}</strong></div>`;
             return `
                 <div class="res-resumo">
                     <div><small>${rotuloIni} *</small><strong>${ddmmaaaa(D.ini)} <span>(${DIAS_CURTOS[D.ini.getDay()]})</span></strong></div>
                     <div><small>Contagem</small><strong>${D.n} ${D.uteis ? 'dias úteis' : 'dias corridos'}</strong></div>
-                    <div><small>${D.uteis ? 'Feriados pulados' : 'Feriados no período'}</small>${valorFer}</div>
+                    ${blocoFer}
                 </div>`;
         }
 
@@ -7888,7 +7981,7 @@
                 g.itens.forEach(({ d, i }) => {
                     const c = _classeDiaD(d, i, N);
                     const nome = d.nome || 'Feriado/Ponto Facultativo';
-                    const linkHTML = d.link ? ` · <a class="dx-link" href="${escapeHtml(d.link.url)}" target="_blank" rel="noopener">${escapeHtml(d.link.rotulo)} ↗</a>` : '';
+                    const linkHTML = d.link ? `<span class="dx-ato"><a class="dx-link" href="${escapeHtml(d.link.url)}" target="_blank" rel="noopener">${escapeHtml(d.link.rotulo)} ↗</a></span>` : '';
                     const rotuloKind = d.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional';
                     const num = d.numero != null ? String(d.numero).padStart(2, '0') : '';
                     if (c === 'fin') {
@@ -7903,7 +7996,7 @@
                     } else {
                         const desc = d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : '';
                         if (d.kind) {
-                            html += linha('cnt', num, d.data, rotuloKind, `${escapeHtml(nome)} · contado (dias corridos)${linkHTML}${desc ? ' · ' + desc : ''}`, 'contado feriado', d.kind);
+                            html += linha('cnt', num, d.data, rotuloKind, `${escapeHtml(nome)} · contado (dias corridos)${desc ? ' · ' + desc : ''}${linkHTML}`, 'contado feriado', d.kind);
                         } else {
                             html += linha('cnt', num, d.data, '', desc, 'contado');
                         }
@@ -8056,8 +8149,7 @@
 
             // Resetar visualização do calendário para mensal
             visualizacaoCalendario = 'mensal';
-            document.getElementById('btnMensal').className = 'active';
-            document.getElementById('btnAnual').className = '';
+            ['btnMensal', 'btnBimestral', 'btnAnual'].forEach((id, k) => { const b = document.getElementById(id); if (b) b.className = k === 0 ? 'active' : ''; });
             atualizarTextoBotaoVisualizacao();
             posicionarGliderVisualizacao();
 
@@ -8196,23 +8288,20 @@
         }
 
         function atualizarTextoBotaoVisualizacao() {
-            const btnMensal = document.getElementById('btnMensal');
-            if (!btnMensal) return;
-            const n = calcularMesesVisiveis();
-            btnMensal.textContent = 'Mês';
-            btnMensal.setAttribute('data-tiptitle', n === 1 ? 'Exibir 1 mês' : `Exibir ${n} meses lado a lado`);
             atualizarTitlesBotoesNav();
         }
 
         function alternarVisualizacao(tipo) {
             visualizacaoCalendario = tipo;
 
-            document.getElementById('btnMensal').className = tipo === 'mensal' ? 'active' : '';
-            document.getElementById('btnAnual').className = tipo === 'anual' ? 'active' : '';
+            ['mensal', 'bimestral', 'anual'].forEach(v => {
+                const b = document.getElementById({ mensal: 'btnMensal', bimestral: 'btnBimestral', anual: 'btnAnual' }[v]);
+                if (b) { b.className = tipo === v ? 'active' : ''; b.setAttribute('aria-selected', tipo === v); }
+            });
 
             // Atualizar texto primeiro — o botão muda de largura ao trocar de modo,
             // então o glider só pode ser posicionado corretamente depois do texto final.
-            if (tipo === 'mensal') {
+            if (tipo !== 'anual') {
                 atualizarTextoBotaoVisualizacao();
             } else {
                 atualizarTitlesBotoesNav();
@@ -8242,7 +8331,7 @@
         }
 
         function mudarMes(direcao) {
-            if (visualizacaoCalendario === 'mensal') {
+            if (visualizacaoCalendario !== 'anual') {
                 const mesesVisiveis = calcularMesesVisiveis();
                 // Avançar/retroceder pela quantidade de meses visíveis
                 mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + (direcao * mesesVisiveis), 1);
@@ -8291,11 +8380,11 @@
         function navegarCalendarioParaPeriodo() {
             const periodo = mesesDoPeriodo();
             if (!periodo) return;
-            const visiveis = calcularMesesVisiveis();
-            // Cabe tudo: começa no mês da data informada. Não cabe: mostra os últimos meses (onde está o prazo final)
-            const alvo = periodo.length <= visiveis ? periodo[0] : periodo[periodo.length - visiveis];
-            mesAtual = new Date(alvo);
-            if (visualizacaoCalendario !== 'mensal') alternarVisualizacao('mensal');
+            // Prazo em um mês só: vista Mês. Em mais de um mês: Bimestre, mostrando o fim do prazo
+            const vista = periodo.length > 1 ? 'bimestral' : 'mensal';
+            const visiveis = vista === 'bimestral' ? 2 : 1;
+            mesAtual = new Date(periodo.length <= visiveis ? periodo[0] : periodo[periodo.length - visiveis]);
+            if (visualizacaoCalendario !== vista) alternarVisualizacao(vista);
             else renderizarCalendario();
         }
 
@@ -8304,7 +8393,7 @@
             const el = document.getElementById('calPeriodoInfo');
             if (!el) return;
             const periodo = mesesDoPeriodo();
-            if (!periodo || periodo.length < 2 || visualizacaoCalendario !== 'mensal') { el.hidden = true; return; }
+            if (!periodo || periodo.length < 2 || visualizacaoCalendario === 'anual') { el.hidden = true; return; }
             const visiveis = calcularMesesVisiveis();
             const vis = [];
             for (let i = 0; i < visiveis; i++) {
@@ -8323,8 +8412,18 @@
             const content = document.getElementById('configFeriadosContent');
             const icon = document.getElementById('configToggleIcon');
 
-            content.classList.toggle('aberto');
+            const abriu = content.classList.toggle('aberto');
             icon.classList.toggle('aberto');
+            const header = document.querySelector('.config-feriados-header');
+            if (header) header.setAttribute('aria-expanded', abriu);
+            // Ao abrir, rola só o necessário para as opções ficarem visíveis. No computador a coluna
+            // do calendário tem rolagem própria; scrollIntoView rola o contêiner certo.
+            if (abriu) {
+                setTimeout(() => {
+                    const ultimo = content.lastElementChild;
+                    if (ultimo) ultimo.scrollIntoView({ block: 'nearest', behavior: _reduzirMovimento() ? 'auto' : 'smooth' });
+                }, 60);
+            }
         }
 
         function limparFeriadosPersonalizados() {
@@ -8356,14 +8455,24 @@
         }
 
         function renderizarCalendario() {
-            if (visualizacaoCalendario === 'mensal') {
+            if (visualizacaoCalendario !== 'anual') {
                 renderizarCalendarioMensal();
             } else {
                 renderizarCalendarioAnual();
             }
             atualizarBotaoHoje();
             atualizarInfoPeriodoCalendario();
+            atualizarPeriodoTexto();
             atualizarMetaPerfil();
+        }
+
+        function atualizarPeriodoTexto() {
+            const el = document.getElementById('calPeriodoTxt');
+            if (!el) return;
+            const periodo = mesesDoPeriodo();
+            if (!periodo || !todosOsDias.length) { el.innerHTML = ''; return; }
+            const n = periodo.length;
+            el.innerHTML = `Prazo de <b>${ddmm(todosOsDias[0].data)}</b> a <b>${ddmm(dataFinal)}</b> · ${n} ${n === 1 ? 'mês' : 'meses'}`;
         }
 
         function atualizarMetaPerfil() {
@@ -8384,7 +8493,7 @@
             if (!btn) return;
             const hoje = new Date();
             let visivel = false;
-            if (visualizacaoCalendario === 'mensal') {
+            if (visualizacaoCalendario !== 'anual') {
                 const mesesVisiveis = calcularMesesVisiveis();
                 for (let i = 0; i < mesesVisiveis; i++) {
                     const m = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + i, 1);
@@ -8411,27 +8520,7 @@
         }
 
         function calcularMesesVisiveis() {
-            // Desktop (layout 2 colunas): 1 mês; com um prazo calculado, até 3 meses lado a lado
-            if (window.innerWidth > 1023) {
-                const periodo = mesesDoPeriodo();
-                return periodo ? Math.min(3, periodo.length) : 1;
-            }
-
-            // Mede a largura real do container do calendário, não do viewport.
-            // Isso garante que o número de meses renderizados corresponde ao espaço
-            // disponível de verdade, independente de padding ou layout aninhado.
-            const gridElement = document.getElementById('calendarioGrid');
-            const largura = (gridElement && gridElement.offsetWidth > 0)
-                ? gridElement.offsetWidth
-                : window.innerWidth - 100; // fallback: viewport − padding body − padding card
-
-            // Thresholds calibrados para o CSS: minmax(240px, 1fr) gap 16px
-            // 3 meses precisam de: 3×240 + 2×16 = 752px → threshold com margem de segurança
-            if (largura >= 775) return 3;
-            // 2 meses precisam de: 2×240 + 16 = 496px → threshold com margem de segurança
-            if (largura >= 516) return 2;
-
-            return 1;
+            return visualizacaoCalendario === 'bimestral' ? 2 : 1;
         }
 
         function renderizarCalendarioMensal() {
@@ -10229,10 +10318,6 @@
             .rel-nota b { color: #64748b; font-weight: 600; }
             .rel-secao { margin-top: 22px; }
             .rel-secao h3 { margin: 0 0 10px; font-size: 15px; font-weight: 700; color: #0f172a; }
-            .rel-fer { display: grid; gap: 6px; }
-            .rel-fer div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 12.5px; padding: 7px 12px; border-radius: 9px; background: #fafbfc; border: 1px solid #f0f2f6; }
-            .rel-fer b { font-weight: 650; } .rel-fer .k { font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; display: block; }
-            .rel-fer .nac .k { color: #be123c; } .rel-fer .per .k { color: #7e22ce; } .rel-fer .ext .k { color: #b45309; }
             .rel-mes { margin: 14px 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #3b82f6; display: flex; gap: 8px; }
             .rel-mes em { margin-left: auto; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; color: #94a3b8; }
             .rel-it { position: relative; display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; padding: 5px 8px; break-inside: avoid; page-break-inside: avoid; }
@@ -10253,6 +10338,26 @@
             .rel-d { font-size: 11.5px; color: #64748b; }
             .rel-nac .rel-d { color: #be123c; } .rel-per .rel-d { color: #7e22ce; } .rel-ext .rel-d { color: #b45309; }
             .rel a { color: inherit; }
+            .rel-dias { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e9edf3; }
+            .rel-dias-t { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #64748b; margin-bottom: 8px; }
+            .rel-quadros { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+            .rel-qm { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #3b82f6; margin: 0 4px 0 8px; }
+            .rel-qm:first-child { margin-left: 0; }
+            .rel-q { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 7px; font-size: 11.5px; font-weight: 650; font-variant-numeric: tabular-nums; }
+            .rel-q-cnt { background: #dcfce7; color: #166534; }
+            .rel-q-fds { background: #eef1f5; color: #94a3b8; }
+            .rel-q-nac { background: #fde4e9; color: #be123c; }
+            .rel-q-per { background: #f1e8ff; color: #7e22ce; }
+            .rel-q-nacc { background: #dcfce7; color: #be123c; box-shadow: inset 0 0 0 1.5px #fb7185; }
+            .rel-q-perc { background: #dcfce7; color: #7e22ce; box-shadow: inset 0 0 0 1.5px #c084fc; }
+            .rel-q-ext { background: #fef3c7; color: #b45309; }
+            .rel-q-ini { background: #fff; color: #15803d; box-shadow: inset 0 0 0 2px #16a34a; }
+            .rel-q-pub { background: #fff; color: #15803d; box-shadow: inset 0 0 0 2px #86efac; }
+            .rel-q-fin { background: linear-gradient(135deg, #3b82f6, #16a34a); color: #fff; }
+            .rel-q-mini { width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; display: inline-block; }
+            .rel-leg-q { margin-top: 10px; }
+            .rel-ato { display: block; margin-top: 2px; font-size: 10.5px; font-weight: 600; }
+            .rel-conj .rel-ato { display: inline; margin-left: 6px; }
             .rel-conj { margin-top: 22px; padding: 12px 16px; border: 1px dashed #e2e8f0; border-radius: 10px; font-size: 11.5px; color: #64748b; }
             .rel-conj small { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
             .rel-conj b { color: #334155; font-weight: 650; }
@@ -10265,8 +10370,8 @@
             const dia = d => `<b>${ddmm(d)} (${DIAS_CURTOS[d.getDay()]})</b>`;
             const esc = escapeHtml;
             const linkHTML = l => l ? (contexto === 'print'
-                ? ` · <a href="${esc(l.url)}">${esc(l.rotulo)} ↗</a>`
-                : ` · ${esc(l.rotulo)}`) : '';
+                ? `<span class="rel-ato"><a href="${esc(l.url)}">${esc(l.rotulo)} ↗</a></span>`
+                : `<span class="rel-ato">${esc(l.rotulo)}</span>`) : '';
             const classe = (d, i) => {
                 if (i === N - 1) return 'fin';
                 if (d.prorrogacao && !d.contado) return 'ext';
@@ -10308,14 +10413,26 @@
             else nota = 'O dia informado não conta: o dia 1 é o dia seguinte.';
             if (D.prorrogadoDe) nota += ` O prazo terminaria em ${dia(D.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
 
-            // Dias que não contaram / feriados (resumido)
-            const listaFer = D.dias.map((d, i) => ({ d, c: classe(d, i) }))
-                .filter(x => x.c === 'nac' || x.c === 'per' || x.c === 'ext' || (x.d.kind && !D.uteis))
-                .map(({ d, c }) => {
-                    const k = c === 'ext' ? 'ext' : (d.kind || c);
-                    const rot = c === 'ext' ? 'Prorrogação' : (d.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional') + (D.uteis ? '' : ' (contado)');
-                    return `<div class="${k}"><b>${ddmmaaaa(d.data)} <span style="font-weight:500;color:#94a3b8">${DIAS_CURTOS[d.data.getDay()]}</span></b><span><span class="k">${rot}</span>${esc(d.nome || (c === 'ext' ? 'Fim de semana' : ''))}${linkHTML(d.link)}</span></div>`;
-                }).join('');
+            // Quadradinhos dos dias (resumido), como no export anterior, nas cores novas
+            const sq = (cls, n, titulo) => `<span class="rel-q rel-q-${cls}" title="${esc(titulo || '')}">${n}</span>`;
+            let quadros = '';
+            const rotMes = d => `<span class="rel-qm">${MESES_ABREV[d.getMonth()]}</span>`;
+            let mesQ = null;
+            const marcaMes = d => { const k = d.getFullYear() * 12 + d.getMonth(); if (k !== mesQ) { mesQ = k; quadros += rotMes(d); } };
+            if (r.ini !== 'inc') { marcaMes(D.ini); quadros += sq('ini', D.ini.getDate(), 'Data informada'); }
+            if (D.publicacao) { marcaMes(D.publicacao); quadros += sq('pub', D.publicacao.getDate(), 'Considera-se publicado'); }
+            D.dias.forEach((d, i) => {
+                if (D.publicacao && formatarDataCompleta(d.data) === formatarDataCompleta(D.publicacao)) return;
+                marcaMes(d.data);
+                const c = classe(d, i);
+                const k = c === 'cnt' ? (d.kind && !D.uteis ? d.kind + 'c' : 'cnt') : c;
+                quadros += sq(k, d.data.getDate(), d.nome || '');
+            });
+            const legQ = [['cnt', D.uteis ? 'Dia contado' : 'Dia corrido'], D.uteis ? ['fds', 'Fim de semana'] : null,
+                nNac ? ['nac', 'Feriado fixo/móvel'] : null, nPer ? ['per', 'Feriado do perfil'] : null,
+                D.prorrogadoDe ? ['ext', 'Prorrogação'] : null, r.ini !== 'inc' ? ['ini', 'Data informada'] : null,
+                D.publicacao ? ['pub', 'Publicação'] : null, ['fin', 'Prazo final']].filter(Boolean)
+                .map(([k, t]) => `<span><i class="rel-q rel-q-${k} rel-q-mini"></i>${t}</span>`).join('');
 
             // Linha do tempo (completo)
             let linha = '';
@@ -10343,7 +10460,7 @@
                     else if (c === 'ext') linha += it('ext', '→', d.data, 'Prorrogação', `${d.nome ? esc(d.nome) + ' · ' : ''}dia não útil`);
                     else if (c === 'nac' || c === 'per') linha += it(c, '✕', d.data, rotK, `${esc(d.nome)} — suspensão de prazo${linkHTML(d.link)}`);
                     else if (c === 'fds') linha += it('fds', '', d.data, '', '');
-                    else linha += it('cnt', num, d.data, d.kind ? rotK : '', [d.kind ? `${esc(d.nome)} · contado (dias corridos)${linkHTML(d.link)}` : '', d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : ''].filter(Boolean).join(' · '));
+                    else linha += it('cnt', num, d.data, d.kind ? rotK : '', [d.kind ? `${esc(d.nome)} · contado (dias corridos)` : '', d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : ''].filter(Boolean).join(' · ') + (d.kind ? linkHTML(d.link) : ''));
                 });
             }
 
@@ -10366,12 +10483,12 @@
         ${D.descricao ? `<div class="rel-desc">${esc(D.descricao)}</div>` : ''}
         <div class="rel-data">${D.fim.getDate()} de ${MESES_PT[D.fim.getMonth()]} de ${D.fim.getFullYear()}</div>
         <div class="rel-dia">${DIAS_SEMANA[D.fim.getDay()]}</div>
-        <div class="rel-regua">
+        ${completo ? `<div class="rel-regua">
             <div class="rel-regua-topo"><div class="rel-ponta"><b>${ddmm(D.dias[0].data)}</b><small>1º dia do período</small></div><div class="rel-meio">${N} ${N === 1 ? 'dia' : 'dias'} no calendário</div><div class="rel-ponta dir"><b>${ddmm(D.fim)}</b><small>${D.prorrogadoDe ? 'prazo final (prorrogado)' : 'prazo final'}</small></div></div>
             <div class="rel-barra${N > 60 ? ' densa' : ''}">${barras}</div>
             <div class="rel-meses">${meses}</div>
             <div class="rel-leg">${leg}</div>
-        </div>
+        </div>` : `<div class="rel-dias"><div class="rel-dias-t">Dias considerados</div><div class="rel-quadros">${quadros}</div><div class="rel-leg rel-leg-q">${legQ}</div></div>`}
         <div class="rel-resumo">
             <div><small>${rotIni} *</small><b>${ddmmaaaa(D.ini)} <span style="font-weight:500;color:#64748b">(${DIAS_CURTOS[D.ini.getDay()]})</span></b></div>
             <div><small>Contagem</small><b>${D.n} ${D.uteis ? 'dias úteis' : 'dias corridos'}</b></div>
@@ -10380,7 +10497,6 @@
         </div>
         <p class="rel-nota">* ${nota}${regraNome ? ` Regra de contagem: ${esc(regraNome.titulo)} (${esc(regraNome.ref)}).` : ''}</p>
     </div></div>
-    ${!completo && listaFer ? `<div class="rel-secao"><h3>Feriados e dias especiais no período</h3><div class="rel-fer">${listaFer}</div></div>` : ''}
     ${completo ? `<div class="rel-secao"><h3>Detalhamento do cálculo</h3>${linha}</div>` : ''}
     ${conj}
     <div class="rel-rodape"><span>Calculado com ContaPrazo · contaprazo.netlify.app</span><span>Gerado em ${ddmmaaaa(hoje)}</span></div>
@@ -10567,6 +10683,32 @@ ${_htmlRelatorio(D, completo, 'print')}
             };
         }
 
+        // Contador de prazos atrasados ou vencendo, no item "Minha Agenda" do menu lateral
+        function atualizarContadorSidebar() {
+            const el = document.getElementById('sidebarContador');
+            if (!el || typeof prazos === 'undefined') return;
+            let atrasados = 0, vencendo = 0;
+            prazos.forEach(p => {
+                if (p.status === 'concluido') return;
+                const st = calcularStatus(p);
+                if (st === 'atrasado') atrasados++; else if (st === 'vencendo') vencendo++;
+            });
+            const n = atrasados + vencendo;
+            el.hidden = n === 0;
+            el.textContent = n;
+            el.className = 'sidebar-contador' + (atrasados ? ' atrasado' : '');
+            el.title = [atrasados ? `${atrasados} atrasado${atrasados > 1 ? 's' : ''}` : '', vencendo ? `${vencendo} vencendo em até 3 dias` : ''].filter(Boolean).join(' · ');
+        }
+
+        function alternarSidebarRecolhida(forcar) {
+            const recolher = forcar === undefined ? !document.body.classList.contains('sidebar-recolhida') : !!forcar;
+            document.body.classList.toggle('sidebar-recolhida', recolher);
+            const b = document.querySelector('.sidebar-recolher span');
+            if (b) b.textContent = recolher ? 'Expandir menu' : 'Recolher menu';
+            try { localStorage.setItem('contaprazo_sidebar_recolhida', recolher ? '1' : '0'); } catch (e) { /* sem armazenamento */ }
+            if (typeof posicionarGlider === 'function') setTimeout(() => { posicionarGlider(); posicionarGliderVisualizacao(); renderizarCalendario(); }, 320);
+        }
+
         function moverSliderSidebar(pagina) {
             const slider = document.getElementById('sidebarSlider');
             if (!slider) return;
@@ -10653,6 +10795,7 @@ ${_htmlRelatorio(D, completo, 'print')}
         }
 
         function salvarPrazosStorage() {
+            setTimeout(atualizarContadorSidebar, 0);
             _agendarGravacaoAgenda();
         }
 
@@ -12141,6 +12284,7 @@ ${_htmlRelatorio(D, completo, 'print')}
 
         // Atualizar badges dos filtros
         function atualizarBadgesFiltros() {
+            atualizarContadorSidebar();
             const contadores = {
                 todos: prazos.length,
                 atrasados: 0,
@@ -12824,7 +12968,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                 const nomeDisplay = (f.nome === 'Feriado/Ponto Facultativo' && !feriadosArquivoMap.has(formatarDataCompleta(f.data)))
                     ? 'Feriado/Ponto Facultativo personalizado'
                     : f.nome;
-                const linkHTML = link ? ` · <a class="dx-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.rotulo)} ↗</a>` : '';
+                const linkHTML = link ? `<span class="dx-ato"><a class="dx-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.rotulo)} ↗</a></span>` : '';
                 return `
                     <div class="dx-item dx-${tipo}">
                         <span class="dx-badge" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
@@ -13864,6 +14008,7 @@ ${_htmlRelatorio(D, completo, 'print')}
 
         carregarRegraContagem();
         renderizarRegraContagem();
+        try { if (localStorage.getItem('contaprazo_sidebar_recolhida') === '1') alternarSidebarRecolhida(true); } catch (e) { /* sem armazenamento */ }
         inicializarPerfis();
         inicializarArquivoAgenda();
         _restaurarOrdenacaoUI();
@@ -13922,6 +14067,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             // Carregar prazos da agenda e verificar vencimentos
             carregarPrazosStorage();
             verificarPrazosVencendo();
+            atualizarContadorSidebar();
 
             // Inicia verificação periódica de atualizações de feriados
             iniciarVerificacaoPeriodica();
@@ -13950,7 +14096,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
                 // Re-renderizar calendário apenas se estiver em visualização mensal
-                if (visualizacaoCalendario === 'mensal') {
+                if (visualizacaoCalendario !== 'anual') {
                     renderizarCalendario();
                     atualizarTextoBotaoVisualizacao();
                 }
