@@ -1239,6 +1239,10 @@
 
         /* Corpo: detalhamento + conjuntos */
         .res-corpo { padding: 18px 24px 20px; display: grid; gap: 14px; }
+        /* Cartão dentro do detalhe do prazo (Minha Agenda) */
+        .resultado-agenda { margin: 0; animation: none; box-shadow: none; }
+        .resultado-agenda .res-topo { padding-top: 18px; }
+        .resultado-agenda .res-rotulo { color: var(--cp-muted); }
 
         /* ==================== DETALHAMENTO (linha do tempo) ==================== */
         .dx { display: grid; gap: 10px; }
@@ -3610,16 +3614,18 @@
             flex-direction: column;
             gap: 0;
             background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            border: 1px solid var(--cp-line);
             overflow: hidden;
+            box-shadow: var(--cp-shadow-card);
         }
 
         .prazo-item {
+            position: relative;
             background: white;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 10px 16px;
-            transition: all 0.2s;
+            border-bottom: 1px solid var(--cp-line-soft);
+            padding: 12px 16px 12px 18px;
+            transition: background 0.15s;
             display: grid;
             grid-template-columns: 26px 1fr auto;
             gap: 12px;
@@ -3631,47 +3637,19 @@
             border-bottom: none;
         }
 
-        /* Coloração de fundo conforme status */
-        .prazo-item-atrasado {
-            background: #fef2f2;
-            border-left: 3px solid #dc2626;
+        /* Status: faixa lateral colorida e leve tom de fundo */
+        .prazo-item::before {
+            content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: transparent;
         }
-
-        .prazo-item-vencendo {
-            background: #fffbeb;
-            border-left: 3px solid #ea580c;
-        }
-
-        /* Vence HOJE - mais urgente que vencendo */
-        .prazo-item-vence-hoje {
-            background: #fed7aa;
-            border-left: 3px solid #f97316;
-        }
-
-        .prazo-item-concluido {
-            background: #f0fdf4;
-            border-left: 3px solid var(--color-green-600);
-        }
-
-        .prazo-item:hover:not(.prazo-item-atrasado):not(.prazo-item-vencendo):not(.prazo-item-vence-hoje):not(.prazo-item-concluido) {
-            background: #f9fafb;
-        }
-
-        .prazo-item-atrasado:hover {
-            background: #fee2e2;
-        }
-
-        .prazo-item-vencendo:hover {
-            background: #fef3c7;
-        }
-
-        .prazo-item-vence-hoje:hover {
-            background: #fdba74;
-        }
-
-        .prazo-item-concluido:hover {
-            background: #dcfce7;
-        }
+        .prazo-item:hover { background: #f8fafc; }
+        .prazo-item-atrasado { background: linear-gradient(90deg, #fff4f6, #fff 45%); }
+        .prazo-item-atrasado::before { background: var(--cp-nac); }
+        .prazo-item-vence-hoje { background: linear-gradient(90deg, #fff1e3, #fff 45%); }
+        .prazo-item-vence-hoje::before { background: #ea580c; }
+        .prazo-item-vencendo { background: linear-gradient(90deg, #fff8ec, #fff 45%); }
+        .prazo-item-vencendo::before { background: #f59e0b; }
+        .prazo-item-concluido::before { background: var(--color-green-600); }
+        .prazo-item-atrasado:hover, .prazo-item-vence-hoje:hover, .prazo-item-vencendo:hover { filter: brightness(0.99); }
 
         .prazo-item:hover .prazo-acoes {
             opacity: 1;
@@ -3794,38 +3772,10 @@
             letter-spacing: 0.3px;
         }
 
-        .badge-atrasado {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-vencendo {
-            background: #fed7aa;
-            color: #9a3412;
-        }
-
-        .badge-pendente {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .badge-concluido {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        /* Badges em fundos coloridos — garantir contraste */
-        .prazo-item-vence-hoje .badge-vencendo {
-            background: rgba(255,255,255,0.75);
-            color: #7c2d12;
-            border: 1px solid rgba(0,0,0,0.08);
-        }
-
-        .prazo-item-atrasado .badge-atrasado {
-            background: rgba(255,255,255,0.6);
-            color: #7f1d1d;
-            border: 1px solid rgba(0,0,0,0.06);
-        }
+        .badge-atrasado { background: var(--cp-nac-soft); color: var(--cp-late); }
+        .badge-vencendo { background: #fff1dc; color: var(--cp-warn); }
+        .badge-pendente { background: #eef4ff; color: var(--color-blue-600); }
+        .badge-concluido { background: #e7f8ee; color: var(--cp-ok); }
 
         /* Informações secundárias */
         .prazo-info-secundaria {
@@ -3897,16 +3847,12 @@
             line-height: 1;
         }
 
-        .prazo-countdown.atrasado  { color: #dc2626; }
-        .prazo-countdown.vencendo  { color: #c2410c; }
-        .prazo-countdown.vence-hoje { color: #ea580c; }
-        .prazo-countdown.pendente  { color: var(--color-blue-500); font-weight: 500; }
-        .prazo-countdown.concluido { color: var(--color-green-600); font-weight: 500; }
-
-        /* Contraste em fundos coloridos */
-        .prazo-item-atrasado .prazo-countdown.atrasado   { color: #7f1d1d; }
-        .prazo-item-vence-hoje .prazo-countdown.vence-hoje { color: #431407; }
-        .prazo-item-vencendo .prazo-countdown.vencendo   { color: #9a3412; }
+        .prazo-countdown::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+        .prazo-countdown.atrasado  { color: var(--cp-late); }
+        .prazo-countdown.vencendo  { color: var(--cp-warn); }
+        .prazo-countdown.vence-hoje { color: #ea580c; text-transform: none; }
+        .prazo-countdown.pendente  { color: var(--color-blue-600); font-weight: 600; }
+        .prazo-countdown.concluido { color: var(--cp-ok); font-weight: 600; }
 
         /* Botões de ação (menu três pontos) */
         .prazo-acoes {
@@ -4209,6 +4155,15 @@
         .agenda-setup-btn-secundario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
         .agenda-setup-btn-secundario:hover { background: #f9fafb; border-color: #9ca3af; }
         .agenda-setup-nota { font-size: 0.78rem; color: #9ca3af; margin-top: 16px; max-width: 380px; line-height: 1.5; }
+        .agenda-setup-opcoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 760px; text-align: left; }
+        .agenda-setup-opcao { position: relative; display: grid; gap: 8px; align-content: start; padding: 18px; border: 1px solid var(--cp-line); border-radius: 14px; background: #fff; }
+        .agenda-setup-opcao:first-child { border-color: #bbf7d0; box-shadow: 0 8px 24px -18px rgba(22, 163, 74, 0.6); }
+        .agenda-setup-opcao strong { font-size: 0.98rem; color: var(--cp-ink); }
+        .agenda-setup-opcao p { margin: 0; font-size: 0.84rem; line-height: 1.5; color: var(--cp-muted); }
+        .agenda-setup-opcao small { font-size: 0.74rem; color: var(--cp-faint); }
+        .agenda-setup-botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+        .agenda-setup-tag { justify-self: start; padding: 2px 8px; border-radius: 999px; background: #e7f8ee; color: var(--cp-ok); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+        @media (max-width: 640px) { .agenda-setup-opcoes { grid-template-columns: 1fr; } }
 
         .modal-fechar {
             background: rgba(0, 0, 0, 0.05);
@@ -4521,16 +4476,14 @@
         /* Responsividade Mobile */
         @media (max-width: 768px) {
             .prazo-item {
-                grid-template-columns: 32px 1fr;
-                gap: 12px;
-                padding: 16px;
+                grid-template-columns: 26px 1fr auto;
+                gap: 10px;
+                padding: 14px 10px 14px 16px;
             }
 
             .prazo-acoes {
                 opacity: 1;
                 visibility: visible;
-                grid-column: 2;
-                justify-content: flex-end;
             }
 
             .modal-detalhes-content {
@@ -8031,17 +7984,6 @@
             gcal: '<svg width="17" height="17" viewBox="0 0 200 200" aria-hidden="true"><rect x="22" y="22" width="156" height="156" rx="22" fill="#fff" stroke="#4285F4" stroke-width="14"/><path d="M22 64h156" stroke="#EA4335" stroke-width="22"/><text x="100" y="152" font-size="74" font-weight="700" text-anchor="middle" fill="#34A853" font-family="Arial, sans-serif">31</text></svg>'
         };
 
-        // Classifica um dia do cálculo para a régua e o detalhamento
-        function _classificarDiaCalculo(dia, index, total) {
-            const tipoFer = ehFeriado(dia.data) ? getTipoFeriado(dia.data) : null;
-            const kind = tipoFer === 'personalizado' ? 'per' : (tipoFer ? 'nac' : null);
-            if (index === total - 1) return { tipo: 'fin', kind };
-            if (dia.prorrogacao && !dia.contado) return { tipo: 'ext', kind };
-            if (!dia.contado && kind) return { tipo: kind, kind };
-            if (!dia.contado) return { tipo: 'fds', kind: null };
-            return { tipo: 'cnt', kind };   // contado (em dias corridos pode ser feriado)
-        }
-
         function _linkAtoNormativo(data) {
             const dataStr = formatarDataCompleta(data);
             const arquivo = feriadosArquivoMap.get(dataStr);
@@ -8065,41 +8007,48 @@
             return { classe: 'ok', texto: `Faltam ${diff} dias` };
         }
 
-        function _renderRegua(dias) {
-            const N = dias.length;
-            const uteis = usarDiasUteis;
+        // Classe visual de um dia (régua, detalhamento e relatórios usam a mesma regra)
+        function _classeDiaD(d, i, N) {
+            if (i === N - 1) return 'fin';
+            if (d.prorrogacao && !d.contado) return 'ext';
+            if (!d.contado && d.kind) return d.kind;
+            if (!d.contado) return 'fds';
+            return 'cnt';
+        }
+
+        function _renderReguaD(D) {
+            const N = D.dias.length;
             let nNac = 0, nPer = 0;
-            const barras = dias.map((d, i) => {
-                const c = _classificarDiaCalculo(d, i, N);
+            const barras = D.dias.map((d, i) => {
+                const c = _classeDiaD(d, i, N);
                 let k = '';
-                if (c.tipo === 'fin') k = 'e';
-                else if (c.tipo === 'ext') k = 'z';
-                else if (c.kind && (!uteis || !d.contado)) { k = c.kind === 'per' ? 'p' : 'x'; c.kind === 'per' ? nPer++ : nNac++; }
-                else if (!d.contado) k = 'w';
+                if (c === 'fin') k = 'e';
+                else if (c === 'ext') k = 'z';
+                else if (d.kind && (!D.uteis || !d.contado)) { k = d.kind === 'per' ? 'p' : 'x'; d.kind === 'per' ? nPer++ : nNac++; }
+                else if (c === 'fds') k = 'w';
                 return `<i class="${k}" style="animation-delay:${Math.min(i * 6, 400)}ms"></i>`;
             }).join('');
             let meses = '';
-            dias.forEach((d, i) => {
+            D.dias.forEach((d, i) => {
                 if (i === 0 || d.data.getDate() === 1) {
                     const left = i / N * 100;
                     if (left < 92) meses += `<span style="left:${left.toFixed(2)}%">${MESES_ABREV[d.data.getMonth()]}</span>`;
                 }
             });
-            const prorrogado = !!(infoCalculo && infoCalculo.prorrogadoDe);
             const legenda = [
-                `<span><i class="rg-cnt"></i>${uteis ? 'Contado' : 'Corrido'}</span>`,
-                uteis ? '<span><i class="rg-wk"></i>Fim de semana</span>' : '',
+                `<span><i class="rg-cnt"></i>${D.uteis ? 'Contado' : 'Corrido'}</span>`,
+                D.uteis ? '<span><i class="rg-wk"></i>Fim de semana</span>' : '',
                 nNac ? `<span><i class="rg-nac"></i>Feriado nacional (${nNac})</span>` : '',
                 nPer ? `<span><i class="rg-per"></i>Feriado do perfil (${nPer})</span>` : '',
-                prorrogado ? '<span><i class="rg-ext"></i>Prorrogação</span>' : '',
+                D.prorrogadoDe ? '<span><i class="rg-ext"></i>Prorrogação</span>' : '',
                 '<span><i class="rg-fin"></i>Prazo final</span>'
             ].join('');
             return `
                 <div class="res-regua">
                     <div class="res-regua-topo">
-                        <div class="res-regua-ponta"><strong>${ddmm(dias[0].data)}</strong><small>1º dia do período</small></div>
+                        <div class="res-regua-ponta"><strong>${ddmm(D.dias[0].data)}</strong><small>1º dia do período</small></div>
                         <div class="res-regua-meio">${N} ${N === 1 ? 'dia' : 'dias'} no calendário</div>
-                        <div class="res-regua-ponta direita"><strong>${ddmm(dias[N - 1].data)}</strong><small>${prorrogado ? 'prazo final (prorrogado)' : 'prazo final'}</small></div>
+                        <div class="res-regua-ponta direita"><strong>${ddmm(D.fim)}</strong><small>${D.prorrogadoDe ? 'prazo final (prorrogado)' : 'prazo final'}</small></div>
                     </div>
                     <div class="res-regua-barra${N > 60 ? ' densa' : ''}" aria-hidden="true">${barras}</div>
                     <div class="res-regua-meses" aria-hidden="true">${meses}</div>
@@ -8107,67 +8056,57 @@
                 </div>`;
         }
 
-        function _renderResumoCalculo(dias) {
-            const r = infoCalculo ? infoCalculo.regra : regraContagem;
-            const ini = new Date(dataInicio + 'T00:00:00');
+        function _renderResumoD(D, feriadosClicaveis) {
+            const r = D.regra || {};
             const rotuloIni = r.ini === 'disp' ? 'Disponibilização'
                 : r.ini === 'inc' ? '1º dia do prazo'
                 : (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início';
-            const nFer = usarDiasUteis
-                ? dias.filter((d, i) => !d.contado && !d.prorrogacao && ehFeriado(d.data)).length
-                : dias.filter(d => !d.prorrogacao && ehFeriado(d.data)).length;
-            const rotuloFer = usarDiasUteis ? 'Feriados pulados' : 'Feriados no período';
-            const valorFer = nFer > 0
+            const nFer = D.dias.filter(d => d.kind && !d.prorrogacao && (D.uteis ? !d.contado : true)).length;
+            const valorFer = nFer > 0 && feriadosClicaveis
                 ? `<button type="button" class="res-resumo-link" onclick="abrirModalFeriadosCalculo()" title="Ver a lista de feriados">${nFer}</button>`
-                : '<strong>0</strong>';
+                : `<strong>${nFer}</strong>`;
             return `
                 <div class="res-resumo">
-                    <div><small>${rotuloIni} *</small><strong>${ddmmaaaa(ini)} <span>(${DIAS_CURTOS[ini.getDay()]})</span></strong></div>
-                    <div><small>Contagem</small><strong>${diasUteis} ${usarDiasUteis ? 'dias úteis' : 'dias corridos'}</strong></div>
-                    <div><small>${rotuloFer}</small>${valorFer}</div>
+                    <div><small>${rotuloIni} *</small><strong>${ddmmaaaa(D.ini)} <span>(${DIAS_CURTOS[D.ini.getDay()]})</span></strong></div>
+                    <div><small>Contagem</small><strong>${D.n} ${D.uteis ? 'dias úteis' : 'dias corridos'}</strong></div>
+                    <div><small>${D.uteis ? 'Feriados pulados' : 'Feriados no período'}</small>${valorFer}</div>
                 </div>`;
         }
 
-        function _renderNotaCalculo() {
-            const r = infoCalculo ? infoCalculo.regra : regraContagem;
-            const ini = new Date(dataInicio + 'T00:00:00');
+        function _renderNotaD(D, extra) {
+            const r = D.regra || {};
             const dia = d => `<strong>${ddmm(d)} (${DIAS_CURTOS[d.getDay()]})</strong>`;
             let t;
-            if (r.ini === 'disp' && infoCalculo && infoCalculo.publicacao) {
-                t = `Disponibilizado no DJe em ${dia(ini)}; considera-se publicado em ${dia(infoCalculo.publicacao)}, e a contagem começa no dia útil seguinte (Lei 11.419/2006, art. 4º, §§ 3º e 4º).`;
+            if (r.ini === 'disp' && D.publicacao) {
+                t = `Disponibilizado no DJe em ${dia(D.ini)}; considera-se publicado em ${dia(D.publicacao)}, e a contagem começa no dia útil seguinte (Lei 11.419/2006, art. 4º, §§ 3º e 4º).`;
             } else if (r.ini === 'inc') {
                 t = 'O dia informado conta como dia 1 do prazo (Código Penal, art. 10)' +
-                    (r.uteis && (ehFimDeSemana(ini) || ehFeriado(ini)) ? '; como não é dia útil, a contagem começou no próximo dia útil' : '') + '.';
-            } else if (infoCalculo && infoCalculo.inicioAdiado) {
-                t = `Intimação em ${dia(ini)}; a contagem começa no 1º dia útil seguinte, ${dia(infoCalculo.inicioAdiado)} (Súmula 310 do STF).`;
-            } else if (r.uteis) {
+                    (r.uteis && formatarDataCompleta(D.dias[0].data) !== formatarDataCompleta(D.ini) ? '; como não é dia útil, a contagem começou no próximo dia útil' : '') + '.';
+            } else if (D.inicioAdiado) {
+                t = `Intimação em ${dia(D.ini)}; a contagem começa no 1º dia útil seguinte, ${dia(D.inicioAdiado)} (Súmula 310 do STF).`;
+            } else if (D.uteis) {
                 t = 'O dia da intimação/publicação não conta: o dia 1 é o próximo dia útil.';
             } else {
                 t = 'O dia informado não conta: o dia 1 é o dia seguinte.';
             }
-            if (infoCalculo && infoCalculo.prorrogadoDe) {
-                t += ` O prazo terminaria em ${dia(infoCalculo.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
-            }
+            if (D.prorrogadoDe) t += ` O prazo terminaria em ${dia(D.prorrogadoDe)}, dia não útil, e foi prorrogado para o próximo dia útil.`;
+            const regra = _nomeRegraRelatorio(D.regra);
+            if (regra) t += ` Regra: ${escapeHtml(regra.titulo)} (${escapeHtml(regra.ref)}).`;
+            if (extra) t += ' ' + extra;
             return `<p class="res-nota"><sup>*</sup> ${t}</p>`;
         }
 
-        // Linha do tempo do cálculo (cartão de resultado). Os relatórios PDF/PNG
-        // e a Minha Agenda continuam usando renderTimelineDetalhamento().
-        function _renderDetalhamentoCalculo(dias) {
-            const N = dias.length;
-            const r = infoCalculo ? infoCalculo.regra : regraContagem;
-            const ini = new Date(dataInicio + 'T00:00:00');
-
-            // Marcos antes da contagem
+        // Linha do tempo (cartão de resultado e detalhe do prazo na Minha Agenda)
+        function _renderDetalhamentoD(D) {
+            const N = D.dias.length;
+            const r = D.regra || {};
             const marcos = [];
-            if (r.ini === 'disp' && infoCalculo && infoCalculo.publicacao) {
-                marcos.push({ data: ini, titulo: 'Disponibilizado no DJe', desc: 'Data informada', icone: '◆' });
-                marcos.push({ data: infoCalculo.publicacao, titulo: 'Considera-se publicado', desc: '1º dia útil após a disponibilização', icone: '◆' });
+            if (r.ini === 'disp' && D.publicacao) {
+                marcos.push({ data: D.ini, titulo: 'Disponibilizado no DJe', desc: 'Data informada', icone: '◆' });
+                marcos.push({ data: D.publicacao, titulo: 'Considera-se publicado', desc: '1º dia útil após a disponibilização', icone: '◆' });
             } else if (r.ini !== 'inc') {
-                marcos.push({ data: ini, titulo: (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início', desc: 'Não computada na contagem', icone: '◆' });
-                if (infoCalculo && infoCalculo.inicioAdiado) {
-                    marcos.push({ data: infoCalculo.inicioAdiado, titulo: 'Início adiado', desc: 'Súmula 310 do STF: o prazo começa no 1º dia útil', icone: '↷' });
-                }
+                marcos.push({ data: D.ini, titulo: (r.uteis || r.s310) ? 'Intimação / publicação' : 'Data de início', desc: 'Não conta na contagem', icone: '◆' });
+                if (D.inicioAdiado) marcos.push({ data: D.inicioAdiado, titulo: 'Início adiado', desc: 'Súmula 310 do STF: o prazo começa no 1º dia útil', icone: '↷' });
             }
 
             const linha = (tipo, badge, data, rotulo, desc, filtro, rotuloTipo = tipo) => `
@@ -8185,38 +8124,34 @@
                 html += `<section class="dx-grupo"><h4 class="dx-mes">Antes da contagem</h4>` +
                     marcos.map(m => linha('ms', m.icone, m.data, escapeHtml(m.titulo), escapeHtml(m.desc), 'marco')).join('') + '</section>';
             }
-
-            // Agrupa por mês
             const grupos = [];
-            dias.forEach((d, i) => {
+            D.dias.forEach((d, i) => {
                 const chave = d.data.getFullYear() * 12 + d.data.getMonth();
                 if (!grupos.length || grupos[grupos.length - 1].chave !== chave) grupos.push({ chave, data: d.data, itens: [] });
                 grupos[grupos.length - 1].itens.push({ d, i });
             });
             grupos.forEach(g => {
                 const contados = g.itens.filter(x => x.d.contado && !x.d.prorrogacao).length;
-                html += `<section class="dx-grupo"><h4 class="dx-mes">${MESES_PT[g.data.getMonth()]} ${g.data.getFullYear()}<em>${g.itens.length} ${g.itens.length === 1 ? 'dia' : 'dias'} · ${contados} ${usarDiasUteis ? 'contados' : 'corridos'}</em></h4>`;
+                html += `<section class="dx-grupo"><h4 class="dx-mes">${MESES_PT[g.data.getMonth()]} ${g.data.getFullYear()}<em>${g.itens.length} ${g.itens.length === 1 ? 'dia' : 'dias'} · ${contados} ${D.uteis ? 'contados' : 'corridos'}</em></h4>`;
                 g.itens.forEach(({ d, i }) => {
-                    const c = _classificarDiaCalculo(d, i, N);
-                    const nome = c.kind ? (obterNomeFeriado(d.data) || 'Feriado/Ponto Facultativo') : null;
-                    const link = c.kind === 'per' ? _linkAtoNormativo(d.data) : null;
-                    const linkHTML = link ? ` · <a class="dx-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.rotulo)} ↗</a>` : '';
-                    const rotuloKind = c.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional';
+                    const c = _classeDiaD(d, i, N);
+                    const nome = d.nome || 'Feriado/Ponto Facultativo';
+                    const linkHTML = d.link ? ` · <a class="dx-link" href="${escapeHtml(d.link.url)}" target="_blank" rel="noopener">${escapeHtml(d.link.rotulo)} ↗</a>` : '';
+                    const rotuloKind = d.kind === 'per' ? 'Feriado do perfil' : 'Feriado nacional';
                     const num = d.numero != null ? String(d.numero).padStart(2, '0') : '';
-                    if (c.tipo === 'fin') {
+                    if (c === 'fin') {
                         html += linha('fin', d.prorrogacao ? '→' : num, d.data, 'Prazo final',
                             d.prorrogacao ? 'Primeiro dia útil após o vencimento.' : 'Último dia do prazo.', 'contado');
-                    } else if (c.tipo === 'ext') {
-                        html += linha('ext', '→', d.data, 'Prorrogação', `${nome ? escapeHtml(nome) + ' · ' : ''}dia não útil`, nome ? 'prorrogacao feriado' : 'prorrogacao fds');
-                    } else if (c.tipo === 'nac' || c.tipo === 'per') {
-                        html += linha(c.tipo, '✕', d.data, rotuloKind, `${escapeHtml(nome)} — suspensão de prazo${linkHTML}`, 'feriado');
-                    } else if (c.tipo === 'fds') {
+                    } else if (c === 'ext') {
+                        html += linha('ext', '→', d.data, 'Prorrogação', `${d.kind ? escapeHtml(nome) + ' · ' : ''}dia não útil`, d.kind ? 'prorrogacao feriado' : 'prorrogacao fds');
+                    } else if (c === 'nac' || c === 'per') {
+                        html += linha(c, '✕', d.data, rotuloKind, `${escapeHtml(nome)} — suspensão de prazo${linkHTML}`, 'feriado');
+                    } else if (c === 'fds') {
                         html += linha('fds', '', d.data, '', '', 'fds');
                     } else {
                         const desc = d.numero === 1 ? (r.ini === 'inc' ? 'Dia informado, computado.' : 'Início da contagem.') : '';
-                        if (c.kind) {
-                            // Dias corridos: o feriado é contado normalmente
-                            html += linha('cnt', num, d.data, rotuloKind, `${escapeHtml(nome)} · contado (dias corridos)${linkHTML}${desc ? ' · ' + desc : ''}`, 'contado feriado', c.kind);
+                        if (d.kind) {
+                            html += linha('cnt', num, d.data, rotuloKind, `${escapeHtml(nome)} · contado (dias corridos)${linkHTML}${desc ? ' · ' + desc : ''}`, 'contado feriado', d.kind);
                         } else {
                             html += linha('cnt', num, d.data, '', desc, 'contado');
                         }
@@ -8225,21 +8160,33 @@
                 html += '</section>';
             });
 
-            const nCont = dias.filter(d => d.contado && !d.prorrogacao).length;
-            const nFds = dias.filter((d, i) => !d.contado && !ehFeriado(d.data)).length;
-            const nFer = dias.filter(d => ehFeriado(d.data)).length;
+            const nCont = D.dias.filter(d => d.contado && !d.prorrogacao).length;
+            const nFds = D.dias.filter(d => !d.contado && !d.kind).length;
+            const nFer = D.dias.filter(d => d.kind).length;
             const aba = (f, rotulo, n, cor) => `<button type="button" class="dx-aba${f === 'todos' ? ' ativa' : ''}" role="tab" aria-selected="${f === 'todos'}" data-f="${f}" onclick="filtrarDetalhamento(this)">${cor ? `<i class="${cor}"></i>` : ''}${rotulo} <em>${n}</em></button>`;
             return `
                 <div class="dx">
                     <h3 class="dx-titulo">${ICO.lista}Detalhamento do cálculo</h3>
                     <div class="dx-abas" role="tablist" aria-label="Filtrar dias">
                         ${aba('todos', 'Todos', N + marcos.length)}
-                        ${aba('contado', usarDiasUteis ? 'Contados' : 'Corridos', nCont, 'rg-cnt')}
-                        ${usarDiasUteis ? aba('fds', 'Fim de semana', nFds, 'rg-wk') : ''}
+                        ${aba('contado', D.uteis ? 'Contados' : 'Corridos', nCont, 'rg-cnt')}
+                        ${D.uteis ? aba('fds', 'Fim de semana', nFds, 'rg-wk') : ''}
                         ${aba('feriado', 'Feriados', nFer, 'rg-fer')}
                     </div>
                     <div class="dx-lista" data-filtro="todos">${html}</div>
                 </div>`;
+        }
+
+        function _renderConjuntosNotaD(D) {
+            if (!D.conjuntos || !D.conjuntos.length) return '';
+            const itens = D.conjuntos.map(c => {
+                const links = obterLinksDoConjunto(c);
+                const linksHTML = links.length > 0
+                    ? `<span class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</span>`
+                    : '';
+                return `<div class="conjunto-obs-item"><span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}${linksHTML}</div>`;
+            }).join('');
+            return `<div class="conjuntos-obs"><span class="conjuntos-obs-label">Feriados online utilizados</span>${itens}</div>`;
         }
 
         function filtrarDetalhamento(botao) {
@@ -8277,31 +8224,9 @@
         window.addEventListener('resize', () => { if (calculoRealizado) ajustarDataResultado(); });
 
         function mostrarResultado() {
-            const dias = todosOsDias;
+            const D = _dadosRelatorioCalculo();
             const st = _statusDoPrazo(dataFinal);
-
-            // ── Conjuntos online usados (nota no fim do cartão) ──
-            const conjuntosHTML = (() => {
-                if (!regraUsaFeriados()) return '';
-                const conjuntos = obterMetadataConjuntos();
-                if (!conjuntos || conjuntos.length === 0) return '';
-                const arquivosAtivos = new Set(feriadosArquivoMap.values());
-                const conjuntosAtivos = conjuntos.filter(c => arquivosAtivos.has(c.arquivo));
-                if (conjuntosAtivos.length === 0) return '';
-                const itens = conjuntosAtivos.map(c => {
-                    const links = obterLinksDoConjunto(c);
-                    const linksHTML = links.length > 0
-                        ? `<span class="conjunto-obs-links">${links.map(l => `<a class="conjunto-obs-link" href="${escapeHtml(l.url)}" target="_blank" rel="noopener" title="${escapeHtml(l.rotulo || 'Ver ato normativo')}">${escapeHtml(l.rotulo || 'Ver ato normativo')} ↗</a>`).join('')}</span>`
-                        : '';
-                    return `
-                    <div class="conjunto-obs-item">
-                        <span class="conjunto-obs-nome">${escapeHtml(c.nome)}</span>
-                        ${c.descricao ? `<span class="conjunto-obs-desc">${escapeHtml(c.descricao)}</span>` : ''}
-                        ${linksHTML}
-                    </div>`;
-                }).join('');
-                return `<div class="conjuntos-obs"><span class="conjuntos-obs-label">Feriados online utilizados</span>${itens}</div>`;
-            })();
+            const conjuntosHTML = _renderConjuntosNotaD(D);
 
             const html = `
                 <div class="resultado">
@@ -8314,9 +8239,9 @@
                             <span class="res-sep" aria-hidden="true">·</span>
                             <span class="res-status res-status-${st.classe}">${st.texto}</span>
                         </div>
-                        ${_renderRegua(dias)}
-                        ${_renderResumoCalculo(dias)}
-                        ${_renderNotaCalculo()}
+                        ${_renderReguaD(D)}
+                        ${_renderResumoD(D, true)}
+                        ${_renderNotaD(D)}
                     </div>
 
                     <div class="res-acoes">
@@ -8338,7 +8263,7 @@
                     </div>
 
                     <div class="res-corpo">
-                        ${_renderDetalhamentoCalculo(dias)}
+                        ${_renderDetalhamentoD(D)}
                         ${conjuntosHTML}
                     </div>
                 </div>
@@ -11161,12 +11086,12 @@ ${_htmlRelatorio(D, completo, 'print')}
                 agendaFilePronto = true;
                 _ocultarTelaSetupAgenda();
                 renderizarPrazos();
-                mostrarNotificacao('Usando armazenamento no navegador (IndexedDB).', 'sucesso');
+                mostrarNotificacao('A agenda agora fica guardada neste navegador.', 'sucesso');
             } catch(e) {
                 agendaModoIDB = false;
                 localStorage.removeItem('agendaStorageMode');
                 agendaInitStatus = 'unsupported';
-                mostrarNotificacao('Não foi possível acessar o IndexedDB.', 'erro');
+                mostrarNotificacao('Não foi possível usar o armazenamento deste navegador. Em janela anônima ele pode estar bloqueado.', 'erro');
             }
         }
 
@@ -11174,9 +11099,9 @@ ${_htmlRelatorio(D, completo, 'print')}
             criarToast({
                 tipo: 'aviso',
                 titulo: 'Mudar para armazenamento no navegador?',
-                mensagemHTML: 'Os dados atuais serão copiados para o IndexedDB deste navegador. O arquivo JSON continuará existindo no seu computador, mas não será mais sincronizado automaticamente.',
+                mensagemHTML: 'Os dados atuais serão copiados para o armazenamento deste navegador. O arquivo JSON continuará existindo no seu computador, mas não será mais sincronizado automaticamente.',
                 autoFechar: false,
-                botaoTexto: 'Mudar para IndexedDB',
+                botaoTexto: 'Guardar no navegador',
                 botaoCallback: async () => {
                     try {
                         agendaModoIDB = true;
@@ -11187,7 +11112,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     } catch(e) {
                         agendaModoIDB = false;
                         localStorage.removeItem('agendaStorageMode');
-                        mostrarNotificacao('Erro ao migrar para IndexedDB.', 'erro');
+                        mostrarNotificacao('Não foi possível copiar a agenda para o navegador.', 'erro');
                     }
                 },
                 botaoSecundarioTexto: 'Cancelar'
@@ -11311,7 +11236,7 @@ ${_htmlRelatorio(D, completo, 'print')}
             if (!infoDiv) return;
             if (agendaInitStatus === 'ready') {
                 const label = agendaModoIDB ? 'Armazenamento no navegador' : 'Arquivo da agenda';
-                const nome = agendaModoIDB ? 'IndexedDB — dados salvos neste navegador' : agendaFileName;
+                const nome = agendaModoIDB ? 'Guardada neste navegador' : agendaFileName;
                 infoDiv.innerHTML = `<div class="agenda-mais-arquivo-label">${label}</div><div class="agenda-mais-arquivo-nome" title="${escapeHtml(nome)}">${escapeHtml(nome)}</div>`;
                 infoDiv.style.display = 'block';
                 if (sepDiv) sepDiv.style.display = 'block';
@@ -11353,15 +11278,28 @@ ${_htmlRelatorio(D, completo, 'print')}
                 const temDadosLS = !!(localStorage.getItem('agendaPrazos') || localStorage.getItem('agendaPrazosArquivados'));
                 html = `<div class="agenda-setup-screen">
                     <div class="agenda-setup-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
-                    <div class="agenda-setup-titulo">Configure o arquivo da sua agenda</div>
-                    <div class="agenda-setup-desc">A Minha Agenda salva prazos diretamente em um arquivo JSON no seu computador, sem depender do armazenamento do navegador.${temDadosLS ? '<br><br><strong style="color:#92400e;">&#9888;&#65039; Dados anteriores encontrados</strong> — serão migrados automaticamente para o arquivo escolhido.' : ''}</div>
-                    <div class="agenda-setup-acoes">
-                        <button class="agenda-setup-btn-primario" onclick="trocarArquivoAgenda('novo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo</button>
-                        <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Abrir arquivo existente</button>
-                        <div style="display:flex;align-items:center;gap:10px;margin:4px 0;"><hr style="flex:1;border:none;border-top:1px solid #e5e7eb;"><span style="color:#9ca3af;font-size:0.78rem;white-space:nowrap;">ou use o armazenamento do navegador</span><hr style="flex:1;border:none;border-top:1px solid #e5e7eb;"></div>
-                        <button class="agenda-setup-btn-secundario" onclick="usarModoIDBDiretamente()" style="color:#3b82f6;border-color:#bfdbfe;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Usar IndexedDB (dados no navegador)</button>
+                    <div class="agenda-setup-titulo">Onde guardar a sua agenda?</div>
+                    <div class="agenda-setup-desc">Os prazos salvos ficam só com você: nada é enviado para a internet.${temDadosLS ? '<br><br><strong style="color:#92400e;">Encontramos prazos salvos anteriormente.</strong> Eles serão levados para a opção que você escolher.' : ''}</div>
+                    <div class="agenda-setup-opcoes">
+                        <div class="agenda-setup-opcao">
+                            <span class="agenda-setup-tag">Recomendado</span>
+                            <strong>Arquivo no computador</strong>
+                            <p>Um arquivo .json na pasta que você escolher. Dá para fazer backup e abrir em outro computador.</p>
+                            <div class="agenda-setup-botoes">
+                                <button class="agenda-setup-btn-primario" onclick="trocarArquivoAgenda('novo')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Criar novo arquivo</button>
+                                <button class="agenda-setup-btn-secundario" onclick="trocarArquivoAgenda('existente')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Abrir arquivo</button>
+                            </div>
+                            <small>Funciona no Chrome e no Edge para computador.</small>
+                        </div>
+                        <div class="agenda-setup-opcao">
+                            <strong>Guardar neste navegador</strong>
+                            <p>Mais simples, sem arquivo. Os prazos ficam só neste navegador e se perdem se os dados do site forem apagados.</p>
+                            <div class="agenda-setup-botoes">
+                                <button class="agenda-setup-btn-secundario" onclick="usarModoIDBDiretamente()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>Guardar neste navegador</button>
+                            </div>
+                            <small>Dá para mudar depois, no menu ⋮ da agenda.</small>
+                        </div>
                     </div>
-                    <div class="agenda-setup-nota">O arquivo ficará onde você escolher. O app precisa de permissão de leitura e escrita. Nenhum dado é enviado à nuvem.</div>
                 </div>`;
             }
             setupDiv.innerHTML = html;
@@ -11458,7 +11396,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     <button class="modal-close-btn modal-close-btn-abs" onclick="${closeModal}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
                     <div class="modal-aviso-icon" style="background:#eff6ff;"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
                     <h3 style="margin-bottom:4px;">Armazenamento no navegador</h3>
-                    <p style="color:#6b7280;font-size:0.82rem;margin-bottom:6px;text-align:center;">Os dados da agenda estão salvos no <strong>IndexedDB</strong> deste navegador.</p>
+                    <p style="color:#6b7280;font-size:0.82rem;margin-bottom:6px;text-align:center;">Os dados da agenda estão guardados <strong>neste navegador</strong>.</p>
                     <p style="color:#92400e;font-size:0.78rem;margin-bottom:18px;text-align:center;background:#fef3c7;padding:8px 12px;border-radius:6px;line-height:1.5;">⚠️ Dados ficam vinculados a este navegador e podem ser perdidos se o histórico/dados do site forem apagados. Faça backups regulares.</p>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <button class="btn btn-secondary" style="justify-content:flex-start;gap:10px;" onclick="exportarCopiaArquivoAgenda();${closeModal};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Baixar cópia dos dados (JSON)</button>
@@ -12171,7 +12109,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     : (diasRestantes.numero === 1 ? 'dia' : 'dias');
                 countdownChip = `<div class="prazo-countdown atrasado">Atrasado há ${diasRestantes.numero} ${textoTipo}</div>`;
             } else if (diasRestantes.hoje) {
-                countdownChip = `<div class="prazo-countdown vence-hoje">VENCE HOJE</div>`;
+                countdownChip = `<div class="prazo-countdown vence-hoje">Vence hoje</div>`;
             } else {
                 const classe = status === 'vencendo' ? 'vencendo' : 'pendente';
                 const textoTipo = diasRestantes.tipo === 'uteis'
@@ -12187,7 +12125,7 @@ ${_htmlRelatorio(D, completo, 'print')}
 
             // Descrição (opcional)
             const descricaoHTML = prazo.descricao ?
-                `<p class="prazo-descricao">${prazo.descricao}</p>` : '';
+                `<p class="prazo-descricao">${escapeHtml(prazo.descricao)}</p>` : '';
 
             const isSelecionado = prazosSelecionados.has(prazo.id);
             const checkboxSelecaoHTML = modoSelecao ? `
@@ -12206,7 +12144,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                     </div>
                     <div class="prazo-conteudo"${!modoSelecao ? ` onclick="abrirDetalhes('${prazo.id}')" style="cursor:pointer;"` : ''}>
                         <div class="prazo-header">
-                            <h3 class="prazo-titulo">${prazo.titulo}</h3>
+                            <h3 class="prazo-titulo">${escapeHtml(prazo.titulo)}</h3>
                             <button class="prazo-estrela-btn ${prazo.importante ? 'importante' : ''}" onclick="toggleImportante(event,'${prazo.id}')" title="${prazo.importante ? 'Remover dos importantes' : 'Marcar como importante'}">
                                 <svg viewBox="0 0 24 24" fill="${prazo.importante ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             </button>
@@ -12628,57 +12566,18 @@ ${_htmlRelatorio(D, completo, 'print')}
             // Preencher título
             document.getElementById('modalDetalhesTitulo').textContent = prazo.titulo;
 
-            // Construir corpo com os mesmos dados do resultado original
-            const dataInicioFormatada = prazo.dataInicio.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const dataFinalFormatada = prazo.dataFinal.toLocaleDateString('pt-BR', { dateStyle: 'full' });
-            const tipoDias = prazo.tipoDias === 'uteis' ? 'Úteis' : 'Corridos';
-
-            let descricaoHTML = '';
-            if (prazo.descricao) {
-                descricaoHTML = `
-                    <div class="resultado-descricao">
-                        <strong>Descrição:</strong> ${prazo.descricao}
-                    </div>
-                `;
-            }
-
-            // Status e contador
-            const status = calcularStatus(prazo);
+            // Status do prazo (mesma contagem de dias restantes da lista)
             const diasRestantes = calcularDiasRestantes(prazo);
-            let statusHTML = '';
-
+            let statusClasse, statusTexto;
             if (prazo.status === 'concluido') {
-                const dataConcFormatada = prazo.dataConclusao ? prazo.dataConclusao.toLocaleDateString('pt-BR') : '';
-                statusHTML = `
-                    <div class="resultado-info" style="background: #d1fae5; padding: 10px; border-radius: 8px; border-left: 4px solid #059669;">
-                        <strong>Status:</strong> <span style="color: #065f46; font-weight: 700;">✓ Concluído em ${dataConcFormatada}</span>
-                    </div>
-                `;
+                statusClasse = 'ok';
+                statusTexto = 'Concluído' + (prazo.dataConclusao ? ' em ' + prazo.dataConclusao.toLocaleDateString('pt-BR') : '');
             } else {
-                let labelContador = '';
-                let corBarra = '';
-
-                if (diasRestantes.atrasado) {
-                    const n = diasRestantes.numero;
-                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
-                    labelContador = `${n} ${unid} atrasado${n > 1 ? 's' : ''}`;
-                    corBarra = '#dc2626';
-                } else if (diasRestantes.hoje) {
-                    labelContador = 'Vence hoje!';
-                    corBarra = '#ea580c';
-                } else {
-                    const n = diasRestantes.numero;
-                    const verbo = n === 1 ? 'Falta' : 'Faltam';
-                    const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
-                    labelContador = `${verbo} ${n} ${unid}`;
-                    corBarra = '#3b82f6';
-                }
-
-                statusHTML = `
-                    <div class="resultado-info" style="background: ${corBarra}15; padding: 10px; border-radius: 8px; border-left: 4px solid ${corBarra};">
-                        <strong>Status:</strong> <span style="color: ${corBarra}; font-weight: 700;">${labelContador}</span>
-                    </div>
-                `;
+                const n = diasRestantes.numero;
+                const unid = diasRestantes.tipo === 'uteis' ? (n === 1 ? 'dia útil' : 'dias úteis') : (n === 1 ? 'dia' : 'dias');
+                if (diasRestantes.atrasado) { statusClasse = 'late'; statusTexto = `Atrasado há ${n} ${unid}`; }
+                else if (diasRestantes.hoje) { statusClasse = 'warn'; statusTexto = 'Vence hoje'; }
+                else { statusClasse = calcularStatus(prazo) === 'vencendo' ? 'warn' : 'ok'; statusTexto = `${n === 1 ? 'Falta' : 'Faltam'} ${n} ${unid}`; }
             }
 
             // Atualizar estrela no header do modal
@@ -12690,33 +12589,26 @@ ${_htmlRelatorio(D, completo, 'print')}
                 modalEstrelaBtnPrazo.title = prazo.importante ? 'Remover dos importantes' : 'Marcar como importante';
             }
 
+            const D = _dadosRelatorioPrazo(prazo);
+            const perfilNota = prazo.perfilUsado && prazo.perfilUsado.nome ? `Perfil de feriados usado: ${escapeHtml(prazo.perfilUsado.nome)}.` : '';
             const html = `
-                <div class="resultado" style="box-shadow: none; border: none; margin: 0;">
-                    ${descricaoHTML}
-                    <div class="resultado-info">
-                        <strong>Data de Início:</strong> ${dataInicioFormatada}${prazo.tipoDias === 'uteis' ? '<sup style="color:#9ca3af;font-size:0.75em;">*</sup>' : ''}
+                <div class="resultado resultado-agenda">
+                    <div class="res-topo">
+                        <div class="res-rotulo">${ICO.cal}Prazo final</div>
+                        ${prazo.descricao ? `<div class="res-descricao" title="${escapeHtml(prazo.descricao)}">${escapeHtml(prazo.descricao)}</div>` : ''}
+                        <div class="res-data">${D.fim.getDate()} de ${MESES_PT[D.fim.getMonth()]} de ${D.fim.getFullYear()}</div>
+                        <div class="res-sub">
+                            <span class="res-dia-semana">${DIAS_SEMANA[D.fim.getDay()]}</span>
+                            <span class="res-sep" aria-hidden="true">·</span>
+                            <span class="res-status res-status-${statusClasse}">${statusTexto}</span>
+                        </div>
+                        ${_renderReguaD(D)}
+                        ${_renderResumoD(D, false)}
+                        ${_renderNotaD(D, perfilNota)}
                     </div>
-                    <div class="resultado-info">
-                        <strong>Dias ${tipoDias} Contados:</strong> ${prazo.diasSolicitados}
-                    </div>
-                    <div class="resultado-info">
-                        <strong>Data Final do Prazo:</strong> <span class="data-final">${dataFinalFormatada}</span>
-                    </div>
-                    ${prazo.tipoDias === 'uteis' ? '<p style="font-size:0.78em; color:#9ca3af; margin:4px 0 0 0; line-height:1.4;"><sup>*</sup> Em Dias Úteis, a data de início não é computada — a contagem começa no próximo dia útil.</p>' : ''}
-                    ${statusHTML}
-                    ${(prazo.tipoDias === 'uteis' && prazo.perfilUsado) ? `<div class="resultado-info" style="font-size:0.82em;color:#6b7280;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg><span>Perfil de feriados: <strong style="color:#374151;">${escapeHtml(prazo.perfilUsado.nome)}</strong></span></div>` : ''}
-
-                    <div class="detalhamento" style="margin-top: 12px;">
-                        <h3>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Detalhamento (Auditoria)
-                        </h3>
-                        ${renderTimelineDetalhamento(prazo.detalhamentoDias, prazo.conjuntosMetadata)}
+                    <div class="res-corpo">
+                        ${_renderDetalhamentoD(D)}
+                        ${_renderConjuntosNotaD(D)}
                     </div>
                 </div>
             `;
@@ -14465,7 +14357,7 @@ ${_htmlRelatorio(D, completo, 'print')}
                 <ul style="margin:0;padding-left:18px;color:#7f1d1d;font-size:0.85rem;line-height:2;">
                     <li>Todos os <strong>feriados personalizados</strong> e perfis</li>
                     <li>Feriados <strong>fixos e móveis</strong> customizados (volta ao padrão)</li>
-                    <li>Todos os <strong>prazos da Minha Agenda</strong> (arquivo e IndexedDB)</li>
+                    <li>Todos os <strong>prazos da Minha Agenda</strong> (no arquivo e no navegador)</li>
                     <li>Todas as <strong>preferências e avisos</strong> dispensados</li>
                 </ul>
             </div>
