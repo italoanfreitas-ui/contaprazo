@@ -13,6 +13,8 @@
             box-sizing: border-box;
         }
 
+        [hidden] { display: none !important; }
+
         :root {
             /* Gradientes principais */
             --gradient-primary: linear-gradient(135deg, #3b82f6, #16a34a);
@@ -39,8 +41,8 @@
             --radius-lg: 12px;
 
             /* Transitions */
-            --transition-fast: all 0.2s;
-            --transition-normal: all 0.3s;
+            --transition-fast: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease);
+            --transition-normal: background-color 0.24s var(--cp-ease), border-color 0.24s var(--cp-ease), color 0.24s var(--cp-ease), box-shadow 0.24s var(--cp-ease);
 
             /* Redesign v2.0: tokens semânticos (resultado, detalhamento, calendário) */
             --cp-ink: #0f172a;
@@ -63,6 +65,7 @@
             --cp-per-soft: #f1e8ff;
             --cp-ext: #f59e0b;          /* prorrogação */
             --cp-ext-soft: #fef3c7;
+            --cp-ease: cubic-bezier(0.2, 0, 0, 1);
             --cp-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
         }
 
@@ -203,12 +206,8 @@
             .nav-tab:hover:not(.active) {
                 background: #f1f5f9;
                 color: #334155;
-                transform: translateY(-2px);
             }
 
-            .nav-tab:hover:not(.active) svg {
-                transform: scale(1.12);
-            }
         }
 
         .nav-tab:active:not(.active) {
@@ -490,7 +489,7 @@
             font-size: 0.875rem;
             font-weight: 500;
             box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             white-space: nowrap;
             cursor: pointer;
             flex-shrink: 0;
@@ -498,7 +497,6 @@
 
         .btn-data-hoje:hover {
             background: linear-gradient(135deg, var(--color-blue-600), #1d4ed8);
-            transform: translateY(-1px);
             box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
         }
 
@@ -528,7 +526,7 @@
             border: 1px solid #d1d5db;
             border-radius: 8px;
             font-size: 1rem;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         textarea {
@@ -599,7 +597,7 @@
 
         /* ==================== REGRA DE CONTAGEM ==================== */
         .regra-group { margin-bottom: 20px; }
-        .regra-resumo, .regra-topo, .regra-opcao, .regra-check {
+        .regra-resumo, .regra-topo, .regra-opcao {
             font: inherit; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; color: inherit;
         }
         .regra-resumo {
@@ -608,7 +606,7 @@
             transition: border-color 0.15s, box-shadow 0.15s;
         }
         .regra-resumo:hover { border-color: #93b4f5; }
-        .regra-resumo:focus-visible, .regra-opcao:focus-visible, .regra-topo:focus-visible, .regra-check:focus-visible {
+        .regra-resumo:focus-visible, .regra-opcao:focus-visible, .regra-topo:focus-visible {
             outline: none; box-shadow: 0 0 0 3px var(--cp-focus);
         }
         .regra-resumo-ic {
@@ -646,23 +644,67 @@
         }
         .regra-opcao-txt strong { display: block; font-size: 0.86rem; font-weight: 600; color: #1e293b; }
         .regra-ref { margin-left: 6px; font-size: 0.7rem; font-weight: 500; color: var(--cp-faint); }
-        .regra-personal .regra-ref {
-            display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; vertical-align: 1px;
-            font-size: 0.66rem; font-weight: 700; background: var(--cp-soft); color: var(--cp-muted);
-        }
-        .regra-personal .regra-opcao.ativa .regra-ref { background: #e8f0ff; color: var(--color-blue-600); }
-        .regra-opcao-txt small, .regra-check small {
+        .regra-opcao-txt small {
             display: block; margin-top: 2px; font-size: 0.74rem; line-height: 1.4; color: var(--cp-muted); font-weight: 400;
+            animation: cpSurgir 0.22s var(--cp-ease) backwards;
         }
+        .regra-caixa { animation: cpAbrir 0.24s var(--cp-ease) backwards; transform-origin: top center; }
+        .regra-resumo { animation: cpSurgir 0.2s var(--cp-ease) backwards; }
+        .regra-radio, .regra-opcao.ativa .regra-radio::after { transition: border-color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease); }
+        .regra-opcao.ativa .regra-radio::after { animation: cpPonto 0.22s var(--cp-ease) backwards; }
+
+        /* Regra personalizada: três linhas de controles compactos */
         .regra-personal {
-            display: grid; gap: 10px; margin: 6px 4px 4px 34px; padding: 10px 0 4px 12px; border-left: 2px solid var(--cp-line);
+            display: grid; gap: 12px; margin: 6px 4px 4px; padding: 14px 12px 12px;
+            border-radius: 12px; background: #f8fafc; border: 1px solid var(--cp-line-soft);
+            animation: cpAbrir 0.26s var(--cp-ease) backwards; transform-origin: top center;
         }
-        .regra-sub-label { font-size: 0.76rem; font-weight: 600; color: var(--cp-text); }
-        .regra-check {
-            display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start;
-            font-size: 0.84rem; color: var(--cp-text); padding: 2px 0;
+        .rp-linha { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 10px; align-items: center; }
+        .rp-linha-top { align-items: start; }
+        .rp-linha-top .rp-rotulo { padding-top: 6px; }
+        .rp-rotulo { font-size: 0.74rem; font-weight: 600; color: var(--cp-muted); }
+        .rp-seg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 10px; background: #eceff4; }
+        .rp-seg-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .rp-opcao {
+            min-width: 0; height: 30px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; cursor: pointer;
+            font: inherit; font-size: 0.78rem; font-weight: 600; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            transition: background-color 0.2s var(--cp-ease), color 0.2s var(--cp-ease), box-shadow 0.2s var(--cp-ease);
         }
-        .regra-check .tipos-feriado-checkbox { margin-top: 1px; }
+        .rp-opcao:hover:not(.ativa) { color: var(--cp-ink); background: rgba(255, 255, 255, 0.55); }
+        .rp-opcao.ativa { background: #fff; color: var(--cp-ink); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.12); }
+        .rp-opcao:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .rp-switches { display: grid; gap: 6px; }
+        .rp-switch {
+            display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; width: 100%;
+            padding: 6px 8px; border: 0; border-radius: 9px; background: none; cursor: pointer; text-align: left; font: inherit;
+            transition: background-color 0.18s var(--cp-ease); animation: cpSurgir 0.22s var(--cp-ease) backwards;
+        }
+        .rp-switch:hover { background: rgba(255, 255, 255, 0.7); }
+        .rp-switch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .rp-trilho {
+            position: relative; width: 34px; height: 20px; margin-top: 1px; border-radius: 999px; background: #cbd5e1;
+            transition: background-color 0.22s var(--cp-ease);
+        }
+        .rp-bola {
+            position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25); transition: transform 0.22s var(--cp-ease);
+        }
+        .rp-switch.ativa .rp-trilho { background: var(--color-green-600); }
+        .rp-switch.ativa .rp-bola { transform: translateX(14px); }
+        .rp-switch-txt { font-size: 0.82rem; font-weight: 600; color: var(--cp-text); line-height: 1.35; }
+        .rp-switch-txt small { display: block; font-size: 0.7rem; font-weight: 500; color: var(--cp-faint); }
+        .rp-resumo {
+            margin: 0; padding-top: 10px; border-top: 1px solid var(--cp-line); font-size: 0.76rem; line-height: 1.5; color: var(--cp-muted);
+        }
+        @media (max-width: 520px) {
+            .rp-linha { grid-template-columns: 1fr; gap: 6px; }
+            .rp-linha-top .rp-rotulo { padding-top: 0; }
+            .rp-opcao { font-size: 0.74rem; padding: 0 4px; }
+        }
+
+        @keyframes cpAbrir { from { opacity: 0; transform: translateY(-4px) scale(0.99); } to { opacity: 1; transform: none; } }
+        @keyframes cpSurgir { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+        @keyframes cpPonto { from { transform: scale(0); } to { transform: scale(1); } }
 
         /* ================================================
            SIDEBAR DE NAVEGAÇÃO (desktop ≥ 1025px)
@@ -773,12 +815,8 @@
             .sidebar-tab:hover:not(.active) {
                 background: #f1f5f9;
                 color: #334155;
-                transform: translateX(3px);
             }
 
-            .sidebar-tab:hover:not(.active) svg {
-                transform: scale(1.12);
-            }
         }
 
         .sidebar-tab:active:not(.active) {
@@ -981,7 +1019,7 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -998,8 +1036,7 @@
 
         .btn-primary:hover {
             background: var(--color-blue-600);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .btn-secondary {
@@ -1009,8 +1046,7 @@
 
         .btn-secondary:hover {
             background: #4b5563;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .btn-success {
@@ -1020,8 +1056,7 @@
 
         .btn-success:hover {
             background: var(--color-green-700);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .btn-danger,
@@ -1033,8 +1068,7 @@
         .btn-danger:hover,
         .btn-red:hover {
             background: #b91c1c;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         
@@ -1050,7 +1084,6 @@
 
         .btn-quick:hover {
             background: #e5e7eb;
-            transform: translateY(-1px);
         }
 
         .btn-group {
@@ -1106,7 +1139,7 @@
             background: #fff;
             border: 1px solid var(--cp-line);
             box-shadow: var(--cp-shadow-card);
-            animation: resEntrada 0.35s ease both;
+            animation: resEntrada 0.35s ease backwards;
         }
         @keyframes resEntrada { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
         .res-topo {
@@ -1160,7 +1193,7 @@
         .res-regua-barra.densa { gap: 0; }
         .res-regua-barra i {
             flex: 1; min-width: 0; background: var(--cp-cnt-strong);
-            transform-origin: left; animation: reguaCresce 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+            transform-origin: left; animation: reguaCresce 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
         }
         .res-regua-barra i.w { background: var(--cp-wk); }
         .res-regua-barra i.x { background: #fb7185; }
@@ -1216,7 +1249,7 @@
             border: 1px solid var(--cp-line); background: #fff; color: #475569;
             transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, filter 0.15s;
         }
-        .res-btn:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+        .res-btn:hover { border-color: #cbd5e1; }
         .res-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
         .res-btn-salvar {
             flex: 1; border: 0; color: #fff;
@@ -1251,9 +1284,12 @@
         .dx-aba em { font-style: normal; margin-left: 5px; color: var(--cp-faint); font-variant-numeric: tabular-nums; }
         .dx-aba:hover { color: var(--cp-text); }
         .dx-aba.ativa { color: var(--cp-ink); }
-        .dx-aba.ativa::after {
+        .dx-aba::after {
             content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--gradient-border);
+            transform: scaleX(0); transition: transform 0.25s var(--cp-ease);
         }
+        .dx-aba.ativa::after { transform: scaleX(1); }
+        .dx-aba { transition: color 0.18s var(--cp-ease); }
         .dx-aba:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--cp-focus); border-radius: 6px; }
         .dx-lista {
             max-height: 440px; overflow-y: auto; padding: 0 8px 8px;
@@ -1273,7 +1309,10 @@
             padding: 7px 8px; border-radius: 10px;
         }
         .dx-item::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #e2e8f0, #eef1f5); }
+        /* O conector começa no 1º item e termina no último (com um item só, não aparece) */
+        .dx-lista > .dx-item:first-child::before,
         .dx-grupo:first-child .dx-item:first-of-type::before { top: 50%; }
+        .dx-lista > .dx-item:last-child::before,
         .dx-grupo:last-child .dx-item:last-of-type::before { bottom: 50%; }
         .dx-badge {
             position: relative; z-index: 1; width: 28px; height: 28px; border-radius: 50%;
@@ -1314,9 +1353,10 @@
             .res-topo { padding: 18px 16px 16px; }
             .res-data { font-size: 1.75rem; }
             .res-regua-meio { display: none; }
-            .res-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            .res-resumo > div { padding: 0 10px; }
-            .res-resumo small, .res-resumo strong { white-space: normal; }
+            .res-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; }
+            .res-resumo > div { padding: 0 12px; }
+            .res-resumo > div:first-child { grid-column: 1 / -1; padding: 0 0 10px; border-bottom: 1px solid #e9edf3; }
+            .res-resumo > div:nth-child(2) { padding-left: 0; border-left: 0; }
             .res-acoes { padding: 12px 16px; }
             .res-btn-google span { display: none; }
             .res-btn-google { width: 40px; padding: 0; flex-shrink: 0; }
@@ -1722,7 +1762,6 @@
         .modal-close-btn:hover {
             background: rgba(0, 0, 0, 0.1);
             color: #374151;
-            transform: rotate(90deg) scale(1.1);
         }
 
         .modal-close-btn:active {
@@ -1759,8 +1798,7 @@
         .modal-detalhes-acoes .btn-secondary:hover,
         .modal-input-footer .btn-secondary:hover {
             background: #e2e8f0;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         /* Detalhe do prazo: só a ação principal é cheia; as demais são contornadas */
@@ -1801,14 +1839,13 @@
             border: 1.5px solid #e5e7eb;
             border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         .modal-option:hover {
             border-color: var(--color-blue-500);
             background: #eff6ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .modal-option-title {
@@ -1828,7 +1865,7 @@
             border: 1.5px solid #e5e7eb;
             border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             margin-bottom: 10px;
             background: white;
         }
@@ -1836,8 +1873,7 @@
         .item-predefinido:hover {
             border-color: var(--color-blue-500);
             background: #eff6ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .item-predefinido-nome {
@@ -2037,7 +2073,7 @@
             color: #6b7280;
             cursor: pointer;
             font-size: 0.75rem;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         .modal-perfil-btn:hover {
@@ -2066,7 +2102,7 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 1rem;
             font-size: 0.9rem;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         .modal-input-small:focus {
@@ -2325,7 +2361,7 @@
         .ed-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
         .ed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .ed-btn-pri { border: 0; color: #fff; background: linear-gradient(180deg, #3b82f6, #2563eb); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 18px -10px rgba(37,99,235,.9); }
-        .ed-btn-pri:hover { background: linear-gradient(180deg, #3b82f6, #2563eb); filter: brightness(1.05); transform: translateY(-1px); }
+        .ed-btn-pri:hover { background: linear-gradient(180deg, #3b82f6, #2563eb); filter: brightness(1.05); }
         .ed-btn-perigo { margin-left: auto; color: var(--cp-late); }
         .ed-btn-perigo:hover { border-color: #fecdd3; background: #fff1f3; }
         @media (max-width: 860px) { .ed-grade, .ed-grade-3 { grid-template-columns: 1fr; } }
@@ -2347,14 +2383,13 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             z-index: 1000;
         }
 
         .scroll-to-top:hover {
             background: rgba(37, 99, 235, 1);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .scroll-to-top.visible {
@@ -2473,7 +2508,6 @@
 
         .toast-btn-acao:hover {
             background: var(--color-blue-600);
-            transform: translateY(-1px);
         }
 
         .toast-btn-acao:active {
@@ -2497,7 +2531,6 @@
         .toast-btn-secundario:hover {
             background: rgba(0, 0, 0, 0.06);
             color: #374151;
-            transform: translateY(-1px);
         }
 
         .toast-btn-secundario:active {
@@ -2532,7 +2565,6 @@
         .toast-close:hover {
             background: rgba(0, 0, 0, 0.1);
             color: #374151;
-            transform: rotate(90deg) scale(1.1);
         }
 
         .toast-close:active {
@@ -2959,7 +2991,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             white-space: nowrap;
         }
 
@@ -2970,8 +3002,7 @@
         }
 
         .update-banner-btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .update-banner-btn-secondary {
@@ -3061,7 +3092,7 @@
             padding: 7px 12px;
             background: white; border: 1px solid #e5e7eb; border-radius: 8px;
             font-size: 0.875rem; font-weight: 500; color: #374151;
-            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit;
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .agenda-filtro-btn:hover { border-color: #d1d5db; background: #f9fafb; }
@@ -3114,7 +3145,7 @@
             padding: 7px 11px;
             background: white; border: 1px solid #e5e7eb; border-radius: 8px;
             font-size: 0.8rem; font-weight: 500; color: #374151;
-            cursor: pointer; transition: all 0.18s; font-family: inherit;
+            cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit;
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .agenda-toolbar-btn:hover { background: #f9fafb; border-color: #d1d5db; }
@@ -3160,7 +3191,7 @@
         .agenda-ordenacao-dir-btn {
             flex: 1; padding: 5px 10px; background: #f3f4f6; border: 1px solid #e5e7eb;
             font-size: 0.8rem; font-weight: 500; color: #6b7280;
-            cursor: pointer; transition: all 0.15s; font-family: inherit;
+            cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit;
             display: flex; align-items: center; justify-content: center; gap: 5px;
         }
         .agenda-ordenacao-dir-btn:first-child { border-radius: 6px 0 0 6px; border-right: none; }
@@ -3247,7 +3278,7 @@
             background: white; color: #9ca3af;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; flex-shrink: 0;
-            transition: all 0.15s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
         .barra-selecao-cancel:hover { background: #fee2e2; border-color: #fca5a5; color: #dc2626; }
         .barra-selecao-cancel svg { width: 13px; height: 13px; }
@@ -3270,7 +3301,7 @@
             padding: 5px 9px; border: 1px solid #e5e7eb; border-radius: 6px;
             background: white; color: #374151;
             font-size: 0.78rem; font-weight: 500;
-            cursor: pointer; transition: all 0.15s; font-family: inherit;
+            cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit;
             white-space: nowrap;
         }
         .btn-selecao-mini:hover { background: #f3f4f6; border-color: #d1d5db; }
@@ -3330,7 +3361,7 @@
             padding: 6px 11px; border: 1px solid #e5e7eb; border-radius: 7px;
             background: white; color: #374151;
             font-size: 0.8rem; font-weight: 500; line-height: 1;
-            cursor: pointer; transition: all 0.15s; font-family: inherit;
+            cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit;
             white-space: nowrap;
         }
         .btn-selecao-action:hover { background: #f3f4f6; border-color: #d1d5db; }
@@ -3356,7 +3387,7 @@
             border: 2px solid #d1d5db;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -3462,7 +3493,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             background: white;
             flex-shrink: 0;
         }
@@ -3646,7 +3677,7 @@
             transition: color 0.15s, transform 0.15s;
         }
         .prazo-estrela-btn.importante { color: #f59e0b; }
-        .prazo-estrela-btn:hover { color: #f59e0b; transform: scale(1.2); }
+        .prazo-estrela-btn:hover { color: #f59e0b; }
         .prazo-estrela-btn svg { width: 13px; height: 13px; }
 
         .prazo-menu-btn {
@@ -3658,7 +3689,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             background: transparent;
             color: #9ca3af;
         }
@@ -3704,7 +3735,7 @@
         .prazo-menu-item {
             padding: 12px 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -3856,14 +3887,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             color: #6b7280;
             flex-shrink: 0;
         }
 
         .modal-detalhes-fechar:hover {
             background: rgba(0, 0, 0, 0.12);
-            transform: rotate(90deg);
             color: #111827;
         }
 
@@ -3877,7 +3907,7 @@
             transition: color 0.15s, transform 0.15s;
         }
         .modal-estrela-btn.importante { color: #f59e0b; }
-        .modal-estrela-btn:hover { color: #f59e0b; transform: scale(1.15); }
+        .modal-estrela-btn:hover { color: #f59e0b; }
         .modal-estrela-btn svg { width: 18px; height: 18px; }
 
         .modal-detalhes-body {
@@ -3926,9 +3956,9 @@
         .agenda-setup-titulo { font-size: 1.15rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
         .agenda-setup-desc { font-size: 0.9rem; color: #6b7280; max-width: 420px; line-height: 1.6; margin-bottom: 24px; }
         .agenda-setup-acoes { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .agenda-setup-btn-primario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
-        .agenda-setup-btn-primario:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,0.3); }
-        .agenda-setup-btn-secundario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: inherit; }
+        .agenda-setup-btn-primario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #16a34a; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit; }
+        .agenda-setup-btn-primario:hover { background: #15803d; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18); }
+        .agenda-setup-btn-secundario { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease); font-family: inherit; }
         .agenda-setup-btn-secundario:hover { background: #f9fafb; border-color: #9ca3af; }
         .agenda-setup-nota { font-size: 0.78rem; color: #9ca3af; margin-top: 16px; max-width: 380px; line-height: 1.5; }
         .agenda-setup-opcoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 760px; text-align: left; }
@@ -3965,7 +3995,6 @@
         .modal-fechar:hover {
             background: rgba(0, 0, 0, 0.1);
             color: #374151;
-            transform: rotate(90deg) scale(1.1);
         }
 
         .modal-fechar:active {
@@ -3977,20 +4006,19 @@
             border: 1.5px solid #e5e7eb;
             border-radius: 1.2rem;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         .opcao-arquivamento:hover {
             border-color: var(--color-blue-500);
             background: #eff6ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         .opcao-arquivamento.opcao-perigo:hover {
             border-color: #dc2626;
             background: #fef2f2;
-            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.18);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.18);
         }
 
         /* Toast de Undo */
@@ -4067,7 +4095,7 @@
             font-family: inherit;
         }
 
-        .toast-undo-btn:hover { background: var(--color-blue-600); transform: translateY(-1px); }
+        .toast-undo-btn:hover { background: var(--color-blue-600); }
         .toast-undo-btn:active { transform: translateY(1px); transition-duration: 0.05s; }
 
         /* Paginação da Agenda */
@@ -4107,7 +4135,7 @@
             font-size: 0.875rem;
             font-weight: 500;
             color: #374151;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
             display: flex;
             align-items: center;
             gap: 4px;
@@ -4224,7 +4252,7 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 1rem;
             font-size: 0.95rem;
-            transition: all 0.2s;
+            transition: background-color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease), opacity 0.18s var(--cp-ease);
         }
 
         .modal-input-group input:focus,
@@ -4328,64 +4356,81 @@
 
     
         /* ==================== CALENDÁRIO (faixa contínua) ==================== */
-        .calendario-header { display: grid; gap: 6px; margin-bottom: 16px; }
+        .calendario-header { display: grid; gap: 10px; margin-bottom: 18px; }
         .cal-linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
-        .cal-titulo { margin: 0; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; color: var(--cp-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cal-mes { color: var(--color-blue-500); }
-        .cal-ano { color: var(--cp-ink); }
-        .cal-nav { display: flex; align-items: stretch; flex-shrink: 0; height: 32px; border: 1px solid var(--cp-line); border-radius: 10px; overflow: hidden; background: #fff; }
-        .cal-nav-btn {
-            display: grid; place-items: center; padding: 0 9px; border: 0; background: none; cursor: pointer;
-            font: inherit; font-size: 0.8rem; font-weight: 600; color: var(--cp-muted); transition: background 0.15s, color 0.15s;
+        .cal-titulo {
+            margin: 0; font-size: 1.3rem; font-weight: 750; letter-spacing: -0.025em; color: var(--cp-ink);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums;
         }
-        .cal-nav-btn + .cal-nav-btn { border-left: 1px solid var(--cp-line); }
-        .cal-nav-btn:hover { background: var(--cp-soft); color: var(--cp-ink); }
-        .cal-nav-btn:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--cp-focus); }
-        .cal-nav-hoje { color: var(--color-blue-600); }
-        .cal-nav-hoje.fora-do-mes { color: #fff; background: var(--gradient-blue); }
+        .cal-mes { color: var(--cp-ink); }
+        .cal-ano { color: var(--cp-faint); font-weight: 500; }
+        .cal-titulo.troca { animation: cpSurgir 0.24s var(--cp-ease) backwards; }
+        .cal-nav { display: flex; align-items: center; gap: 2px; flex-shrink: 0; padding: 3px; border-radius: 11px; background: var(--cp-soft); }
+        .cal-nav-btn {
+            display: grid; place-items: center; height: 28px; min-width: 28px; padding: 0 8px; border: 0; border-radius: 8px; background: none; cursor: pointer;
+            font: inherit; font-size: 0.78rem; font-weight: 650; color: var(--cp-muted);
+            transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), box-shadow 0.18s var(--cp-ease);
+        }
+        .cal-nav-btn + .cal-nav-btn { border-left: 0; }
+        .cal-nav-btn:hover { background: #fff; color: var(--cp-ink); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
+        .cal-nav-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cp-focus); }
+        .cal-nav-hoje { padding: 0 10px; }
+        .cal-nav-hoje.fora-do-mes { color: var(--color-blue-600); background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
         .cal-linha-sub { gap: 10px; }
+        /* Seletor Mês/Ano no mesmo desenho da navegação */
+        .cal-linha-sub .visualizacao-toggle { border-radius: 11px; background: var(--cp-soft); padding: 3px; gap: 2px; flex-shrink: 0; }
+        .cal-linha-sub .viz-glider { border-radius: 8px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }
+        .cal-linha-sub .visualizacao-toggle button { height: 28px; padding: 0 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 650; color: var(--cp-muted); }
+        .cal-linha-sub .visualizacao-toggle button.active { color: var(--cp-ink); }
 
-        /* Perfil ativo (linha 2 do topo) */
-        .perfil-badge-container { position: relative; min-width: 0; display: inline-flex; align-items: center; }
+        /* Perfil ativo (linha 2 do topo): chip discreto */
+        .perfil-badge-container { position: relative; min-width: 0; }
         .perfil-badge {
-            display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
-            font-size: 0.78rem; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 6px;
+            display: inline-flex; align-items: center; gap: 7px; max-width: 100%; height: 28px; padding: 0 11px 0 9px;
+            border-radius: 999px; background: #fff; border: 1px solid var(--cp-line);
+            font-size: 0.76rem; color: var(--cp-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+            transition: border-color 0.18s var(--cp-ease), background-color 0.18s var(--cp-ease);
         }
         .perfil-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--color-green-600); box-shadow: 0 0 0 3px #dcfce7; }
         .perfil-badge strong { font-weight: 650; color: var(--cp-text); overflow: hidden; text-overflow: ellipsis; }
-        .perfil-badge:hover strong { color: var(--color-blue-600); }
+        .perfil-badge:hover { border-color: #cbd5e1; background: #fafbfc; }
         .perfil-badge.sem-perfil::before { background: #cbd5e1; box-shadow: 0 0 0 3px #f1f5f9; }
 
         /* Grade de um mês */
         .calendario-single .calendario-grid, .mes-container .calendario-grid { gap: 6px 0; }
-        .calendario-dia-semana { text-align: center; padding-bottom: 4px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; color: #a3adbd; }
+        .calendario-dia-semana { text-align: center; padding-bottom: 6px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; color: #a3adbd; }
         .calendario-dia { position: relative; display: grid; place-items: center; height: 44px; cursor: default; }
         .calendario-dia[onclick] { cursor: pointer; }
         .calendario-dia .dia-numero, .calendario-mini-dia .dia-numero {
             position: relative; z-index: 1; display: grid; place-items: center; border-radius: 50%;
-            font-variant-numeric: tabular-nums; transition: background 0.15s, box-shadow 0.15s;
+            font-variant-numeric: tabular-nums;
+            transition: background-color 0.2s var(--cp-ease), box-shadow 0.2s var(--cp-ease), color 0.2s var(--cp-ease);
         }
-        .calendario-dia .dia-numero { width: 36px; height: 36px; font-size: 0.9rem; font-weight: 550; color: #1e293b; }
-        .calendario-dia[onclick]:hover .dia-numero { background: var(--cp-soft); }
+        .calendario-dia .dia-numero { width: 36px; height: 36px; font-size: 0.88rem; font-weight: 550; color: #1e293b; }
+        .calendario-dia[onclick]:hover .dia-numero { background: #eef2f7; }
         .calendario-dia.fim-semana .dia-numero, .calendario-mini-dia.fim-semana .dia-numero { color: #a3adbd; }
-        .calendario-dia.feriado .dia-numero, .calendario-mini-dia.feriado .dia-numero { color: var(--cp-nac); font-weight: 700; }
-        .calendario-dia.feriado-personalizado .dia-numero, .calendario-mini-dia.feriado-personalizado .dia-numero { color: var(--cp-per); font-weight: 700; }
-        .calendario-dia.feriado .dia-numero::after, .calendario-dia.feriado-personalizado .dia-numero::after {
-            content: ""; position: absolute; bottom: 4px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: currentColor;
-        }
+        /* Feriados: número dentro de um círculo tingido (sem pontinhos) */
+        .calendario-dia.feriado .dia-numero, .calendario-mini-dia.feriado .dia-numero { background: var(--cp-nac-soft); color: #be123c; font-weight: 650; }
+        .calendario-dia.feriado-personalizado .dia-numero, .calendario-mini-dia.feriado-personalizado .dia-numero { background: var(--cp-per-soft); color: #7e22ce; font-weight: 650; }
+        .calendario-dia.feriado[onclick]:hover .dia-numero { background: #fbd0d9; }
+        .calendario-dia.feriado-personalizado[onclick]:hover .dia-numero { background: #e6d6ff; }
         /* Faixa do período */
         .na-faixa { background: var(--cp-cnt); }
         .na-faixa.faixa-esq { border-top-left-radius: 22px; border-bottom-left-radius: 22px; }
         .na-faixa.faixa-dir { border-top-right-radius: 22px; border-bottom-right-radius: 22px; }
         .faixa-ate-fim { background: linear-gradient(90deg, var(--cp-cnt) 50%, transparent 50%); }
-        .na-faixa.fim-semana:not(.feriado):not(.feriado-personalizado) .dia-numero { color: #9fb3a6; }
+        .na-faixa.fim-semana:not(.feriado):not(.feriado-personalizado) .dia-numero { color: #94b8a1; }
+        .na-faixa .dia-numero { color: #14532d; }
+        /* Marcos: data informada (anel), publicação no DJe (anel tracejado), prazo final (degradê), hoje (azul) */
         .dia-inicio .dia-numero { background: #fff; box-shadow: inset 0 0 0 2px var(--color-green-600); color: var(--cp-ok) !important; font-weight: 700; }
+        .dia-publicacao .dia-numero { background: #fff; box-shadow: none; outline: 2px dashed #22c55e; outline-offset: -3px; color: var(--cp-ok) !important; font-weight: 700; }
         .dia-final .dia-numero {
-            background: var(--gradient-primary); color: #fff !important; font-weight: 800;
+            background: var(--gradient-primary); color: #fff !important; font-weight: 750;
             box-shadow: 0 6px 14px -6px rgba(22, 163, 74, 0.8);
         }
-        .dia-final .dia-numero::after { background: #fff !important; }
-        .dia-hoje:not(.dia-final):not(.dia-inicio) .dia-numero { box-shadow: inset 0 0 0 1.5px var(--color-blue-500); }
+        .dia-hoje:not(.dia-final):not(.dia-inicio):not(.dia-publicacao) .dia-numero { background: #e8f0ff; color: var(--color-blue-600); font-weight: 750; }
+        .calendario-dia.pulso .dia-numero { animation: cpPulso 0.35s var(--cp-ease); }
+        @keyframes cpPulso { 0% { transform: scale(0.85); } 60% { transform: scale(1.06); } 100% { transform: none; } }
 
         /* Vários meses lado a lado */
         .calendario-multi-meses { display: grid; gap: 16px; }
@@ -4400,7 +4445,6 @@
         .calendario-multi-meses .na-faixa.faixa-dir { border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
         .calendario-multi-meses.meses-3 .calendario-dia { height: 22px; }
         .calendario-multi-meses.meses-3 .calendario-dia .dia-numero { width: 19px; height: 19px; font-size: 0.6rem; }
-        .calendario-multi-meses.meses-3 .calendario-dia .dia-numero::after { display: none; }
         .calendario-multi-meses.meses-3 .na-faixa.faixa-esq { border-top-left-radius: 11px; border-bottom-left-radius: 11px; }
         .calendario-multi-meses.meses-3 .na-faixa.faixa-dir { border-top-right-radius: 11px; border-bottom-right-radius: 11px; }
         .calendario-multi-meses.meses-3 .calendario-grid { gap: 3px 0; }
@@ -4424,10 +4468,17 @@
         .cal-pontos i { width: 6px; height: 6px; border-radius: 3px; background: #cbd5e1; transition: width 0.2s; }
         .cal-pontos i.ativo { width: 16px; background: var(--color-blue-500); }
         .cal-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; font-size: 0.7rem; color: var(--cp-muted); }
-        .cal-legenda > span > i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
-        .cl-faixa { background: #bbefcd; }
-        .cl-nac { background: var(--cp-nac); }
-        .cl-per { background: var(--cp-per); }
+        .cal-legenda > span > i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+        .cl-faixa { background: var(--cp-cnt); box-shadow: inset 0 0 0 1px #bbf0cd; border-radius: 4px !important; width: 14px !important; }
+        .cl-nac { background: var(--cp-nac-soft); box-shadow: inset 0 0 0 1.5px #fb7185; }
+        .cl-per { background: var(--cp-per-soft); box-shadow: inset 0 0 0 1.5px #c084fc; }
+        @media (min-width: 641px) { .btn-group .btn-limpar { flex: 0 0 auto; min-width: 140px; } }
+        .btn-limpar {
+            background: #fff; color: var(--cp-muted); border: 1px solid var(--cp-line);
+            transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease), border-color 0.18s var(--cp-ease);
+        }
+        .btn-limpar:hover { background: #fafbfc; color: var(--cp-ink); border-color: #cbd5e1; }
+        .cal-dica { margin: 8px 0 0; font-size: 0.7rem; color: var(--cp-faint); }
         .cl-ini { background: #fff; box-shadow: inset 0 0 0 2px var(--color-green-600); }
         .cl-fim { background: var(--gradient-primary); }
 
@@ -4483,7 +4534,7 @@
         .config-feriados-toggle { margin-left: auto; display: grid; color: var(--cp-faint); transition: transform 0.2s; }
         .config-feriados-toggle.aberto { transform: rotate(180deg); }
         .config-feriados-content { display: none; }
-        .config-feriados-content.aberto { display: grid; animation: resEntrada 0.2s ease both; }
+        .config-feriados-content.aberto { display: grid; animation: resEntrada 0.2s ease backwards; }
         .config-item {
             display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center;
             width: 100%; padding: 8px 4px; border: 0; border-radius: 10px; background: none; cursor: pointer; text-align: left; font: inherit;
@@ -4508,6 +4559,31 @@
         @media (min-width: 1025px) {
             body { transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         }
+    
+        /* ==================== INTERAÇÃO (hover, pressionar, foco) ==================== */
+        /* Hover = só mudança de tom/borda; pressionar = leve afundar; nada pula, cresce ou gira. */
+        button:not(:disabled):active, .btn:not(:disabled):active, .res-btn:active, .ed-btn:active,
+        .perfil-btn:active, .config-item:active, .regra-opcao:active, .cal-nav-btn:active, .dx-aba:active {
+            transform: scale(0.98);
+            transition: transform 0.08s var(--cp-ease);
+        }
+        .btn-primary:hover, .res-btn-salvar:hover, .ed-btn-pri:hover { filter: brightness(1.06); }
+        .modal-close-btn, .toast-close, .modal-fechar { transition: background-color 0.18s var(--cp-ease), color 0.18s var(--cp-ease); }
+        :focus-visible { outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+    
+        /* Entrada sutil ao trocar de página (sem efeito preso no fim) */
+        .page-content.active { animation: cpPagina 0.3s var(--cp-ease) backwards; }
+        @keyframes cpPagina { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        .config-feriados-content.aberto .config-item { animation: cpSurgir 0.22s var(--cp-ease) backwards; }
+        .config-feriados-content.aberto .config-item:nth-child(2) { animation-delay: 30ms; }
+        .config-feriados-content.aberto .config-item:nth-child(3) { animation-delay: 60ms; }
+        .config-feriados-content.aberto .config-item:nth-child(5) { animation-delay: 90ms; }
+        .perfil-dropdown-menu.show, .perfil-badge-dropdown.show { animation: cpAbrir 0.18s var(--cp-ease) backwards; }
+        .ed-validacao.erro, .ed-validacao.ok { animation: cpSurgir 0.2s var(--cp-ease) backwards; }
+        .perfil-unsaved-indicator.show { animation: cpSurgir 0.22s var(--cp-ease) backwards; }
     </style>
     <!-- Biblioteca html-to-image para exportação de PNG -->
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
@@ -4712,8 +4788,8 @@
                         <span class="tooltip-icon" tabindex="0" aria-label="Ajuda sobre perfil de feriados">?<span class="tooltip-box">Selecione o perfil de feriados personalizados a ser utilizado neste cálculo. O perfil define quais feriados locais e conjuntos importados serão considerados ao contar os dias.<br><br>Use o botão <strong>☁</strong> ao lado para importar conjuntos de feriados pré-configurados diretamente online.</span></span>
                     </span>
                 </div>
-                <div style="display:flex; gap:8px; align-items:stretch;">
-                    <select id="perfilCalculo" class="perfil-calculo-select" style="flex:1; width:auto;" onchange="selecionarPerfilCalculo(this.value)">
+                <div style="display:flex; gap:8px; align-items:stretch; min-width:0;">
+                    <select id="perfilCalculo" class="perfil-calculo-select" style="flex:1; width:auto; min-width:0;" onchange="selecionarPerfilCalculo(this.value)">
                         <option value="">Nenhum (sem feriados personalizados)</option>
                     </select>
                     <button id="btnImportarOnlineCalculo" onclick="abrirModalImportarPerfisOnline()" title="Importar conjuntos de feriados online" style="flex-shrink:0; padding:0 10px; border:1px solid #d1d5db; border-radius:8px; background:white; color:#6b7280; cursor:pointer; display:flex; align-items:center; transition:border-color 0.2s, color 0.2s;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6';" onmouseout="this.style.borderColor='#d1d5db';this.style.color='#6b7280';">
@@ -4763,7 +4839,7 @@
                     </svg>
                     Calcular Prazo
                 </button>
-                <button class="btn btn-secondary" onclick="limparResultado()" id="btnLimpar" style="display:none">
+                <button class="btn btn-limpar" onclick="limparResultado()" id="btnLimpar" style="display:none">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -4816,8 +4892,8 @@
                     </div>
                     <div class="visualizacao-toggle">
                         <span class="viz-glider" id="vizGlider"></span>
-                        <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active" data-tiptitle="Exibir 1 a 3 meses">Mensal</button>
-                        <button onclick="alternarVisualizacao('anual')" id="btnAnual" data-tiptitle="Exibir o calendário do ano completo">Anual</button>
+                        <button onclick="alternarVisualizacao('mensal')" id="btnMensal" class="active" data-tiptitle="Exibir 1 a 3 meses">Mês</button>
+                        <button onclick="alternarVisualizacao('anual')" id="btnAnual" data-tiptitle="Exibir o calendário do ano completo">Ano</button>
                     </div>
                 </div>
             </div>
@@ -4831,8 +4907,9 @@
                 <span><i class="cl-per"></i>Feriado personalizado</span>
                 <span><i class="cl-ini"></i><span id="legendaDataInicio">Data informada</span></span>
                 <span><i class="cl-fim"></i>Prazo final</span>
-                <span class="cal-legenda-ajuda tooltip-icon" tabindex="0" aria-label="Como marcar feriados">?<span class="tooltip-box">Clique em qualquer dia útil para marcá-lo (ou desmarcá-lo) como feriado personalizado do perfil.</span></span>
             </div>
+
+            <p class="cal-dica">Clique em um dia útil para marcar ou desmarcar um feriado personalizado.</p>
 
             <!-- Rodapé do card: perfil de feriados + configuração, como seção do próprio cartão -->
             <div class="card-cal-footer">
@@ -7203,12 +7280,12 @@
                     'dia informado ' + MARCOS_INICIAIS[r.ini].conta,
                     !u ? (r.prorrogar ? 'prorroga' : 'não prorroga') : null
                 ].filter(Boolean).join(' · ');
-                el.innerHTML = `
+                _morphHTML(el, `
                     <button type="button" class="regra-resumo" onclick="alternarRegraPicker(true)" aria-expanded="false">
                         <span class="regra-resumo-ic">${icoRegra}</span>
                         <span class="regra-resumo-txt"><strong>${escapeHtml(atual ? atual.titulo : 'Personalizada')}</strong><small>${escapeHtml(resumo)}</small></span>
                         <span class="regra-acao">Alterar ${chev}</span>
-                    </button>`;
+                    </button>`);
                 return;
             }
 
@@ -7220,29 +7297,44 @@
 
             let personal = '';
             if (idAtual === 'pers') {
-                const marcos = Object.keys(MARCOS_INICIAIS).map(k =>
-                    radio(r.ini === k, `definirOpcaoRegra('ini','${k}')`, MARCOS_INICIAIS[k].titulo, MARCOS_INICIAIS[k].conta, MARCOS_INICIAIS[k].ajuda(u))).join('');
-                const ck = (on, onclick, label, nota) => `
-                    <button type="button" class="regra-check${on ? ' ativa' : ''}" onclick="${onclick}" role="checkbox" aria-checked="${on}">
-                        <span class="tipos-feriado-checkbox${on ? ' active' : ''}"></span><span>${escapeHtml(label)}${on && nota ? `<small>${escapeHtml(nota)}</small>` : ''}</span>
+                const seg = (chave, valor, rotulo, ativo) =>
+                    `<button type="button" class="rp-opcao${ativo ? ' ativa' : ''}" role="radio" aria-checked="${ativo}" onclick="definirOpcaoRegra('${chave}', ${typeof valor === 'string' ? `'${valor}'` : valor})">${rotulo}</button>`;
+                const sw = (chave, on, rotulo, nota) => `
+                    <button type="button" class="rp-switch${on ? ' ativa' : ''}" role="switch" aria-checked="${on}" onclick="definirOpcaoRegra('${chave}', ${!on})">
+                        <span class="rp-trilho" aria-hidden="true"><span class="rp-bola"></span></span>
+                        <span class="rp-switch-txt">${rotulo}<small>${nota}</small></span>
                     </button>`;
+                const marco = MARCOS_INICIAIS[r.ini];
+                let frase = `${u ? 'Dias úteis' : 'Dias corridos'}. ${marco.ajuda(u)}`;
+                if (!u) frase += r.prorrogar ? ' Se o último dia não for útil, vai para o próximo dia útil.' : ' Não prorroga.';
+                if (!u && r.ini === 'pub' && r.s310) frase += ' Se o dia seguinte não for útil, a contagem começa no 1º dia útil (Súmula 310 do STF).';
                 personal = `
                     <div class="regra-personal">
-                        <div class="regra-sub-label">O que é o dia informado</div>
-                        <div class="regra-lista" role="radiogroup">${marcos}</div>
-                        <div class="segmented-control" title="Dias Úteis: exclui fins de semana e feriados do prazo.&#10;Dias Corridos: conta todos os dias do calendário.">
-                            <span class="seg-glider" id="segGlider"></span>
-                            <button type="button" class="segmented-btn${u ? ' active' : ''}" id="btnDiasUteis" onclick="selecionarTipoDias(true)">Dias Úteis</button>
-                            <button type="button" class="segmented-btn${!u ? ' active' : ''}" id="btnDiasCorridos" onclick="selecionarTipoDias(false)">Dias Corridos</button>
+                        <div class="rp-linha">
+                            <span class="rp-rotulo">Contagem</span>
+                            <div class="rp-seg" role="radiogroup" aria-label="Tipo de dias">
+                                ${seg('uteis', true, 'Dias úteis', u)}${seg('uteis', false, 'Dias corridos', !u)}
+                            </div>
                         </div>
-                        ${!u ? ck(r.prorrogar, `definirOpcaoRegra('prorrogar', ${!r.prorrogar})`, 'Prorrogar se o último dia não for útil',
-                                  'Vai para o próximo dia útil (CPP, art. 798, § 3º; CC, art. 132, § 1º).') : ''}
-                        ${!u && r.ini === 'pub' ? ck(r.s310, `definirOpcaoRegra('s310', ${!r.s310})`, 'Começar no 1º dia útil',
-                                  'Se a intimação for na sexta, o prazo começa na segunda (Súmula 310 do STF).') : ''}
+                        <div class="rp-linha">
+                            <span class="rp-rotulo">Dia informado</span>
+                            <div class="rp-seg rp-seg-3" role="radiogroup" aria-label="O que é o dia informado">
+                                ${seg('ini', 'pub', 'Publicação', r.ini === 'pub')}${seg('ini', 'disp', 'Disponib. DJe', r.ini === 'disp')}${seg('ini', 'inc', 'Conta como dia 1', r.ini === 'inc')}
+                            </div>
+                        </div>
+                        ${!u ? `
+                        <div class="rp-linha rp-linha-top">
+                            <span class="rp-rotulo">Ajustes</span>
+                            <div class="rp-switches">
+                                ${sw('prorrogar', r.prorrogar, 'Prorrogar se terminar em dia não útil', 'CPP, art. 798, § 3º · CC, art. 132, § 1º')}
+                                ${r.ini === 'pub' ? sw('s310', r.s310, 'Começar no 1º dia útil', 'Súmula 310 do STF') : ''}
+                            </div>
+                        </div>` : ''}
+                        <p class="rp-resumo">${escapeHtml(frase)}</p>
                     </div>`;
             }
 
-            el.innerHTML = `
+            const novoHTML = `
                 <div class="regra-caixa">
                     <button type="button" class="regra-topo" onclick="alternarRegraPicker(false)" aria-expanded="true">
                         <span>Escolha a regra</span><span class="regra-acao">Recolher <span class="regra-chev-up">${chev}</span></span>
@@ -7253,7 +7345,33 @@
                     </div>
                     ${personal}
                 </div>`;
-            if (idAtual === 'pers') requestAnimationFrame(posicionarGlider);
+            _morphHTML(el, novoHTML);
+        }
+
+        // Atualiza o DOM no lugar (sem recriar o que já existe): mantém foco, deixa as
+        // transições de classe acontecerem e só anima o que de fato entrou na tela.
+        function _morphHTML(container, html) {
+            const t = document.createElement('div');
+            t.innerHTML = html.trim();
+            const morph = (a, b) => {
+                if (a.nodeType !== b.nodeType || a.nodeName !== b.nodeName) { a.replaceWith(b.cloneNode(true)); return; }
+                if (a.nodeType === 3) { if (a.nodeValue !== b.nodeValue) a.nodeValue = b.nodeValue; return; }
+                if (a.nodeType !== 1) return;
+                [...a.attributes].forEach(at => { if (!b.hasAttribute(at.name)) a.removeAttribute(at.name); });
+                [...b.attributes].forEach(at => { if (a.getAttribute(at.name) !== at.value) a.setAttribute(at.name, at.value); });
+                const ac = [...a.childNodes], bc = [...b.childNodes];
+                for (let i = 0; i < Math.max(ac.length, bc.length); i++) {
+                    if (!ac[i]) a.appendChild(bc[i].cloneNode(true));
+                    else if (!bc[i]) ac[i].remove();
+                    else morph(ac[i], bc[i]);
+                }
+            };
+            const novos = [...t.childNodes], velhos = [...container.childNodes];
+            for (let i = 0; i < Math.max(novos.length, velhos.length); i++) {
+                if (!velhos[i]) container.appendChild(novos[i].cloneNode(true));
+                else if (!novos[i]) velhos[i].remove();
+                else morph(velhos[i], novos[i]);
+            }
         }
 
         function posicionarGlider() {
@@ -7415,7 +7533,8 @@
             }
 
             if (ehFim) className += ' dia-final';
-            else if (ehInicio || ehPublicacao) className += ' dia-inicio';
+            else if (ehInicio) className += ' dia-inicio';
+            else if (ehPublicacao) className += ' dia-publicacao';
             if (ehHoje) className += ' dia-hoje';
 
             // Tooltip
@@ -7588,6 +7707,7 @@
             renderizarCalendario();
             if (navegarParaPeriodo) navegarCalendarioParaPeriodo();
             if (visualizacaoCalendario === 'mensal') { atualizarTextoBotaoVisualizacao(); posicionarGliderVisualizacao(); }
+            animarFaixaCalendario();
             document.getElementById('btnLimpar').style.display = 'inline-flex';
 
             // Scroll suave até os resultados (com 10px de espaço acima)
@@ -7840,6 +7960,9 @@
                 g.hidden = !g.querySelector('.dx-item:not([hidden])');
             });
             lista.scrollTop = 0;
+            if (lista.animate && !_reduzirMovimento()) {
+                lista.animate([{ opacity: 0.35, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+            }
         }
 
         // Encolhe a data final até caber numa linha
@@ -7901,6 +8024,8 @@
                 </div>
             `;
 
+            // Remove o menu de exportação de um cálculo anterior (ele é movido para o <body> ao abrir)
+            document.querySelectorAll('body > #menu-resultado').forEach(m => m.remove());
             document.getElementById('resultado').innerHTML = html;
             document.getElementById('resultado').style.display = 'block';
             requestAnimationFrame(ajustarDataResultado);
@@ -8073,27 +8198,9 @@
         function atualizarTextoBotaoVisualizacao() {
             const btnMensal = document.getElementById('btnMensal');
             if (!btnMensal) return;
-
-            // Só atualiza se estiver em visualização mensal
-            if (visualizacaoCalendario === 'mensal') {
-                const mesesVisiveis = calcularMesesVisiveis();
-
-                switch(mesesVisiveis) {
-                    case 3:
-                        btnMensal.textContent = 'Trimestral';
-                        btnMensal.setAttribute('data-tiptitle', 'Exibir 3 meses simultâneos no calendário');
-                        break;
-                    case 2:
-                        btnMensal.textContent = 'Bimestral';
-                        btnMensal.setAttribute('data-tiptitle', 'Exibir 2 meses simultâneos no calendário');
-                        break;
-                    case 1:
-                    default:
-                        btnMensal.textContent = 'Mensal';
-                        btnMensal.setAttribute('data-tiptitle', 'Exibir 1 mês no calendário');
-                        break;
-                }
-            }
+            const n = calcularMesesVisiveis();
+            btnMensal.textContent = 'Mês';
+            btnMensal.setAttribute('data-tiptitle', n === 1 ? 'Exibir 1 mês' : `Exibir ${n} meses lado a lado`);
             atualizarTitlesBotoesNav();
         }
 
@@ -8113,6 +8220,25 @@
             posicionarGliderVisualizacao();
 
             renderizarCalendario();
+            animarCalendario(0);
+        }
+
+        // Animação sutil ao trocar de mês/vista (não roda em re-renderizações comuns)
+        function _reduzirMovimento() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+        function animarCalendario(direcao) {
+            if (_reduzirMovimento()) return;
+            const grid = document.getElementById('calendarioGrid');
+            const dx = direcao > 0 ? 14 : direcao < 0 ? -14 : 0;
+            if (grid && grid.animate) grid.animate([{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(0.2, 0, 0, 1)' });
+            const t = document.querySelector('.cal-titulo');
+            if (t) { t.classList.remove('troca'); void t.offsetWidth; t.classList.add('troca'); }
+        }
+        // Faixa do prazo aparece em sequência depois de calcular
+        function animarFaixaCalendario() {
+            if (_reduzirMovimento()) return;
+            document.querySelectorAll('#calendarioGrid .na-faixa, #calendarioGrid .dia-final, #calendarioGrid .dia-inicio').forEach((el, i) => {
+                if (el.animate) el.animate([{ opacity: 0.2, transform: 'scale(0.92)' }, { opacity: 1, transform: 'none' }], { duration: 260, delay: Math.min(i * 10, 320), easing: 'cubic-bezier(0.2, 0, 0, 1)', fill: 'backwards' });
+            });
         }
 
         function mudarMes(direcao) {
@@ -8124,11 +8250,15 @@
                 mesAtual = new Date(mesAtual.getFullYear() + direcao, 0, 1);
             }
             renderizarCalendario();
+            animarCalendario(direcao);
         }
 
         function irParaHoje() {
+            const antes = mesAtual ? mesAtual.getFullYear() * 12 + mesAtual.getMonth() : 0;
             mesAtual = new Date();
             renderizarCalendario();
+            const depois = mesAtual.getFullYear() * 12 + mesAtual.getMonth();
+            if (antes !== depois) animarCalendario(depois > antes ? 1 : -1);
         }
 
         // Desativa o editor de personalizados quando o perfil tem múltiplas fontes mescladas.
@@ -8450,6 +8580,8 @@
             }
             salvarFeriadosNoLocalStorage();
             renderizarCalendario();
+            const celula = document.querySelector(`#calendarioGrid [onclick="toggleDia('${dataStr}')"]`);
+            if (celula && !_reduzirMovimento()) celula.classList.add('pulso');
 
             // Notifica o sistema de perfis sobre alteração
             notificarAlteracaoFeriados();
@@ -11943,6 +12075,8 @@ ${_htmlRelatorio(D, completo, 'print')}
             event.stopPropagation();
             const menu = document.getElementById('menu-resultado');
             if (!menu) return;
+            // O menu é position:fixed; dentro do cartão animado ele ficaria preso e cortado.
+            if (menu.parentElement !== document.body) document.body.appendChild(menu);
 
             const wasActive = menu.classList.contains('active');
             fecharMenusPrazo();
@@ -14090,12 +14224,12 @@ ${_htmlRelatorio(D, completo, 'print')}
             <div style="margin: 16px 0;">
                 <label for="editTitulo" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Título:</label>
                 <input type="text" id="editTitulo" placeholder="Ex: Recurso Processo 12345"
-                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; transition: all 0.2s;">
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; transition: border-color 0.18s, box-shadow 0.18s;">
             </div>
             <div style="margin: 16px 0;">
                 <label for="editDescricao" style="display: block; margin-bottom: 6px; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.4px;">Descrição (opcional):</label>
                 <textarea id="editDescricao" placeholder="Detalhes adicionais..." rows="3"
-                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; resize: vertical; transition: all 0.2s;"></textarea>
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 1rem; font-size: 0.95rem; font-family: inherit; resize: vertical; transition: border-color 0.18s, box-shadow 0.18s;"></textarea>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
                 <button class="btn btn-secondary" onclick="fecharModalEditar()">Cancelar</button>
